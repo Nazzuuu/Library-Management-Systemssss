@@ -234,6 +234,8 @@ Public Class Book
             cblanguage.Text = row.Cells("Language").Value.ToString
             DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
 
+            rbgenerate.Enabled = False
+
 
         End If
 
@@ -296,14 +298,17 @@ Public Class Book
 
     Public Sub clear()
 
-        txtisbn.Clear()
-        txtbooktitle.Clear()
+        txtisbn.Text = ""
+        txtbooktitle.Text = ""
+        txtisbn.Enabled = True
+        rbgenerate.Enabled = True
 
         cbauthor.DataSource = Nothing
         cbgenre.DataSource = Nothing
         cbcategory.DataSource = Nothing
         cbpublisher.DataSource = Nothing
         cblanguage.DataSource = Nothing
+        rbgenerate.Checked = False
 
 
         cbauthorr()
@@ -316,4 +321,29 @@ Public Class Book
         DateTimePicker1.Value = DateTime.Today
         DataGridView1.ClearSelection()
     End Sub
+
+    Private Sub rbgenerate_CheckedChanged(sender As Object, e As EventArgs) Handles rbgenerate.CheckedChanged
+
+
+        If rbgenerate.Checked Then
+            txtisbn.Enabled = False
+            txtisbn.Text = jinireyt()
+        Else
+            txtisbn.Enabled = True
+            txtisbn.Clear()
+        End If
+
+    End Sub
+
+
+
+    Function jinireyt() As String
+        Dim random As New Random()
+        Dim isbn As String = ""
+        For i As Integer = 0 To 12
+            isbn += random.Next(0, 10).ToString()
+        Next
+        Return isbn
+    End Function
+
 End Class
