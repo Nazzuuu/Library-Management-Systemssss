@@ -1,4 +1,5 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.Net
+Imports MySql.Data.MySqlClient
 
 Public Class Author
     Private Sub Author_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -51,9 +52,8 @@ Public Class Author
                 End If
             Next
 
-
-            Author_Load(sender, e)
             MsgBox("Author added successfully", vbInformation)
+            Author_Load(sender, e)
 
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
@@ -64,9 +64,81 @@ Public Class Author
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
+        If DataGridView1.SelectedRows.Count > 0 Then
+
+            Dim con As New MySqlConnection(connectionString)
+
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+            Dim author As String = txtauthor.Text.Trim
+
+            Try
+                con.Open()
+                Dim com As New MySqlCommand("UPDATE `author_tbl` SET `AuthorName`= @author WHERE  `ID` = @id", con)
+                com.Parameters.AddWithValue("@author", author)
+                com.Parameters.AddWithValue("@id", ID)
+                com.ExecuteNonQuery()
+
+                MsgBox("Updated successfully!", vbInformation)
+                Author_Load(sender, e)
+                txtauthor.Clear()
+            Catch ex As Exception
+                MsgBox(ex.Message, vbCritical)
+            End Try
+
+        End If
     End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
+        If DataGridView1.SelectedRows.Count > 0 Then
+
+            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this author?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+
+            If dialogResult = DialogResult.Yes Then
+
+                Dim con As New MySqlConnection(connectionString)
+                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+                Try
+                    con.Open()
+                    Dim delete As New MySqlCommand("DELETE FROM `author_tbl` WHERE `ID` = @id", con)
+                    delete.Parameters.AddWithValue("@id", ID)
+                    delete.ExecuteNonQuery()
+
+                    MsgBox("Author deleted successfully.", vbInformation)
+                    Author_Load(sender, e)
+                    txtauthor.Clear()
+
+
+                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl`", con)
+                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+
+                    If rowCount = 0 Then
+
+                        Dim reset As New MySqlCommand("ALTER TABLE `author_tbl` AUTO_INCREMENT = 1", con)
+                        reset.ExecuteNonQuery()
+
+                    End If
+
+                Catch ex As Exception
+                    MsgBox(ex.Message, vbCritical)
+                End Try
+            End If
+        End If
     End Sub
+
+    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+
+            Dim row As DataGridViewRow = Me.DataGridView1.Rows(e.RowIndex)
+
+            txtauthor.Text = row.Cells("AuthorName").Value.ToString
+
+        End If
+    End Sub
+
 End Class
