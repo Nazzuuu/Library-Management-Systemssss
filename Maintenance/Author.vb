@@ -135,7 +135,6 @@ Public Class Author
         If e.RowIndex >= 0 Then
 
             Dim row As DataGridViewRow = Me.DataGridView1.Rows(e.RowIndex)
-
             txtauthor.Text = row.Cells("AuthorName").Value.ToString
 
         End If
