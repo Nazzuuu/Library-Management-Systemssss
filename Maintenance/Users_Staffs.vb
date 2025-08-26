@@ -15,6 +15,11 @@ Public Class Users_Staffs
         adapp.Fill(dt, "INFO")
         DataGridView1.DataSource = dt.Tables("INFO")
 
+        DataGridView1.Columns("ID").Visible = False
+        DataGridView1.EnableHeadersVisualStyles = False
+        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
         AddHandler DataGridView1.CellFormatting, AddressOf Me.DataGridView1_CellFormatting
 
     End Sub
@@ -234,22 +239,22 @@ Public Class Users_Staffs
 
 
 
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = Me.DataGridView1.Rows(e.RowIndex)
+            Dim row = DataGridView1.Rows(e.RowIndex)
 
-            txtusername.Text = row.Cells("Username").Value.ToString()
-            txtemail.Text = row.Cells("Email").Value.ToString()
-            txtcontactnumber.Text = row.Cells("ContactNumber").Value.ToString()
+            txtusername.Text = row.Cells("Username").Value.ToString
+            txtemail.Text = row.Cells("Email").Value.ToString
+            txtcontactnumber.Text = row.Cells("ContactNumber").Value.ToString
 
 
-            Dim password As String = row.Cells("Password").Value.ToString()
+            Dim password = row.Cells("Password").Value.ToString
             txtpassword.Text = password
             txtpassword.UseSystemPasswordChar = False
             CheckBox1.Checked = True
 
 
-            Dim gender As String = row.Cells("Gender").Value.ToString()
+            Dim gender = row.Cells("Gender").Value.ToString
             If gender = "Male" Then
                 rbmale.Checked = True
             ElseIf gender = "Female" Then
@@ -258,8 +263,8 @@ Public Class Users_Staffs
 
 
             If Not IsDBNull(row.Cells("Image").Value) Then
-                Dim imgData As Byte() = DirectCast(row.Cells("Image").Value, Byte())
-                Using ms As New IO.MemoryStream(imgData)
+                Dim imgData = DirectCast(row.Cells("Image").Value, Byte())
+                Using ms As New MemoryStream(imgData)
                     Try
 
                         If ms.Length > 0 Then

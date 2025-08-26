@@ -18,7 +18,9 @@ Public Class Author
         DataGridView1.DataSource = ds.Tables("INFO")
 
 
-
+        DataGridView1.EnableHeadersVisualStyles = False
+        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
     End Sub
 
     Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs)

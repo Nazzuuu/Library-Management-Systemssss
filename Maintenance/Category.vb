@@ -12,6 +12,11 @@ Public Class Category
 
         adap.Fill(dt, "INFO")
         DataGridView1.DataSource = dt.Tables("INFO")
+
+        DataGridView1.EnableHeadersVisualStyles = False
+        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
     End Sub
 
     Private Sub Category_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
