@@ -21,7 +21,7 @@ Public Class Book
         DataGridView1.DataSource = dt.Tables("INFO")
 
 
-        DateTimePicker1.MaxDate = DateTime.Today.AddMonths(-7)
+
 
         DataGridView1.Columns("ID").Visible = False
         DataGridView1.EnableHeadersVisualStyles = False
@@ -122,7 +122,18 @@ Public Class Book
         Dim booktitle As String = txtbooktitle.Text.Trim
 
         Dim deyts As DateTime = DateTimePicker1.Value
-        Dim purmatdeyt As String = deyts.ToString("yyyy-MMMM-dd")
+
+
+        If deyts.Date > DateTime.Today.Date Then
+            MsgBox("You cannot select a future date.", vbExclamation)
+            Exit Sub
+        End If
+
+
+        Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
+
+
+
 
 
         Try
@@ -161,8 +172,18 @@ Public Class Book
 
             Dim isbn As String = txtisbn.Text.Trim
             Dim booktitle As String = txtbooktitle.Text.Trim
+
+
             Dim deyts As DateTime = DateTimePicker1.Value
-            Dim purmatdeyt As String = deyts.ToString("yyyy-MMMM-dd")
+
+            If deyts.Date > DateTime.Today.Date Then
+                MsgBox("You cannot select a future date.", vbExclamation)
+                Exit Sub
+            End If
+
+
+            Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
+
 
 
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
@@ -278,13 +299,21 @@ Public Class Book
         txtisbn.Clear()
         txtbooktitle.Clear()
 
-        cbauthor.SelectedIndex = -1
-        cbgenre.SelectedIndex = -1
-        cbcategory.SelectedIndex = -1
-        cbpublisher.SelectedIndex = -1
-        cblanguage.SelectedIndex = -1
+        cbauthor.DataSource = Nothing
+        cbgenre.DataSource = Nothing
+        cbcategory.DataSource = Nothing
+        cbpublisher.DataSource = Nothing
+        cblanguage.DataSource = Nothing
+
+
+        cbauthorr()
+        cbgenree()
+        cbcategoryy()
+        cbpublisherr()
+        cblang()
+
 
         DateTimePicker1.Value = DateTime.Today
-
+        DataGridView1.ClearSelection()
     End Sub
 End Class
