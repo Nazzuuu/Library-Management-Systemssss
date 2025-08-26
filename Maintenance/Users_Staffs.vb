@@ -65,14 +65,23 @@ Public Class Users_Staffs
         Dim email As String = txtemail.Text.Trim
         Dim contact As String = txtcontactnumber.Text.Trim
 
+
         If PictureBox2.Image Is Nothing Then
-            MsgBox("Please import an image first.", vbExclamation)
+            MsgBox("Please import an image first.", vbExclamation, "No Image")
+            Exit Sub
+        End If
+
+
+        If String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
+            MsgBox("Please fill in all the required fields (Username, Password, Email).", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
         Dim con As New MySqlConnection(connectionString)
         Try
             con.Open()
+
+
             Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE `Username` = @username OR `Email` = @email", con)
             checkCom.Parameters.AddWithValue("@username", user)
             checkCom.Parameters.AddWithValue("@email", email)
@@ -82,6 +91,7 @@ Public Class Users_Staffs
                 MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
                 Exit Sub
             End If
+
 
             Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`Username`, `Password`, `Email`, `ContactNumber`, `Gender`, `Image`) VALUES (@username, @password, @email, @contact, @gender, @image)", con)
             com.Parameters.AddWithValue("@username", user)
@@ -94,27 +104,53 @@ Public Class Users_Staffs
                 gender = "Male"
             ElseIf rbfemale.Checked Then
                 gender = "Female"
+            Else
+
+                MsgBox("Please select a gender.", vbExclamation, "Missing Information")
+                Exit Sub
             End If
             com.Parameters.AddWithValue("@gender", gender)
+
 
             Dim newImageBytes As Byte() = Nothing
             If PictureBox2.Image IsNot Nothing Then
                 Using ms As New IO.MemoryStream()
-                    Using tempBitmap As New Bitmap(PictureBox2.Image)
-                        tempBitmap.Save(ms, Imaging.ImageFormat.Jpeg)
-                        newImageBytes = ms.ToArray()
-                    End Using
+
+                    PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
+                    newImageBytes = ms.ToArray()
                 End Using
             End If
 
+
+            com.Parameters.AddWithValue("@image", If(newImageBytes IsNot Nothing, newImageBytes, CType(DBNull.Value, Object)))
+
             com.ExecuteNonQuery()
             MsgBox("Staff member added successfully!", vbInformation)
-            Users_Staffs_Load(sender, e)
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            con.Close()
+
+
+            RefreshDataGrid()
             clearfields()
+
+        Catch ex As Exception
+            MsgBox(ex.Message & vbCrLf & "Details: " & ex.StackTrace, vbCritical, "Database Error")
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
+
+
+    Public Sub RefreshDataGrid()
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT `ID`, `Username`, `Password`, `Email`, `ContactNumber`, `Gender`, `Image` FROM `user_staff_tbl`"
+        Dim adapp As New MySqlDataAdapter(com, con)
+        Dim dt As New DataSet
+        Try
+            adapp.Fill(dt, "INFO")
+            DataGridView1.DataSource = dt.Tables("INFO")
+        Catch ex As Exception
+            MsgBox("Error refreshing data: " & ex.Message, vbCritical)
         End Try
     End Sub
 
@@ -137,23 +173,24 @@ Public Class Users_Staffs
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
-        Dim user As String = txtusername.Text.Trim
-        Dim pass As String = txtpassword.Text.Trim
-        Dim email As String = txtemail.Text.Trim
-        Dim contact As String = txtcontactnumber.Text.Trim
 
-        If String.IsNullOrEmpty(user) Then
+        Dim originalUsername As String = String.Empty
+        If DataGridView1.CurrentRow IsNot Nothing AndAlso DataGridView1.CurrentRow.Cells("Username").Value IsNot Nothing Then
+            originalUsername = DataGridView1.CurrentRow.Cells("Username").Value.ToString()
+        Else
             MsgBox("Please select a staff member to edit.", vbExclamation)
             Exit Sub
         End If
+
+        Dim user As String = txtusername.Text.Trim()
+        Dim pass As String = txtpassword.Text.Trim()
+        Dim email As String = txtemail.Text.Trim()
+        Dim contact As String = txtcontactnumber.Text.Trim()
 
         Dim con As New MySqlConnection(connectionString)
         Try
             con.Open()
             Dim updateCom As New MySqlCommand("UPDATE `user_staff_tbl` SET `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender, `Image` = @image WHERE `Username` = @originalUsername", con)
-
-
-            Dim originalUsername As String = DataGridView1.CurrentRow.Cells("Username").Value.ToString()
 
             updateCom.Parameters.AddWithValue("@username", user)
             updateCom.Parameters.AddWithValue("@password", pass)
@@ -165,36 +202,33 @@ Public Class Users_Staffs
                 gender = "Male"
             ElseIf rbfemale.Checked Then
                 gender = "Female"
+            Else
+                MsgBox("Please select a gender.", vbExclamation, "Missing Information")
+                Exit Sub
             End If
             updateCom.Parameters.AddWithValue("@gender", gender)
 
-
+            Dim imageBytes As Byte() = Nothing
             If PictureBox2.Image IsNot Nothing Then
                 Using ms As New IO.MemoryStream()
-                    Try
-                        PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
-                        Dim img As Byte() = ms.ToArray()
-                        updateCom.Parameters.AddWithValue("@image", img)
-                    Catch ex As Exception
-                        MsgBox("Error saving image: " & ex.Message, vbCritical)
-                        updateCom.Parameters.AddWithValue("@image", DBNull.Value)
-                    End Try
+                    PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
+                    imageBytes = ms.ToArray()
                 End Using
-            Else
-
-                updateCom.Parameters.AddWithValue("@image", DBNull.Value)
             End If
-
+            updateCom.Parameters.AddWithValue("@image", If(imageBytes IsNot Nothing, imageBytes, CType(DBNull.Value, Object)))
             updateCom.Parameters.AddWithValue("@originalUsername", originalUsername)
 
             updateCom.ExecuteNonQuery()
             MsgBox("Staff member updated successfully!", vbInformation)
-            Users_Staffs_Load(sender, e)
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            con.Close()
+            RefreshDataGrid()
             clearfields()
+
+        Catch ex As Exception
+            MsgBox("Error updating staff member: " & ex.Message, vbCritical)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
     End Sub
 
@@ -239,46 +273,44 @@ Public Class Users_Staffs
 
 
 
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs)
+    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
         If e.RowIndex >= 0 Then
-            Dim row = DataGridView1.Rows(e.RowIndex)
-
-            txtusername.Text = row.Cells("Username").Value.ToString
-            txtemail.Text = row.Cells("Email").Value.ToString
-            txtcontactnumber.Text = row.Cells("ContactNumber").Value.ToString
+            Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
 
-            Dim password = row.Cells("Password").Value.ToString
+            txtusername.Text = If(IsDBNull(row.Cells("Username").Value), String.Empty, row.Cells("Username").Value.ToString())
+            txtemail.Text = If(IsDBNull(row.Cells("Email").Value), String.Empty, row.Cells("Email").Value.ToString())
+            txtcontactnumber.Text = If(IsDBNull(row.Cells("ContactNumber").Value), String.Empty, row.Cells("ContactNumber").Value.ToString())
+
+
+            Dim password As String = If(IsDBNull(row.Cells("Password").Value), String.Empty, row.Cells("Password").Value.ToString())
             txtpassword.Text = password
             txtpassword.UseSystemPasswordChar = False
             CheckBox1.Checked = True
 
 
-            Dim gender = row.Cells("Gender").Value.ToString
-            If gender = "Male" Then
-                rbmale.Checked = True
-            ElseIf gender = "Female" Then
-                rbfemale.Checked = True
-            End If
+            Dim gender As String = If(IsDBNull(row.Cells("Gender").Value), String.Empty, row.Cells("Gender").Value.ToString())
+            rbmale.Checked = (gender = "Male")
+            rbfemale.Checked = (gender = "Female")
 
 
             If Not IsDBNull(row.Cells("Image").Value) Then
-                Dim imgData = DirectCast(row.Cells("Image").Value, Byte())
-                Using ms As New MemoryStream(imgData)
-                    Try
-
+                Dim imgData As Byte() = Nothing
+                Try
+                    imgData = CType(row.Cells("Image").Value, Byte())
+                    Using ms As New MemoryStream(imgData)
                         If ms.Length > 0 Then
                             PictureBox2.Image = Image.FromStream(ms)
                             PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
                         Else
                             PictureBox2.Image = Nothing
                         End If
-                    Catch ex As Exception
-
-                        MsgBox("Error loading image: " & ex.Message, vbCritical)
-                        PictureBox2.Image = Nothing
-                    End Try
-                End Using
+                    End Using
+                Catch ex As Exception
+                    MsgBox("Error loading image: " & ex.Message, vbCritical)
+                    PictureBox2.Image = Nothing
+                End Try
             Else
                 PictureBox2.Image = Nothing
             End If
@@ -308,12 +340,16 @@ Public Class Users_Staffs
         txtpassword.Text = ""
         txtemail.Text = ""
         txtcontactnumber.Text = ""
+        CheckBox1.Checked = False
         rbmale.Checked = False
         rbfemale.Checked = False
+
         If PictureBox2.Image IsNot Nothing Then
             PictureBox2.Image.Dispose()
             PictureBox2.Image = Nothing
         End If
+
+        DataGridView1.ClearSelection()
     End Sub
 
 End Class

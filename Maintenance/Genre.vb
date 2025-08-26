@@ -85,7 +85,7 @@ Public Class Genre
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this author?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this genre?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 
             If dialogResult = DialogResult.Yes Then
 

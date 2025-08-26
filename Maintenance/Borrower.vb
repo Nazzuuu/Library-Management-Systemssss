@@ -17,6 +17,12 @@ Public Class Borrower
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
+        cbgradee()
+        cbsecs()
+        cbdepts()
+        cbstrandd()
+
+
     End Sub
 
     Private Sub btnimport_Click(sender As Object, e As EventArgs) Handles btnimport.Click
@@ -43,5 +49,67 @@ Public Class Borrower
 
     End Sub
 
+    Public Sub cbgradee()
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT ID, Grade FROM `grade_tbl`"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim dt As New DataTable
+
+        adap.Fill(dt)
+
+        cbgrade.DataSource = dt
+        cbgrade.DisplayMember = "Grade"
+        cbgrade.ValueMember = "ID"
+        cbgrade.SelectedIndex = -1
+
+    End Sub
+
+    Public Sub cbsecs()
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT ID, Section FROM `section_tbl`"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim dt As New DataTable
+
+        adap.Fill(dt)
+
+        cbsection.DataSource = dt
+        cbsection.DisplayMember = "Section"
+        cbsection.ValueMember = "ID"
+        cbsection.SelectedIndex = -1
+
+    End Sub
+
+    Public Sub cbdepts()
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT ID, Department FROM `department_tbl`"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim dt As New DataTable
+
+        adap.Fill(dt)
+
+        cbdepartment.DataSource = dt
+        cbdepartment.DisplayMember = "Department"
+        cbdepartment.ValueMember = "ID"
+        cbdepartment.SelectedIndex = -1
+
+    End Sub
+
+    Public Sub cbstrandd()
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT ID, Strand FROM `strand_tbl`"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim dt As New DataTable
+
+        adap.Fill(dt)
+
+        cbstrand.DataSource = dt
+        cbstrand.DisplayMember = "Strand"
+        cbstrand.ValueMember = "ID"
+        cbstrand.SelectedIndex = -1
+    End Sub
 
 End Class

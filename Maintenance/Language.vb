@@ -53,4 +53,86 @@ Public Class Language
         End Try
 
     End Sub
+
+    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+
+        If DataGridView1.SelectedRows.Count > 0 Then
+
+            Dim con As New MySqlConnection(connectionString)
+
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+            Dim lang As String = txtlanguage.Text.Trim
+
+            Try
+                con.Open()
+                Dim com As New MySqlCommand("UPDATE `language_tbl` SET `Language`= @language WHERE  `ID` = @id", con)
+                com.Parameters.AddWithValue("@language", lang)
+                com.Parameters.AddWithValue("@id", ID)
+                com.ExecuteNonQuery()
+
+                MsgBox("Updated successfully!", vbInformation)
+                Language_Load(sender, e)
+                txtlanguage.Clear()
+            Catch ex As Exception
+                MsgBox(ex.Message, vbCritical)
+            End Try
+
+        End If
+
+    End Sub
+
+    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
+
+        If DataGridView1.SelectedRows.Count > 0 Then
+
+            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this language?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+
+            If dialogResult = DialogResult.Yes Then
+
+                Dim con As New MySqlConnection(connectionString)
+                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+                Try
+                    con.Open()
+                    Dim delete As New MySqlCommand("DELETE FROM `language_tbl` WHERE `ID` = @id", con)
+                    delete.Parameters.AddWithValue("@id", ID)
+                    delete.ExecuteNonQuery()
+
+                    MsgBox("Language deleted successfully.", vbInformation)
+                    Language_Load(sender, e)
+                    txtlanguage.Clear()
+
+
+                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `language_tbl`", con)
+                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+
+                    If rowCount = 0 Then
+
+                        Dim reset As New MySqlCommand("ALTER TABLE `language_tbl` AUTO_INCREMENT = 1", con)
+                        reset.ExecuteNonQuery()
+
+                    End If
+
+                Catch ex As Exception
+                    MsgBox(ex.Message, vbCritical)
+                End Try
+            End If
+
+        End If
+
+    End Sub
+
+    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+
+            Dim row = DataGridView1.Rows(e.RowIndex)
+            txtlanguage.Text = row.Cells("Language").Value.ToString
+
+        End If
+
+    End Sub
 End Class

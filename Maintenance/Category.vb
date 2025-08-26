@@ -53,4 +53,86 @@ Public Class Category
             txtcategory.Clear()
         End Try
     End Sub
+
+    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+
+        If DataGridView1.SelectedRows.Count > 0 Then
+
+            Dim con As New MySqlConnection(connectionString)
+
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+            Dim cat As String = txtcategory.Text.Trim
+
+            Try
+                con.Open()
+                Dim com As New MySqlCommand("UPDATE `category_tbl` SET `Category`= @category WHERE  `ID` = @id", con)
+                com.Parameters.AddWithValue("@category", cat)
+                com.Parameters.AddWithValue("@id", ID)
+                com.ExecuteNonQuery()
+
+                MsgBox("Updated successfully!", vbInformation)
+                Category_Load(sender, e)
+                txtcategory.Clear()
+            Catch ex As Exception
+                MsgBox(ex.Message, vbCritical)
+            End Try
+
+        End If
+
+    End Sub
+
+    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
+
+        If DataGridView1.SelectedRows.Count > 0 Then
+
+            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this category?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+
+            If dialogResult = DialogResult.Yes Then
+
+                Dim con As New MySqlConnection(connectionString)
+                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+                Try
+                    con.Open()
+                    Dim delete As New MySqlCommand("DELETE FROM `category_tbl` WHERE `ID` = @id", con)
+                    delete.Parameters.AddWithValue("@id", ID)
+                    delete.ExecuteNonQuery()
+
+                    MsgBox("Language deleted successfully.", vbInformation)
+                    Category_Load(sender, e)
+                    txtcategory.Clear()
+
+
+                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `category_tbl`", con)
+                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+
+                    If rowCount = 0 Then
+
+                        Dim reset As New MySqlCommand("ALTER TABLE `category_tbl` AUTO_INCREMENT = 1", con)
+                        reset.ExecuteNonQuery()
+
+                    End If
+
+                Catch ex As Exception
+                    MsgBox(ex.Message, vbCritical)
+                End Try
+            End If
+
+        End If
+
+    End Sub
+
+    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+
+            Dim row = DataGridView1.Rows(e.RowIndex)
+            txtcategory.Text = row.Cells("Category").Value.ToString
+
+        End If
+
+    End Sub
 End Class
