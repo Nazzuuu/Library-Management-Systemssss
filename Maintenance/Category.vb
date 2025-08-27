@@ -135,4 +135,19 @@ Public Class Category
         End If
 
     End Sub
+
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        If dt IsNot Nothing Then
+            If txtsearch.Text.Trim() <> "" Then
+                Dim filter As String = String.Format("Category LIKE '*{0}*'", txtsearch.Text.Trim())
+                dt.DefaultView.RowFilter = filter
+            Else
+                dt.DefaultView.RowFilter = ""
+            End If
+        End If
+
+    End Sub
 End Class
