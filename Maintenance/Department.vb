@@ -73,6 +73,13 @@ Public Class Department
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Borrower Then
+                        Dim borrower = DirectCast(form, Borrower)
+                        borrower.cbdepts()
+                    End If
+                Next
+
                 MsgBox("Updated successfully!", vbInformation)
                 Department_Load(sender, e)
                 txtdepartment.Clear()
@@ -101,6 +108,13 @@ Public Class Department
                     Dim delete As New MySqlCommand("DELETE FROM `department_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Borrower Then
+                            Dim borrower = DirectCast(form, Borrower)
+                            borrower.cbdepts()
+                        End If
+                    Next
 
                     MsgBox("Department deleted successfully.", vbInformation)
                     Department_Load(sender, e)

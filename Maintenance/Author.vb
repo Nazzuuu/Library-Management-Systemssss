@@ -82,6 +82,14 @@ Public Class Author
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Book Then
+                        Dim book = DirectCast(form, Book)
+                        book.cbauthorr()
+                        Exit For
+                    End If
+                Next
+
                 MsgBox("Updated successfully!", vbInformation)
                 Author_Load(sender, e)
                 txtauthor.Clear()
@@ -109,6 +117,14 @@ Public Class Author
                     Dim delete As New MySqlCommand("DELETE FROM `author_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Book Then
+                            Dim book = DirectCast(form, Book)
+                            book.cbauthorr()
+                            Exit For
+                        End If
+                    Next
 
                     MsgBox("Author deleted successfully.", vbInformation)
                     Author_Load(sender, e)

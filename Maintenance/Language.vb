@@ -72,6 +72,12 @@ Public Class Language
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Book Then
+                        Dim book = DirectCast(form, Book)
+                    End If
+                Next
+
                 MsgBox("Updated successfully!", vbInformation)
                 Language_Load(sender, e)
                 txtlanguage.Clear()
@@ -100,6 +106,12 @@ Public Class Language
                     Dim delete As New MySqlCommand("DELETE FROM `language_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Book Then
+                            Dim book = DirectCast(form, Book)
+                        End If
+                    Next
 
                     MsgBox("Language deleted successfully.", vbInformation)
                     Language_Load(sender, e)

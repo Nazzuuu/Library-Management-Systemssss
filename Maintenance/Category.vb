@@ -72,6 +72,13 @@ Public Class Category
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Book Then
+                        Dim book = DirectCast(form, Book)
+                        book.cbcategoryy()
+                    End If
+                Next
+
                 MsgBox("Updated successfully!", vbInformation)
                 Category_Load(sender, e)
                 txtcategory.Clear()
@@ -100,6 +107,13 @@ Public Class Category
                     Dim delete As New MySqlCommand("DELETE FROM `category_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Book Then
+                            Dim book = DirectCast(form, Book)
+                            book.cbcategoryy()
+                        End If
+                    Next
 
                     MsgBox("Language deleted successfully.", vbInformation)
                     Category_Load(sender, e)

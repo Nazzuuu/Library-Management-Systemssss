@@ -95,7 +95,14 @@ Public Class Publisher
             com.Parameters.AddWithValue("@id", ID)
             com.ExecuteNonQuery()
 
+            For Each form In Application.OpenForms
 
+                If TypeOf form Is Book Then
+                    Dim book = DirectCast(form, Book)
+                    book.cbpublisherr()
+
+                End If
+            Next
 
             MsgBox("Updated successfully", vbInformation)
             Publisher_Load(sender, e)
@@ -125,6 +132,15 @@ Public Class Publisher
                     Dim delete As New MySqlCommand("DELETE FROM `publisher_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+
+                        If TypeOf form Is Book Then
+                            Dim book = DirectCast(form, Book)
+                            book.cbpublisherr()
+
+                        End If
+                    Next
 
                     MsgBox("Publisher deleted successfully.", vbInformation)
                     Publisher_Load(sender, e)

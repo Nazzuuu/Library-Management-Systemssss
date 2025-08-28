@@ -71,6 +71,13 @@ Public Class Genre
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Book Then
+                        Dim book = DirectCast(form, Book)
+                        book.cbgenree()
+                    End If
+                Next
+
                 MsgBox("Updated successfully!", vbInformation)
                 Genre_Load(sender, e)
                 txtgenre.Clear()
@@ -98,6 +105,13 @@ Public Class Genre
                     Dim delete As New MySqlCommand("DELETE FROM `genre_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Book Then
+                            Dim book = DirectCast(form, Book)
+                            book.cbgenree()
+                        End If
+                    Next
 
                     MsgBox("Genre deleted successfully.", vbInformation)
                     Genre_Load(sender, e)
