@@ -1,7 +1,9 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.IO
 Imports System.Security.Cryptography
 Imports System.Text
-Imports System.IO
+Imports MySql.Data.MySqlClient
+Imports TheArtOfDevHtmlRenderer.Adapters
+Imports Windows.Win32.System
 
 Public Class Users_Staffs
 
@@ -60,20 +62,29 @@ Public Class Users_Staffs
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim user As String = txtusername.Text.Trim
-        Dim pass As String = txtpassword.Text.Trim
-        Dim email As String = txtemail.Text.Trim
-        Dim contact As String = txtcontactnumber.Text.Trim
+        Dim user As String = txtusername.Text.Trim()
+        Dim pass As String = txtpassword.Text.Trim()
+        Dim email As String = txtemail.Text.Trim()
+        Dim contact As String = txtcontactnumber.Text.Trim()
+        Dim gender As String = ""
 
-
-        If PictureBox2.Image Is Nothing Then
-            MsgBox("Please import an image first.", vbExclamation, "No Image")
+        ' Input validation
+        If String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
+            MsgBox("Please fill in all the required fields (Username, Password, Email).", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
+        If rbmale.Checked Then
+            gender = "Male"
+        ElseIf rbfemale.Checked Then
+            gender = "Female"
+        Else
+            MsgBox("Please select a gender.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
 
-        If String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
-            MsgBox("Please fill in all the required fields (Username, Password, Email).", vbExclamation, "Missing Information")
+        If PictureBox2.Image Is Nothing Then
+            MsgBox("Please import an image first.", vbExclamation, "No Image")
             Exit Sub
         End If
 
@@ -81,7 +92,7 @@ Public Class Users_Staffs
         Try
             con.Open()
 
-
+            ' Check for duplication
             Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE `Username` = @username OR `Email` = @email", con)
             checkCom.Parameters.AddWithValue("@username", user)
             checkCom.Parameters.AddWithValue("@email", email)
@@ -92,41 +103,25 @@ Public Class Users_Staffs
                 Exit Sub
             End If
 
+            ' Encrypt the password before saving
+            Dim hashedPassword As String = EncryptPassword(pass)
 
+            ' Insert into database
             Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`Username`, `Password`, `Email`, `ContactNumber`, `Gender`, `Image`) VALUES (@username, @password, @email, @contact, @gender, @image)", con)
             com.Parameters.AddWithValue("@username", user)
-            com.Parameters.AddWithValue("@password", pass)
+            com.Parameters.AddWithValue("@password", hashedPassword) ' Use the hashed password
             com.Parameters.AddWithValue("@email", email)
             com.Parameters.AddWithValue("@contact", contact)
-
-            Dim gender As String = ""
-            If rbmale.Checked Then
-                gender = "Male"
-            ElseIf rbfemale.Checked Then
-                gender = "Female"
-            Else
-
-                MsgBox("Please select a gender.", vbExclamation, "Missing Information")
-                Exit Sub
-            End If
             com.Parameters.AddWithValue("@gender", gender)
 
+            Dim ms As New IO.MemoryStream()
+            PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
+            Dim arrImage() As Byte = ms.ToArray()
 
-            Dim newImageBytes As Byte() = Nothing
-            If PictureBox2.Image IsNot Nothing Then
-                Using ms As New IO.MemoryStream()
-
-                    PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
-                    newImageBytes = ms.ToArray()
-                End Using
-            End If
-
-
-            com.Parameters.AddWithValue("@image", If(newImageBytes IsNot Nothing, newImageBytes, CType(DBNull.Value, Object)))
+            com.Parameters.Add("@Image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
 
             com.ExecuteNonQuery()
             MsgBox("Staff member added successfully!", vbInformation)
-
 
             RefreshDataGrid()
             clearfields()
@@ -172,51 +167,62 @@ Public Class Users_Staffs
 
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
-
-
-        Dim originalUsername As String = String.Empty
-        If DataGridView1.CurrentRow IsNot Nothing AndAlso DataGridView1.CurrentRow.Cells("Username").Value IsNot Nothing Then
-            originalUsername = DataGridView1.CurrentRow.Cells("Username").Value.ToString()
-        Else
+        If DataGridView1.SelectedRows.Count = 0 Then
             MsgBox("Please select a staff member to edit.", vbExclamation)
             Exit Sub
         End If
 
+        Dim selectedID As Integer = Convert.ToInt32(DataGridView1.SelectedRows(0).Cells("ID").Value)
         Dim user As String = txtusername.Text.Trim()
         Dim pass As String = txtpassword.Text.Trim()
         Dim email As String = txtemail.Text.Trim()
         Dim contact As String = txtcontactnumber.Text.Trim()
+        Dim gender As String = ""
+        Dim arrImage() As Byte = Nothing
+
+        If rbmale.Checked Then
+            gender = "Male"
+        ElseIf rbfemale.Checked Then
+            gender = "Female"
+        Else
+            MsgBox("Please select a gender.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
 
         Dim con As New MySqlConnection(connectionString)
         Try
             con.Open()
-            Dim updateCom As New MySqlCommand("UPDATE `user_staff_tbl` SET `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender, `Image` = @image WHERE `Username` = @originalUsername", con)
 
+            Dim sql As String = "UPDATE `user_staff_tbl` SET `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender"
+            If PictureBox2.Image IsNot Nothing Then
+                sql &= ", `Image` = @image"
+            End If
+            sql &= " WHERE `ID` = @id"
+
+            Dim updateCom As New MySqlCommand(sql, con)
+            updateCom.Parameters.AddWithValue("@id", selectedID)
             updateCom.Parameters.AddWithValue("@username", user)
-            updateCom.Parameters.AddWithValue("@password", pass)
             updateCom.Parameters.AddWithValue("@email", email)
             updateCom.Parameters.AddWithValue("@contact", contact)
-
-            Dim gender As String = ""
-            If rbmale.Checked Then
-                gender = "Male"
-            ElseIf rbfemale.Checked Then
-                gender = "Female"
-            Else
-                MsgBox("Please select a gender.", vbExclamation, "Missing Information")
-                Exit Sub
-            End If
             updateCom.Parameters.AddWithValue("@gender", gender)
 
-            Dim imageBytes As Byte() = Nothing
-            If PictureBox2.Image IsNot Nothing Then
-                Using ms As New IO.MemoryStream()
-                    PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
-                    imageBytes = ms.ToArray()
-                End Using
+            ' Check if password has changed and encrypt it
+            Dim currentPasswordFromGrid As String = DataGridView1.SelectedRows(0).Cells("Password").Value.ToString()
+            If pass = currentPasswordFromGrid Then
+                ' Password is unchanged, use existing hash
+                updateCom.Parameters.AddWithValue("@password", currentPasswordFromGrid)
+            Else
+                ' Password was changed, hash and update
+                Dim hashedPassword As String = EncryptPassword(pass)
+                updateCom.Parameters.AddWithValue("@password", hashedPassword)
             End If
-            updateCom.Parameters.AddWithValue("@image", If(imageBytes IsNot Nothing, imageBytes, CType(DBNull.Value, Object)))
-            updateCom.Parameters.AddWithValue("@originalUsername", originalUsername)
+
+            If PictureBox2.Image IsNot Nothing Then
+                Dim ms As New IO.MemoryStream
+                PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
+                arrImage = ms.GetBuffer()
+                updateCom.Parameters.Add("@image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
+            End If
 
             updateCom.ExecuteNonQuery()
             MsgBox("Staff member updated successfully!", vbInformation)
@@ -232,7 +238,16 @@ Public Class Users_Staffs
         End Try
     End Sub
 
-
+    Public Function EncryptPassword(ByVal password As String) As String
+        Using md5Hash As MD5 = MD5.Create()
+            Dim data As Byte() = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(password))
+            Dim sBuilder As New StringBuilder()
+            For i As Integer = 0 To data.Length - 1
+                sBuilder.Append(data(i).ToString("x2"))
+            Next
+            Return sBuilder.ToString()
+        End Using
+    End Function
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
         Dim user As String = txtusername.Text.Trim
@@ -278,22 +293,19 @@ Public Class Users_Staffs
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
-
             txtusername.Text = If(IsDBNull(row.Cells("Username").Value), String.Empty, row.Cells("Username").Value.ToString())
             txtemail.Text = If(IsDBNull(row.Cells("Email").Value), String.Empty, row.Cells("Email").Value.ToString())
             txtcontactnumber.Text = If(IsDBNull(row.Cells("ContactNumber").Value), String.Empty, row.Cells("ContactNumber").Value.ToString())
 
-
-            Dim password As String = If(IsDBNull(row.Cells("Password").Value), String.Empty, row.Cells("Password").Value.ToString())
-            txtpassword.Text = password
-            txtpassword.UseSystemPasswordChar = False
-            CheckBox1.Checked = True
-
+            ' Hindi i-a-assign ang password para hindi ito ma-edit
+            ' Instead, a dummy password is set
+            txtpassword.Text = "********" ' Pwede mong palitan kung anong string ang gusto mo
+            txtpassword.UseSystemPasswordChar = True ' Itago ang password
+            CheckBox1.Checked = False ' Uncheck ang show password
 
             Dim gender As String = If(IsDBNull(row.Cells("Gender").Value), String.Empty, row.Cells("Gender").Value.ToString())
             rbmale.Checked = (gender = "Male")
             rbfemale.Checked = (gender = "Female")
-
 
             If Not IsDBNull(row.Cells("Image").Value) Then
                 Dim imgData As Byte() = Nothing

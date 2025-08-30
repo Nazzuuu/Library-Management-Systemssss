@@ -223,7 +223,7 @@ Public Class Book
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
         If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = Me.DataGridView1.Rows(e.RowIndex)
+            Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
             txtisbn.Text = row.Cells("ISBN").Value.ToString
             txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
