@@ -22,12 +22,12 @@ Partial Class login
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         txtuser = New Guna.UI2.WinForms.Guna2TextBox()
         txtpass = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
@@ -36,16 +36,16 @@ Partial Class login
         Panel1 = New Panel()
         Label3 = New Label()
         CheckBox1 = New CheckBox()
-        Panel2 = New Panel()
+        Panel_btnlogin = New Panel()
         Panel1.SuspendLayout()
-        Panel2.SuspendLayout()
+        Panel_btnlogin.SuspendLayout()
         SuspendLayout()
         ' 
         ' txtuser
         ' 
         txtuser.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtuser.BorderRadius = 14
-        txtuser.CustomizableEdges = CustomizableEdges1
+        txtuser.CustomizableEdges = CustomizableEdges7
         txtuser.DefaultText = ""
         txtuser.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtuser.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -60,7 +60,7 @@ Partial Class login
         txtuser.Name = "txtuser"
         txtuser.PlaceholderText = ""
         txtuser.SelectedText = ""
-        txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         txtuser.Size = New Size(238, 28)
         txtuser.TabIndex = 0
         ' 
@@ -68,7 +68,7 @@ Partial Class login
         ' 
         txtpass.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtpass.BorderRadius = 14
-        txtpass.CustomizableEdges = CustomizableEdges3
+        txtpass.CustomizableEdges = CustomizableEdges9
         txtpass.DefaultText = ""
         txtpass.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtpass.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -83,7 +83,7 @@ Partial Class login
         txtpass.Name = "txtpass"
         txtpass.PlaceholderText = ""
         txtpass.SelectedText = ""
-        txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         txtpass.Size = New Size(238, 28)
         txtpass.TabIndex = 1
         ' 
@@ -112,7 +112,7 @@ Partial Class login
         ' btnlogin
         ' 
         btnlogin.BorderRadius = 15
-        btnlogin.CustomizableEdges = CustomizableEdges5
+        btnlogin.CustomizableEdges = CustomizableEdges11
         btnlogin.DisabledState.BorderColor = Color.DarkGray
         btnlogin.DisabledState.CustomBorderColor = Color.DarkGray
         btnlogin.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -122,7 +122,7 @@ Partial Class login
         btnlogin.ForeColor = Color.White
         btnlogin.Location = New Point(21, 12)
         btnlogin.Name = "btnlogin"
-        btnlogin.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        btnlogin.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         btnlogin.Size = New Size(155, 33)
         btnlogin.TabIndex = 4
         btnlogin.Text = "login"
@@ -152,19 +152,19 @@ Partial Class login
         ' CheckBox1
         ' 
         CheckBox1.AutoSize = True
-        CheckBox1.Location = New Point(332, 171)
+        CheckBox1.Location = New Point(335, 171)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(15, 14)
         CheckBox1.TabIndex = 6
         CheckBox1.UseVisualStyleBackColor = True
         ' 
-        ' Panel2
+        ' Panel_btnlogin
         ' 
-        Panel2.Controls.Add(btnlogin)
-        Panel2.Location = New Point(127, 207)
-        Panel2.Name = "Panel2"
-        Panel2.Size = New Size(191, 57)
-        Panel2.TabIndex = 7
+        Panel_btnlogin.Controls.Add(btnlogin)
+        Panel_btnlogin.Location = New Point(127, 207)
+        Panel_btnlogin.Name = "Panel_btnlogin"
+        Panel_btnlogin.Size = New Size(191, 57)
+        Panel_btnlogin.TabIndex = 7
         ' 
         ' login
         ' 
@@ -172,7 +172,7 @@ Partial Class login
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(443, 280)
         ControlBox = False
-        Controls.Add(Panel2)
+        Controls.Add(Panel_btnlogin)
         Controls.Add(CheckBox1)
         Controls.Add(Panel1)
         Controls.Add(Label2)
@@ -184,7 +184,7 @@ Partial Class login
         StartPosition = FormStartPosition.CenterScreen
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
-        Panel2.ResumeLayout(False)
+        Panel_btnlogin.ResumeLayout(False)
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -197,5 +197,5 @@ Partial Class login
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Label3 As Label
     Friend WithEvents CheckBox1 As CheckBox
-    Friend WithEvents Panel2 As Panel
+    Friend WithEvents Panel_btnlogin As Panel
 End Class

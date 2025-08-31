@@ -106,4 +106,28 @@ Public Class login
         End If
 
     End Sub
+
+    Private Sub btnlogin_MouseHover(sender As Object, e As EventArgs) Handles btnlogin.MouseHover
+
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub btnlogin_MouseLeave(sender As Object, e As EventArgs) Handles btnlogin.MouseLeave
+
+        Cursor = Cursors.Default
+
+    End Sub
+
+    Private Sub CheckBox1_MouseHover(sender As Object, e As EventArgs) Handles CheckBox1.MouseHover
+
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub CheckBox1_MouseLeave(sender As Object, e As EventArgs) Handles CheckBox1.MouseLeave
+
+        Cursor = Cursors.Default
+
+    End Sub
 End Class
