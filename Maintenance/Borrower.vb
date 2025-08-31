@@ -462,6 +462,9 @@ Public Class Borrower
     Private Sub rbstudent_CheckedChanged(sender As Object, e As EventArgs) Handles rbstudent.CheckedChanged
 
         If rbstudent.Checked Then
+
+
+            rbnone.Checked = False
             lblborrowertype.Text = "LRN:"
 
             cbdepartment.Enabled = True
@@ -477,16 +480,28 @@ Public Class Borrower
     Private Sub rbteacher_CheckedChanged(sender As Object, e As EventArgs) Handles rbteacher.CheckedChanged
 
         If rbteacher.Checked Then
+
+            rbnone.Checked = False
             lblborrowertype.Text = "Employee no.:"
 
-            cbgrade.Enabled = False
-            cbsection.Enabled = False
-            cbstrand.Enabled = False
-            cbdepartment.Enabled = False
 
-            cbgrade.SelectedIndex = -1
-            cbsection.SelectedIndex = -1
-            cbstrand.SelectedIndex = -1
+            cbdepartment.Enabled = False
+            cbdepartment.DataSource = Nothing
+            cbdepts()
+
+            cbgrade.Enabled = False
+            cbgrade.DataSource = Nothing
+            cbgradee()
+
+            cbsection.Enabled = False
+            cbsection.DataSource = Nothing
+            cbsecs()
+
+            cbstrand.Visible = True
+            cbstrand.Enabled = False
+            cbstrand.DataSource = Nothing
+            cbstrandd()
+
         End If
 
     End Sub
@@ -499,6 +514,7 @@ Public Class Borrower
         Else
             txtmname.Enabled = True
         End If
+
     End Sub
 
     Private Sub ClearFields()

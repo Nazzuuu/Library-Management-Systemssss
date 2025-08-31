@@ -825,7 +825,7 @@ Partial Class MainForm
         Panel_User.Anchor = AnchorStyles.Top Or AnchorStyles.Right
         Panel_User.Controls.Add(lbl_currentuser)
         Panel_User.Controls.Add(Label2)
-        Panel_User.Location = New Point(733, -1)
+        Panel_User.Location = New Point(733, 2)
         Panel_User.Name = "Panel_User"
         Panel_User.Size = New Size(266, 39)
         Panel_User.TabIndex = 17
@@ -835,7 +835,7 @@ Partial Class MainForm
         lbl_currentuser.AutoSize = True
         lbl_currentuser.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         lbl_currentuser.ForeColor = Color.Gray
-        lbl_currentuser.Location = New Point(153, 12)
+        lbl_currentuser.Location = New Point(153, 11)
         lbl_currentuser.Name = "lbl_currentuser"
         lbl_currentuser.Size = New Size(43, 18)
         lbl_currentuser.TabIndex = 1
@@ -846,7 +846,7 @@ Partial Class MainForm
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(46, 12)
+        Label2.Location = New Point(46, 11)
         Label2.Name = "Label2"
         Label2.Size = New Size(109, 18)
         Label2.TabIndex = 0

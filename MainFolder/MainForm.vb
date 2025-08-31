@@ -59,9 +59,11 @@
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_User.Show()
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
+            Panel_dash.Controls.Add(Panel_User)
             lumabasna = True
         End If
 
@@ -88,8 +90,10 @@
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
 
+
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
+            Panel_dash.Controls.Add(Panel_User)
             lumabasna = True
         End If
 
@@ -110,8 +114,10 @@
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
 
+
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
+            Panel_dash.Controls.Add(Panel_User)
             lumabasna = True
         End If
 
@@ -131,9 +137,11 @@
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_User.Show()
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
+            Panel_dash.Controls.Add(Panel_User)
             lumabasna = True
         End If
 
