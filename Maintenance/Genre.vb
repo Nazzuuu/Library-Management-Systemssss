@@ -136,16 +136,6 @@ Public Class Genre
         End If
     End Sub
 
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs)
-
-        If e.RowIndex >= 0 Then
-
-            Dim row = DataGridView1.Rows(e.RowIndex)
-            txtgenre.Text = row.Cells("Genre").Value.ToString
-
-        End If
-
-    End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
@@ -158,6 +148,18 @@ Public Class Genre
             Else
                 dt.DefaultView.RowFilter = ""
             End If
+        End If
+
+    End Sub
+
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+
+        If e.RowIndex >= 0 Then
+
+            Dim row = DataGridView1.Rows(e.RowIndex)
+            txtgenre.Text = row.Cells("Genre").Value.ToString
+
         End If
 
     End Sub
