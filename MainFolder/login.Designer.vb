@@ -32,7 +32,7 @@ Partial Class login
         txtpass = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
         Label2 = New Label()
-        Guna2Button1 = New Guna.UI2.WinForms.Guna2Button()
+        btnlogin = New Guna.UI2.WinForms.Guna2Button()
         Panel1 = New Panel()
         Label3 = New Label()
         CheckBox1 = New CheckBox()
@@ -109,23 +109,23 @@ Partial Class login
         Label2.TabIndex = 3
         Label2.Text = "Password:"
         ' 
-        ' Guna2Button1
+        ' btnlogin
         ' 
-        Guna2Button1.BorderRadius = 15
-        Guna2Button1.CustomizableEdges = CustomizableEdges5
-        Guna2Button1.DisabledState.BorderColor = Color.DarkGray
-        Guna2Button1.DisabledState.CustomBorderColor = Color.DarkGray
-        Guna2Button1.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        Guna2Button1.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        Guna2Button1.FillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2Button1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
-        Guna2Button1.ForeColor = Color.White
-        Guna2Button1.Location = New Point(21, 12)
-        Guna2Button1.Name = "Guna2Button1"
-        Guna2Button1.ShadowDecoration.CustomizableEdges = CustomizableEdges6
-        Guna2Button1.Size = New Size(155, 33)
-        Guna2Button1.TabIndex = 4
-        Guna2Button1.Text = "login"
+        btnlogin.BorderRadius = 15
+        btnlogin.CustomizableEdges = CustomizableEdges5
+        btnlogin.DisabledState.BorderColor = Color.DarkGray
+        btnlogin.DisabledState.CustomBorderColor = Color.DarkGray
+        btnlogin.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btnlogin.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btnlogin.FillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnlogin.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        btnlogin.ForeColor = Color.White
+        btnlogin.Location = New Point(21, 12)
+        btnlogin.Name = "btnlogin"
+        btnlogin.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        btnlogin.Size = New Size(155, 33)
+        btnlogin.TabIndex = 4
+        btnlogin.Text = "login"
         ' 
         ' Panel1
         ' 
@@ -160,7 +160,7 @@ Partial Class login
         ' 
         ' Panel2
         ' 
-        Panel2.Controls.Add(Guna2Button1)
+        Panel2.Controls.Add(btnlogin)
         Panel2.Location = New Point(127, 207)
         Panel2.Name = "Panel2"
         Panel2.Size = New Size(191, 57)
@@ -193,7 +193,7 @@ Partial Class login
     Friend WithEvents txtpass As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Label1 As Label
     Friend WithEvents Label2 As Label
-    Friend WithEvents Guna2Button1 As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents btnlogin As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Label3 As Label
     Friend WithEvents CheckBox1 As CheckBox

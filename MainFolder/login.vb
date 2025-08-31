@@ -7,7 +7,7 @@ Public Class login
     End Sub
 
 
-    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+    Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
 
         Dim User As String = txtuser.Text.Trim()
         Dim Pass As String = txtpass.Text.Trim()
@@ -85,6 +85,24 @@ Public Class login
             txtpass.UseSystemPasswordChar = False
         Else
             txtpass.UseSystemPasswordChar = True
+        End If
+
+    End Sub
+
+    Private Sub txtpass_KeyDown(sender As Object, e As KeyEventArgs) Handles txtpass.KeyDown
+
+        If e.KeyCode = Keys.Enter Then
+            btnlogin_Click(sender, e)
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub btnlogin_KeyDown(sender As Object, e As KeyEventArgs) Handles btnlogin.KeyDown
+
+        If e.KeyCode = Keys.Enter Then
+            btnlogin_Click(sender, e)
+            e.Handled = True
         End If
 
     End Sub
