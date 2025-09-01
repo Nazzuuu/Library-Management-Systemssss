@@ -151,6 +151,7 @@ Public Class Users_Staffs
     End Sub
 
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+
         If CheckBox1.Checked = True Then
             txtpassword.UseSystemPasswordChar = False
         Else
@@ -159,6 +160,7 @@ Public Class Users_Staffs
     End Sub
 
     Private Sub txtpassword_TextChanged(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
+
         If CheckBox1.Checked = True Then
             txtpassword.UseSystemPasswordChar = False
         Else
@@ -170,58 +172,90 @@ Public Class Users_Staffs
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
-
-        Dim originalUsername As String = String.Empty
-        If DataGridView1.CurrentRow IsNot Nothing AndAlso DataGridView1.CurrentRow.Cells("Username").Value IsNot Nothing Then
-            originalUsername = DataGridView1.CurrentRow.Cells("Username").Value.ToString()
-        Else
+        If DataGridView1.CurrentRow Is Nothing Then
             MsgBox("Please select a staff member to edit.", vbExclamation)
             Exit Sub
         End If
+
+
+        Dim originalID As Integer = CInt(DataGridView1.CurrentRow.Cells("ID").Value)
 
         Dim user As String = txtusername.Text.Trim()
         Dim pass As String = txtpassword.Text.Trim()
         Dim email As String = txtemail.Text.Trim()
         Dim contact As String = txtcontactnumber.Text.Trim()
+        Dim gender As String = ""
         Dim arrImage() As Byte = Nothing
+
+        If String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
+            MsgBox("Please fill in all required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
+        If rbmale.Checked Then
+            gender = "Male"
+        ElseIf rbfemale.Checked Then
+            gender = "Female"
+        Else
+            MsgBox("Please select a gender.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
 
         Dim con As New MySqlConnection(connectionString)
         Try
             con.Open()
-            Dim updateCom As New MySqlCommand("UPDATE `user_staff_tbl` SET `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender, `Image` = @image WHERE `Username` = @originalUsername", con)
 
-            updateCom.Parameters.AddWithValue("@username", user)
-            updateCom.Parameters.AddWithValue("@password", pass)
-            updateCom.Parameters.AddWithValue("@email", email)
-            updateCom.Parameters.AddWithValue("@contact", contact)
 
-            Dim gender As String = ""
-            If rbmale.Checked Then
-                gender = "Male"
-            ElseIf rbfemale.Checked Then
-                gender = "Female"
-            Else
-                MsgBox("Please select a gender.", vbExclamation, "Missing Information")
+            Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE (`Username` = @username OR `Email` = @email) AND `ID` <> @id", con)
+            checkCom.Parameters.AddWithValue("@username", user)
+            checkCom.Parameters.AddWithValue("@email", email)
+            checkCom.Parameters.AddWithValue("@id", originalID)
+            Dim count As Integer = Convert.ToInt32(checkCom.ExecuteScalar())
+
+            If count > 0 Then
+                MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
                 Exit Sub
             End If
-            updateCom.Parameters.AddWithValue("@gender", gender)
 
 
-            Dim currentPass As String = DataGridView1.SelectedRows(0).Cells("Password").Value.ToString()
-            If pass = currentPass Then
+            Dim getPassCom As New MySqlCommand("SELECT `Password` FROM `user_staff_tbl` WHERE `ID` = @id", con)
+            getPassCom.Parameters.AddWithValue("@id", originalID)
+            Dim oldPass As String = getPassCom.ExecuteScalar().ToString()
 
-                updateCom.Parameters.AddWithValue("@password", currentPass)
+            Dim updateCom As New MySqlCommand("UPDATE `user_staff_tbl` SET `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender, `Image` = @image WHERE `ID` = @id", con)
+
+
+            updateCom.Parameters.AddWithValue("@username", user)
+
+            If pass = "********" Then
+                updateCom.Parameters.AddWithValue("@password", oldPass)
             Else
-
-                Dim hashedPassword As String = EncryptPassword(pass)
-                updateCom.Parameters.AddWithValue("@password", hashedPassword)
+                updateCom.Parameters.AddWithValue("@password", pass)
             End If
+            updateCom.Parameters.AddWithValue("@email", email)
+            updateCom.Parameters.AddWithValue("@contact", contact)
+            updateCom.Parameters.AddWithValue("@gender", gender)
+            updateCom.Parameters.AddWithValue("@id", originalID)
+
 
             If PictureBox2.Image IsNot Nothing Then
-                Dim ms As New IO.MemoryStream
-                PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
-                arrImage = ms.GetBuffer()
-                updateCom.Parameters.Add("@image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
+                Using ms As New IO.MemoryStream()
+                    PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
+                    arrImage = ms.ToArray()
+                    updateCom.Parameters.Add("@image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
+                End Using
+            Else
+
+                Dim getImageCom As New MySqlCommand("SELECT `Image` FROM `user_staff_tbl` WHERE `ID` = @id", con)
+                getImageCom.Parameters.AddWithValue("@id", originalID)
+                Dim oldImage As Object = getImageCom.ExecuteScalar()
+
+                If Not IsDBNull(oldImage) Then
+                    arrImage = DirectCast(oldImage, Byte())
+                    updateCom.Parameters.Add("@image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
+                Else
+                    updateCom.Parameters.AddWithValue("@image", DBNull.Value)
+                End If
             End If
 
             updateCom.ExecuteNonQuery()
@@ -238,16 +272,7 @@ Public Class Users_Staffs
         End Try
     End Sub
 
-    Public Function EncryptPassword(ByVal password As String) As String
-        Using md5Hash As MD5 = MD5.Create()
-            Dim data As Byte() = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(password))
-            Dim sBuilder As New StringBuilder()
-            For i As Integer = 0 To data.Length - 1
-                sBuilder.Append(data(i).ToString("x2"))
-            Next
-            Return sBuilder.ToString()
-        End Using
-    End Function
+
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
         Dim user As String = txtusername.Text.Trim
@@ -300,7 +325,7 @@ Public Class Users_Staffs
 
             txtpassword.Text = "********"
             txtpassword.UseSystemPasswordChar = True
-            CheckBox1.Checked = False 
+            CheckBox1.Checked = False
 
             Dim gender As String = If(IsDBNull(row.Cells("Gender").Value), String.Empty, row.Cells("Gender").Value.ToString())
             rbmale.Checked = (gender = "Male")
