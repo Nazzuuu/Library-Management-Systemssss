@@ -22,12 +22,12 @@ Partial Class login
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         txtuser = New Guna.UI2.WinForms.Guna2TextBox()
         txtpass = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
@@ -45,7 +45,7 @@ Partial Class login
         ' 
         txtuser.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtuser.BorderRadius = 14
-        txtuser.CustomizableEdges = CustomizableEdges7
+        txtuser.CustomizableEdges = CustomizableEdges1
         txtuser.DefaultText = ""
         txtuser.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtuser.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -55,12 +55,12 @@ Partial Class login
         txtuser.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtuser.ForeColor = Color.Black
         txtuser.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtuser.Location = New Point(117, 120)
+        txtuser.Location = New Point(152, 120)
         txtuser.Margin = New Padding(5)
         txtuser.Name = "txtuser"
         txtuser.PlaceholderText = ""
         txtuser.SelectedText = ""
-        txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtuser.Size = New Size(238, 28)
         txtuser.TabIndex = 0
         ' 
@@ -68,7 +68,7 @@ Partial Class login
         ' 
         txtpass.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtpass.BorderRadius = 14
-        txtpass.CustomizableEdges = CustomizableEdges9
+        txtpass.CustomizableEdges = CustomizableEdges3
         txtpass.DefaultText = ""
         txtpass.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtpass.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -78,12 +78,12 @@ Partial Class login
         txtpass.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtpass.ForeColor = Color.Black
         txtpass.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtpass.Location = New Point(117, 164)
+        txtpass.Location = New Point(152, 164)
         txtpass.Margin = New Padding(5)
         txtpass.Name = "txtpass"
         txtpass.PlaceholderText = ""
         txtpass.SelectedText = ""
-        txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtpass.Size = New Size(238, 28)
         txtpass.TabIndex = 1
         ' 
@@ -92,7 +92,7 @@ Partial Class login
         Label1.AutoSize = True
         Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(30, 122)
+        Label1.Location = New Point(65, 122)
         Label1.Name = "Label1"
         Label1.Size = New Size(87, 18)
         Label1.TabIndex = 2
@@ -103,7 +103,7 @@ Partial Class login
         Label2.AutoSize = True
         Label2.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(34, 166)
+        Label2.Location = New Point(69, 166)
         Label2.Name = "Label2"
         Label2.Size = New Size(81, 18)
         Label2.TabIndex = 3
@@ -112,7 +112,7 @@ Partial Class login
         ' btnlogin
         ' 
         btnlogin.BorderRadius = 15
-        btnlogin.CustomizableEdges = CustomizableEdges11
+        btnlogin.CustomizableEdges = CustomizableEdges5
         btnlogin.DisabledState.BorderColor = Color.DarkGray
         btnlogin.DisabledState.CustomBorderColor = Color.DarkGray
         btnlogin.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -122,19 +122,19 @@ Partial Class login
         btnlogin.ForeColor = Color.White
         btnlogin.Location = New Point(21, 12)
         btnlogin.Name = "btnlogin"
-        btnlogin.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        btnlogin.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btnlogin.Size = New Size(155, 33)
         btnlogin.TabIndex = 4
         btnlogin.Text = "login"
         ' 
         ' Panel1
         ' 
-        Panel1.Anchor = AnchorStyles.Top
         Panel1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Panel1.Controls.Add(Label3)
-        Panel1.Location = New Point(-1, 0)
+        Panel1.Dock = DockStyle.Top
+        Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(445, 58)
+        Panel1.Size = New Size(486, 58)
         Panel1.TabIndex = 5
         ' 
         ' Label3
@@ -143,7 +143,7 @@ Partial Class login
         Label3.AutoSize = True
         Label3.Font = New Font("Baskerville Old Face", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.White
-        Label3.Location = New Point(78, 9)
+        Label3.Location = New Point(102, 9)
         Label3.Name = "Label3"
         Label3.Size = New Size(279, 56)
         Label3.TabIndex = 1
@@ -152,7 +152,7 @@ Partial Class login
         ' CheckBox1
         ' 
         CheckBox1.AutoSize = True
-        CheckBox1.Location = New Point(335, 171)
+        CheckBox1.Location = New Point(370, 171)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(15, 14)
         CheckBox1.TabIndex = 6
@@ -161,7 +161,7 @@ Partial Class login
         ' Panel_btnlogin
         ' 
         Panel_btnlogin.Controls.Add(btnlogin)
-        Panel_btnlogin.Location = New Point(127, 207)
+        Panel_btnlogin.Location = New Point(162, 207)
         Panel_btnlogin.Name = "Panel_btnlogin"
         Panel_btnlogin.Size = New Size(191, 57)
         Panel_btnlogin.TabIndex = 7
@@ -170,7 +170,7 @@ Partial Class login
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(443, 280)
+        ClientSize = New Size(486, 280)
         ControlBox = False
         Controls.Add(Panel_btnlogin)
         Controls.Add(CheckBox1)

@@ -163,4 +163,26 @@ Public Class Genre
         End If
 
     End Sub
+
+    Private Sub txtgenre_KeyDown(sender As Object, e As KeyEventArgs) Handles txtgenre.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtgenre_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtgenre.KeyPress
+
+        If e.KeyChar = " "c AndAlso String.IsNullOrEmpty(txtgenre.Text) Then
+            e.Handled = True
+
+
+        End If
+
+        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
 End Class

@@ -165,4 +165,21 @@ Public Class Department
         End If
 
     End Sub
+
+    Private Sub txtdepartment_KeyDown(sender As Object, e As KeyEventArgs) Handles txtdepartment.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtdepartment_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtdepartment.KeyPress
+
+        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = True
+
+        End If
+
+    End Sub
 End Class

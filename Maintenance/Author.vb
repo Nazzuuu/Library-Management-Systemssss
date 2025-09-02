@@ -171,6 +171,22 @@ Public Class Author
         End If
     End Sub
 
+    Private Sub txtauthor_KeyDown(sender As Object, e As KeyEventArgs) Handles txtauthor.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtauthor_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtauthor.KeyPress
+
+        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
+
     'heck nooo'
 
 End Class

@@ -167,4 +167,74 @@ Public Class Supplier
         End If
 
     End Sub
+
+    Private Sub txtsupplier_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsupplier.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtsupplier_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtsupplier.KeyPress
+
+        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtaddress_KeyDown(sender As Object, e As KeyEventArgs) Handles txtaddress.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtaddress_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtaddress.KeyPress
+
+
+        If Not Char.IsLetterOrDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) AndAlso e.KeyChar <> "#" Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtcontact_KeyDown(sender As Object, e As KeyEventArgs) Handles txtcontact.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtcontact_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtcontact.KeyPress
+
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtcontact_TextChanged(sender As Object, e As EventArgs) Handles txtcontact.TextChanged
+
+        Dim oreyjeynal As String = txtcontact.Text
+
+        If String.IsNullOrEmpty(oreyjeynal) Then
+            Return
+        End If
+
+        If oreyjeynal.StartsWith("09") Then
+
+        Else
+
+            If oreyjeynal.Length > 0 Then
+                txtcontact.Clear()
+                txtcontact.Text = "09"
+                txtcontact.SelectionStart = 2
+            End If
+        End If
+
+    End Sub
 End Class

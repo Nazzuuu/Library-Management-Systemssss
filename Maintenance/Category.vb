@@ -164,4 +164,21 @@ Public Class Category
         End If
 
     End Sub
+
+    Private Sub txtcategory_KeyDown(sender As Object, e As KeyEventArgs) Handles txtcategory.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtcategory_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtcategory.KeyPress
+
+
+        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
 End Class
