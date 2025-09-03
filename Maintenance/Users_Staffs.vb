@@ -455,5 +455,34 @@ Public Class Users_Staffs
 
     End Sub
 
+    Private Sub txtcontactnumber_KeyUp(sender As Object, e As KeyEventArgs) Handles txtcontactnumber.KeyUp
+
+        If e.KeyCode = Keys.Back Then
+            AddHandler txtcontactnumber.TextChanged, AddressOf txtcontactnumber_TextChanged
+        End If
+
+    End Sub
+
+    Private Sub txtcontactnumber_TextChanged(sender As Object, e As EventArgs) Handles txtcontactnumber.TextChanged
+
+        Dim oreyjeynal As String = txtcontactnumber.Text
+
+        If String.IsNullOrEmpty(oreyjeynal) Then
+            Return
+        End If
+
+        If oreyjeynal.StartsWith("09") Then
+
+        Else
+
+            If oreyjeynal.Length > 0 Then
+                txtcontactnumber.Clear()
+                txtcontactnumber.Text = "09"
+                txtcontactnumber.SelectionStart = 2
+            End If
+        End If
+
+    End Sub
+
     ''pagod na ako mga bes''
 End Class

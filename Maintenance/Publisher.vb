@@ -273,4 +273,13 @@ Public Class Publisher
         End If
 
     End Sub
+
+    Private Sub txtcontact_KeyUp(sender As Object, e As KeyEventArgs) Handles txtcontact.KeyUp
+
+        If e.KeyCode = Keys.Back Then
+            AddHandler txtcontact.TextChanged, AddressOf txtcontact_TextChanged
+
+        End If
+
+    End Sub
 End Class
