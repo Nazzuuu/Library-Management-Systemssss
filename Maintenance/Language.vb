@@ -178,4 +178,12 @@ Public Class Language
         End If
 
     End Sub
+
+    Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
 End Class
