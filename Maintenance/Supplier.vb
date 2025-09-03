@@ -207,6 +207,10 @@ Public Class Supplier
             e.SuppressKeyPress = True
         End If
 
+        If e.KeyCode = Keys.Back Then
+            RemoveHandler txtcontact.TextChanged, AddressOf txtcontact_TextChanged
+        End If
+
     End Sub
 
     Private Sub txtcontact_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtcontact.KeyPress

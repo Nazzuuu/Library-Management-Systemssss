@@ -418,6 +418,10 @@ Public Class Users_Staffs
             e.SuppressKeyPress = True
         End If
 
+        If e.KeyCode = Keys.Back Then
+            RemoveHandler txtcontactnumber.TextChanged, AddressOf txtcontactnumber_TextChanged
+        End If
+
     End Sub
 
     Private Sub txtcontactnumber_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtcontactnumber.KeyPress
