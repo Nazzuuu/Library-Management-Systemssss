@@ -49,7 +49,6 @@
 
   <ItemGroup>
     <Folder Include="Settingsss\" />
-    <Folder Include="Process\" />
   </ItemGroup>
 
   <ItemGroup>

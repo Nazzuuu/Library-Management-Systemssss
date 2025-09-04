@@ -4,6 +4,7 @@ Public Class login
     Public Sub clear()
         txtpass.Text = ""
         txtuser.Text = ""
+        CheckBox1.Checked = False
     End Sub
 
 

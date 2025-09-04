@@ -59,6 +59,8 @@
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_dash.Controls.Remove(Acquisition)
+
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -89,6 +91,7 @@
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_dash.Controls.Remove(Acquisition)
 
 
         If lumabasna = False Then
@@ -113,6 +116,7 @@
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_dash.Controls.Remove(Acquisition)
 
 
         If lumabasna = False Then
@@ -137,6 +141,7 @@
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_dash.Controls.Remove(Acquisition)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -295,5 +300,20 @@
 
     Private Sub StrandToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles StrandToolStripMenuItem1.Click
         Strand.ShowDialog()
+    End Sub
+
+    Private Sub AcquisitionToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AcquisitionToolStripMenuItem.Click
+
+        Panel_dash.Controls.Clear()
+
+        With Acquisition
+            .TopMost = True
+            .TopLevel = False
+            .BringToFront()
+            Panel_dash.Controls.Add(Acquisition)
+            .Show()
+
+        End With
+
     End Sub
 End Class

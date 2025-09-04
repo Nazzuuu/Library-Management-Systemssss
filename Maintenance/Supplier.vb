@@ -50,7 +50,12 @@ Public Class Supplier
             com.Parameters.AddWithValue("@contact", contact)
             com.ExecuteNonQuery()
 
-
+            For Each form In Application.OpenForms
+                If TypeOf form Is Acquisition Then
+                    Dim acq = DirectCast(form, Acquisition)
+                    acq.cbsupplierr()
+                End If
+            Next
 
             MsgBox("Supplier added successfully", vbInformation)
             Supplier_Load(sender, e)
@@ -85,7 +90,12 @@ Public Class Supplier
             com.Parameters.AddWithValue("@id", ID)
             com.ExecuteNonQuery()
 
-
+            For Each form In Application.OpenForms
+                If TypeOf form Is Acquisition Then
+                    Dim acq = DirectCast(form, Acquisition)
+                    acq.cbsupplierr()
+                End If
+            Next
 
             MsgBox("Updated successfully", vbInformation)
             Supplier_Load(sender, e)
@@ -116,6 +126,13 @@ Public Class Supplier
                     Dim delete As New MySqlCommand("DELETE FROM `supplier_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Acquisition Then
+                            Dim acq = DirectCast(form, Acquisition)
+                            acq.cbsupplierr()
+                        End If
+                    Next
 
                     MsgBox("Supplier deleted successfully.", vbInformation)
                     Supplier_Load(sender, e)
