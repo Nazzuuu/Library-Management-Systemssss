@@ -200,7 +200,7 @@ Public Class Borrower
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.SelectedRows.Count = 0 Then
-            MessageBox.Show("Please select a record to edit.")
+            MessageBox.Show("Please select a record to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 

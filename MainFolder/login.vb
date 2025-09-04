@@ -40,10 +40,22 @@ Public Class login
             If userCount > 0 Then
 
                 MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
                 MainForm.Show()
                 MainForm.lbl_currentuser.Text = "Staff"
+
+                MainForm.AuthorMaintenanceToolStripMenuItem.Visible = False
+                MainForm.GenreMaintenanceToolStripMenuItem.Visible = False
+                MainForm.SupplierMaintenanceToolStripMenuItem.Visible = False
+                MainForm.PublisherMaintenanceToolStripMenuItem.Visible = False
+                MainForm.LanguageToolStripMenuItem.Visible = False
+                MainForm.CategoryToolStripMenuItem.Visible = False
+                MainForm.AcquisitionToolStripMenuItem.Visible = False
+                MainForm.AccessionToolStripMenuItem.Visible = False
+                MainForm.ReportsToolStripMenuItem1.Visible = False
                 MainForm.UserMaintenanceToolStripMenuItem.Visible = False
                 MainForm.Audit_Trail.Visible = False
+
                 Me.Hide()
                 clear()
 
