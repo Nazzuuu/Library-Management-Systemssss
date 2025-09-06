@@ -93,9 +93,10 @@ Partial Class Section
         txtsection.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsection.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsection.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsection.Font = New Font("Segoe UI", 9F)
+        txtsection.Font = New Font("Sorts Mill Goudy", 9.749999F)
         txtsection.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsection.Location = New Point(36, 46)
+        txtsection.Location = New Point(41, 55)
+        txtsection.Margin = New Padding(3, 4, 3, 4)
         txtsection.Name = "txtsection"
         txtsection.PlaceholderText = ""
         txtsection.SelectedText = ""

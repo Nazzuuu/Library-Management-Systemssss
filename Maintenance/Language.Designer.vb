@@ -93,9 +93,9 @@ Partial Class Language
         txtlanguage.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlanguage.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlanguage.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlanguage.Font = New Font("Segoe UI", 9F)
+        txtlanguage.Font = New Font("Sorts Mill Goudy", 9.749999F)
         txtlanguage.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlanguage.Location = New Point(36, 39)
+        txtlanguage.Location = New Point(41, 47)
         txtlanguage.Name = "txtlanguage"
         txtlanguage.PlaceholderText = ""
         txtlanguage.SelectedText = ""

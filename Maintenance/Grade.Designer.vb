@@ -93,9 +93,12 @@ Partial Class Grade
         txtgrade.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtgrade.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtgrade.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgrade.Font = New Font("Segoe UI", 9F)
+        txtgrade.Font = New Font("Sorts Mill Goudy", 9.749999F)
+        txtgrade.ForeColor = Color.Black
         txtgrade.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgrade.Location = New Point(36, 46)
+        txtgrade.Location = New Point(41, 55)
+        txtgrade.Margin = New Padding(3, 4, 3, 4)
+        txtgrade.MaxLength = 2
         txtgrade.Name = "txtgrade"
         txtgrade.PlaceholderText = ""
         txtgrade.SelectedText = ""
@@ -218,7 +221,7 @@ Partial Class Grade
         DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
         DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle2.BackColor = SystemColors.Window
         DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
         DataGridViewCellStyle2.ForeColor = SystemColors.Control
@@ -238,7 +241,7 @@ Partial Class Grade
         DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
         DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
+        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4

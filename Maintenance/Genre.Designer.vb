@@ -93,9 +93,10 @@ Partial Class Genre
         txtgenre.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtgenre.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtgenre.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgenre.Font = New Font("Segoe UI", 9F)
+        txtgenre.Font = New Font("Sorts Mill Goudy", 9.749999F)
         txtgenre.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgenre.Location = New Point(36, 37)
+        txtgenre.Location = New Point(41, 44)
+        txtgenre.Margin = New Padding(3, 4, 3, 4)
         txtgenre.Name = "txtgenre"
         txtgenre.PlaceholderText = ""
         txtgenre.SelectedText = ""

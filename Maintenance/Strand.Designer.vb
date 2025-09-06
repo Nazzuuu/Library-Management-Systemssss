@@ -93,9 +93,10 @@ Partial Class Strand
         txtstrand.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtstrand.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtstrand.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtstrand.Font = New Font("Segoe UI", 9F)
+        txtstrand.Font = New Font("Sorts Mill Goudy", 9.749999F)
         txtstrand.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtstrand.Location = New Point(36, 46)
+        txtstrand.Location = New Point(41, 55)
+        txtstrand.Margin = New Padding(3, 4, 3, 4)
         txtstrand.Name = "txtstrand"
         txtstrand.PlaceholderText = ""
         txtstrand.SelectedText = ""

@@ -105,9 +105,11 @@ Partial Class Author
         txtauthor.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtauthor.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtauthor.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtauthor.Font = New Font("Segoe UI", 9F)
+        txtauthor.Font = New Font("Sorts Mill Goudy", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        txtauthor.ForeColor = Color.Black
         txtauthor.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtauthor.Location = New Point(36, 40)
+        txtauthor.Location = New Point(41, 48)
+        txtauthor.Margin = New Padding(3, 4, 3, 4)
         txtauthor.Name = "txtauthor"
         txtauthor.PlaceholderText = ""
         txtauthor.SelectedText = ""

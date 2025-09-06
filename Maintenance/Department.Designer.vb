@@ -93,9 +93,10 @@ Partial Class Department
         txtdepartment.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtdepartment.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtdepartment.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtdepartment.Font = New Font("Segoe UI", 9F)
+        txtdepartment.Font = New Font("Sorts Mill Goudy", 9.749999F)
         txtdepartment.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtdepartment.Location = New Point(36, 46)
+        txtdepartment.Location = New Point(41, 55)
+        txtdepartment.Margin = New Padding(3, 4, 3, 4)
         txtdepartment.Name = "txtdepartment"
         txtdepartment.PlaceholderText = ""
         txtdepartment.SelectedText = ""

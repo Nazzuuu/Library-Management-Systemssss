@@ -172,13 +172,19 @@ Public Class Section
             e.SuppressKeyPress = True
         End If
 
+        If e.KeyCode = Keys.Enter Then
+            btnadd_Click(sender, e)
+            e.Handled = True
+        End If
+
     End Sub
 
     Private Sub txtsection_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtsection.KeyPress
 
-        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+        If Not Char.IsLetterOrDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
             e.Handled = True
         End If
+
 
     End Sub
 
@@ -186,6 +192,15 @@ Public Class Section
 
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub btnadd_KeyDown(sender As Object, e As KeyEventArgs) Handles btnadd.KeyDown
+
+        If e.KeyCode = Keys.Enter Then
+            btnadd_Click(sender, e)
+            e.Handled = True
         End If
 
     End Sub

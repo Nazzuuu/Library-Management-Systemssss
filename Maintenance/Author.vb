@@ -177,6 +177,11 @@ Public Class Author
             e.SuppressKeyPress = True
         End If
 
+        If e.KeyCode = Keys.Enter Then
+            btnadd_Click(sender, e)
+            e.Handled = True
+        End If
+
     End Sub
 
     Private Sub txtauthor_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtauthor.KeyPress
@@ -191,6 +196,15 @@ Public Class Author
 
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub btnadd_KeyDown(sender As Object, e As KeyEventArgs) Handles btnadd.KeyDown
+
+        If e.KeyCode = Keys.Enter Then
+            btnadd_Click(sender, e)
+            e.Handled = True
         End If
 
     End Sub
