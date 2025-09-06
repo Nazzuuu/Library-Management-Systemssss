@@ -44,6 +44,14 @@ Public Class Grade
                 End If
             Next
 
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is Section Then
+                    Dim gradesucakes = DirectCast(form, Section)
+                    gradesucakes.cbgradesu()
+                End If
+            Next
+
             MsgBox("Grade added successfully", vbInformation)
             Grade_Load(sender, e)
 
@@ -80,6 +88,14 @@ Public Class Grade
                     End If
                 Next
 
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Section Then
+                        Dim gradesucakes = DirectCast(form, Section)
+                        gradesucakes.cbgradesu()
+                    End If
+                Next
+
                 MsgBox("Updated successfully!", vbInformation)
                 Grade_Load(sender, e)
                 txtgrade.Clear()
@@ -113,6 +129,13 @@ Public Class Grade
                         If TypeOf form Is Borrower Then
                             Dim borrower = DirectCast(form, Borrower)
                             borrower.cbgradee()
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Section Then
+                            Dim gradesucakes = DirectCast(form, Section)
+                            gradesucakes.cbgradesu()
                         End If
                     Next
 

@@ -1,4 +1,5 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.Security
+Imports MySql.Data.MySqlClient
 
 Public Class Department
     Private Sub Department_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -43,6 +44,14 @@ Public Class Department
                 End If
             Next
 
+            For Each form In Application.OpenForms
+                If TypeOf form Is Section Then
+                    Dim depsu = DirectCast(form, Section)
+                    depsu.cbdeptss()
+                End If
+            Next
+
+
             MsgBox("Department added successfully", vbInformation)
             Department_Load(sender, e)
 
@@ -80,6 +89,14 @@ Public Class Department
                     End If
                 Next
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Section Then
+                        Dim depsu = DirectCast(form, Section)
+                        depsu.cbdeptss()
+                    End If
+                Next
+
+
                 MsgBox("Updated successfully!", vbInformation)
                 Department_Load(sender, e)
                 txtdepartment.Clear()
@@ -115,6 +132,14 @@ Public Class Department
                             borrower.cbdepts()
                         End If
                     Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Section Then
+                            Dim depsu = DirectCast(form, Section)
+                            depsu.cbdeptss()
+                        End If
+                    Next
+
 
                     MsgBox("Department deleted successfully.", vbInformation)
                     Department_Load(sender, e)

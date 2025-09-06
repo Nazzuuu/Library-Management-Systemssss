@@ -22,14 +22,17 @@ Public Class Borrower
             con.Close()
         End Try
 
+
         cbgradee()
         cbsecs()
         cbdepts()
         cbstrandd()
 
-        cbgrade.Enabled = False
-        cbsection.Enabled = False
-        cbstrand.Enabled = False
+        cbsection.Visible = True
+        lblsection.Visible = True
+        cbstrand.Visible = True
+        lblstrand.Visible = True
+
         cbdepartment.Enabled = False
 
     End Sub
@@ -140,6 +143,7 @@ Public Class Borrower
         End If
 
     End Sub
+
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(connectionString)
@@ -187,6 +191,12 @@ Public Class Borrower
             MsgBox("Borrower added successfully!", vbInformation)
             Borrower_Load(sender, e)
             ClearFields()
+
+            cbstrand.Visible = True
+            cbstrand.Location = New Point(682, 285)
+
+            lblstrand.Visible = True
+            lblstrand.Location = New Point(682, 266)
 
         Catch ex As Exception
             MessageBox.Show("Error adding borrower: " & ex.Message)
@@ -249,6 +259,12 @@ Public Class Borrower
             Borrower_Load(sender, e)
             ClearFields()
 
+            cbstrand.Visible = True
+            cbstrand.Location = New Point(682, 285)
+
+            lblstrand.Visible = True
+            lblstrand.Location = New Point(682, 266)
+
         Catch ex As Exception
             MessageBox.Show("Error updating borrower: " & ex.Message)
         Finally
@@ -282,6 +298,11 @@ Public Class Borrower
                     Borrower_Load(sender, e)
                     ClearFields()
 
+                    cbstrand.Visible = True
+                    cbstrand.Location = New Point(682, 285)
+
+                    lblstrand.Visible = True
+                    lblstrand.Location = New Point(682, 266)
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
@@ -304,7 +325,15 @@ Public Class Borrower
 
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
+
         ClearFields()
+
+        cbstrand.Visible = True
+        cbstrand.Location = New Point(682, 285)
+
+        lblstrand.Visible = True
+        lblstrand.Location = New Point(682, 266)
+
     End Sub
 
 
@@ -366,15 +395,15 @@ Public Class Borrower
 
         cbsection.Visible = True
         lblsection.Visible = True
-        cbstrand.Visible = True
-        lblstrand.Visible = True
-
-        cbstrand.Location = New Point(682, 285)
-        lblstrand.Location = New Point(682, 266)
+        cbstrand.Visible = False
+        lblstrand.Visible = False
 
         If cbdepartment.SelectedIndex <> -1 Then
             cbgrade.Enabled = True
-            If cbdepartment.Text.Trim().ToLower() = "jhs" Then
+            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem).ToLower()
+
+            If selectedDept = "jhs" Then
+
                 Dim con As New MySqlConnection(connectionString)
                 Dim dt As New DataTable
                 Try
@@ -384,21 +413,20 @@ Public Class Borrower
                     cbgrade.DataSource = dt
                     cbgrade.DisplayMember = "Grade"
                     cbgrade.ValueMember = "ID"
-                    cbstrand.Enabled = False
-                    cbstrand.SelectedIndex = -1
-                    cbstrand.Visible = False
-                    lblstrand.Visible = False
+                    cbgrade.SelectedIndex = -1
 
-                    cbsection.Enabled = True
+                    cbsection.Enabled = False
                     cbsection.Visible = True
                     lblsection.Visible = True
 
+                    cbstrand.Enabled = False
+                    cbstrand.Visible = False
+                    lblstrand.Visible = False
                 Catch ex As Exception
-                    MessageBox.Show("Error filtering grades: " & ex.Message)
-                Finally
-                    con.Close()
+                    MessageBox.Show("Error filtering JHS grades: " & ex.Message)
                 End Try
-            ElseIf cbdepartment.Text.Trim().ToLower() = "shs" Then
+            ElseIf selectedDept = "shs" Then
+
                 Dim con As New MySqlConnection(connectionString)
                 Dim dt As New DataTable
                 Try
@@ -408,31 +436,23 @@ Public Class Borrower
                     cbgrade.DataSource = dt
                     cbgrade.DisplayMember = "Grade"
                     cbgrade.ValueMember = "ID"
+                    cbgrade.SelectedIndex = -1
 
                     cbsection.Enabled = False
                     cbsection.Visible = False
                     lblsection.Visible = False
-                    cbsection.SelectedIndex = -1
+
+                    cbstrand.Enabled = False
+                    cbstrand.Visible = True
+                    lblstrand.Visible = True
+
 
                     cbstrand.Location = New Point(682, 216)
                     lblstrand.Location = New Point(682, 197)
 
-                    cbstrand.Enabled = True
-                    cbstrand.Visible = True
-                    lblstrand.Visible = True
-
                 Catch ex As Exception
-                    MessageBox.Show("Error filtering grades: " & ex.Message)
-                Finally
-                    con.Close()
+                    MessageBox.Show("Error filtering SHS grades: " & ex.Message)
                 End Try
-            Else
-                cbgrade.Enabled = False
-                cbsection.Enabled = False
-                cbstrand.Enabled = False
-                cbgrade.SelectedIndex = -1
-                cbsection.SelectedIndex = -1
-                cbstrand.SelectedIndex = -1
             End If
         End If
     End Sub
@@ -448,15 +468,72 @@ Public Class Borrower
 
     Private Sub cbgrade_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbgrade.SelectedIndexChanged
 
+        cbsection.Enabled = False
+        cbsection.SelectedIndex = -1
+        cbstrand.Enabled = False
+        cbstrand.SelectedIndex = -1
+
         If cbgrade.SelectedIndex <> -1 Then
+            Dim selectedGrade As String = cbgrade.GetItemText(cbgrade.SelectedItem)
+            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem).ToLower()
 
-            cbsection.Enabled = True
-        Else
+            If selectedDept = "jhs" Then
 
-            cbsection.Enabled = False
-            cbsection.SelectedIndex = -1
+                cbsection.Enabled = True
+                Dim con As New MySqlConnection(connectionString)
+                Dim dt As New DataTable
+                Try
+                    con.Open()
+
+                    Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = 'JHS' AND GradeLevel = @grade", con)
+                    com.Parameters.AddWithValue("@grade", selectedGrade)
+
+
+                    Dim adap As New MySqlDataAdapter(com)
+                    adap.Fill(dt)
+
+                    cbsection.DataSource = dt
+                    cbsection.DisplayMember = "Section"
+                    cbsection.ValueMember = "ID"
+                    cbsection.SelectedIndex = -1
+
+
+                    cbstrand.Enabled = False
+                Catch ex As Exception
+                    MessageBox.Show("Error loading sections: " & ex.Message)
+                Finally
+                    con.Close()
+                End Try
+
+            ElseIf selectedDept = "shs" Then
+
+                cbstrand.Enabled = True
+                Dim con As New MySqlConnection(connectionString)
+                Dim dt As New DataTable
+                Try
+                    con.Open()
+
+                    Dim com As New MySqlCommand("SELECT ID, Strand FROM `section_tbl` WHERE Department = 'SHS' AND GradeLevel = @grade", con)
+                    com.Parameters.AddWithValue("@grade", selectedGrade)
+
+
+                    Dim adap As New MySqlDataAdapter(com)
+                    adap.Fill(dt)
+
+                    cbstrand.DataSource = dt
+                    cbstrand.DisplayMember = "Strand"
+                    cbstrand.ValueMember = "ID"
+                    cbstrand.SelectedIndex = -1
+
+
+                    cbsection.Enabled = False
+                Catch ex As Exception
+                    MessageBox.Show("Error loading strands: " & ex.Message)
+                Finally
+                    con.Close()
+                End Try
+            End If
         End If
-
     End Sub
 
     Private Sub rbstudent_CheckedChanged(sender As Object, e As EventArgs) Handles rbstudent.CheckedChanged
@@ -518,31 +595,45 @@ Public Class Borrower
     End Sub
 
     Private Sub ClearFields()
-
         txtfname.Clear()
         txtmname.Clear()
         txtlname.Clear()
         txtlrn.Clear()
         txtcontactnumber.Clear()
         DataGridView1.ClearSelection()
+        Pic1.Image = Nothing
+
+
+        cbdepartment.Visible = True
+        cbgrade.Visible = True
+        cbsection.Visible = True
+        lblsection.Visible = True
+        cbstrand.Visible = True
+        lblstrand.Visible = True
+
+        cbdepartment.Enabled = False
+        cbgrade.Enabled = False
+        cbsection.Enabled = False
+        cbstrand.Enabled = False
+
 
         cbdepartment.DataSource = Nothing
-        cbdepartment.Enabled = False
         cbgrade.DataSource = Nothing
         cbsection.DataSource = Nothing
         cbstrand.DataSource = Nothing
-        Pic1.Image = Nothing
 
         cbdepts()
-        cbgradee()
         cbsecs()
+        cbgradee()
         cbstrandd()
+
 
         rbstudent.Checked = False
         rbteacher.Checked = False
         rbnone.Checked = False
         txtmname.Enabled = True
         lblborrowertype.Text = "LRN:"
+
     End Sub
 
     Private Sub txtfname_KeyDown(sender As Object, e As KeyEventArgs) Handles txtfname.KeyDown
@@ -613,6 +704,10 @@ Public Class Borrower
 
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
+        End If
+
+        If e.KeyCode = Keys.Back Then
+            RemoveHandler txtcontactnumber.TextChanged, AddressOf txtcontactnumber_TextChanged
         End If
 
     End Sub

@@ -43,6 +43,13 @@ Public Class Strand
                 End If
             Next
 
+            For Each form In Application.OpenForms
+                If TypeOf form Is Section Then
+                    Dim strnd = DirectCast(form, Section)
+                    strnd.cbstrandsu()
+                End If
+            Next
+
             MsgBox("Strand added successfully", vbInformation)
             Strand_Load(sender, e)
 
@@ -80,6 +87,13 @@ Public Class Strand
                     End If
                 Next
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Section Then
+                        Dim strnd = DirectCast(form, Section)
+                        strnd.cbstrandsu()
+                    End If
+                Next
+
                 MsgBox("Updated successfully!", vbInformation)
                 Strand_Load(sender, e)
                 txtstrand.Clear()
@@ -113,6 +127,13 @@ Public Class Strand
                         If TypeOf form Is Borrower Then
                             Dim borrower = DirectCast(form, Borrower)
                             borrower.cbstrandd()
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Section Then
+                            Dim strnd = DirectCast(form, Section)
+                            strnd.cbstrandsu()
                         End If
                     Next
 
