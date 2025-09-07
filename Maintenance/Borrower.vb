@@ -139,7 +139,7 @@ Public Class Borrower
         Dim con As New MySqlConnection(connectionString)
         Dim borrowerType As String = ""
         Dim middleName As String = txtmname.Text.Trim()
-        Dim lrnParam As Object = DBNull.Value
+        Dim lrn As Object = DBNull.Value
         Dim employeeNo As Object = DBNull.Value
         Dim contactNumber As String = txtcontactnumber.Text.Trim()
         Dim firstName As String = txtfname.Text.Trim()
@@ -166,7 +166,7 @@ Public Class Borrower
                 MsgBox("Please enter the student's LRN.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
-            lrnParam = txtlrn.Text.Trim()
+            lrn = txtlrn.Text.Trim()
         ElseIf borrowerType = "Teacher" Then
             If String.IsNullOrWhiteSpace(txtemployeeno.Text) Then
                 MsgBox("Please enter the teacher's Employee Number.", vbExclamation, "Missing Information")
@@ -181,7 +181,7 @@ Public Class Borrower
 
 
             Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE (`LRN` = @LRN OR `EmployeeNo` = @EmployeeNo) OR `ContactNumber` = @ContactNumber", con)
-            checkCom.Parameters.AddWithValue("@LRN", If(lrnParam Is DBNull.Value, "", lrnParam))
+            checkCom.Parameters.AddWithValue("@LRN", If(lrn Is DBNull.Value, "", lrn))
             checkCom.Parameters.AddWithValue("@EmployeeNo", If(employeeNo Is DBNull.Value, "", employeeNo))
             checkCom.Parameters.AddWithValue("@ContactNumber", contactNumber)
 
@@ -200,7 +200,7 @@ Public Class Borrower
             com.Parameters.AddWithValue("@FirstName", firstName)
             com.Parameters.AddWithValue("@LastName", lastName)
             com.Parameters.AddWithValue("@MiddleName", middleName)
-            com.Parameters.AddWithValue("@LRN", lrnParam)
+            com.Parameters.AddWithValue("@LRN", lrn)
             com.Parameters.AddWithValue("@EmployeeNo", employeeNo)
             com.Parameters.AddWithValue("@ContactNumber", contactNumber)
             com.Parameters.AddWithValue("@Department", cbdepartment.Text.Trim())
