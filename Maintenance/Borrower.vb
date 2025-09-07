@@ -240,8 +240,8 @@ Public Class Borrower
         Dim con As New MySqlConnection(connectionString)
         Dim borrowerType As String = ""
         Dim middleName As String = txtmname.Text.Trim()
-        Dim lrnParam As Object = DBNull.Value
-        Dim employeeNoParam As Object = DBNull.Value
+        Dim lrn As Object = DBNull.Value
+        Dim employeeNo As Object = DBNull.Value
         Dim contactNumber As String = txtcontactnumber.Text.Trim()
         Dim firstName As String = txtfname.Text.Trim()
         Dim lastName As String = txtlname.Text.Trim()
@@ -267,13 +267,13 @@ Public Class Borrower
                 MsgBox("Please enter the student's LRN.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
-            lrnParam = txtlrn.Text.Trim()
+            lrn = txtlrn.Text.Trim()
         ElseIf borrowerType = "Teacher" Then
             If String.IsNullOrWhiteSpace(txtemployeeno.Text) Then
                 MsgBox("Please enter the teacher's Employee Number.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
-            employeeNoParam = txtemployeeno.Text.Trim()
+            employeeNo = txtemployeeno.Text.Trim()
         End If
 
         Try
@@ -281,8 +281,8 @@ Public Class Borrower
 
 
             Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE ((`LRN` = @LRN AND `LRN` IS NOT NULL) OR (`EmployeeNo` = @EmployeeNo AND `EmployeeNo` IS NOT NULL) OR `ContactNumber` = @ContactNumber) AND `ID` <> @ID", con)
-            coms.Parameters.AddWithValue("@LRN", If(lrnParam Is DBNull.Value, "", lrnParam))
-            coms.Parameters.AddWithValue("@EmployeeNo", If(employeeNoParam Is DBNull.Value, "", employeeNoParam))
+            coms.Parameters.AddWithValue("@LRN", If(lrn Is DBNull.Value, "", lrn))
+            coms.Parameters.AddWithValue("@EmployeeNo", If(employeeNo Is DBNull.Value, "", employeeNo))
             coms.Parameters.AddWithValue("@ContactNumber", contactNumber)
             coms.Parameters.AddWithValue("@ID", Id)
 
@@ -300,8 +300,8 @@ Public Class Borrower
             com.Parameters.AddWithValue("@FirstName", firstName)
             com.Parameters.AddWithValue("@LastName", lastName)
             com.Parameters.AddWithValue("@MiddleName", middleName)
-            com.Parameters.AddWithValue("@LRN", lrnParam)
-            com.Parameters.AddWithValue("@EmployeeNo", employeeNoParam)
+            com.Parameters.AddWithValue("@LRN", lrn)
+            com.Parameters.AddWithValue("@EmployeeNo", employeeNo)
             com.Parameters.AddWithValue("@ContactNumber", contactNumber)
             com.Parameters.AddWithValue("@Department", cbdepartment.Text.Trim())
             com.Parameters.AddWithValue("@Grade", cbgrade.Text.Trim())
