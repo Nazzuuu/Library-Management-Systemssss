@@ -41,8 +41,6 @@ Partial Class Borrower
         Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges33 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges32 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -61,6 +59,8 @@ Partial Class Borrower
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges32 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
         PictureBox1 = New PictureBox()
@@ -72,7 +72,6 @@ Partial Class Borrower
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Label6 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
-        txtemployeeno = New Guna.UI2.WinForms.Guna2TextBox()
         Label10 = New Label()
         txtcontactnumber = New Guna.UI2.WinForms.Guna2TextBox()
         Panel1 = New Panel()
@@ -95,6 +94,7 @@ Partial Class Borrower
         Label1 = New Label()
         txtlname = New Guna.UI2.WinForms.Guna2TextBox()
         txtfname = New Guna.UI2.WinForms.Guna2TextBox()
+        txtemployeeno = New Guna.UI2.WinForms.Guna2TextBox()
         panel_borrower = New Panel()
         OpenFileDialog1 = New OpenFileDialog()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -335,27 +335,6 @@ Partial Class Borrower
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
-        ' 
-        ' txtemployeeno
-        ' 
-        txtemployeeno.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtemployeeno.BorderRadius = 12
-        txtemployeeno.CustomizableEdges = CustomizableEdges31
-        txtemployeeno.DefaultText = ""
-        txtemployeeno.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
-        txtemployeeno.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
-        txtemployeeno.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtemployeeno.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtemployeeno.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemployeeno.Font = New Font("Segoe UI", 9F)
-        txtemployeeno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemployeeno.Location = New Point(306, 197)
-        txtemployeeno.Name = "txtemployeeno"
-        txtemployeeno.PlaceholderText = ""
-        txtemployeeno.SelectedText = ""
-        txtemployeeno.ShadowDecoration.CustomizableEdges = CustomizableEdges32
-        txtemployeeno.Size = New Size(232, 33)
-        txtemployeeno.TabIndex = 73
         ' 
         ' Label10
         ' 
@@ -685,6 +664,27 @@ Partial Class Borrower
         txtfname.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         txtfname.Size = New Size(232, 33)
         txtfname.TabIndex = 38
+        ' 
+        ' txtemployeeno
+        ' 
+        txtemployeeno.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtemployeeno.BorderRadius = 12
+        txtemployeeno.CustomizableEdges = CustomizableEdges31
+        txtemployeeno.DefaultText = ""
+        txtemployeeno.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtemployeeno.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtemployeeno.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtemployeeno.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtemployeeno.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtemployeeno.Font = New Font("Segoe UI", 9F)
+        txtemployeeno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtemployeeno.Location = New Point(306, 197)
+        txtemployeeno.Name = "txtemployeeno"
+        txtemployeeno.PlaceholderText = ""
+        txtemployeeno.SelectedText = ""
+        txtemployeeno.ShadowDecoration.CustomizableEdges = CustomizableEdges32
+        txtemployeeno.Size = New Size(232, 33)
+        txtemployeeno.TabIndex = 73
         ' 
         ' panel_borrower
         ' 

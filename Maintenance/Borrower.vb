@@ -37,6 +37,13 @@ Public Class Borrower
 
         txtemployeeno.Visible = False
 
+        txtfname.Enabled = False
+        txtlname.Enabled = False
+        txtmname.Enabled = False
+        txtlrn.Enabled = False
+        txtcontactnumber.Enabled = False
+        rbnone.Enabled = False
+
     End Sub
 
 
@@ -467,7 +474,6 @@ Public Class Borrower
         cbstrand.Enabled = False
         cbstrand.SelectedIndex = -1
 
-
         cbsection.Visible = True
         lblsection.Visible = True
         cbstrand.Visible = False
@@ -475,9 +481,10 @@ Public Class Borrower
 
         If cbdepartment.SelectedIndex <> -1 Then
             cbgrade.Enabled = True
-            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem).ToLower()
+            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
-            If selectedDept = "jhs" Then
+
+            If selectedDept = "Junior High School" Then
 
                 Dim con As New MySqlConnection(connectionString)
                 Dim dt As New DataTable
@@ -500,7 +507,7 @@ Public Class Borrower
                 Catch ex As Exception
                     MessageBox.Show("Error filtering JHS grades: " & ex.Message)
                 End Try
-            ElseIf selectedDept = "shs" Then
+            ElseIf selectedDept = "Senior High School" Then
 
                 Dim con As New MySqlConnection(connectionString)
                 Dim dt As New DataTable
@@ -520,7 +527,6 @@ Public Class Borrower
                     cbstrand.Enabled = False
                     cbstrand.Visible = True
                     lblstrand.Visible = True
-
 
                     cbstrand.Location = New Point(942, 216)
                     lblstrand.Location = New Point(942, 197)
@@ -550,9 +556,10 @@ Public Class Borrower
 
         If cbgrade.SelectedIndex <> -1 Then
             Dim selectedGrade As String = cbgrade.GetItemText(cbgrade.SelectedItem)
-            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem).ToLower()
+            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
-            If selectedDept = "jhs" Then
+
+            If selectedDept = "Junior High School" Then
 
                 cbsection.Enabled = True
                 Dim con As New MySqlConnection(connectionString)
@@ -560,9 +567,8 @@ Public Class Borrower
                 Try
                     con.Open()
 
-                    Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = 'JHS' AND GradeLevel = @grade", con)
+                    Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = 'Junior High School' AND GradeLevel = @grade", con)
                     com.Parameters.AddWithValue("@grade", selectedGrade)
-
 
                     Dim adap As New MySqlDataAdapter(com)
                     adap.Fill(dt)
@@ -572,7 +578,6 @@ Public Class Borrower
                     cbsection.ValueMember = "ID"
                     cbsection.SelectedIndex = -1
 
-
                     cbstrand.Enabled = False
                 Catch ex As Exception
                     MessageBox.Show("Error loading sections: " & ex.Message)
@@ -580,7 +585,7 @@ Public Class Borrower
                     con.Close()
                 End Try
 
-            ElseIf selectedDept = "shs" Then
+            ElseIf selectedDept = "Senior High School" Then
 
                 cbstrand.Enabled = True
                 Dim con As New MySqlConnection(connectionString)
@@ -588,9 +593,8 @@ Public Class Borrower
                 Try
                     con.Open()
 
-                    Dim com As New MySqlCommand("SELECT ID, Strand FROM `section_tbl` WHERE Department = 'SHS' AND GradeLevel = @grade", con)
+                    Dim com As New MySqlCommand("SELECT ID, Strand FROM `section_tbl` WHERE Department = 'Senior High School' AND GradeLevel = @grade", con)
                     com.Parameters.AddWithValue("@grade", selectedGrade)
-
 
                     Dim adap As New MySqlDataAdapter(com)
                     adap.Fill(dt)
@@ -599,7 +603,6 @@ Public Class Borrower
                     cbstrand.DisplayMember = "Strand"
                     cbstrand.ValueMember = "ID"
                     cbstrand.SelectedIndex = -1
-
 
                     cbsection.Enabled = False
                 Catch ex As Exception
@@ -612,6 +615,7 @@ Public Class Borrower
     End Sub
 
     Private Sub rbstudent_CheckedChanged(sender As Object, e As EventArgs) Handles rbstudent.CheckedChanged
+
 
         If rbstudent.Checked Then
 
@@ -627,12 +631,21 @@ Public Class Borrower
             cbsection.Enabled = False
             cbstrand.Enabled = False
 
+            txtfname.Enabled = True
+            txtlname.Enabled = True
+            txtmname.Enabled = True
+            txtcontactnumber.Enabled = True
+            rbnone.Enabled = True
+            txtlrn.Enabled = True
 
         End If
 
     End Sub
 
     Private Sub rbteacher_CheckedChanged(sender As Object, e As EventArgs) Handles rbteacher.CheckedChanged
+
+
+
 
         If rbteacher.Checked Then
 
@@ -658,9 +671,22 @@ Public Class Borrower
             cbsecs()
 
             cbstrand.Visible = True
+            cbstrand.Location = New Point(942, 285)
+
+
+            lblstrand.Visible = True
+            lblstrand.Location = New Point(942, 266)
+
             cbstrand.Enabled = False
             cbstrand.DataSource = Nothing
             cbstrandd()
+
+            txtfname.Enabled = True
+            txtlname.Enabled = True
+            txtmname.Enabled = True
+            txtcontactnumber.Enabled = True
+            rbnone.Enabled = True
+            txtlrn.Enabled = True
 
         End If
 
@@ -719,6 +745,13 @@ Public Class Borrower
         rbnone.Checked = False
         txtmname.Enabled = True
         lblborrowertype.Text = "LRN:"
+
+        txtfname.Enabled = False
+        txtlname.Enabled = False
+        txtmname.Enabled = False
+        txtlrn.Enabled = False
+        txtcontactnumber.Enabled = False
+        rbnone.Enabled = False
 
     End Sub
 
@@ -835,4 +868,6 @@ Public Class Borrower
         End If
 
     End Sub
+
+
 End Class

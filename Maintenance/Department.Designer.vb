@@ -95,13 +95,13 @@ Partial Class Department
         txtdepartment.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtdepartment.Font = New Font("Sorts Mill Goudy", 9.749999F)
         txtdepartment.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtdepartment.Location = New Point(41, 55)
+        txtdepartment.Location = New Point(36, 55)
         txtdepartment.Margin = New Padding(3, 4, 3, 4)
         txtdepartment.Name = "txtdepartment"
         txtdepartment.PlaceholderText = ""
         txtdepartment.SelectedText = ""
         txtdepartment.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtdepartment.Size = New Size(342, 33)
+        txtdepartment.Size = New Size(347, 33)
         txtdepartment.TabIndex = 3
         ' 
         ' btndelete

@@ -48,10 +48,10 @@ Public Class Section
             grade = cbgrade.GetItemText(cbgrade.SelectedItem)
         End If
 
-        If dept = "JHS" Then
+        If dept = "Junior High School" Then
             secs = txtsection.Text.Trim
             strand = ""
-        ElseIf dept = "SHS" Then
+        ElseIf dept = "Senior High School" Then
             secs = ""
             If cbstrand.SelectedIndex <> -1 Then
                 strand = cbstrand.GetItemText(cbstrand.SelectedItem)
@@ -106,10 +106,10 @@ Public Class Section
                 newGrade = cbgrade.GetItemText(cbgrade.SelectedItem)
             End If
 
-            If newDept = "JHS" Then
+            If newDept = "Junior High School" Then
                 newSecs = txtsection.Text.Trim
                 newStrand = ""
-            ElseIf newDept = "SHS" Then
+            ElseIf newDept = "Senior High School" Then
                 newSecs = ""
                 If cbstrand.SelectedIndex <> -1 Then
                     newStrand = cbstrand.GetItemText(cbstrand.SelectedItem)
@@ -224,7 +224,7 @@ Public Class Section
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
-                Dim filter As String = String.Format("Section LIKE '*{0}*'", txtsearch.Text.Trim())
+                Dim filter As String = String.Format("Section LIKE '*{0}*' OR Department LIKE '*{0}*'", txtsearch.Text.Trim())
                 dt.DefaultView.RowFilter = filter
             Else
                 dt.DefaultView.RowFilter = ""
@@ -333,7 +333,7 @@ Public Class Section
             txtsection.Enabled = False
             cbstrand.Enabled = False
 
-            If selectedDept = "JHS" Then
+            If selectedDept = "Junior High School" Then
                 Dim con As New MySqlConnection(connectionString)
                 Dim com As String = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 7 AND 10"
                 Dim adap As New MySqlDataAdapter(com, con)
@@ -353,7 +353,7 @@ Public Class Section
 
                 cbgrade.Enabled = True
 
-            ElseIf selectedDept = "SHS" Then
+            ElseIf selectedDept = "Senior High School" Then
                 Dim con As New MySqlConnection(connectionString)
                 Dim com As String = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 11 AND 12"
                 Dim adap As New MySqlDataAdapter(com, con)
@@ -392,7 +392,7 @@ Public Class Section
         cbgradesu()
         cbstrandsu()
 
-        txtsection.Clear()
+        txtsection.Text = ""
         txtsearch.Clear()
 
 
@@ -403,6 +403,9 @@ Public Class Section
 
         txtsection.Visible = True
         cbstrand.Visible = False
+
+        rbjhs.Checked = False
+        rbshs.Checked = False
 
         lbl_sectionandstrand.Text = "Section:"
 
@@ -421,9 +424,9 @@ Public Class Section
         If cbgrade.SelectedIndex <> -1 Then
             Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
-            If selectedDept = "JHS" Then
+            If selectedDept = "Junior High School" Then
                 txtsection.Enabled = True
-            ElseIf selectedDept = "SHS" Then
+            ElseIf selectedDept = "Senior High School" Then
                 cbstrand.Enabled = True
             End If
         Else
@@ -432,4 +435,26 @@ Public Class Section
             cbstrand.Enabled = False
         End If
     End Sub
+
+    Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles rbjhs.CheckedChanged
+
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+
+        If dt IsNot Nothing AndAlso rbjhs.Checked Then
+            dt.DefaultView.RowFilter = "Department = 'Junior High School'"
+        End If
+
+    End Sub
+
+    Private Sub RadioButton2_CheckedChanged(sender As Object, e As EventArgs) Handles rbshs.CheckedChanged
+
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+
+        If dt IsNot Nothing AndAlso rbshs.Checked Then
+            dt.DefaultView.RowFilter = "Department = 'Senior High School'"
+        End If
+
+    End Sub
+
+
 End Class

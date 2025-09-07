@@ -28,58 +28,15 @@ Public Class Department
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
-
         Dim con As New MySqlConnection(connectionString)
-        Dim deps As String = txtdepartment.Text.Trim
-        Try
-            con.Open()
-            Dim com As New MySqlCommand("INSERT INTO `department_tbl`(`Department`) VALUES (@department)", con)
-            com.Parameters.AddWithValue("@department", deps)
-            com.ExecuteNonQuery()
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is Borrower Then
-                    Dim borrower = DirectCast(form, Borrower)
-                    borrower.cbdepts()
-                End If
-            Next
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is Section Then
-                    Dim depsu = DirectCast(form, Section)
-                    depsu.cbdeptss()
-                End If
-            Next
+        Dim deps As String = txtdepartment.Text.Trim()
 
 
-            MsgBox("Department added successfully", vbInformation)
-            Department_Load(sender, e)
-
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            txtdepartment.Clear()
-
-        End Try
-
-    End Sub
-
-    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim con As New MySqlConnection(connectionString)
-
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-
-            Dim dept As String = txtdepartment.Text.Trim
-
+        If deps = "Junior High School" OrElse deps = "Senior High School" Then
             Try
                 con.Open()
-                Dim com As New MySqlCommand("UPDATE `department_tbl` SET `Department`= @department WHERE  `ID` = @id", con)
-                com.Parameters.AddWithValue("@department", dept)
-                com.Parameters.AddWithValue("@id", ID)
+                Dim com As New MySqlCommand("INSERT INTO `department_tbl`(`Department`) VALUES (@department)", con)
+                com.Parameters.AddWithValue("@department", deps)
                 com.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
@@ -96,16 +53,67 @@ Public Class Department
                     End If
                 Next
 
-
-                MsgBox("Updated successfully!", vbInformation)
+                MsgBox("Department added successfully", vbInformation)
                 Department_Load(sender, e)
-                txtdepartment.Clear()
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
+            Finally
+                txtdepartment.Clear()
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
             End Try
-
+        Else
+            MsgBox("Invalid input. Please enter 'Junior High School' or 'Senior High School' only.", vbCritical)
+            txtdepartment.Clear()
         End If
+    End Sub
 
+    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+        If DataGridView1.SelectedRows.Count > 0 Then
+            Dim con As New MySqlConnection(connectionString)
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim dept As String = txtdepartment.Text.Trim()
+
+
+            If dept = "Junior High School" OrElse dept = "Senior High School" Then
+                Try
+                    con.Open()
+                    Dim com As New MySqlCommand("UPDATE `department_tbl` SET `Department`= @department WHERE `ID` = @id", con)
+                    com.Parameters.AddWithValue("@department", dept)
+                    com.Parameters.AddWithValue("@id", ID)
+                    com.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Borrower Then
+                            Dim borrower = DirectCast(form, Borrower)
+                            borrower.cbdepts()
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Section Then
+                            Dim depsu = DirectCast(form, Section)
+                            depsu.cbdeptss()
+                        End If
+                    Next
+
+                    MsgBox("Updated successfully!", vbInformation)
+                    Department_Load(sender, e)
+                Catch ex As Exception
+                    MsgBox(ex.Message, vbCritical)
+                Finally
+                    txtdepartment.Clear()
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
+                End Try
+            Else
+                MsgBox("Invalid input. Please enter 'Junior High School' or 'Senior High School' only.", vbCritical)
+                txtdepartment.Clear()
+            End If
+        End If
     End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
