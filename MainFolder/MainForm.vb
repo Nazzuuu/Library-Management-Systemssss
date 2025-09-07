@@ -229,6 +229,10 @@
         Genre.ShowDialog()
     End Sub
 
+    Private Sub SectionToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles SectionToolStripMenuItem2.Click
+        Section.ShowDialog()
+    End Sub
+
     Private Sub SupplierMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SupplierMaintenanceToolStripMenuItem.Click
         Supplier.ShowDialog()
     End Sub
@@ -290,9 +294,6 @@
 
     End Sub
 
-    Private Sub SectionToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles SectionToolStripMenuItem2.Click
-        Section.ShowDialog()
-    End Sub
 
     Private Sub GradeToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles GradeToolStripMenuItem1.Click
         Grade.ShowDialog()
@@ -316,4 +317,6 @@
         End With
 
     End Sub
+
+
 End Class

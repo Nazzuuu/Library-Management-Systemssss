@@ -21,7 +21,8 @@ Public Class Section
 
 
         cbstrand.Visible = False
-
+        cbgrade.Enabled = False
+        txtsection.Enabled = False
 
     End Sub
 
@@ -327,6 +328,11 @@ Public Class Section
             cbgrade.DataSource = Nothing
             cbgrade.Items.Clear()
 
+
+            cbgrade.Enabled = False
+            txtsection.Enabled = False
+            cbstrand.Enabled = False
+
             If selectedDept = "JHS" Then
                 Dim con As New MySqlConnection(connectionString)
                 Dim com As String = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 7 AND 10"
@@ -342,8 +348,10 @@ Public Class Section
                 txtsection.Visible = True
                 cbstrand.Visible = False
 
-
                 lbl_sectionandstrand.Text = "Section:"
+
+
+                cbgrade.Enabled = True
 
             ElseIf selectedDept = "SHS" Then
                 Dim con As New MySqlConnection(connectionString)
@@ -362,12 +370,12 @@ Public Class Section
 
                 cbstrandsu()
 
-
                 lbl_sectionandstrand.Text = "Strand:"
+
+                cbgrade.Enabled = True
 
             End If
         End If
-
     End Sub
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
@@ -376,15 +384,24 @@ Public Class Section
 
     Public Sub clearlahat()
 
+        cbdepartment.DataSource = Nothing
+        cbgrade.DataSource = Nothing
+        cbstrand.DataSource = Nothing
 
+        cbdeptss()
+        cbgradesu()
+        cbstrandsu()
 
-        cbdepartment.SelectedIndex = -1
-        cbgrade.SelectedIndex = -1
-        cbstrand.SelectedIndex = -1
         txtsection.Clear()
         txtsearch.Clear()
 
 
+        cbgrade.Enabled = False
+        txtsection.Enabled = False
+        cbstrand.Enabled = False
+
+
+        txtsection.Visible = True
         cbstrand.Visible = False
 
         lbl_sectionandstrand.Text = "Section:"
@@ -396,6 +413,23 @@ Public Class Section
         End If
 
         DataGridView1.ClearSelection()
+
     End Sub
 
+    Private Sub cbgrade_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbgrade.SelectedIndexChanged
+
+        If cbgrade.SelectedIndex <> -1 Then
+            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
+
+            If selectedDept = "JHS" Then
+                txtsection.Enabled = True
+            ElseIf selectedDept = "SHS" Then
+                cbstrand.Enabled = True
+            End If
+        Else
+
+            txtsection.Enabled = False
+            cbstrand.Enabled = False
+        End If
+    End Sub
 End Class
