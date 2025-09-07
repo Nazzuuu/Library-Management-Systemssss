@@ -35,20 +35,10 @@ Public Class Borrower
 
         cbdepartment.Enabled = False
 
-    End Sub
-
-    Private Sub btnimport_Click(sender As Object, e As EventArgs) Handles btnimport.Click
-
-        If OpenFileDialog1.ShowDialog <> DialogResult.Cancel Then
-            Pic1.Image = Image.FromFile(OpenFileDialog1.FileName)
-            Pic1.SizeMode = PictureBoxSizeMode.StretchImage
-        End If
-    End Sub
-    Private Sub btnclearr_Click(sender As Object, e As EventArgs) Handles btnclearr.Click
-
-        Pic1.Image = Nothing
+        txtemployeeno.Visible = False
 
     End Sub
+
 
     Public Sub cbgradee()
         Dim con As New MySqlConnection(connectionString)
@@ -147,9 +137,13 @@ Public Class Borrower
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(connectionString)
-
         Dim borrowerType As String = ""
         Dim middleName As String = txtmname.Text.Trim()
+        Dim lrnParam As Object = DBNull.Value
+        Dim employeeNo As Object = DBNull.Value
+        Dim contactNumber As String = txtcontactnumber.Text.Trim()
+        Dim firstName As String = txtfname.Text.Trim()
+        Dim lastName As String = txtlname.Text.Trim()
 
         If rbstudent.Checked Then
             borrowerType = "Student"
@@ -161,49 +155,77 @@ Public Class Borrower
             middleName = "N/A"
         End If
 
-        If Pic1.Image Is Nothing Then
-            MessageBox.Show("Please import an image for the borrower.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return
+
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(contactNumber) Then
+            MsgBox("Please fill in all required fields.", vbExclamation, "Missing Information")
+            Exit Sub
         End If
 
-        Dim ms As New IO.MemoryStream
-        Pic1.Image.Save(ms, Pic1.Image.RawFormat)
-        Dim arrImage() As Byte = ms.GetBuffer
+        If borrowerType = "Student" Then
+            If String.IsNullOrWhiteSpace(txtlrn.Text) Then
+                MsgBox("Please enter the student's LRN.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+            lrnParam = txtlrn.Text.Trim()
+        ElseIf borrowerType = "Teacher" Then
+            If String.IsNullOrWhiteSpace(txtemployeeno.Text) Then
+                MsgBox("Please enter the teacher's Employee Number.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+            employeeNo = txtemployeeno.Text.Trim()
+        End If
+
 
         Try
             con.Open()
-            Dim com As New MySqlCommand("INSERT INTO `borrower_tbl` (Borrower, FirstName, MiddleName, LastName, LRN, ContactNumber, Department, Grade, Section, Strand, Image) VALUES (@Borrower, @FirstName, @MiddleName, @LastName, @LRN, @ContactNumber, @Department, @Grade, @Section, @Strand, @Image)", con)
+
+
+            Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE (`LRN` = @LRN OR `EmployeeNo` = @EmployeeNo) OR `ContactNumber` = @ContactNumber", con)
+            checkCom.Parameters.AddWithValue("@LRN", If(lrnParam Is DBNull.Value, "", lrnParam))
+            checkCom.Parameters.AddWithValue("@EmployeeNo", If(employeeNo Is DBNull.Value, "", employeeNo))
+            checkCom.Parameters.AddWithValue("@ContactNumber", contactNumber)
+
+            Dim count As Integer = Convert.ToInt32(checkCom.ExecuteScalar())
+
+            If count > 0 Then
+                MsgBox("LRN, Employee Number, or Contact Number already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
+                con.Close()
+                Exit Sub
+            End If
+
+
+            Dim com As New MySqlCommand("INSERT INTO `borrower_tbl`(`Borrower`, `FirstName`, `LastName`, `MiddleName`, `LRN`, `EmployeeNo`, `ContactNumber`, `Department`, `Grade`, `Section`, `Strand`) VALUES (@Borrower, @FirstName, @LastName, @MiddleName, @LRN, @EmployeeNo, @ContactNumber, @Department, @Grade, @Section, @Strand)", con)
 
             com.Parameters.AddWithValue("@Borrower", borrowerType)
-            com.Parameters.AddWithValue("@FirstName", txtfname.Text.Trim())
+            com.Parameters.AddWithValue("@FirstName", firstName)
+            com.Parameters.AddWithValue("@LastName", lastName)
             com.Parameters.AddWithValue("@MiddleName", middleName)
-            com.Parameters.AddWithValue("@LastName", txtlname.Text.Trim())
-            com.Parameters.AddWithValue("@LRN", txtlrn.Text.Trim())
-            com.Parameters.AddWithValue("@ContactNumber", txtcontactnumber.Text.Trim())
+            com.Parameters.AddWithValue("@LRN", lrnParam)
+            com.Parameters.AddWithValue("@EmployeeNo", employeeNo)
+            com.Parameters.AddWithValue("@ContactNumber", contactNumber)
             com.Parameters.AddWithValue("@Department", cbdepartment.Text.Trim())
             com.Parameters.AddWithValue("@Grade", cbgrade.Text.Trim())
             com.Parameters.AddWithValue("@Section", cbsection.Text.Trim())
             com.Parameters.AddWithValue("@Strand", cbstrand.Text.Trim())
-            com.Parameters.Add("@Image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
-            com.ExecuteNonQuery()
 
+            com.ExecuteNonQuery()
 
             MsgBox("Borrower added successfully!", vbInformation)
             Borrower_Load(sender, e)
             ClearFields()
 
             cbstrand.Visible = True
-            cbstrand.Location = New Point(682, 285)
-
+            cbstrand.Location = New Point(942, 285)
             lblstrand.Visible = True
-            lblstrand.Location = New Point(682, 266)
+            lblstrand.Location = New Point(942, 266)
 
         Catch ex As Exception
             MessageBox.Show("Error adding borrower: " & ex.Message)
         Finally
-            con.Close()
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
-
     End Sub
 
 
@@ -214,12 +236,15 @@ Public Class Borrower
             Return
         End If
 
-        Dim selectedID As Integer = Convert.ToInt32(DataGridView1.SelectedRows(0).Cells("ID").Value)
-
+        Dim ID As Integer = Convert.ToInt32(DataGridView1.SelectedRows(0).Cells("ID").Value)
         Dim con As New MySqlConnection(connectionString)
-        Dim arrImage() As Byte = Nothing
         Dim borrowerType As String = ""
         Dim middleName As String = txtmname.Text.Trim()
+        Dim lrnParam As Object = DBNull.Value
+        Dim employeeNoParam As Object = DBNull.Value
+        Dim contactNumber As String = txtcontactnumber.Text.Trim()
+        Dim firstName As String = txtfname.Text.Trim()
+        Dim lastName As String = txtlname.Text.Trim()
 
         If rbstudent.Checked Then
             borrowerType = "Student"
@@ -231,28 +256,59 @@ Public Class Borrower
             middleName = "N/A"
         End If
 
-        If Pic1.Image IsNot Nothing Then
-            Dim ms As New IO.MemoryStream
-            Pic1.Image.Save(ms, Pic1.Image.RawFormat)
-            arrImage = ms.GetBuffer
+
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(contactNumber) Then
+            MsgBox("Please fill in all required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
+        If borrowerType = "Student" Then
+            If String.IsNullOrWhiteSpace(txtlrn.Text) Then
+                MsgBox("Please enter the student's LRN.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+            lrnParam = txtlrn.Text.Trim()
+        ElseIf borrowerType = "Teacher" Then
+            If String.IsNullOrWhiteSpace(txtemployeeno.Text) Then
+                MsgBox("Please enter the teacher's Employee Number.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+            employeeNoParam = txtemployeeno.Text.Trim()
         End If
 
         Try
             con.Open()
-            Dim com As New MySqlCommand("UPDATE `borrower_tbl` SET Borrower=@Borrower, FirstName=@FirstName, MiddleName=@MiddleName, LastName=@LastName, LRN=@LRN, ContactNumber=@ContactNumber, Department=@Department, Grade=@Grade, Section=@Section, Strand=@Strand, Image=@Image WHERE ID=@ID", con)
+
+
+            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE ((`LRN` = @LRN AND `LRN` IS NOT NULL) OR (`EmployeeNo` = @EmployeeNo AND `EmployeeNo` IS NOT NULL) OR `ContactNumber` = @ContactNumber) AND `ID` <> @ID", con)
+            coms.Parameters.AddWithValue("@LRN", If(lrnParam Is DBNull.Value, "", lrnParam))
+            coms.Parameters.AddWithValue("@EmployeeNo", If(employeeNoParam Is DBNull.Value, "", employeeNoParam))
+            coms.Parameters.AddWithValue("@ContactNumber", contactNumber)
+            coms.Parameters.AddWithValue("@ID", Id)
+
+            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar())
+
+            If count > 0 Then
+                MsgBox("LRN, Employee Number, or Contact Number already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
+                con.Close()
+                Exit Sub
+            End If
+
+            Dim com As New MySqlCommand("UPDATE `borrower_tbl` SET `Borrower`=@Borrower, `FirstName`=@FirstName, `LastName`=@LastName, `MiddleName`=@MiddleName, `LRN`=@LRN, `EmployeeNo`=@EmployeeNo, `ContactNumber`=@ContactNumber, `Department`=@Department, `Grade`=@Grade, `Section`=@Section, `Strand`=@Strand WHERE `ID`=@ID", con)
 
             com.Parameters.AddWithValue("@Borrower", borrowerType)
-            com.Parameters.AddWithValue("@FirstName", txtfname.Text.Trim())
+            com.Parameters.AddWithValue("@FirstName", firstName)
+            com.Parameters.AddWithValue("@LastName", lastName)
             com.Parameters.AddWithValue("@MiddleName", middleName)
-            com.Parameters.AddWithValue("@LastName", txtlname.Text.Trim())
-            com.Parameters.AddWithValue("@LRN", txtlrn.Text.Trim())
-            com.Parameters.AddWithValue("@ContactNumber", txtcontactnumber.Text.Trim())
+            com.Parameters.AddWithValue("@LRN", lrnParam)
+            com.Parameters.AddWithValue("@EmployeeNo", employeeNoParam)
+            com.Parameters.AddWithValue("@ContactNumber", contactNumber)
             com.Parameters.AddWithValue("@Department", cbdepartment.Text.Trim())
             com.Parameters.AddWithValue("@Grade", cbgrade.Text.Trim())
             com.Parameters.AddWithValue("@Section", cbsection.Text.Trim())
             com.Parameters.AddWithValue("@Strand", cbstrand.Text.Trim())
-            com.Parameters.Add("@Image", MySqlDbType.LongBlob, If(arrImage Is Nothing, 0, arrImage.Length)).Value = If(arrImage Is Nothing, DBNull.Value, arrImage)
-            com.Parameters.AddWithValue("@ID", selectedID)
+            com.Parameters.AddWithValue("@ID", ID)
+
             com.ExecuteNonQuery()
 
             MsgBox("Borrower updated successfully!", vbInformation)
@@ -260,17 +316,17 @@ Public Class Borrower
             ClearFields()
 
             cbstrand.Visible = True
-            cbstrand.Location = New Point(682, 285)
-
+            cbstrand.Location = New Point(942, 285)
             lblstrand.Visible = True
-            lblstrand.Location = New Point(682, 266)
+            lblstrand.Location = New Point(942, 266)
 
         Catch ex As Exception
             MessageBox.Show("Error updating borrower: " & ex.Message)
         Finally
-            con.Close()
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
-
     End Sub
 
 
@@ -299,10 +355,11 @@ Public Class Borrower
                     ClearFields()
 
                     cbstrand.Visible = True
-                    cbstrand.Location = New Point(682, 285)
+                    cbstrand.Location = New Point(942, 285)
+
 
                     lblstrand.Visible = True
-                    lblstrand.Location = New Point(682, 266)
+                    lblstrand.Location = New Point(942, 266)
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
@@ -329,37 +386,64 @@ Public Class Borrower
         ClearFields()
 
         cbstrand.Visible = True
-        cbstrand.Location = New Point(682, 285)
+        cbstrand.Location = New Point(942, 285)
+
 
         lblstrand.Visible = True
-        lblstrand.Location = New Point(682, 266)
+        lblstrand.Location = New Point(942, 266)
 
     End Sub
 
 
-
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
+
+
         If e.RowIndex >= 0 Then
+
             Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
             Dim borrowerType As String = row.Cells("Borrower").Value.ToString()
 
+
+
             If borrowerType = "Student" Then
+
                 rbstudent.Checked = True
+
             ElseIf borrowerType = "Teacher" Then
+
                 rbteacher.Checked = True
+
+                txtemployeeno.Text = If(IsDBNull(row.Cells("EmployeeNo").Value), String.Empty, row.Cells("EmployeeNo").Value.ToString())
+                txtlrn.Text = ""
+
+                cbstrand.Visible = True
+                cbstrand.Location = New Point(942, 285)
+
+
+                lblstrand.Visible = True
+                lblstrand.Location = New Point(942, 266)
+
+
             End If
+
 
             txtfname.Text = row.Cells("FirstName").Value.ToString()
 
             Dim middleName As String = row.Cells("MiddleName").Value.ToString()
+
             If middleName.Trim().ToUpper() = "N/A" Then
+
                 rbnone.Checked = True
                 txtmname.Text = ""
+
             Else
+
                 rbnone.Checked = False
                 txtmname.Text = middleName
+
             End If
+
 
             txtlname.Text = row.Cells("LastName").Value.ToString()
             txtlrn.Text = row.Cells("LRN").Value.ToString()
@@ -369,19 +453,10 @@ Public Class Borrower
             cbsection.Text = row.Cells("Section").Value.ToString()
             cbstrand.Text = row.Cells("Strand").Value.ToString()
 
-            If row.Cells("Image").Value IsNot DBNull.Value Then
-                Dim arrImage() As Byte = CType(row.Cells("Image").Value, Byte())
-                Dim ms As New IO.MemoryStream(arrImage)
-                Pic1.Image = Image.FromStream(ms)
-                Pic1.SizeMode = PictureBoxSizeMode.StretchImage
-            Else
-                Pic1.Image = Nothing
-            End If
+
         End If
 
     End Sub
-
-
 
     Private Sub cbdepartment_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbdepartment.SelectedIndexChanged
 
@@ -447,8 +522,8 @@ Public Class Borrower
                     lblstrand.Visible = True
 
 
-                    cbstrand.Location = New Point(682, 216)
-                    lblstrand.Location = New Point(682, 197)
+                    cbstrand.Location = New Point(942, 216)
+                    lblstrand.Location = New Point(942, 197)
 
                 Catch ex As Exception
                     MessageBox.Show("Error filtering SHS grades: " & ex.Message)
@@ -541,6 +616,9 @@ Public Class Borrower
         If rbstudent.Checked Then
 
 
+            txtlrn.Visible = True
+            txtemployeeno.Visible = False
+
             rbnone.Checked = False
             lblborrowertype.Text = "LRN:"
 
@@ -557,6 +635,11 @@ Public Class Borrower
     Private Sub rbteacher_CheckedChanged(sender As Object, e As EventArgs) Handles rbteacher.CheckedChanged
 
         If rbteacher.Checked Then
+
+            txtlrn.Visible = False
+            txtlrn.Enabled = True
+
+            txtemployeeno.Visible = True
 
             rbnone.Checked = False
             lblborrowertype.Text = "Employee no.:"
@@ -595,14 +678,17 @@ Public Class Borrower
     End Sub
 
     Private Sub ClearFields()
+
+        txtemployeeno.Clear()
         txtfname.Clear()
         txtmname.Clear()
         txtlname.Clear()
         txtlrn.Clear()
         txtcontactnumber.Clear()
         DataGridView1.ClearSelection()
-        Pic1.Image = Nothing
 
+        txtlrn.Visible = True
+        txtemployeeno.Visible = False
 
         cbdepartment.Visible = True
         cbgrade.Visible = True

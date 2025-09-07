@@ -4,13 +4,13 @@ Imports System.Text
 Imports MySql.Data.MySqlClient
 Imports TheArtOfDevHtmlRenderer.Adapters
 Imports Windows.Win32.System
-
+Imports System.Text.RegularExpressions
 Public Class Users_Staffs
 
     Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT `ID`, `Username`, `Password`, `Email`, `ContactNumber`, `Gender`, `Image` FROM `user_staff_tbl`"
+        Dim com As String = "SELECT * FROM `user_staff_tbl`"
         Dim adapp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
 
@@ -36,99 +36,76 @@ Public Class Users_Staffs
         End If
     End Sub
 
-    Private Sub btnimport_Click(sender As Object, e As EventArgs) Handles btnimport.Click
-
-
-        If PictureBox2.Image IsNot Nothing Then
-            PictureBox2.Image.Dispose()
-        End If
-
-
-        If OpenFileDialog1.ShowDialog <> DialogResult.Cancel Then
-
-            PictureBox2.Image = Image.FromFile(OpenFileDialog1.FileName)
-            PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
-        End If
-    End Sub
-
-    Private Sub btnclearr_Click(sender As Object, e As EventArgs) Handles btnclearr.Click
-
-        If PictureBox2.Image IsNot Nothing Then
-            PictureBox2.Image.Dispose()
-            PictureBox2.Image = Nothing
-        End If
-
-    End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
+        Dim firstName As String = txtfname.Text.Trim()
+        Dim lastName As String = txtlname.Text.Trim()
+        Dim user As String = txtusername.Text.Trim()
+        Dim pass As String = txtpassword.Text.Trim()
+        Dim email As String = txtemail.Text.Trim()
+        Dim contact As String = txtcontactnumber.Text.Trim()
 
-        Dim user As String = txtusername.Text.Trim
-        Dim pass As String = txtpassword.Text.Trim
-        Dim email As String = txtemail.Text.Trim
-        Dim contact As String = txtcontactnumber.Text.Trim
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
+            MsgBox("Please fill in all the required fields (First Name, Last Name, Username, Password, Email).", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
 
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        If Not emailRegex.IsMatch(email) Then
+            MsgBox("Invalid email format. Please enter a valid email address.", vbExclamation, "Invalid Email")
+            Exit Sub
+        End If
 
-        If PictureBox2.Image Is Nothing Then
-            MsgBox("Please import an image first.", vbExclamation, "No Image")
+        Dim gender As String = ""
+        If rbmale.Checked Then
+            gender = "Male"
+        ElseIf rbfemale.Checked Then
+            gender = "Female"
+        Else
+            MsgBox("Please select a gender.", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
 
-        If String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
-            MsgBox("Please fill in all the required fields (Username, Password, Email).", vbExclamation, "Missing Information")
-            Exit Sub
+        Dim middleName As String
+        If CheckBox2.Checked Then
+            middleName = "N/A"
+        Else
+            middleName = txtmname.Text.Trim()
         End If
 
         Dim con As New MySqlConnection(connectionString)
         Try
             con.Open()
 
-
-            Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE `Username` = @username OR `Email` = @email", con)
-            checkCom.Parameters.AddWithValue("@username", user)
-            checkCom.Parameters.AddWithValue("@email", email)
-            Dim count As Integer = Convert.ToInt32(checkCom.ExecuteScalar())
+            Dim Coms As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE `Username` = @username OR `Email` = @email", con)
+            Coms.Parameters.AddWithValue("@username", user)
+            Coms.Parameters.AddWithValue("@email", email)
+            Dim count As Integer = Convert.ToInt32(Coms.ExecuteScalar())
 
             If count > 0 Then
                 MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
                 Exit Sub
             End If
 
-
-            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`Username`, `Password`, `Email`, `ContactNumber`, `Gender`, `Image`) VALUES (@username, @password, @email, @contact, @gender, @image)", con)
+            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleName`, `Username`, `Password`, `Email`, `ContactNumber`, `Gender`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @gender)", con)
+            com.Parameters.AddWithValue("@firstName", firstName)
+            com.Parameters.AddWithValue("@lastName", lastName)
+            com.Parameters.AddWithValue("@middleName", middleName)
             com.Parameters.AddWithValue("@username", user)
             com.Parameters.AddWithValue("@password", pass)
             com.Parameters.AddWithValue("@email", email)
             com.Parameters.AddWithValue("@contact", contact)
-
-            Dim gender As String = ""
-            If rbmale.Checked Then
-                gender = "Male"
-            ElseIf rbfemale.Checked Then
-                gender = "Female"
-            Else
-
-                MsgBox("Please select a gender.", vbExclamation, "Missing Information")
-                Exit Sub
-            End If
             com.Parameters.AddWithValue("@gender", gender)
-
-
-            Dim ms As New IO.MemoryStream()
-            PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
-            Dim arrImage() As Byte = ms.ToArray()
-
-            com.Parameters.Add("@Image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
-
             com.ExecuteNonQuery()
-            MsgBox("Staff member added successfully!", vbInformation)
 
-            RefreshDataGrid()
+            MsgBox("Staff member added successfully!", vbInformation)
+            Users_Staffs_Load(sender, e)
             clearfields()
 
         Catch ex As Exception
-            MsgBox(ex.Message & vbCrLf & "Details: " & ex.StackTrace, vbCritical, "Database Error")
+            MsgBox(ex.Message, vbCritical, "Database Error")
         Finally
             If con.State = ConnectionState.Open Then
                 con.Close()
@@ -137,18 +114,6 @@ Public Class Users_Staffs
     End Sub
 
 
-    Public Sub RefreshDataGrid()
-        Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT `ID`, `Username`, `Password`, `Email`, `ContactNumber`, `Gender`, `Image` FROM `user_staff_tbl`"
-        Dim adapp As New MySqlDataAdapter(com, con)
-        Dim dt As New DataSet
-        Try
-            adapp.Fill(dt, "INFO")
-            DataGridView1.DataSource = dt.Tables("INFO")
-        Catch ex As Exception
-            MsgBox("Error refreshing data: " & ex.Message, vbCritical)
-        End Try
-    End Sub
 
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
 
@@ -173,22 +138,27 @@ Public Class Users_Staffs
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.CurrentRow Is Nothing Then
-            MsgBox("Please select a staff member to edit.", vbExclamation)
+            MsgBox("Please select a row before to edit.", vbExclamation)
             Exit Sub
         End If
 
-
-        Dim originalID As Integer = CInt(DataGridView1.CurrentRow.Cells("ID").Value)
-
+        Dim ID As Integer = CInt(DataGridView1.CurrentRow.Cells("ID").Value)
+        Dim firstName As String = txtfname.Text.Trim()
+        Dim lastName As String = txtlname.Text.Trim()
         Dim user As String = txtusername.Text.Trim()
         Dim pass As String = txtpassword.Text.Trim()
         Dim email As String = txtemail.Text.Trim()
         Dim contact As String = txtcontactnumber.Text.Trim()
         Dim gender As String = ""
-        Dim arrImage() As Byte = Nothing
 
-        If String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
             MsgBox("Please fill in all required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        If Not emailRegex.IsMatch(email) Then
+            MsgBox("Invalid email format. Please enter a valid email address.", vbExclamation, "Invalid Email")
             Exit Sub
         End If
 
@@ -201,66 +171,43 @@ Public Class Users_Staffs
             Exit Sub
         End If
 
+
+        Dim middleName As String
+        If CheckBox2.Checked Then
+            middleName = "N/A"
+        Else
+            middleName = txtmname.Text.Trim()
+        End If
+
         Dim con As New MySqlConnection(connectionString)
         Try
             con.Open()
 
-
-            Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE (`Username` = @username OR `Email` = @email) AND `ID` <> @id", con)
-            checkCom.Parameters.AddWithValue("@username", user)
-            checkCom.Parameters.AddWithValue("@email", email)
-            checkCom.Parameters.AddWithValue("@id", originalID)
-            Dim count As Integer = Convert.ToInt32(checkCom.ExecuteScalar())
+            Dim Com As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE (`Username` = @username OR `Email` = @email) AND `ID` <> @id", con)
+            Com.Parameters.AddWithValue("@username", user)
+            Com.Parameters.AddWithValue("@email", email)
+            Com.Parameters.AddWithValue("@id", ID)
+            Dim count As Integer = Convert.ToInt32(Com.ExecuteScalar())
 
             If count > 0 Then
                 MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
                 Exit Sub
             End If
 
+            Dim Coms As New MySqlCommand("UPDATE `user_staff_tbl` SET `FirstName` = @firstName, `LastName` = @lastName, `MiddleName` = @middleName, `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender WHERE `ID` = @id", con)
+            Coms.Parameters.AddWithValue("@firstName", firstName)
+            Coms.Parameters.AddWithValue("@lastName", lastName)
+            Coms.Parameters.AddWithValue("@middleName", middleName)
+            Coms.Parameters.AddWithValue("@username", user)
+            Coms.Parameters.AddWithValue("@password", pass)
+            Coms.Parameters.AddWithValue("@email", email)
+            Coms.Parameters.AddWithValue("@contact", contact)
+            Coms.Parameters.AddWithValue("@gender", gender)
+            Coms.Parameters.AddWithValue("@id", ID)
+            Coms.ExecuteNonQuery()
 
-            Dim getPassCom As New MySqlCommand("SELECT `Password` FROM `user_staff_tbl` WHERE `ID` = @id", con)
-            getPassCom.Parameters.AddWithValue("@id", originalID)
-            Dim oldPass As String = getPassCom.ExecuteScalar().ToString()
-
-            Dim updateCom As New MySqlCommand("UPDATE `user_staff_tbl` SET `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender, `Image` = @image WHERE `ID` = @id", con)
-
-
-            updateCom.Parameters.AddWithValue("@username", user)
-
-            If pass = "********" Then
-                updateCom.Parameters.AddWithValue("@password", oldPass)
-            Else
-                updateCom.Parameters.AddWithValue("@password", pass)
-            End If
-            updateCom.Parameters.AddWithValue("@email", email)
-            updateCom.Parameters.AddWithValue("@contact", contact)
-            updateCom.Parameters.AddWithValue("@gender", gender)
-            updateCom.Parameters.AddWithValue("@id", originalID)
-
-
-            If PictureBox2.Image IsNot Nothing Then
-                Using ms As New IO.MemoryStream()
-                    PictureBox2.Image.Save(ms, PictureBox2.Image.RawFormat)
-                    arrImage = ms.ToArray()
-                    updateCom.Parameters.Add("@image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
-                End Using
-            Else
-
-                Dim getImageCom As New MySqlCommand("SELECT `Image` FROM `user_staff_tbl` WHERE `ID` = @id", con)
-                getImageCom.Parameters.AddWithValue("@id", originalID)
-                Dim oldImage As Object = getImageCom.ExecuteScalar()
-
-                If Not IsDBNull(oldImage) Then
-                    arrImage = DirectCast(oldImage, Byte())
-                    updateCom.Parameters.Add("@image", MySqlDbType.LongBlob, arrImage.Length).Value = arrImage
-                Else
-                    updateCom.Parameters.AddWithValue("@image", DBNull.Value)
-                End If
-            End If
-
-            updateCom.ExecuteNonQuery()
             MsgBox("Staff member updated successfully!", vbInformation)
-            RefreshDataGrid()
+            Users_Staffs_Load(sender, e)
             clearfields()
 
         Catch ex As Exception
@@ -272,44 +219,55 @@ Public Class Users_Staffs
         End Try
     End Sub
 
-
-
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
-        Dim user As String = txtusername.Text.Trim
 
-        If MsgBox("Are you sure you want to delete this staff member?", vbQuestion + vbYesNo) = vbYes Then
-            Dim con As New MySqlConnection(connectionString)
-            Try
-                con.Open()
-                Dim com As New MySqlCommand("DELETE FROM `user_staff_tbl` WHERE `Username` = @username", con)
-                com.Parameters.AddWithValue("@username", user)
-                com.ExecuteNonQuery()
+        If DataGridView1.SelectedRows.Count > 0 Then
 
-                MsgBox("Staff member deleted successfully!", vbInformation)
+            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this staff member?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 
-                Users_Staffs_Load(sender, e)
-            Catch ex As Exception
-                MsgBox(ex.Message, vbCritical)
-            Finally
-                con.Close()
-                ResetAutoIncrement()
-                clearfields()
-            End Try
+            If dialogResult = DialogResult.Yes Then
+
+                Dim con As New MySqlConnection(connectionString)
+                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+                Try
+                    con.Open()
+                    Dim delete As New MySqlCommand("DELETE FROM `user_staff_tbl` WHERE `ID` = @id", con)
+                    delete.Parameters.AddWithValue("@id", ID)
+                    delete.ExecuteNonQuery()
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Book Then
+                            Dim book = DirectCast(form, Book)
+                            book.cbcategoryy()
+                        End If
+                    Next
+
+                    MsgBox("Staff member deleted successfully.", vbInformation)
+                    Users_Staffs_Load(sender, e)
+                    clearfields()
+
+
+                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl`", con)
+                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+
+                    If rowCount = 0 Then
+
+                        Dim reset As New MySqlCommand("ALTER TABLE `user_staff_tbl` AUTO_INCREMENT = 1", con)
+                        reset.ExecuteNonQuery()
+
+                    End If
+
+                Catch ex As Exception
+                    MsgBox(ex.Message, vbCritical)
+                End Try
+            End If
+
         End If
     End Sub
 
-    Private Sub ResetAutoIncrement()
-        Dim con As New MySqlConnection(connectionString)
-        Try
-            con.Open()
-            Dim com As New MySqlCommand("ALTER TABLE `user_staff_tbl` AUTO_INCREMENT = 1", con)
-            com.ExecuteNonQuery()
-        Catch ex As Exception
-            MsgBox("Error resetting auto-increment: " & ex.Message, vbCritical)
-        Finally
-            con.Close()
-        End Try
-    End Sub
+
 
 
 
@@ -318,48 +276,39 @@ Public Class Users_Staffs
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
+            txtfname.Text = If(IsDBNull(row.Cells("FirstName").Value), String.Empty, row.Cells("FirstName").Value.ToString())
+            txtlname.Text = If(IsDBNull(row.Cells("LastName").Value), String.Empty, row.Cells("LastName").Value.ToString())
             txtusername.Text = If(IsDBNull(row.Cells("Username").Value), String.Empty, row.Cells("Username").Value.ToString())
             txtemail.Text = If(IsDBNull(row.Cells("Email").Value), String.Empty, row.Cells("Email").Value.ToString())
             txtcontactnumber.Text = If(IsDBNull(row.Cells("ContactNumber").Value), String.Empty, row.Cells("ContactNumber").Value.ToString())
-
-
-            txtpassword.Text = "********"
-            txtpassword.UseSystemPasswordChar = True
-            CheckBox1.Checked = False
+            txtpassword.Text = If(IsDBNull(row.Cells("Password").Value), String.Empty, row.Cells("Password").Value.ToString())
 
             Dim gender As String = If(IsDBNull(row.Cells("Gender").Value), String.Empty, row.Cells("Gender").Value.ToString())
             rbmale.Checked = (gender = "Male")
             rbfemale.Checked = (gender = "Female")
 
-            If Not IsDBNull(row.Cells("Image").Value) Then
-                Dim imgData As Byte() = Nothing
-                Try
-                    imgData = CType(row.Cells("Image").Value, Byte())
-                    Using ms As New MemoryStream(imgData)
-                        If ms.Length > 0 Then
-                            PictureBox2.Image = Image.FromStream(ms)
-                            PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
-                        Else
-                            PictureBox2.Image = Nothing
-                        End If
-                    End Using
-                Catch ex As Exception
-                    MsgBox("Error loading image: " & ex.Message, vbCritical)
-                    PictureBox2.Image = Nothing
-                End Try
+            Dim middleName As String = If(IsDBNull(row.Cells("MiddleName").Value), String.Empty, row.Cells("MiddleName").Value.ToString())
+
+            If middleName = "N/A" Then
+
+                CheckBox2.Checked = True
+                txtmname.Text = "N/A"
+                txtmname.Enabled = False
             Else
-                PictureBox2.Image = Nothing
+
+                CheckBox2.Checked = False
+                txtmname.Text = middleName
+                txtmname.Enabled = True
             End If
         End If
     End Sub
-
 
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
-                Dim filter As String = String.Format("Username LIKE '*{0}*' OR Email LIKE '*{0}*' OR ContactNumber LIKE '*{0}*'", txtsearch.Text.Trim())
+                Dim filter As String = String.Format("FirstName LIKE '*{0}*' OR LastName LIKE '*{0}*' OR ContactNumber LIKE '*{0}*'", txtsearch.Text.Trim())
                 dt.DefaultView.RowFilter = filter
             Else
                 dt.DefaultView.RowFilter = ""
@@ -372,20 +321,24 @@ Public Class Users_Staffs
     End Sub
 
     Public Sub clearfields()
+
+        txtfname.Text = ""
+        txtlname.Text = ""
+        txtmname.Text = ""
         txtusername.Text = ""
         txtpassword.Text = ""
         txtemail.Text = ""
         txtcontactnumber.Text = ""
-        CheckBox1.Checked = False
+
+
         rbmale.Checked = False
         rbfemale.Checked = False
+        CheckBox2.Checked = False
 
-        If PictureBox2.Image IsNot Nothing Then
-            PictureBox2.Image.Dispose()
-            PictureBox2.Image = Nothing
-        End If
+        txtmname.Enabled = True
 
         DataGridView1.ClearSelection()
+
     End Sub
 
     Private Sub txtusername_KeyDown(sender As Object, e As KeyEventArgs) Handles txtusername.KeyDown
@@ -484,6 +437,47 @@ Public Class Users_Staffs
                 txtcontactnumber.Text = "09"
                 txtcontactnumber.SelectionStart = 2
             End If
+        End If
+
+    End Sub
+
+    Private Sub txtemail_TextChanged(sender As Object, e As EventArgs) Handles txtemail.TextChanged
+
+
+        Dim email As String = txtemail.Text.Trim()
+
+        If String.IsNullOrWhiteSpace(email) Then
+
+            lblexample.ForeColor = Color.Black
+            lblexample.Text = "Example@email.com"
+            Exit Sub
+        End If
+
+
+        Dim emailRegex As New Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+
+
+        If emailRegex.IsMatch(email) Then
+
+            lblexample.ForeColor = Color.Green
+            lblexample.Text = "Example@email.com ✓"
+
+        Else
+
+            lblexample.ForeColor = Color.Red
+            lblexample.Text = "Example@email.com ✕"
+        End If
+
+    End Sub
+
+    Private Sub CheckBox2_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox2.CheckedChanged
+
+        If CheckBox2.Checked Then
+            txtmname.Enabled = False
+            txtmname.Text = ""
+        Else
+            txtmname.Enabled = True
+            txtmname.Text = ""
         End If
 
     End Sub

@@ -66,11 +66,14 @@ Partial Class Users_Staffs
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Label6 = New Label()
         groupbox = New Guna.UI2.WinForms.Guna2GroupBox()
-        Panel1 = New Panel()
-        Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
-        PictureBox2 = New PictureBox()
-        btnclearr = New Guna.UI2.WinForms.Guna2Button()
-        btnimport = New Guna.UI2.WinForms.Guna2Button()
+        CheckBox2 = New CheckBox()
+        Label8 = New Label()
+        Label7 = New Label()
+        Label5 = New Label()
+        txtmname = New Guna.UI2.WinForms.Guna2TextBox()
+        txtlname = New Guna.UI2.WinForms.Guna2TextBox()
+        txtfname = New Guna.UI2.WinForms.Guna2TextBox()
+        lblexample = New Label()
         CheckBox1 = New CheckBox()
         rbmale = New RadioButton()
         rbfemale = New RadioButton()
@@ -88,9 +91,6 @@ Partial Class Users_Staffs
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
         groupbox.SuspendLayout()
-        Panel1.SuspendLayout()
-        Guna2Panel1.SuspendLayout()
-        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         panel_book.SuspendLayout()
         SuspendLayout()
         ' 
@@ -274,7 +274,7 @@ Partial Class Users_Staffs
         Label6.AutoSize = True
         Label6.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(25, 76)
+        Label6.Location = New Point(646, 76)
         Label6.Name = "Label6"
         Label6.Size = New Size(76, 16)
         Label6.TabIndex = 39
@@ -286,7 +286,14 @@ Partial Class Users_Staffs
         groupbox.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         groupbox.BorderRadius = 9
         groupbox.BorderThickness = 2
-        groupbox.Controls.Add(Panel1)
+        groupbox.Controls.Add(CheckBox2)
+        groupbox.Controls.Add(Label8)
+        groupbox.Controls.Add(Label7)
+        groupbox.Controls.Add(Label5)
+        groupbox.Controls.Add(txtmname)
+        groupbox.Controls.Add(txtlname)
+        groupbox.Controls.Add(txtfname)
+        groupbox.Controls.Add(lblexample)
         groupbox.Controls.Add(CheckBox1)
         groupbox.Controls.Add(rbmale)
         groupbox.Controls.Add(rbfemale)
@@ -317,85 +324,131 @@ Partial Class Users_Staffs
         groupbox.Size = New Size(1333, 626)
         groupbox.TabIndex = 0
         ' 
-        ' Panel1
+        ' CheckBox2
         ' 
-        Panel1.Controls.Add(Guna2Panel1)
-        Panel1.Controls.Add(btnclearr)
-        Panel1.Controls.Add(btnimport)
-        Panel1.Location = New Point(955, 43)
-        Panel1.Name = "Panel1"
-        Panel1.Size = New Size(291, 205)
-        Panel1.TabIndex = 72
+        CheckBox2.AutoSize = True
+        CheckBox2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        CheckBox2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        CheckBox2.Location = New Point(562, 102)
+        CheckBox2.Name = "CheckBox2"
+        CheckBox2.Size = New Size(52, 20)
+        CheckBox2.TabIndex = 79
+        CheckBox2.Text = "N/A"
+        CheckBox2.UseVisualStyleBackColor = True
         ' 
-        ' Guna2Panel1
+        ' Label8
         ' 
-        Guna2Panel1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2Panel1.BorderRadius = 9
-        Guna2Panel1.BorderThickness = 2
-        Guna2Panel1.Controls.Add(PictureBox2)
-        Guna2Panel1.CustomizableEdges = CustomizableEdges13
-        Guna2Panel1.Location = New Point(73, 12)
-        Guna2Panel1.Name = "Guna2Panel1"
-        Guna2Panel1.ShadowDecoration.CustomizableEdges = CustomizableEdges14
-        Guna2Panel1.Size = New Size(158, 137)
-        Guna2Panel1.TabIndex = 55
+        Label8.AutoSize = True
+        Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label8.Location = New Point(324, 76)
+        Label8.Name = "Label8"
+        Label8.Size = New Size(92, 16)
+        Label8.TabIndex = 78
+        Label8.Text = "Middle Name:"
         ' 
-        ' PictureBox2
+        ' Label7
         ' 
-        PictureBox2.BackgroundImageLayout = ImageLayout.None
-        PictureBox2.Location = New Point(16, 11)
-        PictureBox2.Name = "PictureBox2"
-        PictureBox2.Size = New Size(129, 114)
-        PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
-        PictureBox2.TabIndex = 52
-        PictureBox2.TabStop = False
+        Label7.AutoSize = True
+        Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label7.Location = New Point(25, 145)
+        Label7.Name = "Label7"
+        Label7.Size = New Size(79, 16)
+        Label7.TabIndex = 77
+        Label7.Text = "Last Name:"
         ' 
-        ' btnclearr
+        ' Label5
         ' 
-        btnclearr.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclearr.BorderRadius = 9
-        btnclearr.BorderThickness = 1
-        btnclearr.CustomizableEdges = CustomizableEdges15
-        btnclearr.DisabledState.BorderColor = Color.DarkGray
-        btnclearr.DisabledState.CustomBorderColor = Color.DarkGray
-        btnclearr.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnclearr.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnclearr.FillColor = Color.Empty
-        btnclearr.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btnclearr.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclearr.Location = New Point(27, 166)
-        btnclearr.Name = "btnclearr"
-        btnclearr.ShadowDecoration.CustomizableEdges = CustomizableEdges16
-        btnclearr.Size = New Size(98, 27)
-        btnclearr.TabIndex = 53
-        btnclearr.Text = "REMOVE"
+        Label5.AutoSize = True
+        Label5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label5.Location = New Point(25, 76)
+        Label5.Name = "Label5"
+        Label5.Size = New Size(79, 16)
+        Label5.TabIndex = 76
+        Label5.Text = "First Name:"
         ' 
-        ' btnimport
+        ' txtmname
         ' 
-        btnimport.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnimport.BorderRadius = 9
-        btnimport.BorderThickness = 1
-        btnimport.CustomizableEdges = CustomizableEdges17
-        btnimport.DisabledState.BorderColor = Color.DarkGray
-        btnimport.DisabledState.CustomBorderColor = Color.DarkGray
-        btnimport.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnimport.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnimport.FillColor = Color.Empty
-        btnimport.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btnimport.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnimport.Location = New Point(175, 166)
-        btnimport.Name = "btnimport"
-        btnimport.ShadowDecoration.CustomizableEdges = CustomizableEdges18
-        btnimport.Size = New Size(90, 27)
-        btnimport.TabIndex = 54
-        btnimport.Text = "IMPORT"
+        txtmname.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtmname.BorderRadius = 12
+        txtmname.CustomizableEdges = CustomizableEdges13
+        txtmname.DefaultText = ""
+        txtmname.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtmname.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtmname.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtmname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtmname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtmname.Font = New Font("Segoe UI", 9F)
+        txtmname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtmname.Location = New Point(324, 95)
+        txtmname.Name = "txtmname"
+        txtmname.PlaceholderText = ""
+        txtmname.SelectedText = ""
+        txtmname.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        txtmname.Size = New Size(232, 33)
+        txtmname.TabIndex = 75
+        ' 
+        ' txtlname
+        ' 
+        txtlname.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtlname.BorderRadius = 12
+        txtlname.CustomizableEdges = CustomizableEdges15
+        txtlname.DefaultText = ""
+        txtlname.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtlname.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtlname.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtlname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtlname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtlname.Font = New Font("Segoe UI", 9F)
+        txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtlname.Location = New Point(25, 164)
+        txtlname.Name = "txtlname"
+        txtlname.PlaceholderText = ""
+        txtlname.SelectedText = ""
+        txtlname.ShadowDecoration.CustomizableEdges = CustomizableEdges16
+        txtlname.Size = New Size(232, 33)
+        txtlname.TabIndex = 74
+        ' 
+        ' txtfname
+        ' 
+        txtfname.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtfname.BorderRadius = 12
+        txtfname.CustomizableEdges = CustomizableEdges17
+        txtfname.DefaultText = ""
+        txtfname.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtfname.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtfname.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtfname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtfname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtfname.Font = New Font("Segoe UI", 9F)
+        txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtfname.Location = New Point(25, 95)
+        txtfname.Name = "txtfname"
+        txtfname.PlaceholderText = ""
+        txtfname.SelectedText = ""
+        txtfname.ShadowDecoration.CustomizableEdges = CustomizableEdges18
+        txtfname.Size = New Size(232, 33)
+        txtfname.TabIndex = 73
+        ' 
+        ' lblexample
+        ' 
+        lblexample.AutoSize = True
+        lblexample.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
+        lblexample.ForeColor = SystemColors.WindowFrame
+        lblexample.Location = New Point(1106, 79)
+        lblexample.Name = "lblexample"
+        lblexample.Size = New Size(104, 13)
+        lblexample.TabIndex = 72
+        lblexample.Text = "Example@gmail.com"
         ' 
         ' CheckBox1
         ' 
         CheckBox1.AutoSize = True
         CheckBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         CheckBox1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CheckBox1.Location = New Point(264, 161)
+        CheckBox1.Location = New Point(883, 172)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(61, 20)
         CheckBox1.TabIndex = 71
@@ -407,7 +460,7 @@ Partial Class Users_Staffs
         rbmale.AutoSize = True
         rbmale.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbmale.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbmale.Location = New Point(735, 104)
+        rbmale.Location = New Point(406, 172)
         rbmale.Name = "rbmale"
         rbmale.Size = New Size(55, 20)
         rbmale.TabIndex = 70
@@ -420,7 +473,7 @@ Partial Class Users_Staffs
         rbfemale.AutoSize = True
         rbfemale.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbfemale.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbfemale.Location = New Point(846, 104)
+        rbfemale.Location = New Point(517, 172)
         rbfemale.Name = "rbfemale"
         rbfemale.Size = New Size(69, 20)
         rbfemale.TabIndex = 69
@@ -433,7 +486,7 @@ Partial Class Users_Staffs
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(653, 104)
+        Label4.Location = New Point(324, 172)
         Label4.Name = "Label4"
         Label4.Size = New Size(58, 16)
         Label4.TabIndex = 61
@@ -444,7 +497,7 @@ Partial Class Users_Staffs
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(341, 135)
+        Label3.Location = New Point(978, 145)
         Label3.Name = "Label3"
         Label3.Size = New Size(116, 16)
         Label3.TabIndex = 60
@@ -463,7 +516,7 @@ Partial Class Users_Staffs
         txtcontactnumber.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontactnumber.Font = New Font("Segoe UI", 9F)
         txtcontactnumber.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtcontactnumber.Location = New Point(341, 154)
+        txtcontactnumber.Location = New Point(978, 164)
         txtcontactnumber.Name = "txtcontactnumber"
         txtcontactnumber.PlaceholderText = ""
         txtcontactnumber.SelectedText = ""
@@ -476,7 +529,7 @@ Partial Class Users_Staffs
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(341, 76)
+        Label2.Location = New Point(978, 76)
         Label2.Name = "Label2"
         Label2.Size = New Size(44, 16)
         Label2.TabIndex = 58
@@ -495,7 +548,7 @@ Partial Class Users_Staffs
         txtemail.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemail.Font = New Font("Segoe UI", 9F)
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemail.Location = New Point(341, 95)
+        txtemail.Location = New Point(978, 95)
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""
@@ -508,7 +561,7 @@ Partial Class Users_Staffs
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(25, 135)
+        Label1.Location = New Point(646, 145)
         Label1.Name = "Label1"
         Label1.Size = New Size(75, 16)
         Label1.TabIndex = 56
@@ -527,7 +580,7 @@ Partial Class Users_Staffs
         txtpassword.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtpassword.Font = New Font("Segoe UI", 9F)
         txtpassword.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtpassword.Location = New Point(25, 154)
+        txtpassword.Location = New Point(646, 164)
         txtpassword.Name = "txtpassword"
         txtpassword.PlaceholderText = ""
         txtpassword.SelectedText = ""
@@ -548,7 +601,7 @@ Partial Class Users_Staffs
         txtusername.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtusername.Font = New Font("Segoe UI", 9F)
         txtusername.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtusername.Location = New Point(25, 95)
+        txtusername.Location = New Point(646, 95)
         txtusername.Name = "txtusername"
         txtusername.PlaceholderText = ""
         txtusername.SelectedText = ""
@@ -583,9 +636,6 @@ Partial Class Users_Staffs
         Guna2GradientPanel1.ResumeLayout(False)
         groupbox.ResumeLayout(False)
         groupbox.PerformLayout()
-        Panel1.ResumeLayout(False)
-        Guna2Panel1.ResumeLayout(False)
-        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         panel_book.ResumeLayout(False)
         ResumeLayout(False)
     End Sub
@@ -602,8 +652,6 @@ Partial Class Users_Staffs
     Friend WithEvents groupbox As Guna.UI2.WinForms.Guna2GroupBox
     Friend WithEvents txtusername As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents panel_book As Panel
-    Friend WithEvents btnimport As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents btnclearr As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Label3 As Label
     Friend WithEvents txtcontactnumber As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Label2 As Label
@@ -615,8 +663,13 @@ Partial Class Users_Staffs
     Friend WithEvents rbfemale As RadioButton
     Friend WithEvents OpenFileDialog1 As OpenFileDialog
     Friend WithEvents CheckBox1 As CheckBox
-    Friend WithEvents Panel1 As Panel
-    Friend WithEvents PictureBox2 As PictureBox
-    Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents lblexample As Label
+    Friend WithEvents txtlname As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents txtfname As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents Label8 As Label
+    Friend WithEvents Label7 As Label
+    Friend WithEvents Label5 As Label
+    Friend WithEvents txtmname As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents CheckBox2 As CheckBox
 End Class
