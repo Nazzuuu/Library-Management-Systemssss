@@ -705,12 +705,12 @@ Public Class Borrower
 
     Private Sub ClearFields()
 
-        txtemployeeno.Clear()
-        txtfname.Clear()
-        txtmname.Clear()
-        txtlname.Clear()
-        txtlrn.Clear()
-        txtcontactnumber.Clear()
+        txtemployeeno.Text = ""
+        txtfname.Text = ""
+        txtmname.Text = ""
+        txtlname.Text = ""
+        txtlrn.Text = ""
+        txtcontactnumber.Text = ""
         DataGridView1.ClearSelection()
 
         txtlrn.Visible = True

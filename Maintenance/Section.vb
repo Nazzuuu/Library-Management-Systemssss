@@ -156,17 +156,30 @@ Public Class Section
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim sectionName As String = selectedRow.Cells("Section").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim Borrower As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE Section = @section", con)
+                    Borrower.Parameters.AddWithValue("@section", sectionName)
+                    Dim borrowerCount As Integer = CInt(Borrower.ExecuteScalar())
+
+
+                    If borrowerCount > 0 Then
+                        MessageBox.Show("Cannot delete this section. It is already assigned to a borrower.", "information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `section_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Borrower Then
-                            Dim borrower = DirectCast(form, Borrower)
-                            borrower.cbsecs()
+                            DirectCast(form, Borrower).cbsecs()
                         End If
                     Next
 
@@ -174,24 +187,23 @@ Public Class Section
                     Section_Load(sender, e)
                     clearlahat()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `section_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
                 End Try
             End If
-
         End If
-
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick

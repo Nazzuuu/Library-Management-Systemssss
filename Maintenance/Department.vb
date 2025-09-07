@@ -64,7 +64,7 @@ Public Class Department
                 End If
             End Try
         Else
-            MsgBox("Invalid input. Please enter 'Junior High School' or 'Senior High School' only.", vbCritical)
+            MessageBox.Show("Invalid input. Please enter 'Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             txtdepartment.Clear()
         End If
     End Sub
@@ -110,8 +110,8 @@ Public Class Department
                     End If
                 End Try
             Else
-                MsgBox("Invalid input. Please enter 'Junior High School' or 'Senior High School' only.", vbCritical)
-                txtdepartment.Clear()
+                MessageBox.Show("Invalid input. Please enter 'Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                txtdepartment.Text = ""
             End If
         End If
     End Sub
@@ -127,50 +127,58 @@ Public Class Department
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim departmentName As String = selectedRow.Cells("Department").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim Coms As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl` WHERE Department = @department", con)
+                    Coms.Parameters.AddWithValue("@department", departmentName)
+                    Dim count As Integer = CInt(Coms.ExecuteScalar())
+
+
+                    If count > 0 Then
+                        MessageBox.Show("Cannot delete this department. It is already assigned to a grade level.", "information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `department_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
+
                     For Each form In Application.OpenForms
                         If TypeOf form Is Borrower Then
-                            Dim borrower = DirectCast(form, Borrower)
-                            borrower.cbdepts()
+                            DirectCast(form, Borrower).cbdepts()
                         End If
-                    Next
-
-                    For Each form In Application.OpenForms
                         If TypeOf form Is Section Then
-                            Dim depsu = DirectCast(form, Section)
-                            depsu.cbdeptss()
+                            DirectCast(form, Section).cbdeptss()
                         End If
                     Next
-
 
                     MsgBox("Department deleted successfully.", vbInformation)
                     Department_Load(sender, e)
                     txtdepartment.Clear()
 
-
-                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `department_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+                    Dim rowCountCom As New MySqlCommand("SELECT COUNT(*) FROM `department_tbl`", con)
+                    Dim rowCount As Long = CLng(rowCountCom.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `department_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
                 End Try
             End If
-
         End If
-
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
