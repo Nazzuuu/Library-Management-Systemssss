@@ -449,7 +449,7 @@ Public Class Users_Staffs
         If String.IsNullOrWhiteSpace(email) Then
 
             lblexample.ForeColor = Color.Black
-            lblexample.Text = "Example@email.com"
+            lblexample.Text = "Example@gmail.com"
             Exit Sub
         End If
 
@@ -460,12 +460,12 @@ Public Class Users_Staffs
         If emailRegex.IsMatch(email) Then
 
             lblexample.ForeColor = Color.Green
-            lblexample.Text = "Example@email.com ✓"
+            lblexample.Text = "Example@gmail.com ✓"
 
         Else
 
             lblexample.ForeColor = Color.Red
-            lblexample.Text = "Example@email.com ✕"
+            lblexample.Text = "Example@gmail.com ✕"
         End If
 
     End Sub

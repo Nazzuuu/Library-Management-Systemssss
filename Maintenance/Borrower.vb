@@ -33,16 +33,18 @@ Public Class Borrower
         cbstrand.Visible = True
         lblstrand.Visible = True
 
-        cbdepartment.Enabled = False
+        'cbdepartment.Enabled = False
 
-        txtemployeeno.Visible = False
+        'txtemployeeno.Visible = False
 
-        txtfname.Enabled = False
-        txtlname.Enabled = False
-        txtmname.Enabled = False
-        txtlrn.Enabled = False
-        txtcontactnumber.Enabled = False
-        rbnone.Enabled = False
+        'txtfname.Enabled = False
+        'txtlname.Enabled = False
+        'txtmname.Enabled = False
+        'txtlrn.Enabled = False
+        'txtcontactnumber.Enabled = False
+        'rbnone.Enabled = False
+
+        ClearFields()
 
     End Sub
 
