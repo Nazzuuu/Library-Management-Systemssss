@@ -41,6 +41,11 @@ Public Class Supplier
         Dim address As String = txtaddress.Text.Trim
         Dim contact As String = txtcontact.Text.Trim
 
+        If String.IsNullOrWhiteSpace(supp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `supplier_tbl`(`SupplierName`, `Address`, `ContactNumber`) VALUES (@supplier, @address, @contact)", con)
@@ -82,6 +87,11 @@ Public Class Supplier
 
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+            If String.IsNullOrWhiteSpace(supp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             Try
                 con.Open()

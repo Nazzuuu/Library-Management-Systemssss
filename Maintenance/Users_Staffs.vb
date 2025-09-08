@@ -47,7 +47,7 @@ Public Class Users_Staffs
         Dim contact As String = txtcontactnumber.Text.Trim()
 
         If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
-            MsgBox("Please fill in all the required fields (First Name, Last Name, Username, Password, Email).", vbExclamation, "Missing Information")
+            MsgBox("Please fill in all the required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
@@ -152,7 +152,7 @@ Public Class Users_Staffs
         Dim gender As String = ""
 
         If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
-            MsgBox("Please fill in all required fields.", vbExclamation, "Missing Information")
+            MsgBox("Please fill in all the required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
 

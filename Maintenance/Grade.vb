@@ -31,6 +31,12 @@ Public Class Grade
 
         Dim con As New MySqlConnection(connectionString)
         Dim grds As String = txtgrade.Text.Trim
+
+        If String.IsNullOrWhiteSpace(grds) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `grade_tbl`(`Grade`) VALUES (@grade)", con)
@@ -73,6 +79,11 @@ Public Class Grade
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
             Dim grd As String = txtgrade.Text.Trim
+
+            If String.IsNullOrWhiteSpace(grd) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             Try
                 con.Open()

@@ -46,6 +46,11 @@ Public Class Publisher
         Dim address As String = txtaddress.Text.Trim
         Dim contact As String = txtcontact.Text.Trim
 
+        If String.IsNullOrWhiteSpace(publisher) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `publisher_tbl`(`PublisherName`, `Address`, `ContactNumber`) VALUES (@publisher, @address, @contact)", con)
@@ -86,6 +91,11 @@ Public Class Publisher
 
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+            If String.IsNullOrWhiteSpace(pub) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             Try
                 con.Open()

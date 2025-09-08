@@ -29,6 +29,13 @@ Public Class Genre
 
         Dim con As New MySqlConnection(connectionString)
         Dim genre As String = txtgenre.Text.Trim
+
+        If String.IsNullOrWhiteSpace(genre) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
+
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `genre_tbl`(`Genre`) VALUES (@genre)", con)
@@ -63,6 +70,11 @@ Public Class Genre
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
             Dim genree As String = txtgenre.Text.Trim
+
+            If String.IsNullOrWhiteSpace(genree) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             Try
                 con.Open()

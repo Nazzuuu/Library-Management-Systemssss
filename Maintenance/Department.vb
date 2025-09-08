@@ -31,6 +31,10 @@ Public Class Department
         Dim con As New MySqlConnection(connectionString)
         Dim deps As String = txtdepartment.Text.Trim()
 
+        If String.IsNullOrWhiteSpace(deps) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
 
         If deps = "Junior High School" OrElse deps = "Senior High School" Then
             Try
@@ -76,6 +80,10 @@ Public Class Department
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
             Dim dept As String = txtdepartment.Text.Trim()
 
+            If String.IsNullOrWhiteSpace(dept) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             If dept = "Junior High School" OrElse dept = "Senior High School" Then
                 Try

@@ -121,25 +121,25 @@ Public Class Book
         Dim isbn As String = txtisbn.Text.Trim
         Dim booktitle As String = txtbooktitle.Text.Trim
 
-        Dim deyts As DateTime = DateTimePicker1.Value
 
+        If String.IsNullOrEmpty(isbn) OrElse String.IsNullOrEmpty(booktitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
+            MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
+            Exit Sub
+        End If
+
+        Dim deyts As DateTime = DateTimePicker1.Value
 
         If deyts.Date > DateTime.Today.Date Then
             MsgBox("You cannot select a future date.", vbExclamation)
             Exit Sub
         End If
 
-
         Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
-
-
-
-
 
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`ISBN`, `BookTitle`, `Author`, `Genre`, `Category`, `Publisher`, `Language`, `YearPublished`) VALUES
-                                       (@isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished )", con)
+                                     (@isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished )", con)
 
             com.Parameters.AddWithValue("@isbn", isbn)
             com.Parameters.AddWithValue("@booktitle", booktitle)
@@ -151,13 +151,9 @@ Public Class Book
             com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
             com.ExecuteNonQuery()
 
-
-
-
             MsgBox("Book added successfully", vbInformation)
             clear()
             Book_Load(sender, e)
-
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         End Try
@@ -168,12 +164,15 @@ Public Class Book
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
+            If String.IsNullOrEmpty(txtisbn.Text.Trim) OrElse String.IsNullOrEmpty(txtbooktitle.Text.Trim) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
+                MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
+                Exit Sub
+            End If
+
             Dim con As New MySqlConnection(connectionString)
 
             Dim isbn As String = txtisbn.Text.Trim
             Dim booktitle As String = txtbooktitle.Text.Trim
-
-
             Dim deyts As DateTime = DateTimePicker1.Value
 
             If deyts.Date > DateTime.Today.Date Then
@@ -181,18 +180,12 @@ Public Class Book
                 Exit Sub
             End If
 
-
             Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
-
-
-
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
 
             Try
                 con.Open()
-
-
                 Dim com As New MySqlCommand("UPDATE `book_tbl` SET `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished WHERE `ID` = @id", con)
 
                 com.Parameters.AddWithValue("@isbn", isbn)
@@ -209,9 +202,7 @@ Public Class Book
 
                 MsgBox("Book updated successfully", vbInformation)
                 clear()
-
                 Book_Load(sender, e)
-
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try

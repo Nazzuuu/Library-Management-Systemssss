@@ -28,21 +28,7 @@ Public Class Borrower
         cbdepts()
         cbstrandd()
 
-        'cbsection.Visible = True
-        'lblsection.Visible = True
-        'cbstrand.Visible = True
-        'lblstrand.Visible = True
 
-        'cbdepartment.Enabled = False
-
-        'txtemployeeno.Visible = False
-
-        'txtfname.Enabled = False
-        'txtlname.Enabled = False
-        'txtmname.Enabled = False
-        'txtlrn.Enabled = False
-        'txtcontactnumber.Enabled = False
-        'rbnone.Enabled = False
 
         ClearFields()
         strandlocation()
@@ -145,7 +131,7 @@ Public Class Borrower
         If dt IsNot Nothing Then
             Dim searchValue As String = txtsearch.Text.Trim()
             If Not String.IsNullOrEmpty(searchValue) Then
-                Dim filter As String = String.Format("FirstName LIKE '%{0}%' OR LastName LIKE '%{0}%' OR MiddleName LIKE '%{0}%' OR LRN LIKE '%{0}%' OR Borrower LIKE '%{0}%'", searchValue)
+                Dim filter As String = String.Format("FirstName LIKE '%{0}%' OR Department LIKE '%{0}%' OR LastName LIKE '%{0}%' OR MiddleName LIKE '%{0}%' OR LRN LIKE '%{0}%' OR Borrower LIKE '%{0}%'", searchValue)
                 dt.DefaultView.RowFilter = filter
             Else
                 dt.DefaultView.RowFilter = ""

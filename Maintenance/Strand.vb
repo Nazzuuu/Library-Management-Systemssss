@@ -30,6 +30,12 @@ Public Class Strand
 
         Dim con As New MySqlConnection(connectionString)
         Dim strandd As String = txtstrand.Text.Trim
+
+        If String.IsNullOrWhiteSpace(strandd) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `strand_tbl`(`Strand`) VALUES (@strand)", con)
@@ -72,6 +78,11 @@ Public Class Strand
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
             Dim strandd As String = txtstrand.Text.Trim
+
+            If String.IsNullOrWhiteSpace(strandd) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             Try
                 con.Open()

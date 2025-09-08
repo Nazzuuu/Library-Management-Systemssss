@@ -31,6 +31,11 @@ Public Class Category
         Dim con As New MySqlConnection(connectionString)
         Dim category As String = txtcategory.Text.Trim
 
+        If String.IsNullOrWhiteSpace(category) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `category_tbl`(`Category`) VALUES (@category) ", con)
@@ -64,6 +69,11 @@ Public Class Category
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
             Dim cat As String = txtcategory.Text.Trim
+
+            If String.IsNullOrWhiteSpace(cat) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             Try
                 con.Open()

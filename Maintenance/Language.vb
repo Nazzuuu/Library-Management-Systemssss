@@ -31,6 +31,11 @@ Public Class Language
         Dim con As New MySqlConnection(connectionString)
         Dim lang As String = txtlanguage.Text.Trim
 
+        If String.IsNullOrWhiteSpace(lang) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `language_tbl`(`Language`) VALUES (@language)", con)
@@ -64,6 +69,11 @@ Public Class Language
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
             Dim lang As String = txtlanguage.Text.Trim
+
+            If String.IsNullOrWhiteSpace(lang) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             Try
                 con.Open()

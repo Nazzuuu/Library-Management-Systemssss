@@ -95,12 +95,12 @@ Partial Class Category
         txtcategory.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcategory.Font = New Font("Sorts Mill Goudy", 9.749999F)
         txtcategory.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtcategory.Location = New Point(41, 48)
+        txtcategory.Location = New Point(36, 48)
         txtcategory.Name = "txtcategory"
         txtcategory.PlaceholderText = ""
         txtcategory.SelectedText = ""
         txtcategory.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtcategory.Size = New Size(342, 37)
+        txtcategory.Size = New Size(347, 37)
         txtcategory.TabIndex = 3
         ' 
         ' btndelete

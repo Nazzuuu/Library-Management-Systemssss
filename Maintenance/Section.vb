@@ -60,6 +60,11 @@ Public Class Section
             End If
         End If
 
+        If String.IsNullOrWhiteSpace(secs) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Try
             con.Open()
             Dim com As New MySqlCommand("INSERT INTO `section_tbl`(`Department`, `GradeLevel`, `Section`, `Strand`) VALUES (@dept, @grade, @section, @strand)", con)
@@ -99,6 +104,11 @@ Public Class Section
             Dim newGrade As String = ""
             Dim newSecs As String = ""
             Dim newStrand As String = ""
+
+            If String.IsNullOrWhiteSpace(newSecs) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
 
             If cbdepartment.SelectedIndex <> -1 Then
                 newDept = cbdepartment.GetItemText(cbdepartment.SelectedItem)

@@ -38,6 +38,12 @@ Public Class Author
 
         Dim con As New MySqlConnection(connectionString)
         Dim author As String = txtauthor.Text.Trim
+
+        If String.IsNullOrWhiteSpace(author) Then
+            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Try
             con.Open()
 
@@ -74,6 +80,12 @@ Public Class Author
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
             Dim author As String = txtauthor.Text.Trim
+
+            If String.IsNullOrWhiteSpace(author) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+
 
             Try
                 con.Open()

@@ -22,6 +22,7 @@ Partial Class login
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        components = New ComponentModel.Container()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -37,6 +38,7 @@ Partial Class login
         Label3 = New Label()
         CheckBox1 = New CheckBox()
         Panel_btnlogin = New Panel()
+
         Panel1.SuspendLayout()
         Panel_btnlogin.SuspendLayout()
         SuspendLayout()
@@ -198,4 +200,5 @@ Partial Class login
     Friend WithEvents Label3 As Label
     Friend WithEvents CheckBox1 As CheckBox
     Friend WithEvents Panel_btnlogin As Panel
+    Friend WithEvents logintimer As Timer
 End Class
