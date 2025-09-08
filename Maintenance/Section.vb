@@ -20,9 +20,11 @@ Public Class Section
         cbdeptss()
 
 
-        cbstrand.Visible = False
-        cbgrade.Enabled = False
-        txtsection.Enabled = False
+        'cbstrand.Visible = False
+        'cbgrade.Enabled = False
+        'txtsection.Enabled = False
+
+        clearlahat()
 
     End Sub
 
@@ -236,7 +238,7 @@ Public Class Section
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
-                Dim filter As String = String.Format("Section LIKE '*{0}*' OR Department LIKE '*{0}*'", txtsearch.Text.Trim())
+                Dim filter As String = String.Format("Section LIKE '*{0}*' OR Department LIKE '*{0}*' OR Strand LIKE '*{0}*'", txtsearch.Text.Trim())
                 dt.DefaultView.RowFilter = filter
             Else
                 dt.DefaultView.RowFilter = ""

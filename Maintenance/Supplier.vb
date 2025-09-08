@@ -70,42 +70,47 @@ Public Class Supplier
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
+        If DataGridView1.SelectedRows.Count > 0 Then
 
-        Dim con As New MySqlConnection(connectionString)
 
-        Dim supp As String = txtsupplier.Text.Trim
-        Dim address As String = txtaddress.Text.Trim
-        Dim contact As String = txtcontact.Text.Trim
 
-        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-        Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim con As New MySqlConnection(connectionString)
 
-        Try
-            con.Open()
-            Dim com As New MySqlCommand("UPDATE `supplier_tbl` SET `SupplierName`= @supplier,`Address`= @address,`ContactNumber`= @contact  WHERE `ID` = @id", con)
+            Dim supp As String = txtsupplier.Text.Trim
+            Dim address As String = txtaddress.Text.Trim
+            Dim contact As String = txtcontact.Text.Trim
 
-            com.Parameters.AddWithValue("@supplier", supp)
-            com.Parameters.AddWithValue("@address", address)
-            com.Parameters.AddWithValue("@contact", contact)
-            com.Parameters.AddWithValue("@id", ID)
-            com.ExecuteNonQuery()
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            For Each form In Application.OpenForms
-                If TypeOf form Is Acquisition Then
-                    Dim acq = DirectCast(form, Acquisition)
-                    acq.cbsupplierr()
-                End If
-            Next
+            Try
+                con.Open()
+                Dim com As New MySqlCommand("UPDATE `supplier_tbl` SET `SupplierName`= @supplier,`Address`= @address,`ContactNumber`= @contact  WHERE `ID` = @id", con)
 
-            MsgBox("Updated successfully", vbInformation)
-            Supplier_Load(sender, e)
+                com.Parameters.AddWithValue("@supplier", supp)
+                com.Parameters.AddWithValue("@address", address)
+                com.Parameters.AddWithValue("@contact", contact)
+                com.Parameters.AddWithValue("@id", ID)
+                com.ExecuteNonQuery()
 
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            clear()
-        End Try
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Acquisition Then
+                        Dim acq = DirectCast(form, Acquisition)
+                        acq.cbsupplierr()
+                    End If
+                Next
 
+                MsgBox("Updated successfully", vbInformation)
+                Supplier_Load(sender, e)
+
+            Catch ex As Exception
+                MsgBox(ex.Message, vbCritical)
+            Finally
+                clear()
+            End Try
+        Else
+            MsgBox("Please select a row before edit.", vbExclamation)
+        End If
 
     End Sub
 

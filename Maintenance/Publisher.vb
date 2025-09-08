@@ -76,43 +76,47 @@ Public Class Publisher
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        If DataGridView1.SelectedRows.Count > 0 Then
 
-        Dim pub As String = txtpublisher.Text.Trim
-        Dim address As String = txtaddress.Text.Trim
-        Dim contact As String = txtcontact.Text.Trim
+            Dim con As New MySqlConnection(connectionString)
 
-        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-        Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim pub As String = txtpublisher.Text.Trim
+            Dim address As String = txtaddress.Text.Trim
+            Dim contact As String = txtcontact.Text.Trim
 
-        Try
-            con.Open()
-            Dim com As New MySqlCommand("UPDATE `publisher_tbl` SET `PublisherName`= @publisher,`Address`= @address,`ContactNumber`= @contact  WHERE `ID` = @id", con)
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            com.Parameters.AddWithValue("@publisher", pub)
-            com.Parameters.AddWithValue("@address", address)
-            com.Parameters.AddWithValue("@contact", contact)
-            com.Parameters.AddWithValue("@id", ID)
-            com.ExecuteNonQuery()
+            Try
+                con.Open()
+                Dim com As New MySqlCommand("UPDATE `publisher_tbl` SET `PublisherName`= @publisher,`Address`= @address,`ContactNumber`= @contact  WHERE `ID` = @id", con)
 
-            For Each form In Application.OpenForms
+                com.Parameters.AddWithValue("@publisher", pub)
+                com.Parameters.AddWithValue("@address", address)
+                com.Parameters.AddWithValue("@contact", contact)
+                com.Parameters.AddWithValue("@id", ID)
+                com.ExecuteNonQuery()
 
-                If TypeOf form Is Book Then
-                    Dim book = DirectCast(form, Book)
-                    book.cbpublisherr()
+                For Each form In Application.OpenForms
 
-                End If
-            Next
+                    If TypeOf form Is Book Then
+                        Dim book = DirectCast(form, Book)
+                        book.cbpublisherr()
 
-            MsgBox("Updated successfully", vbInformation)
-            Publisher_Load(sender, e)
+                    End If
+                Next
 
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            clear()
-        End Try
+                MsgBox("Updated successfully", vbInformation)
+                Publisher_Load(sender, e)
 
+            Catch ex As Exception
+                MsgBox(ex.Message, vbCritical)
+            Finally
+                clear()
+            End Try
+        Else
+            MsgBox("Please select a row to edit.", vbExclamation)
+        End If
     End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click

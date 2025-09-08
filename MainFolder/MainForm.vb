@@ -268,7 +268,9 @@
     End Sub
 
     Private Sub RegisterToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RegisterToolStripMenuItem.Click
+
         Panel_dash.Controls.Clear()
+        Borrower.strandlocation()
 
         With Borrower
             .TopLevel = False

@@ -28,10 +28,10 @@ Public Class Borrower
         cbdepts()
         cbstrandd()
 
-        cbsection.Visible = True
-        lblsection.Visible = True
-        cbstrand.Visible = True
-        lblstrand.Visible = True
+        'cbsection.Visible = True
+        'lblsection.Visible = True
+        'cbstrand.Visible = True
+        'lblstrand.Visible = True
 
         'cbdepartment.Enabled = False
 
@@ -45,9 +45,20 @@ Public Class Borrower
         'rbnone.Enabled = False
 
         ClearFields()
+        strandlocation()
 
     End Sub
 
+    Public Sub strandlocation()
+
+        cbstrand.Visible = True
+        cbstrand.Location = New Point(942, 285)
+
+
+        lblstrand.Visible = True
+        lblstrand.Location = New Point(942, 266)
+
+    End Sub
 
     Public Sub cbgradee()
         Dim con As New MySqlConnection(connectionString)
