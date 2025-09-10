@@ -108,13 +108,13 @@ Partial Class Author
         txtauthor.Font = New Font("Sorts Mill Goudy", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtauthor.ForeColor = Color.Black
         txtauthor.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtauthor.Location = New Point(41, 48)
+        txtauthor.Location = New Point(36, 48)
         txtauthor.Margin = New Padding(3, 4, 3, 4)
         txtauthor.Name = "txtauthor"
         txtauthor.PlaceholderText = ""
         txtauthor.SelectedText = ""
         txtauthor.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtauthor.Size = New Size(342, 33)
+        txtauthor.Size = New Size(347, 33)
         txtauthor.TabIndex = 3
         ' 
         ' btndelete

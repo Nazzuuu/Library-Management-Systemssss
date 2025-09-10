@@ -129,24 +129,43 @@ Public Class Grade
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim gradeLevel As String = selectedRow.Cells("Grade").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim sectionCom As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl` WHERE GradeLevel = @grade", con)
+                    sectionCom.Parameters.AddWithValue("@grade", gradeLevel)
+                    Dim sectionCount As Integer = CInt(sectionCom.ExecuteScalar())
+
+                    If sectionCount > 0 Then
+                        MessageBox.Show("Cannot delete this grade. It is currently assigned to " & sectionCount & " section(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
+                    Dim borrowerCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE Grade = @grade", con)
+                    borrowerCom.Parameters.AddWithValue("@grade", gradeLevel)
+                    Dim borrowerCount As Integer = CInt(borrowerCom.ExecuteScalar())
+
+                    If borrowerCount > 0 Then
+                        MessageBox.Show("Cannot delete this grade. It is currently assigned to " & borrowerCount & " borrower(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `grade_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
-                    For Each form In Application.OpenForms
-                        If TypeOf form Is Borrower Then
-                            Dim borrower = DirectCast(form, Borrower)
-                            borrower.cbgradee()
-                        End If
-                    Next
 
                     For Each form In Application.OpenForms
+                        If TypeOf form Is Borrower Then
+                            DirectCast(form, Borrower).cbgradee()
+                        End If
                         If TypeOf form Is Section Then
-                            Dim gradesucakes = DirectCast(form, Section)
-                            gradesucakes.cbgradesu()
+                            DirectCast(form, Section).cbgradesu()
                         End If
                     Next
 
@@ -154,24 +173,19 @@ Public Class Grade
                     Grade_Load(sender, e)
                     txtgrade.Clear()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `grade_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `grade_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 End Try
             End If
-
         End If
-
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick

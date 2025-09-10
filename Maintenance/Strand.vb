@@ -127,24 +127,33 @@ Public Class Strand
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim strandName As String = selectedRow.Cells("Strand").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim sectionCom As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl` WHERE Strand = @strand", con)
+                    sectionCom.Parameters.AddWithValue("@strand", strandName)
+                    Dim sectionCount As Integer = CInt(sectionCom.ExecuteScalar())
+
+                    If sectionCount > 0 Then
+                        MessageBox.Show("Cannot delete this strand. It is assigned to " & sectionCount & " section(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `strand_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
-                    For Each form In Application.OpenForms
-                        If TypeOf form Is Borrower Then
-                            Dim borrower = DirectCast(form, Borrower)
-                            borrower.cbstrandd()
-                        End If
-                    Next
 
                     For Each form In Application.OpenForms
+                        If TypeOf form Is Borrower Then
+                            DirectCast(form, Borrower).cbstrandd()
+                        End If
                         If TypeOf form Is Section Then
-                            Dim strnd = DirectCast(form, Section)
-                            strnd.cbstrandsu()
+                            DirectCast(form, Section).cbstrandsu()
                         End If
                     Next
 
@@ -152,24 +161,19 @@ Public Class Strand
                     Strand_Load(sender, e)
                     txtstrand.Clear()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `strand_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 End Try
             End If
-
         End If
-
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick

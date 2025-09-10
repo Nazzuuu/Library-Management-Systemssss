@@ -45,6 +45,8 @@ Public Class Language
             For Each form In Application.OpenForms
                 If TypeOf form Is Book Then
                     Dim book = DirectCast(form, Book)
+
+                    book.cblang()
                 End If
             Next
 
@@ -85,6 +87,8 @@ Public Class Language
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then
                         Dim book = DirectCast(form, Book)
+
+                        book.cblang()
                     End If
                 Next
 
@@ -110,9 +114,22 @@ Public Class Language
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim languageName As String = selectedRow.Cells("Language").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim bookCom As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE Language = @language", con)
+                    bookCom.Parameters.AddWithValue("@language", languageName)
+                    Dim bookCount As Integer = CInt(bookCom.ExecuteScalar())
+
+                    If bookCount > 0 Then
+                        MessageBox.Show("Cannot delete this language. It is assigned to " & bookCount & " book(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `language_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
@@ -120,6 +137,8 @@ Public Class Language
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then
                             Dim book = DirectCast(form, Book)
+
+                            book.cblang()
                         End If
                     Next
 
@@ -127,24 +146,19 @@ Public Class Language
                     Language_Load(sender, e)
                     txtlanguage.Clear()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `language_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `language_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 End Try
             End If
-
         End If
-
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick

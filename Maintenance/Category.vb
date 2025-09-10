@@ -111,9 +111,22 @@ Public Class Category
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim categoryName As String = selectedRow.Cells("Category").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim bookCom As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE Category = @category", con)
+                    bookCom.Parameters.AddWithValue("@category", categoryName)
+                    Dim bookCount As Integer = CInt(bookCom.ExecuteScalar())
+
+                    If bookCount > 0 Then
+                        MessageBox.Show("Cannot delete this category. It is assigned to " & bookCount & " book(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `category_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
@@ -125,28 +138,23 @@ Public Class Category
                         End If
                     Next
 
-                    MsgBox("Language deleted successfully.", vbInformation)
+                    MsgBox("Category deleted successfully.", vbInformation)
                     Category_Load(sender, e)
                     txtcategory.Clear()
-
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `category_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `category_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 End Try
             End If
-
         End If
-
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick

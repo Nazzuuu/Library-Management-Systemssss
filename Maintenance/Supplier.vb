@@ -135,9 +135,21 @@ Public Class Supplier
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim supplierName As String = selectedRow.Cells("SupplierName").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim acquisitionCom As New MySqlCommand("SELECT COUNT(*) FROM `acquisition_tbl` WHERE Supplier = @supplier", con)
+                    acquisitionCom.Parameters.AddWithValue("@supplier", supplierName)
+                    Dim acquisitionCount As Integer = CInt(acquisitionCom.ExecuteScalar())
+
+                    If acquisitionCount > 0 Then
+                        MessageBox.Show("Cannot delete this supplier. They are assigned to " & acquisitionCount & " acquisition(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
                     Dim delete As New MySqlCommand("DELETE FROM `supplier_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
@@ -153,22 +165,18 @@ Public Class Supplier
                     Supplier_Load(sender, e)
                     clear()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `supplier_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 End Try
             End If
-
         End If
     End Sub
 

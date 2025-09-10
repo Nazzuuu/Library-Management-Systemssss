@@ -140,19 +140,30 @@ Public Class Publisher
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim publisherName As String = selectedRow.Cells("PublisherName").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim bookCom As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE Publisher = @publisher", con)
+                    bookCom.Parameters.AddWithValue("@publisher", publisherName)
+                    Dim bookCount As Integer = CInt(bookCom.ExecuteScalar())
+
+                    If bookCount > 0 Then
+                        MessageBox.Show("Cannot delete this publisher. They are assigned to " & bookCount & " book(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `publisher_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
                     For Each form In Application.OpenForms
-
                         If TypeOf form Is Book Then
                             Dim book = DirectCast(form, Book)
                             book.cbpublisherr()
-
                         End If
                     Next
 
@@ -160,24 +171,19 @@ Public Class Publisher
                     Publisher_Load(sender, e)
                     clear()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `publisher_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 End Try
             End If
-
         End If
-
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick

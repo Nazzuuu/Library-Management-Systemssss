@@ -111,9 +111,22 @@ Public Class Genre
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim genreName As String = selectedRow.Cells("Genre").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim bookCom As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE Genre = @genre", con)
+                    bookCom.Parameters.AddWithValue("@genre", genreName)
+                    Dim bookCount As Integer = CInt(bookCom.ExecuteScalar())
+
+                    If bookCount > 0 Then
+                        MessageBox.Show("Cannot delete this genre. It is assigned to " & bookCount & " book(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `genre_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
@@ -129,24 +142,21 @@ Public Class Genre
                     Genre_Load(sender, e)
                     txtgenre.Clear()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `genre_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 End Try
             End If
-
         End If
     End Sub
+
 
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged

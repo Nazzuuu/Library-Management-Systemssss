@@ -123,9 +123,22 @@ Public Class Author
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim authorName As String = selectedRow.Cells("AuthorName").Value.ToString().Trim()
 
                 Try
                     con.Open()
+
+
+                    Dim bookCom As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE Author = @author", con)
+                    bookCom.Parameters.AddWithValue("@author", authorName)
+                    Dim bookCount As Integer = CInt(bookCom.ExecuteScalar())
+
+                    If bookCount > 0 Then
+                        MessageBox.Show("Cannot delete this author. They are assigned to " & bookCount & " book(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
+
                     Dim delete As New MySqlCommand("DELETE FROM `author_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
@@ -142,15 +155,12 @@ Public Class Author
                     Author_Load(sender, e)
                     txtauthor.Clear()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `author_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception

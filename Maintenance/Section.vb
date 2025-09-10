@@ -28,6 +28,7 @@ Public Class Section
 
     End Sub
 
+
     Private Sub Section_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
@@ -53,6 +54,10 @@ Public Class Section
         If dept = "Junior High School" Then
             secs = txtsection.Text.Trim
             strand = ""
+            If String.IsNullOrWhiteSpace(secs) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
         ElseIf dept = "Senior High School" Then
             secs = ""
             If cbstrand.SelectedIndex <> -1 Then
@@ -60,10 +65,12 @@ Public Class Section
             End If
         End If
 
-        If String.IsNullOrWhiteSpace(secs) Then
-            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+
+        If duplication(dept, grade, secs, strand) Then
+            MsgBox("The entry already exists in the database. Please use an another Section or Strand name.", vbExclamation, "Duplication Error")
             Exit Sub
         End If
+
 
         Try
             con.Open()
@@ -92,6 +99,40 @@ Public Class Section
 
     End Sub
 
+
+    Private Function duplication(ByVal dept As String, ByVal grade As String, ByVal section As String, ByVal strand As String) As Boolean
+        Dim con As New MySqlConnection(connectionString)
+        Dim query As String = ""
+        Dim count As Integer = 0
+
+        If dept = "Junior High School" Then
+            query = "SELECT COUNT(*) FROM `section_tbl` WHERE `Department` = @dept AND `GradeLevel` = @grade AND `Section` = @section"
+        ElseIf dept = "Senior High School" Then
+            query = "SELECT COUNT(*) FROM `section_tbl` WHERE `Department` = @dept AND `GradeLevel` = @grade AND `Strand` = @strand"
+        End If
+
+        Try
+            con.Open()
+            Dim com As New MySqlCommand(query, con)
+            com.Parameters.AddWithValue("@dept", dept)
+            com.Parameters.AddWithValue("@grade", grade)
+
+            If dept = "Junior High School" Then
+                com.Parameters.AddWithValue("@section", section)
+            ElseIf dept = "Senior High School" Then
+                com.Parameters.AddWithValue("@strand", strand)
+            End If
+
+            count = CInt(com.ExecuteScalar())
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical)
+            Return True
+        End Try
+
+        Return count > 0
+    End Function
+
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then
@@ -105,11 +146,6 @@ Public Class Section
             Dim newSecs As String = ""
             Dim newStrand As String = ""
 
-            If String.IsNullOrWhiteSpace(newSecs) Then
-                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
-                Exit Sub
-            End If
-
             If cbdepartment.SelectedIndex <> -1 Then
                 newDept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
             End If
@@ -121,11 +157,21 @@ Public Class Section
             If newDept = "Junior High School" Then
                 newSecs = txtsection.Text.Trim
                 newStrand = ""
+                If String.IsNullOrWhiteSpace(newSecs) Then
+                    MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                    Exit Sub
+                End If
             ElseIf newDept = "Senior High School" Then
                 newSecs = ""
                 If cbstrand.SelectedIndex <> -1 Then
                     newStrand = cbstrand.GetItemText(cbstrand.SelectedItem)
                 End If
+            End If
+
+
+            If duplication(newDept, newGrade, newSecs, newStrand, ID) Then
+                MsgBox("The updated entry already exists in the database. Please use an another Section or Strand name.", vbExclamation, "Duplication Error")
+                Exit Sub
             End If
 
             Try
@@ -152,10 +198,43 @@ Public Class Section
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
+        End If
+    End Sub
 
+
+    Private Function duplication(ByVal dept As String, ByVal grade As String, ByVal section As String, ByVal strand As String, ByVal currentID As Integer) As Boolean
+        Dim con As New MySqlConnection(connectionString)
+        Dim query As String = ""
+        Dim count As Integer = 0
+
+        If dept = "Junior High School" Then
+            query = "SELECT COUNT(*) FROM `section_tbl` WHERE `Department` = @dept AND `GradeLevel` = @grade AND `Section` = @section AND `ID` <> @currentID"
+        ElseIf dept = "Senior High School" Then
+            query = "SELECT COUNT(*) FROM `section_tbl` WHERE `Department` = @dept AND `GradeLevel` = @grade AND `Strand` = @strand AND `ID` <> @currentID"
         End If
 
-    End Sub
+        Try
+            con.Open()
+            Dim com As New MySqlCommand(query, con)
+            com.Parameters.AddWithValue("@dept", dept)
+            com.Parameters.AddWithValue("@grade", grade)
+            com.Parameters.AddWithValue("@currentID", currentID)
+
+            If dept = "Junior High School" Then
+                com.Parameters.AddWithValue("@section", section)
+            ElseIf dept = "Senior High School" Then
+                com.Parameters.AddWithValue("@strand", strand)
+            End If
+
+            count = CInt(com.ExecuteScalar())
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical)
+            Return True
+        End Try
+
+        Return count > 0
+    End Function
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
@@ -168,19 +247,39 @@ Public Class Section
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim sectionName As String = selectedRow.Cells("Section").Value.ToString().Trim()
+                Dim dept As String = selectedRow.Cells("Department").Value.ToString().Trim()
+                Dim grade As String = selectedRow.Cells("GradeLevel").Value.ToString().Trim()
+                Dim section As String = ""
+                Dim strand As String = ""
+
+                If dept = "Junior High School" Then
+                    section = selectedRow.Cells("Section").Value.ToString().Trim()
+                ElseIf dept = "Senior High School" Then
+                    strand = selectedRow.Cells("Strand").Value.ToString().Trim()
+                End If
 
                 Try
                     con.Open()
 
+                    Dim borrowerQuery As New MySqlCommand("", con)
 
-                    Dim Borrower As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE Section = @section", con)
-                    Borrower.Parameters.AddWithValue("@section", sectionName)
-                    Dim borrowerCount As Integer = CInt(Borrower.ExecuteScalar())
+                    If dept = "Junior High School" Then
+                        borrowerQuery.CommandText = "SELECT COUNT(*) FROM `borrower_tbl` WHERE Department = @dept AND Grade = @grade AND Section = @section"
+                        borrowerQuery.Parameters.AddWithValue("@dept", dept)
+                        borrowerQuery.Parameters.AddWithValue("@grade", grade)
+                        borrowerQuery.Parameters.AddWithValue("@section", section)
 
+                    ElseIf dept = "Senior High School" Then
+                        borrowerQuery.CommandText = "SELECT COUNT(*) FROM `borrower_tbl` WHERE Department = @dept AND Grade = @grade AND Strand = @strand"
+                        borrowerQuery.Parameters.AddWithValue("@dept", dept)
+                        borrowerQuery.Parameters.AddWithValue("@grade", grade)
+                        borrowerQuery.Parameters.AddWithValue("@strand", strand)
+                    End If
+
+                    Dim borrowerCount As Integer = CInt(borrowerQuery.ExecuteScalar())
 
                     If borrowerCount > 0 Then
-                        MessageBox.Show("Cannot delete this section. It is already assigned to a borrower.", "information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        MessageBox.Show("Cannot delete this section/strand. It is currently assigned to " & borrowerCount & " borrower(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                         Return
                     End If
 

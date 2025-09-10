@@ -141,13 +141,22 @@ Public Class Department
                     con.Open()
 
 
-                    Dim Coms As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl` WHERE Department = @department", con)
-                    Coms.Parameters.AddWithValue("@department", departmentName)
-                    Dim count As Integer = CInt(Coms.ExecuteScalar())
+                    Dim sectionCom As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl` WHERE Department = @department", con)
+                    sectionCom.Parameters.AddWithValue("@department", departmentName)
+                    Dim sectionCount As Integer = CInt(sectionCom.ExecuteScalar())
+
+                    If sectionCount > 0 Then
+                        MessageBox.Show("Cannot delete this department. It is already assigned to a section. You must delete its sections first.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
 
 
-                    If count > 0 Then
-                        MessageBox.Show("Cannot delete this department. It is already assigned to a grade level.", "information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Dim borrowerCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE Department = @department", con)
+                    borrowerCom.Parameters.AddWithValue("@department", departmentName)
+                    Dim borrowerCount As Integer = CInt(borrowerCom.ExecuteScalar())
+
+                    If borrowerCount > 0 Then
+                        MessageBox.Show("Cannot delete this department. It is assigned to " & borrowerCount & " borrower(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                         Return
                     End If
 
