@@ -53,7 +53,7 @@ Public Class Users_Staffs
 
         Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(email) Then
-            MsgBox("Invalid email format. Please enter a valid email address with a .com domain (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
+            MsgBox("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
             Exit Sub
         End If
 
@@ -158,7 +158,7 @@ Public Class Users_Staffs
 
         Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(email) Then
-            MsgBox("Invalid email format. Please enter a valid email address with a .com domain (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
+            MsgBox("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
             Exit Sub
         End If
 
