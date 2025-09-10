@@ -18,12 +18,6 @@ Public Class Section
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
         cbdeptss()
-
-
-        'cbstrand.Visible = False
-        'cbgrade.Enabled = False
-        'txtsection.Enabled = False
-
         clearlahat()
 
     End Sub

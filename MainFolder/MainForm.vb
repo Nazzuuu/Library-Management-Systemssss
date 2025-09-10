@@ -60,7 +60,7 @@
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
         Panel_dash.Controls.Remove(Acquisition)
-
+        Panel_dash.Controls.Remove(Accession)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -92,7 +92,7 @@
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
         Panel_dash.Controls.Remove(Acquisition)
-
+        Panel_dash.Controls.Remove(Accession)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -117,7 +117,7 @@
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
         Panel_dash.Controls.Remove(Acquisition)
-
+        Panel_dash.Controls.Remove(Accession)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -142,6 +142,7 @@
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users_Staffs)
         Panel_dash.Controls.Remove(Acquisition)
+        Panel_dash.Controls.Remove(Accession)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -320,5 +321,16 @@
 
     End Sub
 
+    Private Sub AccessionToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AccessionToolStripMenuItem.Click
 
+        Panel_dash.Controls.Clear()
+
+        With Accession
+            .TopMost = True
+            .TopLevel = False
+            .BringToFront()
+            Panel_dash.Controls.Add(Accession)
+            .Show()
+        End With
+    End Sub
 End Class
