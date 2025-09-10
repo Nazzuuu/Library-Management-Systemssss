@@ -93,7 +93,8 @@ Partial Class Department
         txtdepartment.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtdepartment.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtdepartment.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtdepartment.Font = New Font("Sorts Mill Goudy", 9.749999F)
+        txtdepartment.Font = New Font("Microsoft Sans Serif", 9F)
+        txtdepartment.ForeColor = Color.Black
         txtdepartment.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtdepartment.Location = New Point(36, 55)
         txtdepartment.Margin = New Padding(3, 4, 3, 4)
@@ -187,6 +188,7 @@ Partial Class Department
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(27, 20)
         txtsearch.Margin = New Padding(4)

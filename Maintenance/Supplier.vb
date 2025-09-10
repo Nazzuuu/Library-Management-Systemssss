@@ -23,7 +23,7 @@ Public Class Supplier
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
-
+        clear()
     End Sub
 
     Public Sub clear()

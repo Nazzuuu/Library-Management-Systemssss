@@ -1,5 +1,6 @@
 ﻿Imports System.Net
 Imports MySql.Data.MySqlClient
+Imports Windows.Win32.System
 
 Public Class Author
     Private Sub Author_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -31,8 +32,11 @@ Public Class Author
     Private Sub Author_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+        txtauthor.Text = ""
 
     End Sub
+
+
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
@@ -47,10 +51,21 @@ Public Class Author
         Try
             con.Open()
 
+            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl` WHERE `AuthorName` = @author", con)
+            comsu.Parameters.AddWithValue("@author", author)
+            Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar())
+
+            If count > 0 Then
+                MsgBox("This author already exists.", vbExclamation, "Duplication is not allowed.")
+                Exit Sub
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `author_tbl`(`AuthorName`) VALUES (@author)", con)
             com.Parameters.AddWithValue("@author", author)
 
             com.ExecuteNonQuery()
+
+
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Book Then
@@ -89,6 +104,16 @@ Public Class Author
 
             Try
                 con.Open()
+
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl` WHERE `AuthorName` = @author", con)
+                comsu.Parameters.AddWithValue("@author", author)
+                Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar())
+
+                If count > 0 Then
+                    MsgBox("This author already exists.", vbExclamation, "Duplication is not allowed.")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("UPDATE `author_tbl` SET `AuthorName`= @author WHERE  `ID` = @id", con)
                 com.Parameters.AddWithValue("@author", author)
                 com.Parameters.AddWithValue("@id", ID)

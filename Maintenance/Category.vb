@@ -23,7 +23,7 @@ Public Class Category
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
-
+        txtcategory.Text = ""
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
@@ -38,6 +38,16 @@ Public Class Category
 
         Try
             con.Open()
+
+            Dim comss As New MySqlCommand("SELECT COUNT(*) FROM `category_tbl` WHERE `Category` = @category", con)
+            comss.Parameters.AddWithValue("@category", category)
+            Dim count As Integer = Convert.ToInt32(comss.ExecuteScalar)
+
+            If count > 0 Then
+                MsgBox("This category already exists.", vbExclamation, "Duplication is not allowed.")
+                Exit Sub
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `category_tbl`(`Category`) VALUES (@category) ", con)
             com.Parameters.AddWithValue("@category", category)
             com.ExecuteNonQuery()
@@ -77,6 +87,16 @@ Public Class Category
 
             Try
                 con.Open()
+
+                Dim comss As New MySqlCommand("SELECT COUNT(*) FROM `category_tbl` WHERE `Category` = @category", con)
+                comss.Parameters.AddWithValue("@category", cat)
+                Dim count As Integer = Convert.ToInt32(comss.ExecuteScalar)
+
+                If count > 0 Then
+                    MsgBox("This category already exists.", vbExclamation, "Duplication is not allowed.")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("UPDATE `category_tbl` SET `Category`= @category WHERE  `ID` = @id", con)
                 com.Parameters.AddWithValue("@category", cat)
                 com.Parameters.AddWithValue("@id", ID)

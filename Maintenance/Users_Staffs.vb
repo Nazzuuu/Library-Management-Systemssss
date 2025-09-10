@@ -51,9 +51,9 @@ Public Class Users_Staffs
             Exit Sub
         End If
 
-        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(email) Then
-            MsgBox("Invalid email format. Please enter a valid email address.", vbExclamation, "Invalid Email")
+            MsgBox("Invalid email format. Please enter a valid email address with a .com domain (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
             Exit Sub
         End If
 
@@ -156,9 +156,9 @@ Public Class Users_Staffs
             Exit Sub
         End If
 
-        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(email) Then
-            MsgBox("Invalid email format. Please enter a valid email address.", vbExclamation, "Invalid Email")
+            MsgBox("Invalid email format. Please enter a valid email address with a .com domain (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
             Exit Sub
         End If
 
@@ -454,7 +454,7 @@ Public Class Users_Staffs
         End If
 
 
-        Dim emailRegex As New Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
 
 
         If emailRegex.IsMatch(email) Then
@@ -480,6 +480,10 @@ Public Class Users_Staffs
             txtmname.Text = ""
         End If
 
+    End Sub
+
+    Private Sub Users_Staffs_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+        clearfields()
     End Sub
 
     ''pagod na ako mga bes''

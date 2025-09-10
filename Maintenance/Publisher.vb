@@ -28,7 +28,7 @@ Public Class Publisher
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
-
+        clear()
     End Sub
 
     Public Sub clear()

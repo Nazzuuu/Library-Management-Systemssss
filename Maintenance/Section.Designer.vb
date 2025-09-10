@@ -48,6 +48,7 @@ Partial Class Section
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
+        Label1 = New Label()
         rbshs = New RadioButton()
         rbjhs = New RadioButton()
         btnclear = New Guna.UI2.WinForms.Guna2Button()
@@ -65,7 +66,6 @@ Partial Class Section
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
-        Label1 = New Label()
         Guna2GradientPanel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -96,6 +96,17 @@ Partial Class Section
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         Guna2GradientPanel1.Size = New Size(595, 192)
         Guna2GradientPanel1.TabIndex = 22
+        ' 
+        ' Label1
+        ' 
+        Label1.AutoSize = True
+        Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label1.Location = New Point(37, 16)
+        Label1.Name = "Label1"
+        Label1.Size = New Size(44, 16)
+        Label1.TabIndex = 70
+        Label1.Text = "Filter:"
         ' 
         ' rbshs
         ' 
@@ -165,7 +176,7 @@ Partial Class Section
         cbdepartment.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbdepartment.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbdepartment.Font = New Font("Segoe UI", 10F)
-        cbdepartment.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbdepartment.ForeColor = Color.Black
         cbdepartment.ItemHeight = 30
         cbdepartment.Location = New Point(36, 82)
         cbdepartment.Name = "cbdepartment"
@@ -266,7 +277,7 @@ Partial Class Section
         cbgrade.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgrade.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgrade.Font = New Font("Segoe UI", 10F)
-        cbgrade.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbgrade.ForeColor = Color.Black
         cbgrade.ItemHeight = 30
         cbgrade.Location = New Point(202, 82)
         cbgrade.Name = "cbgrade"
@@ -285,7 +296,8 @@ Partial Class Section
         txtsection.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsection.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsection.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsection.Font = New Font("Sorts Mill Goudy", 9.749999F)
+        txtsection.Font = New Font("Microsoft Sans Serif", 9F)
+        txtsection.ForeColor = Color.Black
         txtsection.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsection.Location = New Point(368, 82)
         txtsection.Margin = New Padding(3, 4, 3, 4)
@@ -338,6 +350,7 @@ Partial Class Section
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(27, 20)
         txtsearch.Margin = New Padding(4)
@@ -396,17 +409,6 @@ Partial Class Section
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.Size = New Size(594, 191)
         DataGridView1.TabIndex = 23
-        ' 
-        ' Label1
-        ' 
-        Label1.AutoSize = True
-        Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(37, 16)
-        Label1.Name = "Label1"
-        Label1.Size = New Size(44, 16)
-        Label1.TabIndex = 70
-        Label1.Text = "Filter:"
         ' 
         ' Section
         ' 

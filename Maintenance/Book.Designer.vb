@@ -209,6 +209,7 @@ Partial Class Book
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
         txtsearch.Margin = New Padding(4)
@@ -379,6 +380,7 @@ Partial Class Book
         txtbooktitle.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Font = New Font("Segoe UI", 9F)
+        txtbooktitle.ForeColor = Color.Black
         txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Location = New Point(25, 169)
         txtbooktitle.Name = "txtbooktitle"
@@ -411,6 +413,7 @@ Partial Class Book
         txtisbn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Font = New Font("Segoe UI", 9F)
+        txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Location = New Point(25, 95)
         txtisbn.Name = "txtisbn"
@@ -431,7 +434,7 @@ Partial Class Book
         cblanguage.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cblanguage.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cblanguage.Font = New Font("Segoe UI", 10F)
-        cblanguage.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cblanguage.ForeColor = Color.Black
         cblanguage.ItemHeight = 30
         cblanguage.Location = New Point(1015, 95)
         cblanguage.Name = "cblanguage"
@@ -450,7 +453,7 @@ Partial Class Book
         cbpublisher.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbpublisher.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbpublisher.Font = New Font("Segoe UI", 10F)
-        cbpublisher.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbpublisher.ForeColor = Color.Black
         cbpublisher.ItemHeight = 30
         cbpublisher.Location = New Point(682, 169)
         cbpublisher.Name = "cbpublisher"
@@ -469,7 +472,7 @@ Partial Class Book
         cbcategory.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbcategory.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbcategory.Font = New Font("Segoe UI", 10F)
-        cbcategory.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbcategory.ForeColor = Color.Black
         cbcategory.ItemHeight = 30
         cbcategory.Location = New Point(682, 95)
         cbcategory.Name = "cbcategory"
@@ -488,7 +491,7 @@ Partial Class Book
         cbgenre.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgenre.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgenre.Font = New Font("Segoe UI", 10F)
-        cbgenre.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbgenre.ForeColor = Color.Black
         cbgenre.ItemHeight = 30
         cbgenre.Location = New Point(363, 164)
         cbgenre.Name = "cbgenre"
@@ -507,7 +510,7 @@ Partial Class Book
         cbauthor.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbauthor.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbauthor.Font = New Font("Segoe UI", 10F)
-        cbauthor.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbauthor.ForeColor = Color.Black
         cbauthor.ItemHeight = 30
         cbauthor.Location = New Point(363, 95)
         cbauthor.Name = "cbauthor"

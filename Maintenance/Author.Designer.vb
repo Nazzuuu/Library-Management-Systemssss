@@ -105,11 +105,11 @@ Partial Class Author
         txtauthor.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtauthor.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtauthor.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtauthor.Font = New Font("Sorts Mill Goudy", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        txtauthor.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtauthor.ForeColor = Color.Black
         txtauthor.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtauthor.Location = New Point(36, 48)
-        txtauthor.Margin = New Padding(3, 4, 3, 4)
+        txtauthor.Margin = New Padding(3, 5, 3, 5)
         txtauthor.Name = "txtauthor"
         txtauthor.PlaceholderText = ""
         txtauthor.SelectedText = ""
@@ -238,6 +238,7 @@ Partial Class Author
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(30, 13)
         txtsearch.Margin = New Padding(4)

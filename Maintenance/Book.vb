@@ -383,4 +383,8 @@ Public Class Book
         End If
 
     End Sub
+
+    Private Sub Book_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+        clear()
+    End Sub
 End Class

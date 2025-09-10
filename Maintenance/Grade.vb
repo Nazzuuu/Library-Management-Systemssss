@@ -24,7 +24,7 @@ Public Class Grade
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
-
+        txtgrade.Text = ""
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
@@ -34,6 +34,19 @@ Public Class Grade
 
         If String.IsNullOrWhiteSpace(grds) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
+        Dim grade As Integer
+        If Not Integer.TryParse(grds, grade) Then
+            MsgBox("Please enter a valid number.", vbExclamation, "Invalid Input")
+            txtgrade.Clear()
+            Exit Sub
+        End If
+
+        If grade < 7 OrElse grade > 12 Then
+            MsgBox("Please enter a grade between 7 and 12.", vbExclamation, "Invalid Grade")
+            txtgrade.Clear()
             Exit Sub
         End If
 
@@ -82,6 +95,17 @@ Public Class Grade
 
             If String.IsNullOrWhiteSpace(grd) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+
+            Dim grade As Integer
+            If Not Integer.TryParse(grd, grade) Then
+                MsgBox("Please enter a valid number.", vbExclamation, "Invalid Input")
+                Exit Sub
+            End If
+
+            If grade < 7 OrElse grade > 12 Then
+                MsgBox("Please enter a grade between 7 and 12.", vbExclamation, "Invalid Grade")
                 Exit Sub
             End If
 

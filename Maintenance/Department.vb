@@ -1,4 +1,5 @@
-﻿Imports System.Security
+﻿Imports System.Runtime.Intrinsics.Arm
+Imports System.Security
 Imports MySql.Data.MySqlClient
 
 Public Class Department
@@ -24,10 +25,11 @@ Public Class Department
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
-
+        txtdepartment.Text = ""
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
+
         Dim con As New MySqlConnection(connectionString)
         Dim deps As String = txtdepartment.Text.Trim()
 
@@ -37,8 +39,19 @@ Public Class Department
         End If
 
         If deps = "Junior High School" OrElse deps = "Senior High School" Then
+
             Try
                 con.Open()
+
+                Dim command As New MySqlCommand("SELECT COUNT(*) FROM `department_tbl` WHERE `Department` = @department", con)
+                command.Parameters.AddWithValue("@department", deps)
+                Dim count As Integer = Convert.ToInt32(command.ExecuteScalar)
+
+                If count > 0 Then
+                    MsgBox("This department already exists.", vbExclamation, "Duplication is not allowed.")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("INSERT INTO `department_tbl`(`Department`) VALUES (@department)", con)
                 com.Parameters.AddWithValue("@department", deps)
                 com.ExecuteNonQuery()
@@ -74,6 +87,7 @@ Public Class Department
     End Sub
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+
         If DataGridView1.SelectedRows.Count > 0 Then
             Dim con As New MySqlConnection(connectionString)
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
@@ -86,8 +100,19 @@ Public Class Department
             End If
 
             If dept = "Junior High School" OrElse dept = "Senior High School" Then
+
                 Try
                     con.Open()
+
+                    Dim command As New MySqlCommand("SELECT COUNT(*) FROM `department_tbl` WHERE `Department` = @department", con)
+                    command.Parameters.AddWithValue("@department", dept)
+                    Dim count As Integer = Convert.ToInt32(command.ExecuteScalar)
+
+                    If count > 0 Then
+                        MsgBox("This department already exists.", vbExclamation, "Duplication is not allowed.")
+                        Exit Sub
+                    End If
+
                     Dim com As New MySqlCommand("UPDATE `department_tbl` SET `Department`= @department WHERE `ID` = @id", con)
                     com.Parameters.AddWithValue("@department", dept)
                     com.Parameters.AddWithValue("@id", ID)
@@ -159,6 +184,7 @@ Public Class Department
                         MessageBox.Show("Cannot delete this department. It is assigned to " & borrowerCount & " borrower(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                         Return
                     End If
+
 
 
                     Dim delete As New MySqlCommand("DELETE FROM `department_tbl` WHERE `ID` = @id", con)

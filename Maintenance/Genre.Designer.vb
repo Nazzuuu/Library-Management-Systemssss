@@ -93,15 +93,16 @@ Partial Class Genre
         txtgenre.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtgenre.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtgenre.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgenre.Font = New Font("Sorts Mill Goudy", 9.749999F)
+        txtgenre.Font = New Font("Microsoft Sans Serif", 9.0F)
+        txtgenre.ForeColor = Color.Black
         txtgenre.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgenre.Location = New Point(41, 44)
+        txtgenre.Location = New Point(36, 44)
         txtgenre.Margin = New Padding(3, 4, 3, 4)
         txtgenre.Name = "txtgenre"
         txtgenre.PlaceholderText = ""
         txtgenre.SelectedText = ""
         txtgenre.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtgenre.Size = New Size(342, 33)
+        txtgenre.Size = New Size(347, 33)
         txtgenre.TabIndex = 3
         ' 
         ' btndelete
@@ -186,7 +187,8 @@ Partial Class Genre
         txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(29, 20)
         txtsearch.Margin = New Padding(4)

@@ -72,12 +72,12 @@ Partial Class Accession
         Label2 = New Label()
         Label1 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label4 = New Label()
         rbavailable = New RadioButton()
         txtbooktitle = New Guna.UI2.WinForms.Guna2TextBox()
         txtaccessionid = New Guna.UI2.WinForms.Guna2TextBox()
         cbtransactionno = New Guna.UI2.WinForms.Guna2ComboBox()
         panel_accession = New Panel()
-        Label4 = New Label()
         CType(Datagridview1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -146,6 +146,7 @@ Partial Class Accession
         txtbookprice.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbookprice.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbookprice.Font = New Font("Segoe UI", 9F)
+        txtbookprice.ForeColor = Color.Black
         txtbookprice.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbookprice.Location = New Point(682, 169)
         txtbookprice.Name = "txtbookprice"
@@ -167,6 +168,7 @@ Partial Class Accession
         txtsuppliername.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsuppliername.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsuppliername.Font = New Font("Segoe UI", 9F)
+        txtsuppliername.ForeColor = Color.Black
         txtsuppliername.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsuppliername.Location = New Point(682, 95)
         txtsuppliername.Name = "txtsuppliername"
@@ -199,6 +201,7 @@ Partial Class Accession
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
         txtsearch.Margin = New Padding(4)
@@ -325,6 +328,7 @@ Partial Class Accession
         txtisbn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Font = New Font("Segoe UI", 9F)
+        txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Location = New Point(363, 98)
         txtisbn.Name = "txtisbn"
@@ -427,6 +431,17 @@ Partial Class Accession
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label4.Location = New Point(1029, 142)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(55, 16)
+        Label4.TabIndex = 80
+        Label4.Text = "Status:"
+        ' 
         ' rbavailable
         ' 
         rbavailable.AutoSize = True
@@ -452,6 +467,7 @@ Partial Class Accession
         txtbooktitle.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Font = New Font("Segoe UI", 9F)
+        txtbooktitle.ForeColor = Color.Black
         txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Location = New Point(363, 166)
         txtbooktitle.Name = "txtbooktitle"
@@ -473,6 +489,7 @@ Partial Class Accession
         txtaccessionid.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtaccessionid.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaccessionid.Font = New Font("Segoe UI", 9F)
+        txtaccessionid.ForeColor = Color.Black
         txtaccessionid.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaccessionid.Location = New Point(30, 169)
         txtaccessionid.Name = "txtaccessionid"
@@ -493,7 +510,7 @@ Partial Class Accession
         cbtransactionno.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbtransactionno.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbtransactionno.Font = New Font("Segoe UI", 10F)
-        cbtransactionno.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbtransactionno.ForeColor = Color.Black
         cbtransactionno.ItemHeight = 30
         cbtransactionno.Location = New Point(25, 95)
         cbtransactionno.Name = "cbtransactionno"
@@ -510,25 +527,14 @@ Partial Class Accession
         panel_accession.Size = New Size(1370, 700)
         panel_accession.TabIndex = 2
         ' 
-        ' Label4
-        ' 
-        Label4.AutoSize = True
-        Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(1029, 142)
-        Label4.Name = "Label4"
-        Label4.Size = New Size(55, 16)
-        Label4.TabIndex = 80
-        Label4.Text = "Status:"
-        ' 
-        ' Acession
+        ' Accession
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1370, 700)
         Controls.Add(panel_accession)
         FormBorderStyle = FormBorderStyle.None
-        Name = "Acession"
+        Name = "Accession"
         Text = "Acession"
         CType(Datagridview1, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()

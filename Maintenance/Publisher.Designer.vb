@@ -106,6 +106,7 @@ Partial Class Publisher
         txtcontact.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtcontact.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontact.Font = New Font("Segoe UI", 9F)
+        txtcontact.ForeColor = Color.Black
         txtcontact.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontact.Location = New Point(357, 62)
         txtcontact.Name = "txtcontact"
@@ -138,6 +139,7 @@ Partial Class Publisher
         txtaddress.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtaddress.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaddress.Font = New Font("Segoe UI", 9F)
+        txtaddress.ForeColor = Color.Black
         txtaddress.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaddress.Location = New Point(35, 121)
         txtaddress.Name = "txtaddress"
@@ -170,6 +172,7 @@ Partial Class Publisher
         txtpublisher.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtpublisher.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtpublisher.Font = New Font("Segoe UI", 9F)
+        txtpublisher.ForeColor = Color.Black
         txtpublisher.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtpublisher.Location = New Point(35, 62)
         txtpublisher.Name = "txtpublisher"
@@ -262,6 +265,7 @@ Partial Class Publisher
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(30, 20)
         txtsearch.Margin = New Padding(4)

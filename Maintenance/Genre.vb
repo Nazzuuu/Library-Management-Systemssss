@@ -18,11 +18,15 @@ Public Class Genre
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
+        txtgenre.Text = ""
+
     End Sub
+
 
     Private Sub Genre_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+        txtgenre.Text = ""
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
@@ -38,6 +42,16 @@ Public Class Genre
 
         Try
             con.Open()
+
+            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @genre ", con)
+            coms.Parameters.AddWithValue("@genre", genre)
+            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+
+            If count > 0 Then
+                MsgBox("Genre already exists.", vbExclamation, "Duplication is not allowed.")
+                Exit Sub
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `genre_tbl`(`Genre`) VALUES (@genre)", con)
             com.Parameters.AddWithValue("@genre", genre)
             com.ExecuteNonQuery()
@@ -78,6 +92,17 @@ Public Class Genre
 
             Try
                 con.Open()
+
+
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @genre ", con)
+                coms.Parameters.AddWithValue("@genre", genree)
+                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+
+                If count > 0 Then
+                    MsgBox("Genre already exists.", vbExclamation, "Duplication is not allowed.")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("UPDATE `genre_tbl` SET `Genre`= @genre WHERE  `ID` = @id", con)
                 com.Parameters.AddWithValue("@genre", genree)
                 com.Parameters.AddWithValue("@id", ID)

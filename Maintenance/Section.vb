@@ -27,7 +27,7 @@ Public Class Section
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
-
+        clearlahat()
     End Sub
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 

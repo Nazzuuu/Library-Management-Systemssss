@@ -93,14 +93,15 @@ Partial Class Language
         txtlanguage.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlanguage.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlanguage.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlanguage.Font = New Font("Sorts Mill Goudy", 9.749999F)
+        txtlanguage.Font = New Font("Microsoft Sans Serif", 9F)
+        txtlanguage.ForeColor = Color.Black
         txtlanguage.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlanguage.Location = New Point(41, 47)
+        txtlanguage.Location = New Point(36, 47)
         txtlanguage.Name = "txtlanguage"
         txtlanguage.PlaceholderText = ""
         txtlanguage.SelectedText = ""
         txtlanguage.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtlanguage.Size = New Size(342, 33)
+        txtlanguage.Size = New Size(347, 33)
         txtlanguage.TabIndex = 3
         ' 
         ' btndelete
@@ -186,6 +187,7 @@ Partial Class Language
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(27, 20)
         txtsearch.Margin = New Padding(4)

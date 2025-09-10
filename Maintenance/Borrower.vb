@@ -868,5 +868,7 @@ Public Class Borrower
 
     End Sub
 
-
+    Private Sub Borrower_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+        ClearFields()
+    End Sub
 End Class

@@ -166,6 +166,7 @@ Partial Class Users_Staffs
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
         txtsearch.Margin = New Padding(4)
@@ -381,6 +382,7 @@ Partial Class Users_Staffs
         txtmname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtmname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtmname.Font = New Font("Segoe UI", 9F)
+        txtmname.ForeColor = Color.Black
         txtmname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtmname.Location = New Point(324, 95)
         txtmname.Name = "txtmname"
@@ -402,6 +404,7 @@ Partial Class Users_Staffs
         txtlname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlname.Font = New Font("Segoe UI", 9F)
+        txtlname.ForeColor = Color.Black
         txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlname.Location = New Point(25, 164)
         txtlname.Name = "txtlname"
@@ -423,6 +426,7 @@ Partial Class Users_Staffs
         txtfname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtfname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfname.Font = New Font("Segoe UI", 9F)
+        txtfname.ForeColor = Color.Black
         txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfname.Location = New Point(25, 95)
         txtfname.Name = "txtfname"
@@ -515,6 +519,7 @@ Partial Class Users_Staffs
         txtcontactnumber.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtcontactnumber.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontactnumber.Font = New Font("Segoe UI", 9F)
+        txtcontactnumber.ForeColor = Color.Black
         txtcontactnumber.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontactnumber.Location = New Point(978, 164)
         txtcontactnumber.Name = "txtcontactnumber"
@@ -547,6 +552,7 @@ Partial Class Users_Staffs
         txtemail.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtemail.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemail.Font = New Font("Segoe UI", 9F)
+        txtemail.ForeColor = Color.Black
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemail.Location = New Point(978, 95)
         txtemail.Name = "txtemail"
@@ -579,6 +585,7 @@ Partial Class Users_Staffs
         txtpassword.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtpassword.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtpassword.Font = New Font("Segoe UI", 9F)
+        txtpassword.ForeColor = Color.Black
         txtpassword.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtpassword.Location = New Point(646, 164)
         txtpassword.Name = "txtpassword"
@@ -600,6 +607,7 @@ Partial Class Users_Staffs
         txtusername.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtusername.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtusername.Font = New Font("Segoe UI", 9F)
+        txtusername.ForeColor = Color.Black
         txtusername.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtusername.Location = New Point(646, 95)
         txtusername.Name = "txtusername"

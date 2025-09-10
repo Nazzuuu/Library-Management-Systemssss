@@ -93,15 +93,16 @@ Partial Class Strand
         txtstrand.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtstrand.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtstrand.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtstrand.Font = New Font("Sorts Mill Goudy", 9.749999F)
+        txtstrand.Font = New Font("Microsoft Sans Serif", 9F)
+        txtstrand.ForeColor = Color.Black
         txtstrand.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtstrand.Location = New Point(41, 55)
+        txtstrand.Location = New Point(36, 55)
         txtstrand.Margin = New Padding(3, 4, 3, 4)
         txtstrand.Name = "txtstrand"
         txtstrand.PlaceholderText = ""
         txtstrand.SelectedText = ""
         txtstrand.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtstrand.Size = New Size(342, 33)
+        txtstrand.Size = New Size(347, 33)
         txtstrand.TabIndex = 3
         ' 
         ' btndelete
@@ -187,6 +188,7 @@ Partial Class Strand
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(27, 20)
         txtsearch.Margin = New Padding(4)

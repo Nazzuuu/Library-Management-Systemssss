@@ -93,7 +93,8 @@ Partial Class Category
         txtcategory.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtcategory.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtcategory.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtcategory.Font = New Font("Sorts Mill Goudy", 9.749999F)
+        txtcategory.Font = New Font("Microsoft Sans Serif", 9F)
+        txtcategory.ForeColor = Color.Black
         txtcategory.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcategory.Location = New Point(36, 48)
         txtcategory.Name = "txtcategory"
@@ -186,6 +187,7 @@ Partial Class Category
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(27, 17)
         txtsearch.Margin = New Padding(4)

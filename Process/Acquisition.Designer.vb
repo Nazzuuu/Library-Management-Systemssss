@@ -153,6 +153,7 @@ Partial Class Acquisition
         txttransactionno.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txttransactionno.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txttransactionno.Font = New Font("Segoe UI", 9F)
+        txttransactionno.ForeColor = Color.Black
         txttransactionno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txttransactionno.Location = New Point(1014, 95)
         txttransactionno.Name = "txttransactionno"
@@ -174,6 +175,7 @@ Partial Class Acquisition
         txttotalcost.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txttotalcost.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txttotalcost.Font = New Font("Segoe UI", 9F)
+        txttotalcost.ForeColor = Color.Black
         txttotalcost.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txttotalcost.Location = New Point(682, 169)
         txttotalcost.Name = "txttotalcost"
@@ -195,6 +197,7 @@ Partial Class Acquisition
         txtbookprice.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbookprice.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbookprice.Font = New Font("Segoe UI", 9F)
+        txtbookprice.ForeColor = Color.Black
         txtbookprice.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbookprice.Location = New Point(682, 95)
         txtbookprice.Name = "txtbookprice"
@@ -273,6 +276,7 @@ Partial Class Acquisition
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
         txtsearch.Margin = New Padding(4)
@@ -443,6 +447,7 @@ Partial Class Acquisition
         txtbooktitle.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Font = New Font("Segoe UI", 9F)
+        txtbooktitle.ForeColor = Color.Black
         txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Location = New Point(25, 169)
         txtbooktitle.Name = "txtbooktitle"
@@ -475,6 +480,7 @@ Partial Class Acquisition
         txtisbn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Font = New Font("Segoe UI", 9F)
+        txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Location = New Point(25, 95)
         txtisbn.Name = "txtisbn"
@@ -495,7 +501,7 @@ Partial Class Acquisition
         cbsuppliername.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbsuppliername.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbsuppliername.Font = New Font("Segoe UI", 10F)
-        cbsuppliername.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbsuppliername.ForeColor = Color.Black
         cbsuppliername.ItemHeight = 30
         cbsuppliername.Location = New Point(363, 95)
         cbsuppliername.Name = "cbsuppliername"

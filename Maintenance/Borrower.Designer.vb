@@ -177,6 +177,7 @@ Partial Class Borrower
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
         txtsearch.Margin = New Padding(4)
@@ -359,6 +360,7 @@ Partial Class Borrower
         txtcontactnumber.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtcontactnumber.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontactnumber.Font = New Font("Segoe UI", 9F)
+        txtcontactnumber.ForeColor = Color.Black
         txtcontactnumber.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontactnumber.Location = New Point(644, 132)
         txtcontactnumber.Name = "txtcontactnumber"
@@ -426,7 +428,7 @@ Partial Class Borrower
         cbstrand.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbstrand.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbstrand.Font = New Font("Segoe UI", 10F)
-        cbstrand.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbstrand.ForeColor = Color.Black
         cbstrand.ItemHeight = 30
         cbstrand.Location = New Point(942, 285)
         cbstrand.Name = "cbstrand"
@@ -456,7 +458,7 @@ Partial Class Borrower
         cbsection.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbsection.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbsection.Font = New Font("Segoe UI", 10F)
-        cbsection.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbsection.ForeColor = Color.Black
         cbsection.ItemHeight = 30
         cbsection.Location = New Point(942, 216)
         cbsection.Name = "cbsection"
@@ -486,7 +488,7 @@ Partial Class Borrower
         cbgrade.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgrade.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgrade.Font = New Font("Segoe UI", 10F)
-        cbgrade.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbgrade.ForeColor = Color.Black
         cbgrade.ItemHeight = 30
         cbgrade.Location = New Point(942, 151)
         cbgrade.Name = "cbgrade"
@@ -516,7 +518,7 @@ Partial Class Borrower
         cbdepartment.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbdepartment.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbdepartment.Font = New Font("Segoe UI", 10F)
-        cbdepartment.ForeColor = Color.FromArgb(CByte(68), CByte(88), CByte(112))
+        cbdepartment.ForeColor = Color.Black
         cbdepartment.ItemHeight = 30
         cbdepartment.Location = New Point(942, 85)
         cbdepartment.Name = "cbdepartment"
@@ -558,6 +560,7 @@ Partial Class Borrower
         txtlrn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlrn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlrn.Font = New Font("Segoe UI", 9F)
+        txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlrn.Location = New Point(306, 197)
         txtlrn.Name = "txtlrn"
@@ -603,6 +606,7 @@ Partial Class Borrower
         txtmname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtmname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtmname.Font = New Font("Segoe UI", 9F)
+        txtmname.ForeColor = Color.Black
         txtmname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtmname.Location = New Point(306, 132)
         txtmname.Name = "txtmname"
@@ -635,6 +639,7 @@ Partial Class Borrower
         txtlname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlname.Font = New Font("Segoe UI", 9F)
+        txtlname.ForeColor = Color.Black
         txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlname.Location = New Point(30, 196)
         txtlname.Name = "txtlname"
@@ -656,6 +661,7 @@ Partial Class Borrower
         txtfname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtfname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfname.Font = New Font("Segoe UI", 9F)
+        txtfname.ForeColor = Color.Black
         txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfname.Location = New Point(30, 130)
         txtfname.Name = "txtfname"
