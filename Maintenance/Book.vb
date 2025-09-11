@@ -1,9 +1,8 @@
 ﻿Imports MySql.Data.MySqlClient
 
 Public Class Book
-    Private Sub Panel2_Paint(sender As Object, e As PaintEventArgs)
 
-    End Sub
+    Private isbarcode As Boolean = False
 
     Private Sub Book_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -118,16 +117,67 @@ Public Class Book
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(connectionString)
-        Dim isbn As String = txtisbn.Text.Trim
-        Dim booktitle As String = txtbooktitle.Text.Trim
+        Dim isbn As Object = Nothing
+        Dim barcode As Object = Nothing
+        Dim booktitle As String = txtbooktitle.Text.Trim()
+        Dim deyts As DateTime = DateTimePicker1.Value
+
+        If rbgenerate.Checked Then
+            isbn = DBNull.Value
+            barcode = lblrandom.Text.Trim()
 
 
-        If String.IsNullOrEmpty(isbn) OrElse String.IsNullOrEmpty(booktitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
+            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `Barcode` = @barcode", con)
+            coms.Parameters.AddWithValue("@barcode", barcode)
+            Try
+                con.Open()
+                Dim count As Integer = CInt(coms.ExecuteScalar())
+                If count > 0 Then
+                    MsgBox("The Barcode already exists.", vbExclamation, "Duplication not allowed.")
+                    Exit Sub
+                End If
+            Catch ex As Exception
+                MsgBox("Error checking Barcode: " & ex.Message, vbCritical)
+                Exit Sub
+            Finally
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
+            End Try
+
+        Else
+            isbn = txtisbn.Text.Trim()
+            If String.IsNullOrEmpty(CStr(isbn)) Then
+                MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
+                Exit Sub
+            End If
+
+
+            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `ISBN` = @isbn", con)
+            coms.Parameters.AddWithValue("@isbn", isbn)
+            Try
+                con.Open()
+                Dim count As Integer = CInt(coms.ExecuteScalar())
+                If count > 0 Then
+                    MsgBox("The ISBN already exists. Please enter a unique ISBN.", vbExclamation, "Duplication not allowed.")
+                    Exit Sub
+                End If
+            Catch ex As Exception
+                MsgBox("Error checking ISBN: " & ex.Message, vbCritical)
+                Exit Sub
+            Finally
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
+            End Try
+
+            barcode = DBNull.Value
+        End If
+
+        If String.IsNullOrEmpty(booktitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
             MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
             Exit Sub
         End If
-
-        Dim deyts As DateTime = DateTimePicker1.Value
 
         If deyts.Date > DateTime.Today.Date Then
             MsgBox("You cannot select a future date.", vbExclamation)
@@ -138,10 +188,10 @@ Public Class Book
 
         Try
             con.Open()
-            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`ISBN`, `BookTitle`, `Author`, `Genre`, `Category`, `Publisher`, `Language`, `YearPublished`) VALUES
-                                     (@isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished )", con)
+            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`Barcode`,`ISBN`, `BookTitle`, `Author`, `Genre`, `Category`, `Publisher`, `Language`, `YearPublished`) VALUES (@barcode, @isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished )", con)
 
-            com.Parameters.AddWithValue("@isbn", isbn)
+            com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcode), DBNull.Value, barcode))
+            com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbn), DBNull.Value, isbn))
             com.Parameters.AddWithValue("@booktitle", booktitle)
             com.Parameters.AddWithValue("@author", cbauthor.Text)
             com.Parameters.AddWithValue("@genre", cbgenre.Text)
@@ -156,24 +206,86 @@ Public Class Book
             Book_Load(sender, e)
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
+        Finally
+            If Not IsNothing(con) AndAlso con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
-
     End Sub
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            If String.IsNullOrEmpty(txtisbn.Text.Trim) OrElse String.IsNullOrEmpty(txtbooktitle.Text.Trim) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
+            Dim booktitle As String = txtbooktitle.Text.Trim()
+            If String.IsNullOrEmpty(booktitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
                 MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
                 Exit Sub
             End If
 
             Dim con As New MySqlConnection(connectionString)
-
-            Dim isbn As String = txtisbn.Text.Trim
-            Dim booktitle As String = txtbooktitle.Text.Trim
             Dim deyts As DateTime = DateTimePicker1.Value
+
+            Dim isbnValue As Object
+            Dim barcodeValue As Object
+
+            If rbgenerate.Checked Then
+                isbnValue = DBNull.Value
+                barcodeValue = lblrandom.Text.Trim()
+
+
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `Barcode` = @barcode AND `ID` <> @id", con)
+                coms.Parameters.AddWithValue("@barcode", barcodeValue)
+                coms.Parameters.AddWithValue("@id", bookID)
+
+                Try
+                    con.Open()
+                    Dim count As Integer = CInt(coms.ExecuteScalar())
+                    If count > 0 Then
+                        MsgBox("The Barcode already exists.", vbExclamation, "Duplication not allowed.")
+                        Exit Sub
+                    End If
+                Catch ex As Exception
+                    MsgBox("Error checking Barcode: " & ex.Message, vbCritical)
+                    Exit Sub
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
+                End Try
+
+            Else
+                isbnValue = txtisbn.Text.Trim()
+                If String.IsNullOrEmpty(CStr(isbnValue)) Then
+                    MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
+                    Exit Sub
+                End If
+
+
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `ISBN` = @isbn AND `ID` <> @id", con)
+                coms.Parameters.AddWithValue("@isbn", isbnValue)
+                coms.Parameters.AddWithValue("@id", bookID)
+
+                Try
+                    con.Open()
+                    Dim count As Integer = CInt(coms.ExecuteScalar())
+                    If count > 0 Then
+                        MsgBox("The ISBN already exists. Please enter a unique ISBN.", vbExclamation, "Duplication not allowed.")
+                        Exit Sub
+                    End If
+                Catch ex As Exception
+                    MsgBox("Error checking ISBN: " & ex.Message, vbCritical)
+                    Exit Sub
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
+                End Try
+
+                barcodeValue = DBNull.Value
+            End If
 
             If deyts.Date > DateTime.Today.Date Then
                 MsgBox("You cannot select a future date.", vbExclamation)
@@ -181,14 +293,13 @@ Public Class Book
             End If
 
             Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
 
             Try
                 con.Open()
-                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished WHERE `ID` = @id", con)
+                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished WHERE `ID` = @id", con)
 
-                com.Parameters.AddWithValue("@isbn", isbn)
+                com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcodeValue), DBNull.Value, barcodeValue))
+                com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbnValue), DBNull.Value, isbnValue))
                 com.Parameters.AddWithValue("@booktitle", booktitle)
                 com.Parameters.AddWithValue("@author", cbauthor.Text)
                 com.Parameters.AddWithValue("@genre", cbgenre.Text)
@@ -197,7 +308,6 @@ Public Class Book
                 com.Parameters.AddWithValue("@language", cblanguage.Text)
                 com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
                 com.Parameters.AddWithValue("@id", bookID)
-
                 com.ExecuteNonQuery()
 
                 MsgBox("Book updated successfully", vbInformation)
@@ -205,6 +315,10 @@ Public Class Book
                 Book_Load(sender, e)
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
+            Finally
+                If Not IsNothing(con) AndAlso con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
             End Try
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
@@ -212,24 +326,41 @@ Public Class Book
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+        If e.RowIndex >= 0 AndAlso Not DataGridView1.Rows(e.RowIndex).IsNewRow Then
 
-        If e.RowIndex >= 0 Then
+            isbarcode = True
+
             Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
-            txtisbn.Text = row.Cells("ISBN").Value.ToString
-            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
+            lblrandom.Text = row.Cells("Barcode").Value.ToString()
+
+
+            Dim isbnValue As Object = row.Cells("ISBN").Value
+
+            If IsDBNull(isbnValue) OrElse String.IsNullOrEmpty(isbnValue.ToString()) Then
+
+                rbgenerate.Checked = True
+                txtisbn.Enabled = False
+                txtisbn.Text = ""
+            Else
+
+                rbgenerate.Checked = False
+                txtisbn.Enabled = True
+                txtisbn.Text = isbnValue.ToString()
+            End If
+
+            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString()
             cbauthor.Text = row.Cells("Author").Value.ToString()
-            cbgenre.Text = row.Cells("Genre").Value.ToString
-            cbcategory.Text = row.Cells("Category").Value.ToString
-            cbpublisher.Text = row.Cells("Publisher").Value.ToString
-            cblanguage.Text = row.Cells("Language").Value.ToString
+            cbgenre.Text = row.Cells("Genre").Value.ToString()
+            cbcategory.Text = row.Cells("Category").Value.ToString()
+            cbpublisher.Text = row.Cells("Publisher").Value.ToString()
+            cblanguage.Text = row.Cells("Language").Value.ToString()
             DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
 
+
             rbgenerate.Enabled = False
-
-
+            isbarcode = False
         End If
-
     End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
@@ -291,6 +422,7 @@ Public Class Book
 
         txtisbn.Text = ""
         txtbooktitle.Text = ""
+        lblrandom.Text = "00000000000"
         txtisbn.Enabled = True
         rbgenerate.Enabled = True
 
@@ -313,28 +445,15 @@ Public Class Book
         DataGridView1.ClearSelection()
     End Sub
 
-    Private Sub rbgenerate_CheckedChanged(sender As Object, e As EventArgs) Handles rbgenerate.CheckedChanged
-
-
-        If rbgenerate.Checked Then
-            txtisbn.Enabled = False
-            txtisbn.Text = jinireyt()
-        Else
-            txtisbn.Enabled = True
-            txtisbn.Clear()
-        End If
-
-    End Sub
-
 
 
     Function jinireyt() As String
         Dim random As New Random()
-        Dim isbn As String = ""
+        Dim barcode As String = ""
         For i As Integer = 0 To 12
-            isbn += random.Next(0, 10).ToString()
+            barcode += random.Next(0, 10).ToString()
         Next
-        Return isbn
+        Return barcode
     End Function
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
@@ -387,4 +506,19 @@ Public Class Book
     Private Sub Book_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
         clear()
     End Sub
+
+    Private Sub rbgenerate_CheckedChanged(sender As Object, e As EventArgs) Handles rbgenerate.CheckedChanged
+
+        If Not isbarcode Then
+            If rbgenerate.Checked Then
+                lblrandom.Text = jinireyt()
+                txtisbn.Enabled = False
+                txtisbn.Text = ""
+            Else
+                lblrandom.Text = "00000000000"
+                txtisbn.Enabled = True
+            End If
+        End If
+    End Sub
+
 End Class

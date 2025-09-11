@@ -59,9 +59,11 @@ Partial Class Book
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_book = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label10 = New Label()
+        lblrandom = New Label()
+        rbgenerate = New RadioButton()
         DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Label8 = New Label()
-        rbgenerate = New RadioButton()
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         btnclear = New Guna.UI2.WinForms.Guna2Button()
@@ -106,9 +108,11 @@ Partial Class Book
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label10)
+        Guna2GroupBox1.Controls.Add(lblrandom)
+        Guna2GroupBox1.Controls.Add(rbgenerate)
         Guna2GroupBox1.Controls.Add(DateTimePicker1)
         Guna2GroupBox1.Controls.Add(Label8)
-        Guna2GroupBox1.Controls.Add(rbgenerate)
         Guna2GroupBox1.Controls.Add(PictureBox1)
         Guna2GroupBox1.Controls.Add(txtsearch)
         Guna2GroupBox1.Controls.Add(btnclear)
@@ -141,6 +145,41 @@ Partial Class Book
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' Label10
+        ' 
+        Label10.AutoSize = True
+        Label10.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label10.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label10.Location = New Point(30, 70)
+        Label10.Name = "Label10"
+        Label10.Size = New Size(65, 16)
+        Label10.TabIndex = 76
+        Label10.Text = "Barcode:"
+        ' 
+        ' lblrandom
+        ' 
+        lblrandom.AutoSize = True
+        lblrandom.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblrandom.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblrandom.Location = New Point(99, 71)
+        lblrandom.Name = "lblrandom"
+        lblrandom.Size = New Size(95, 16)
+        lblrandom.TabIndex = 75
+        lblrandom.Text = "00000000000"
+        ' 
+        ' rbgenerate
+        ' 
+        rbgenerate.AutoSize = True
+        rbgenerate.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        rbgenerate.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        rbgenerate.Location = New Point(218, 69)
+        rbgenerate.Name = "rbgenerate"
+        rbgenerate.Size = New Size(75, 20)
+        rbgenerate.TabIndex = 74
+        rbgenerate.TabStop = True
+        rbgenerate.Text = "NO ISBN"
+        rbgenerate.UseVisualStyleBackColor = True
+        ' 
         ' DateTimePicker1
         ' 
         DateTimePicker1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -153,7 +192,7 @@ Partial Class Book
         DateTimePicker1.Font = New Font("Segoe UI", 9F)
         DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DateTimePicker1.Format = DateTimePickerFormat.Custom
-        DateTimePicker1.Location = New Point(1014, 169)
+        DateTimePicker1.Location = New Point(1014, 189)
         DateTimePicker1.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
         DateTimePicker1.Name = "DateTimePicker1"
@@ -167,24 +206,11 @@ Partial Class Book
         Label8.AutoSize = True
         Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label8.Location = New Point(1014, 150)
+        Label8.Location = New Point(1014, 170)
         Label8.Name = "Label8"
         Label8.Size = New Size(108, 16)
         Label8.TabIndex = 70
         Label8.Text = "Year Published:"
-        ' 
-        ' rbgenerate
-        ' 
-        rbgenerate.AutoSize = True
-        rbgenerate.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        rbgenerate.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbgenerate.Location = New Point(263, 102)
-        rbgenerate.Name = "rbgenerate"
-        rbgenerate.Size = New Size(85, 20)
-        rbgenerate.TabIndex = 68
-        rbgenerate.TabStop = True
-        rbgenerate.Text = "Generate"
-        rbgenerate.UseVisualStyleBackColor = True
         ' 
         ' PictureBox1
         ' 
@@ -233,7 +259,7 @@ Partial Class Book
         btnclear.FillColor = Color.Empty
         btnclear.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclear.Location = New Point(417, 227)
+        btnclear.Location = New Point(417, 242)
         btnclear.Name = "btnclear"
         btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btnclear.Size = New Size(90, 27)
@@ -247,10 +273,10 @@ Partial Class Book
         Guna2GradientPanel1.BorderThickness = 2
         Guna2GradientPanel1.Controls.Add(DataGridView1)
         Guna2GradientPanel1.CustomizableEdges = CustomizableEdges7
-        Guna2GradientPanel1.Location = New Point(25, 268)
+        Guna2GradientPanel1.Location = New Point(25, 289)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
-        Guna2GradientPanel1.Size = New Size(1283, 341)
+        Guna2GradientPanel1.Size = New Size(1283, 320)
         Guna2GradientPanel1.TabIndex = 45
         ' 
         ' DataGridView1
@@ -278,7 +304,7 @@ Partial Class Book
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(25, 27)
+        DataGridView1.Location = New Point(25, 36)
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
@@ -294,7 +320,7 @@ Partial Class Book
         DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
-        DataGridView1.Size = New Size(1234, 289)
+        DataGridView1.Size = New Size(1234, 280)
         DataGridView1.TabIndex = 21
         ' 
         ' btndelete
@@ -310,7 +336,7 @@ Partial Class Book
         btndelete.FillColor = Color.Empty
         btndelete.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btndelete.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btndelete.Location = New Point(288, 227)
+        btndelete.Location = New Point(288, 242)
         btndelete.Name = "btndelete"
         btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         btndelete.Size = New Size(90, 27)
@@ -330,7 +356,7 @@ Partial Class Book
         btnedit.FillColor = Color.Empty
         btnedit.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnedit.Location = New Point(158, 227)
+        btnedit.Location = New Point(158, 242)
         btnedit.Name = "btnedit"
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         btnedit.Size = New Size(90, 27)
@@ -350,7 +376,7 @@ Partial Class Book
         btnadd.FillColor = Color.Empty
         btnadd.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnadd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnadd.Location = New Point(30, 227)
+        btnadd.Location = New Point(30, 242)
         btnadd.Name = "btnadd"
         btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         btnadd.Size = New Size(90, 27)
@@ -362,7 +388,7 @@ Partial Class Book
         Label7.AutoSize = True
         Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(25, 150)
+        Label7.Location = New Point(30, 166)
         Label7.Name = "Label7"
         Label7.Size = New Size(74, 16)
         Label7.TabIndex = 41
@@ -382,7 +408,7 @@ Partial Class Book
         txtbooktitle.Font = New Font("Segoe UI", 9F)
         txtbooktitle.ForeColor = Color.Black
         txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbooktitle.Location = New Point(25, 169)
+        txtbooktitle.Location = New Point(30, 185)
         txtbooktitle.Name = "txtbooktitle"
         txtbooktitle.PlaceholderText = ""
         txtbooktitle.SelectedText = ""
@@ -395,7 +421,7 @@ Partial Class Book
         Label6.AutoSize = True
         Label6.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(25, 76)
+        Label6.Location = New Point(30, 97)
         Label6.Name = "Label6"
         Label6.Size = New Size(41, 16)
         Label6.TabIndex = 39
@@ -415,7 +441,7 @@ Partial Class Book
         txtisbn.Font = New Font("Segoe UI", 9F)
         txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtisbn.Location = New Point(25, 95)
+        txtisbn.Location = New Point(30, 116)
         txtisbn.Name = "txtisbn"
         txtisbn.PlaceholderText = ""
         txtisbn.SelectedText = ""
@@ -436,7 +462,7 @@ Partial Class Book
         cblanguage.Font = New Font("Segoe UI", 10F)
         cblanguage.ForeColor = Color.Black
         cblanguage.ItemHeight = 30
-        cblanguage.Location = New Point(1015, 95)
+        cblanguage.Location = New Point(1014, 113)
         cblanguage.Name = "cblanguage"
         cblanguage.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         cblanguage.Size = New Size(232, 36)
@@ -455,7 +481,7 @@ Partial Class Book
         cbpublisher.Font = New Font("Segoe UI", 10F)
         cbpublisher.ForeColor = Color.Black
         cbpublisher.ItemHeight = 30
-        cbpublisher.Location = New Point(682, 169)
+        cbpublisher.Location = New Point(682, 187)
         cbpublisher.Name = "cbpublisher"
         cbpublisher.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         cbpublisher.Size = New Size(232, 36)
@@ -474,7 +500,7 @@ Partial Class Book
         cbcategory.Font = New Font("Segoe UI", 10F)
         cbcategory.ForeColor = Color.Black
         cbcategory.ItemHeight = 30
-        cbcategory.Location = New Point(682, 95)
+        cbcategory.Location = New Point(682, 113)
         cbcategory.Name = "cbcategory"
         cbcategory.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         cbcategory.Size = New Size(232, 36)
@@ -493,7 +519,7 @@ Partial Class Book
         cbgenre.Font = New Font("Segoe UI", 10F)
         cbgenre.ForeColor = Color.Black
         cbgenre.ItemHeight = 30
-        cbgenre.Location = New Point(363, 164)
+        cbgenre.Location = New Point(363, 182)
         cbgenre.Name = "cbgenre"
         cbgenre.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         cbgenre.Size = New Size(232, 36)
@@ -512,7 +538,7 @@ Partial Class Book
         cbauthor.Font = New Font("Segoe UI", 10F)
         cbauthor.ForeColor = Color.Black
         cbauthor.ItemHeight = 30
-        cbauthor.Location = New Point(363, 95)
+        cbauthor.Location = New Point(363, 113)
         cbauthor.Name = "cbauthor"
         cbauthor.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         cbauthor.Size = New Size(232, 36)
@@ -523,7 +549,7 @@ Partial Class Book
         Label5.AutoSize = True
         Label5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(682, 150)
+        Label5.Location = New Point(682, 168)
         Label5.Name = "Label5"
         Label5.Size = New Size(71, 16)
         Label5.TabIndex = 32
@@ -534,7 +560,7 @@ Partial Class Book
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(1015, 76)
+        Label4.Location = New Point(1014, 94)
         Label4.Name = "Label4"
         Label4.Size = New Size(75, 16)
         Label4.TabIndex = 31
@@ -545,7 +571,7 @@ Partial Class Book
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(363, 76)
+        Label3.Location = New Point(363, 94)
         Label3.Name = "Label3"
         Label3.Size = New Size(58, 16)
         Label3.TabIndex = 30
@@ -556,7 +582,7 @@ Partial Class Book
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(363, 145)
+        Label2.Location = New Point(363, 163)
         Label2.Name = "Label2"
         Label2.Size = New Size(50, 16)
         Label2.TabIndex = 29
@@ -567,7 +593,7 @@ Partial Class Book
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(682, 73)
+        Label1.Location = New Point(682, 91)
         Label1.Name = "Label1"
         Label1.Size = New Size(72, 16)
         Label1.TabIndex = 28
@@ -622,8 +648,10 @@ Partial Class Book
     Friend WithEvents Label3 As Label
     Friend WithEvents Label2 As Label
     Friend WithEvents Label1 As Label
-    Friend WithEvents rbgenerate As RadioButton
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Label8 As Label
     Friend WithEvents DateTimePicker1 As Guna.UI2.WinForms.Guna2DateTimePicker
+    Friend WithEvents Label10 As Label
+    Friend WithEvents lblrandom As Label
+    Friend WithEvents rbgenerate As RadioButton
 End Class
