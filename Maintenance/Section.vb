@@ -29,6 +29,7 @@ Public Class Section
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         clearlahat()
     End Sub
+
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(connectionString)
@@ -45,7 +46,7 @@ Public Class Section
             grade = cbgrade.GetItemText(cbgrade.SelectedItem)
         End If
 
-        If dept = "Junior High School" Then
+        If dept = "Junior High School" OrElse dept = "Elementary" Then
             secs = txtsection.Text.Trim
             strand = ""
             If String.IsNullOrWhiteSpace(secs) Then
@@ -56,6 +57,10 @@ Public Class Section
             secs = ""
             If cbstrand.SelectedIndex <> -1 Then
                 strand = cbstrand.GetItemText(cbstrand.SelectedItem)
+            End If
+            If String.IsNullOrWhiteSpace(strand) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
             End If
         End If
 
@@ -94,15 +99,20 @@ Public Class Section
     End Sub
 
 
+
     Private Function duplication(ByVal dept As String, ByVal grade As String, ByVal section As String, ByVal strand As String) As Boolean
         Dim con As New MySqlConnection(connectionString)
         Dim query As String = ""
         Dim count As Integer = 0
 
-        If dept = "Junior High School" Then
+        If dept = "Junior High School" OrElse dept = "Elementary" Then
             query = "SELECT COUNT(*) FROM `section_tbl` WHERE `Department` = @dept AND `GradeLevel` = @grade AND `Section` = @section"
         ElseIf dept = "Senior High School" Then
             query = "SELECT COUNT(*) FROM `section_tbl` WHERE `Department` = @dept AND `GradeLevel` = @grade AND `Strand` = @strand"
+        End If
+
+        If String.IsNullOrWhiteSpace(query) Then
+            Return False
         End If
 
         Try
@@ -111,7 +121,7 @@ Public Class Section
             com.Parameters.AddWithValue("@dept", dept)
             com.Parameters.AddWithValue("@grade", grade)
 
-            If dept = "Junior High School" Then
+            If dept = "Junior High School" OrElse dept = "Elementary" Then
                 com.Parameters.AddWithValue("@section", section)
             ElseIf dept = "Senior High School" Then
                 com.Parameters.AddWithValue("@strand", strand)
@@ -122,6 +132,10 @@ Public Class Section
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
             Return True
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
 
         Return count > 0
@@ -148,7 +162,7 @@ Public Class Section
                 newGrade = cbgrade.GetItemText(cbgrade.SelectedItem)
             End If
 
-            If newDept = "Junior High School" Then
+            If newDept = "Junior High School" OrElse newDept = "Elementary" Then
                 newSecs = txtsection.Text.Trim
                 newStrand = ""
                 If String.IsNullOrWhiteSpace(newSecs) Then
@@ -159,6 +173,10 @@ Public Class Section
                 newSecs = ""
                 If cbstrand.SelectedIndex <> -1 Then
                     newStrand = cbstrand.GetItemText(cbstrand.SelectedItem)
+                End If
+                If String.IsNullOrWhiteSpace(newStrand) Then
+                    MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                    Exit Sub
                 End If
             End If
 
@@ -201,10 +219,14 @@ Public Class Section
         Dim query As String = ""
         Dim count As Integer = 0
 
-        If dept = "Junior High School" Then
+        If dept = "Junior High School" OrElse dept = "Elementary" Then
             query = "SELECT COUNT(*) FROM `section_tbl` WHERE `Department` = @dept AND `GradeLevel` = @grade AND `Section` = @section AND `ID` <> @currentID"
         ElseIf dept = "Senior High School" Then
             query = "SELECT COUNT(*) FROM `section_tbl` WHERE `Department` = @dept AND `GradeLevel` = @grade AND `Strand` = @strand AND `ID` <> @currentID"
+        End If
+
+        If String.IsNullOrWhiteSpace(query) Then
+            Return False
         End If
 
         Try
@@ -214,7 +236,7 @@ Public Class Section
             com.Parameters.AddWithValue("@grade", grade)
             com.Parameters.AddWithValue("@currentID", currentID)
 
-            If dept = "Junior High School" Then
+            If dept = "Junior High School" OrElse dept = "Elementary" Then
                 com.Parameters.AddWithValue("@section", section)
             ElseIf dept = "Senior High School" Then
                 com.Parameters.AddWithValue("@strand", strand)
@@ -225,10 +247,15 @@ Public Class Section
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
             Return True
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
 
         Return count > 0
     End Function
+
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
@@ -246,7 +273,7 @@ Public Class Section
                 Dim section As String = ""
                 Dim strand As String = ""
 
-                If dept = "Junior High School" Then
+                If dept = "Junior High School" OrElse dept = "Elementary" Then
                     section = selectedRow.Cells("Section").Value.ToString().Trim()
                 ElseIf dept = "Senior High School" Then
                     strand = selectedRow.Cells("Strand").Value.ToString().Trim()
@@ -257,7 +284,7 @@ Public Class Section
 
                     Dim borrowerQuery As New MySqlCommand("", con)
 
-                    If dept = "Junior High School" Then
+                    If dept = "Junior High School" OrElse dept = "Elementary" Then
                         borrowerQuery.CommandText = "SELECT COUNT(*) FROM `borrower_tbl` WHERE Department = @dept AND Grade = @grade AND Section = @section"
                         borrowerQuery.Parameters.AddWithValue("@dept", dept)
                         borrowerQuery.Parameters.AddWithValue("@grade", grade)
@@ -491,6 +518,25 @@ Public Class Section
 
                 cbgrade.Enabled = True
 
+            ElseIf selectedDept = "Elementary" Then
+
+                Dim con As New MySqlConnection(connectionString)
+                Dim com As String = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 1 AND 6"
+                Dim adap As New MySqlDataAdapter(com, con)
+                Dim ds As New DataTable
+                adap.Fill(ds)
+
+                cbgrade.DataSource = ds
+                cbgrade.DisplayMember = "Grade"
+                cbgrade.ValueMember = "ID"
+                cbgrade.SelectedIndex = -1
+
+                txtsection.Visible = True
+                cbstrand.Visible = False
+
+                lbl_sectionandstrand.Text = "Section:"
+
+                cbgrade.Enabled = True
             End If
         End If
     End Sub
@@ -523,6 +569,7 @@ Public Class Section
 
         rbjhs.Checked = False
         rbshs.Checked = False
+        rbelem.Checked = False
 
         lbl_sectionandstrand.Text = "Section:"
 
@@ -545,6 +592,8 @@ Public Class Section
                 txtsection.Enabled = True
             ElseIf selectedDept = "Senior High School" Then
                 cbstrand.Enabled = True
+            ElseIf selectedDept = "Elementary" Then
+                txtsection.Enabled = True
             End If
         Else
 
@@ -578,4 +627,13 @@ Public Class Section
             Me.Close()
         End If
     End Sub
+
+    Private Sub rbelem_CheckedChanged(sender As Object, e As EventArgs) Handles rbelem.CheckedChanged
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+
+        If dt IsNot Nothing AndAlso rbelem.Checked Then
+            dt.DefaultView.RowFilter = "Department = 'Elementary'"
+        End If
+    End Sub
+
 End Class

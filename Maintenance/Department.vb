@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.Intrinsics.Arm
+﻿Imports System.Diagnostics.Eventing.Reader
+Imports System.Runtime.Intrinsics.Arm
 Imports System.Security
 Imports MySql.Data.MySqlClient
 
@@ -39,7 +40,7 @@ Public Class Department
             Exit Sub
         End If
 
-        If deps = "Junior High School" OrElse deps = "Senior High School" Then
+        If deps = "Junior High School" OrElse deps = "Senior High School" OrElse deps = "Elementary" Then
 
             Try
                 con.Open()
@@ -82,7 +83,7 @@ Public Class Department
                 End If
             End Try
         Else
-            MessageBox.Show("Invalid input. Please enter 'Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Invalid input. Please enter 'Elementary' or 'Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             txtdepartment.Clear()
         End If
     End Sub
@@ -100,7 +101,7 @@ Public Class Department
                 Exit Sub
             End If
 
-            If dept = "Junior High School" OrElse dept = "Senior High School" Then
+            If dept = "Junior High School" OrElse dept = "Senior High School" OrElse dept = "Elementary" Then
 
                 Try
                     con.Open()
@@ -144,7 +145,7 @@ Public Class Department
                     End If
                 End Try
             Else
-                MessageBox.Show("Invalid input. Please enter 'Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                MessageBox.Show("Invalid input. Please enter ''Elementary' or Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 txtdepartment.Text = ""
             End If
         End If

@@ -48,6 +48,7 @@ Partial Class Section
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
+        rbelem = New RadioButton()
         Label1 = New Label()
         rbshs = New RadioButton()
         rbjhs = New RadioButton()
@@ -76,6 +77,7 @@ Partial Class Section
         Guna2GradientPanel1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GradientPanel1.BorderRadius = 9
         Guna2GradientPanel1.BorderThickness = 2
+        Guna2GradientPanel1.Controls.Add(rbelem)
         Guna2GradientPanel1.Controls.Add(Label1)
         Guna2GradientPanel1.Controls.Add(rbshs)
         Guna2GradientPanel1.Controls.Add(rbjhs)
@@ -97,6 +99,19 @@ Partial Class Section
         Guna2GradientPanel1.Size = New Size(595, 192)
         Guna2GradientPanel1.TabIndex = 22
         ' 
+        ' rbelem
+        ' 
+        rbelem.AutoSize = True
+        rbelem.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        rbelem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        rbelem.Location = New Point(89, 16)
+        rbelem.Name = "rbelem"
+        rbelem.Size = New Size(98, 20)
+        rbelem.TabIndex = 71
+        rbelem.TabStop = True
+        rbelem.Text = "Elementary"
+        rbelem.UseVisualStyleBackColor = True
+        ' 
         ' Label1
         ' 
         Label1.AutoSize = True
@@ -113,7 +128,7 @@ Partial Class Section
         rbshs.AutoSize = True
         rbshs.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbshs.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbshs.Location = New Point(255, 16)
+        rbshs.Location = New Point(364, 16)
         rbshs.Name = "rbshs"
         rbshs.Size = New Size(144, 20)
         rbshs.TabIndex = 69
@@ -126,7 +141,7 @@ Partial Class Section
         rbjhs.AutoSize = True
         rbjhs.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbjhs.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbjhs.Location = New Point(89, 16)
+        rbjhs.Location = New Point(198, 16)
         rbjhs.Name = "rbjhs"
         rbjhs.Size = New Size(142, 20)
         rbjhs.TabIndex = 68
@@ -451,4 +466,5 @@ Partial Class Section
     Friend WithEvents rbshs As RadioButton
     Friend WithEvents rbjhs As RadioButton
     Friend WithEvents Label1 As Label
+    Friend WithEvents rbelem As RadioButton
 End Class

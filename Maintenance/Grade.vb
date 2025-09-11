@@ -44,8 +44,8 @@ Public Class Grade
             Exit Sub
         End If
 
-        If grade < 7 OrElse grade > 12 Then
-            MsgBox("Please enter a grade between 7 and 12.", vbExclamation, "Invalid Grade")
+        If grade < 1 OrElse grade > 12 Then
+            MsgBox("Please enter a grade between 1 and 12.", vbExclamation, "Invalid Grade")
             txtgrade.Clear()
             Exit Sub
         End If
@@ -114,8 +114,8 @@ Public Class Grade
                 Exit Sub
             End If
 
-            If grade < 7 OrElse grade > 12 Then
-                MsgBox("Please enter a grade between 7 and 12.", vbExclamation, "Invalid Grade")
+            If grade < 1 OrElse grade > 12 Then
+                MsgBox("Please enter a grade between 1 and 12.", vbExclamation, "Invalid Grade")
                 Exit Sub
             End If
 

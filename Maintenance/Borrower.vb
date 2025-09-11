@@ -466,6 +466,7 @@ Public Class Borrower
 
     Private Sub cbdepartment_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbdepartment.SelectedIndexChanged
 
+
         cbgrade.Enabled = False
         cbgrade.SelectedIndex = -1
         cbsection.Enabled = False
@@ -473,67 +474,98 @@ Public Class Borrower
         cbstrand.Enabled = False
         cbstrand.SelectedIndex = -1
 
+
+        cbgrade.Visible = True
+        lblgrade.Visible = True
         cbsection.Visible = True
         lblsection.Visible = True
-        cbstrand.Visible = False
-        lblstrand.Visible = False
+        cbstrand.Visible = True
+        lblstrand.Visible = True
 
         If cbdepartment.SelectedIndex <> -1 Then
-            cbgrade.Enabled = True
             Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
 
-            If selectedDept = "Junior High School" Then
-
-                Dim con As New MySqlConnection(connectionString)
-                Dim dt As New DataTable
-                Try
-                    con.Open()
-                    Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('7', '8', '9', '10')", con)
-                    adap.Fill(dt)
-                    cbgrade.DataSource = dt
-                    cbgrade.DisplayMember = "Grade"
-                    cbgrade.ValueMember = "ID"
-                    cbgrade.SelectedIndex = -1
-
-                    cbsection.Enabled = False
-                    cbsection.Visible = True
-                    lblsection.Visible = True
-
-                    cbstrand.Enabled = False
-                    cbstrand.Visible = False
-                    lblstrand.Visible = False
-                Catch ex As Exception
-                    MessageBox.Show("Error filtering JHS grades: " & ex.Message)
-                End Try
-            ElseIf selectedDept = "Senior High School" Then
-
-                Dim con As New MySqlConnection(connectionString)
-                Dim dt As New DataTable
-                Try
-                    con.Open()
-                    Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('11', '12')", con)
-                    adap.Fill(dt)
-                    cbgrade.DataSource = dt
-                    cbgrade.DisplayMember = "Grade"
-                    cbgrade.ValueMember = "ID"
-                    cbgrade.SelectedIndex = -1
-
-                    cbsection.Enabled = False
-                    cbsection.Visible = False
-                    lblsection.Visible = False
-
-                    cbstrand.Enabled = False
-                    cbstrand.Visible = True
-                    lblstrand.Visible = True
-
-                    cbstrand.Location = New Point(942, 216)
-                    lblstrand.Location = New Point(942, 197)
-
-                Catch ex As Exception
-                    MessageBox.Show("Error filtering SHS grades: " & ex.Message)
-                End Try
+            If rbteacher.Checked Then
+                cbgrade.Enabled = False
+                cbgrade.Visible = False
+                lblgrade.Visible = False
+                cbsection.Enabled = False
+                cbsection.Visible = False
+                lblsection.Visible = False
+                cbstrand.Enabled = False
+                cbstrand.Visible = False
+                lblstrand.Visible = False
+                Return
             End If
+
+
+            Select Case selectedDept
+                Case "Junior High School"
+                    Dim con As New MySqlConnection(connectionString)
+                    Dim dt As New DataTable
+                    Try
+                        con.Open()
+                        Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('7', '8', '9', '10')", con)
+                        adap.Fill(dt)
+                        cbgrade.DataSource = dt
+                        cbgrade.DisplayMember = "Grade"
+                        cbgrade.ValueMember = "ID"
+                        cbgrade.SelectedIndex = -1
+
+                        cbgrade.Enabled = True
+                        cbsection.Visible = True
+                        lblsection.Visible = True
+                        cbstrand.Visible = False
+                        lblstrand.Visible = False
+                    Catch ex As Exception
+                        MessageBox.Show("Error filtering JHS grades: " & ex.Message)
+                    End Try
+
+                Case "Senior High School"
+                    Dim con As New MySqlConnection(connectionString)
+                    Dim dt As New DataTable
+                    Try
+                        con.Open()
+                        Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('11', '12')", con)
+                        adap.Fill(dt)
+                        cbgrade.DataSource = dt
+                        cbgrade.DisplayMember = "Grade"
+                        cbgrade.ValueMember = "ID"
+                        cbgrade.SelectedIndex = -1
+
+                        cbgrade.Enabled = True
+                        cbsection.Visible = False
+                        lblsection.Visible = False
+                        cbstrand.Visible = True
+                        lblstrand.Visible = True
+                        cbstrand.Location = New Point(942, 216)
+                        lblstrand.Location = New Point(942, 197)
+                    Catch ex As Exception
+                        MessageBox.Show("Error filtering SHS grades: " & ex.Message)
+                    End Try
+
+                Case "Elementary"
+                    Dim con As New MySqlConnection(connectionString)
+                    Dim dt As New DataTable
+                    Try
+                        con.Open()
+                        Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('1', '2', '3', '4', '5', '6')", con)
+                        adap.Fill(dt)
+                        cbgrade.DataSource = dt
+                        cbgrade.DisplayMember = "Grade"
+                        cbgrade.ValueMember = "ID"
+                        cbgrade.SelectedIndex = -1
+
+                        cbgrade.Enabled = True
+                        cbsection.Visible = True
+                        lblsection.Visible = True
+                        cbstrand.Visible = False
+                        lblstrand.Visible = False
+                    Catch ex As Exception
+                        MessageBox.Show("Error filtering Elementary grades: " & ex.Message)
+                    End Try
+            End Select
         End If
     End Sub
 
@@ -557,85 +589,112 @@ Public Class Borrower
             Dim selectedGrade As String = cbgrade.GetItemText(cbgrade.SelectedItem)
             Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
+            Select Case selectedDept
+                Case "Junior High School"
+                    cbsection.Enabled = True
+                    Dim con As New MySqlConnection(connectionString)
+                    Dim dt As New DataTable
+                    Try
+                        con.Open()
+                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = 'Junior High School' AND GradeLevel = @grade", con)
+                        com.Parameters.AddWithValue("@grade", selectedGrade)
+                        Dim adap As New MySqlDataAdapter(com)
+                        adap.Fill(dt)
+                        cbsection.DataSource = dt
+                        cbsection.DisplayMember = "Section"
+                        cbsection.ValueMember = "ID"
+                        cbsection.SelectedIndex = -1
+                        cbstrand.Enabled = False
+                    Catch ex As Exception
+                        MessageBox.Show("Error loading sections: " & ex.Message)
+                    Finally
+                        con.Close()
+                    End Try
 
-            If selectedDept = "Junior High School" Then
+                Case "Senior High School"
+                    cbstrand.Enabled = True
+                    Dim con As New MySqlConnection(connectionString)
+                    Dim dt As New DataTable
+                    Try
+                        con.Open()
+                        Dim com As New MySqlCommand("SELECT ID, Strand FROM `section_tbl` WHERE Department = 'Senior High School' AND GradeLevel = @grade", con)
+                        com.Parameters.AddWithValue("@grade", selectedGrade)
+                        Dim adap As New MySqlDataAdapter(com)
+                        adap.Fill(dt)
+                        cbstrand.DataSource = dt
+                        cbstrand.DisplayMember = "Strand"
+                        cbstrand.ValueMember = "ID"
+                        cbstrand.SelectedIndex = -1
+                        cbsection.Enabled = False
+                    Catch ex As Exception
+                        MessageBox.Show("Error loading strands: " & ex.Message)
+                    Finally
+                        con.Close()
+                    End Try
 
-                cbsection.Enabled = True
-                Dim con As New MySqlConnection(connectionString)
-                Dim dt As New DataTable
-                Try
-                    con.Open()
-
-                    Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = 'Junior High School' AND GradeLevel = @grade", con)
-                    com.Parameters.AddWithValue("@grade", selectedGrade)
-
-                    Dim adap As New MySqlDataAdapter(com)
-                    adap.Fill(dt)
-
-                    cbsection.DataSource = dt
-                    cbsection.DisplayMember = "Section"
-                    cbsection.ValueMember = "ID"
-                    cbsection.SelectedIndex = -1
-
-                    cbstrand.Enabled = False
-                Catch ex As Exception
-                    MessageBox.Show("Error loading sections: " & ex.Message)
-                Finally
-                    con.Close()
-                End Try
-
-            ElseIf selectedDept = "Senior High School" Then
-
-                cbstrand.Enabled = True
-                Dim con As New MySqlConnection(connectionString)
-                Dim dt As New DataTable
-                Try
-                    con.Open()
-
-                    Dim com As New MySqlCommand("SELECT ID, Strand FROM `section_tbl` WHERE Department = 'Senior High School' AND GradeLevel = @grade", con)
-                    com.Parameters.AddWithValue("@grade", selectedGrade)
-
-                    Dim adap As New MySqlDataAdapter(com)
-                    adap.Fill(dt)
-
-                    cbstrand.DataSource = dt
-                    cbstrand.DisplayMember = "Strand"
-                    cbstrand.ValueMember = "ID"
-                    cbstrand.SelectedIndex = -1
-
-                    cbsection.Enabled = False
-                Catch ex As Exception
-                    MessageBox.Show("Error loading strands: " & ex.Message)
-                Finally
-                    con.Close()
-                End Try
-            End If
+                Case "Elementary"
+                    cbsection.Enabled = True
+                    Dim con As New MySqlConnection(connectionString)
+                    Dim dt As New DataTable
+                    Try
+                        con.Open()
+                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = 'Elementary' AND GradeLevel = @grade", con)
+                        com.Parameters.AddWithValue("@grade", selectedGrade)
+                        Dim adap As New MySqlDataAdapter(com)
+                        adap.Fill(dt)
+                        cbsection.DataSource = dt
+                        cbsection.DisplayMember = "Section"
+                        cbsection.ValueMember = "ID"
+                        cbsection.SelectedIndex = -1
+                        cbstrand.Enabled = False
+                    Catch ex As Exception
+                        MessageBox.Show("Error loading sections for Elementary: " & ex.Message)
+                    Finally
+                        con.Close()
+                    End Try
+            End Select
         End If
     End Sub
 
     Private Sub rbstudent_CheckedChanged(sender As Object, e As EventArgs) Handles rbstudent.CheckedChanged
 
-
         If rbstudent.Checked Then
 
 
             txtlrn.Visible = True
+            txtlrn.Enabled = True
             txtemployeeno.Visible = False
 
-            rbnone.Checked = False
+
             lblborrowertype.Text = "LRN:"
 
+
             cbdepartment.Enabled = True
+            cbdepartment.DataSource = Nothing
+            cbdepts()
+
             cbgrade.Enabled = False
+            cbgrade.Visible = True
+            lblgrade.Visible = True
+
             cbsection.Enabled = False
+            cbsection.Visible = True
+            lblsection.Visible = True
+
             cbstrand.Enabled = False
+            cbstrand.Visible = True
+            lblstrand.Visible = True
+
+            cbstrand.Location = New Point(942, 285)
+            lblstrand.Location = New Point(942, 266)
+
 
             txtfname.Enabled = True
             txtlname.Enabled = True
             txtmname.Enabled = True
             txtcontactnumber.Enabled = True
             rbnone.Enabled = True
-            txtlrn.Enabled = True
+            rbnone.Checked = False
 
         End If
 
@@ -643,49 +702,42 @@ Public Class Borrower
 
     Private Sub rbteacher_CheckedChanged(sender As Object, e As EventArgs) Handles rbteacher.CheckedChanged
 
-
-
-
         If rbteacher.Checked Then
 
-            txtlrn.Visible = False
-            txtlrn.Enabled = True
 
+            txtlrn.Visible = False
+            txtlrn.Enabled = False
             txtemployeeno.Visible = True
 
-            rbnone.Checked = False
+
             lblborrowertype.Text = "Employee no.:"
 
 
-            cbdepartment.Enabled = False
+            cbdepartment.Enabled = True
             cbdepartment.DataSource = Nothing
             cbdepts()
 
+
             cbgrade.Enabled = False
-            cbgrade.DataSource = Nothing
-            cbgradee()
+            cbgrade.Visible = False
+            lblgrade.Visible = False
 
             cbsection.Enabled = False
-            cbsection.DataSource = Nothing
-            cbsecs()
-
-            cbstrand.Visible = True
-            cbstrand.Location = New Point(942, 285)
-
-
-            lblstrand.Visible = True
-            lblstrand.Location = New Point(942, 266)
+            cbsection.Visible = False
+            lblsection.Visible = False
 
             cbstrand.Enabled = False
-            cbstrand.DataSource = Nothing
-            cbstrandd()
+            cbstrand.Visible = False
+            lblstrand.Visible = False
+
 
             txtfname.Enabled = True
             txtlname.Enabled = True
             txtmname.Enabled = True
+            txtemployeeno.Enabled = True
             txtcontactnumber.Enabled = True
             rbnone.Enabled = True
-            txtlrn.Enabled = True
+            rbnone.Checked = False
 
         End If
 
