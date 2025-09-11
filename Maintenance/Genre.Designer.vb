@@ -93,7 +93,7 @@ Partial Class Genre
         txtgenre.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtgenre.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtgenre.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgenre.Font = New Font("Microsoft Sans Serif", 9.0F)
+        txtgenre.Font = New Font("Microsoft Sans Serif", 9F)
         txtgenre.ForeColor = Color.Black
         txtgenre.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtgenre.Location = New Point(36, 44)
@@ -187,7 +187,7 @@ Partial Class Genre
         txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(29, 20)
@@ -241,7 +241,7 @@ Partial Class Genre
         DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
         DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
+        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
