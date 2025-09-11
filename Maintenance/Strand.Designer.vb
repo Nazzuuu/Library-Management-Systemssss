@@ -23,22 +23,24 @@ Partial Class Strand
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         Label1 = New Label()
         txtstrand = New Guna.UI2.WinForms.Guna2TextBox()
@@ -49,6 +51,8 @@ Partial Class Strand
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
+        Label2 = New Label()
+        txtdescription = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2GradientPanel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -59,16 +63,18 @@ Partial Class Strand
         Guna2GradientPanel1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GradientPanel1.BorderRadius = 9
         Guna2GradientPanel1.BorderThickness = 2
+        Guna2GradientPanel1.Controls.Add(Label2)
+        Guna2GradientPanel1.Controls.Add(txtdescription)
         Guna2GradientPanel1.Controls.Add(Label1)
         Guna2GradientPanel1.Controls.Add(txtstrand)
         Guna2GradientPanel1.Controls.Add(btndelete)
         Guna2GradientPanel1.Controls.Add(btnedit)
         Guna2GradientPanel1.Controls.Add(btnadd)
-        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges9
+        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges11
         Guna2GradientPanel1.Location = New Point(28, 69)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
-        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges10
-        Guna2GradientPanel1.Size = New Size(415, 150)
+        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        Guna2GradientPanel1.Size = New Size(415, 208)
         Guna2GradientPanel1.TabIndex = 26
         ' 
         ' Label1
@@ -86,7 +92,7 @@ Partial Class Strand
         ' 
         txtstrand.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtstrand.BorderRadius = 12
-        txtstrand.CustomizableEdges = CustomizableEdges1
+        txtstrand.CustomizableEdges = CustomizableEdges3
         txtstrand.DefaultText = ""
         txtstrand.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtstrand.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -101,7 +107,7 @@ Partial Class Strand
         txtstrand.Name = "txtstrand"
         txtstrand.PlaceholderText = ""
         txtstrand.SelectedText = ""
-        txtstrand.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtstrand.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtstrand.Size = New Size(347, 33)
         txtstrand.TabIndex = 3
         ' 
@@ -110,7 +116,7 @@ Partial Class Strand
         btndelete.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btndelete.BorderRadius = 9
         btndelete.BorderThickness = 1
-        btndelete.CustomizableEdges = CustomizableEdges3
+        btndelete.CustomizableEdges = CustomizableEdges5
         btndelete.DisabledState.BorderColor = Color.DarkGray
         btndelete.DisabledState.CustomBorderColor = Color.DarkGray
         btndelete.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -118,9 +124,9 @@ Partial Class Strand
         btndelete.FillColor = Color.Empty
         btndelete.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btndelete.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btndelete.Location = New Point(290, 98)
+        btndelete.Location = New Point(290, 162)
         btndelete.Name = "btndelete"
-        btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btndelete.Size = New Size(90, 27)
         btndelete.TabIndex = 2
         btndelete.Text = "DELETE"
@@ -130,7 +136,7 @@ Partial Class Strand
         btnedit.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnedit.BorderRadius = 9
         btnedit.BorderThickness = 1
-        btnedit.CustomizableEdges = CustomizableEdges5
+        btnedit.CustomizableEdges = CustomizableEdges7
         btnedit.DisabledState.BorderColor = Color.DarkGray
         btnedit.DisabledState.CustomBorderColor = Color.DarkGray
         btnedit.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -138,9 +144,9 @@ Partial Class Strand
         btnedit.FillColor = Color.Empty
         btnedit.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnedit.Location = New Point(160, 98)
+        btnedit.Location = New Point(160, 162)
         btnedit.Name = "btnedit"
-        btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         btnedit.Size = New Size(90, 27)
         btnedit.TabIndex = 1
         btnedit.Text = "EDIT"
@@ -150,7 +156,7 @@ Partial Class Strand
         btnadd.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnadd.BorderRadius = 9
         btnadd.BorderThickness = 1
-        btnadd.CustomizableEdges = CustomizableEdges7
+        btnadd.CustomizableEdges = CustomizableEdges9
         btnadd.DisabledState.BorderColor = Color.DarkGray
         btnadd.DisabledState.CustomBorderColor = Color.DarkGray
         btnadd.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -158,9 +164,9 @@ Partial Class Strand
         btnadd.FillColor = Color.Empty
         btnadd.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnadd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnadd.Location = New Point(36, 98)
+        btnadd.Location = New Point(36, 162)
         btnadd.Name = "btnadd"
-        btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         btnadd.Size = New Size(90, 27)
         btnadd.TabIndex = 0
         btnadd.Text = "ADD"
@@ -180,7 +186,7 @@ Partial Class Strand
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges11
+        txtsearch.CustomizableEdges = CustomizableEdges13
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -195,7 +201,7 @@ Partial Class Strand
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Strand"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtsearch.Size = New Size(420, 30)
         txtsearch.TabIndex = 25
         ' 
@@ -229,7 +235,7 @@ Partial Class Strand
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(29, 241)
+        DataGridView1.Location = New Point(29, 299)
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
@@ -248,11 +254,45 @@ Partial Class Strand
         DataGridView1.Size = New Size(420, 150)
         DataGridView1.TabIndex = 27
         ' 
+        ' Label2
+        ' 
+        Label2.AutoSize = True
+        Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label2.Location = New Point(34, 97)
+        Label2.Name = "Label2"
+        Label2.Size = New Size(85, 16)
+        Label2.TabIndex = 6
+        Label2.Text = "Description:"
+        ' 
+        ' txtdescription
+        ' 
+        txtdescription.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtdescription.BorderRadius = 12
+        txtdescription.CustomizableEdges = CustomizableEdges1
+        txtdescription.DefaultText = ""
+        txtdescription.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtdescription.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtdescription.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtdescription.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtdescription.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtdescription.Font = New Font("Microsoft Sans Serif", 9F)
+        txtdescription.ForeColor = Color.Black
+        txtdescription.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtdescription.Location = New Point(34, 118)
+        txtdescription.Margin = New Padding(3, 4, 3, 4)
+        txtdescription.Name = "txtdescription"
+        txtdescription.PlaceholderText = ""
+        txtdescription.SelectedText = ""
+        txtdescription.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtdescription.Size = New Size(347, 33)
+        txtdescription.TabIndex = 5
+        ' 
         ' Strand
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(474, 413)
+        ClientSize = New Size(474, 478)
         Controls.Add(DataGridView1)
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
@@ -279,4 +319,6 @@ Partial Class Strand
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Label2 As Label
+    Friend WithEvents txtdescription As Guna.UI2.WinForms.Guna2TextBox
 End Class

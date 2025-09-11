@@ -54,14 +54,12 @@ Public Class Publisher
         Try
             con.Open()
 
-            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher OR `Address` = @address OR `ContactNumber` = @contact", con)
+            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher", con)
             comsu.Parameters.AddWithValue("@publisher", publisher)
-            comsu.Parameters.AddWithValue("@address", address)
-            comsu.Parameters.AddWithValue("@contact", contact)
 
             Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
             If count > 0 Then
-                MsgBox("Duplication is not allowed", vbExclamation, "Warning")
+                MsgBox("Publisher name already exists.", vbExclamation, "Warning")
                 Exit Sub
             End If
 
@@ -111,15 +109,12 @@ Public Class Publisher
 
             Try
                 con.Open()
-
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher OR `Address` = @address OR `ContactNumber` = @contact", con)
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher", con)
                 comsu.Parameters.AddWithValue("@publisher", pub)
-                comsu.Parameters.AddWithValue("@address", address)
-                comsu.Parameters.AddWithValue("@contact", contact)
 
                 Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
                 If count > 0 Then
-                    MsgBox("Duplication is not allowed", vbExclamation, "Warning")
+                    MsgBox("Publisher name already exists.", vbExclamation, "Warning")
                     Exit Sub
                 End If
 

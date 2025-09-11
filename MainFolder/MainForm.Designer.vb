@@ -486,7 +486,7 @@ Partial Class MainForm
         ' 
         Label1.Anchor = AnchorStyles.Top
         Label1.AutoSize = True
-        Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        Label1.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         Label1.Location = New Point(242, 14)
         Label1.Name = "Label1"
         Label1.Size = New Size(550, 54)
@@ -539,8 +539,8 @@ Partial Class MainForm
         tbl_paneldash.Location = New Point(27, 39)
         tbl_paneldash.Name = "tbl_paneldash"
         tbl_paneldash.RowCount = 2
-        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
-        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
+        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50.0F))
+        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50.0F))
         tbl_paneldash.Size = New Size(851, 246)
         tbl_paneldash.TabIndex = 0
         ' 
@@ -859,7 +859,7 @@ Partial Class MainForm
         ' 
         ' MainForm
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1015, 515)
         ControlBox = False

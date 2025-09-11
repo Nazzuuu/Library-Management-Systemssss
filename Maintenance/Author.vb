@@ -18,7 +18,7 @@ Public Class Author
         adap.Fill(ds, "INFO")
         DataGridView1.DataSource = ds.Tables("INFO")
 
-        DataGridView1.Columns("ID").Visible = False
+
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
@@ -224,10 +224,6 @@ Public Class Author
             e.SuppressKeyPress = True
         End If
 
-        If e.KeyCode = Keys.Enter Then
-            btnadd_Click(sender, e)
-            e.Handled = True
-        End If
 
     End Sub
 
@@ -247,14 +243,8 @@ Public Class Author
 
     End Sub
 
-    Private Sub btnadd_KeyDown(sender As Object, e As KeyEventArgs) Handles btnadd.KeyDown
 
-        If e.KeyCode = Keys.Enter Then
-            btnadd_Click(sender, e)
-            e.Handled = True
-        End If
 
-    End Sub
 
     'heck nooo'
 

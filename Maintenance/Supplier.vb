@@ -49,14 +49,12 @@ Public Class Supplier
         Try
             con.Open()
 
-            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier OR `Address` = @address OR `ContactNumber` = @contact", con)
+            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier", con)
             comsu.Parameters.AddWithValue("@supplier", supp)
-            comsu.Parameters.AddWithValue("@address", address)
-            comsu.Parameters.AddWithValue("@contact", contact)
 
             Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
             If count > 0 Then
-                MsgBox("Duplication is not allowed", vbExclamation, "Warning")
+                MsgBox("Supplier name already exists.", vbExclamation, "Warning")
                 Exit Sub
             End If
 
@@ -108,14 +106,12 @@ Public Class Supplier
             Try
                 con.Open()
 
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier OR `Address` = @address OR `ContactNumber` = @contact", con)
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier", con)
                 comsu.Parameters.AddWithValue("@supplier", supp)
-                comsu.Parameters.AddWithValue("@address", address)
-                comsu.Parameters.AddWithValue("@contact", contact)
 
                 Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
                 If count > 0 Then
-                    MsgBox("Duplication is not allowed", vbExclamation, "Warning")
+                    MsgBox("Supplier name already exists.", vbExclamation, "Warning")
                     Exit Sub
                 End If
 

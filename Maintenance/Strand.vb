@@ -25,14 +25,16 @@ Public Class Strand
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtstrand.Text = ""
+        txtdescription.Text = ""
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(connectionString)
         Dim strandd As String = txtstrand.Text.Trim
+        Dim des As String = txtdescription.Text.Trim
 
-        If String.IsNullOrWhiteSpace(strandd) Then
+        If String.IsNullOrWhiteSpace(strandd) OrElse String.IsNullOrWhiteSpace(des) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
@@ -40,8 +42,9 @@ Public Class Strand
         Try
             con.Open()
 
-            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE `Strand` = @strand", con)
+            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE `Strand` = @strand OR `Description` = @description", con)
             coms.Parameters.AddWithValue("@strand", strandd)
+            coms.Parameters.AddWithValue("@description", des)
             Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
 
             If count > 0 Then
@@ -49,8 +52,9 @@ Public Class Strand
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `strand_tbl`(`Strand`) VALUES (@strand)", con)
+            Dim com As New MySqlCommand("INSERT INTO `strand_tbl`(`Strand`, `Description`) VALUES (@strand, @description)", con)
             com.Parameters.AddWithValue("@strand", strandd)
+            com.Parameters.AddWithValue("@description", des)
             com.ExecuteNonQuery()
 
             For Each form In Application.OpenForms
@@ -74,6 +78,7 @@ Public Class Strand
             MsgBox(ex.Message, vbCritical)
         Finally
             txtstrand.Clear()
+            txtdescription.Clear()
 
         End Try
 
@@ -86,9 +91,11 @@ Public Class Strand
             Dim con As New MySqlConnection(connectionString)
 
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim ids As Integer = CInt(DataGridView1.CurrentRow.Cells("ID").Value)
 
             Dim strandd As String = txtstrand.Text.Trim
+            Dim des As String = txtdescription.Text.Trim
+
 
             If String.IsNullOrWhiteSpace(strandd) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -98,8 +105,11 @@ Public Class Strand
             Try
                 con.Open()
 
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE `Strand` = @strand", con)
+
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE `Strand` = @strand OR `Description` = @description AND `ID` <> @id", con)
                 coms.Parameters.AddWithValue("@strand", strandd)
+                coms.Parameters.AddWithValue("@description", des)
+                coms.Parameters.AddWithValue("@id", ids)
                 Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
 
                 If count > 0 Then
@@ -107,9 +117,10 @@ Public Class Strand
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `strand_tbl` SET `Strand`= @strand WHERE  `ID` = @id", con)
+                Dim com As New MySqlCommand("UPDATE `strand_tbl` SET `Strand`= @strand, `Description` = @description WHERE  `ID` = @id", con)
                 com.Parameters.AddWithValue("@strand", strandd)
-                com.Parameters.AddWithValue("@id", ID)
+                com.Parameters.AddWithValue("@description", des)
+                com.Parameters.AddWithValue("@id", ids)
                 com.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
@@ -129,6 +140,7 @@ Public Class Strand
                 MsgBox("Updated successfully!", vbInformation)
                 Strand_Load(sender, e)
                 txtstrand.Clear()
+                txtdescription.Clear()
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
@@ -149,6 +161,7 @@ Public Class Strand
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim strandName As String = selectedRow.Cells("Strand").Value.ToString().Trim()
+                Dim des As String = selectedRow.Cells("Description").Value.ToString().Trim()
 
                 Try
                     con.Open()
@@ -203,7 +216,7 @@ Public Class Strand
 
             Dim row = DataGridView1.Rows(e.RowIndex)
             txtstrand.Text = row.Cells("Strand").Value.ToString
-
+            txtdescription.Text = row.Cells("Description").Value.ToString
         End If
 
     End Sub

@@ -281,12 +281,4 @@ Public Class Department
 
     End Sub
 
-    Private Sub btnadd_KeyDown(sender As Object, e As KeyEventArgs) Handles btnadd.KeyDown
-
-        If e.KeyCode = Keys.Enter Then
-            btnadd_Click(sender, e)
-            e.Handled = True
-        End If
-
-    End Sub
 End Class
