@@ -18,7 +18,7 @@ Public Class Author
         adap.Fill(ds, "INFO")
         DataGridView1.DataSource = ds.Tables("INFO")
 
-
+        DataGridView1.Columns("ID").Visible = False
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
@@ -241,6 +241,12 @@ Public Class Author
             e.SuppressKeyPress = True
         End If
 
+    End Sub
+
+    Private Sub Author_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        If e.KeyCode = Keys.Escape Then
+            Me.Close()
+        End If
     End Sub
 
 

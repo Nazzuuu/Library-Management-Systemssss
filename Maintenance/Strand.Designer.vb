@@ -25,6 +25,8 @@ Partial Class Strand
         components = New ComponentModel.Container()
         Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -39,9 +41,9 @@ Partial Class Strand
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
+        Label2 = New Label()
+        txtdescription = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
         txtstrand = New Guna.UI2.WinForms.Guna2TextBox()
         btndelete = New Guna.UI2.WinForms.Guna2Button()
@@ -51,8 +53,6 @@ Partial Class Strand
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
-        Label2 = New Label()
-        txtdescription = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2GradientPanel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -76,6 +76,40 @@ Partial Class Strand
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         Guna2GradientPanel1.Size = New Size(415, 208)
         Guna2GradientPanel1.TabIndex = 26
+        ' 
+        ' Label2
+        ' 
+        Label2.AutoSize = True
+        Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label2.Location = New Point(34, 97)
+        Label2.Name = "Label2"
+        Label2.Size = New Size(85, 16)
+        Label2.TabIndex = 6
+        Label2.Text = "Description:"
+        ' 
+        ' txtdescription
+        ' 
+        txtdescription.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtdescription.BorderRadius = 12
+        txtdescription.CustomizableEdges = CustomizableEdges1
+        txtdescription.DefaultText = ""
+        txtdescription.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtdescription.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtdescription.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtdescription.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtdescription.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtdescription.Font = New Font("Microsoft Sans Serif", 9F)
+        txtdescription.ForeColor = Color.Black
+        txtdescription.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtdescription.Location = New Point(34, 118)
+        txtdescription.Margin = New Padding(3, 4, 3, 4)
+        txtdescription.Name = "txtdescription"
+        txtdescription.PlaceholderText = ""
+        txtdescription.SelectedText = ""
+        txtdescription.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtdescription.Size = New Size(347, 33)
+        txtdescription.TabIndex = 5
         ' 
         ' Label1
         ' 
@@ -254,40 +288,6 @@ Partial Class Strand
         DataGridView1.Size = New Size(420, 150)
         DataGridView1.TabIndex = 27
         ' 
-        ' Label2
-        ' 
-        Label2.AutoSize = True
-        Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(34, 97)
-        Label2.Name = "Label2"
-        Label2.Size = New Size(85, 16)
-        Label2.TabIndex = 6
-        Label2.Text = "Description:"
-        ' 
-        ' txtdescription
-        ' 
-        txtdescription.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtdescription.BorderRadius = 12
-        txtdescription.CustomizableEdges = CustomizableEdges1
-        txtdescription.DefaultText = ""
-        txtdescription.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
-        txtdescription.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
-        txtdescription.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtdescription.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtdescription.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtdescription.Font = New Font("Microsoft Sans Serif", 9F)
-        txtdescription.ForeColor = Color.Black
-        txtdescription.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtdescription.Location = New Point(34, 118)
-        txtdescription.Margin = New Padding(3, 4, 3, 4)
-        txtdescription.Name = "txtdescription"
-        txtdescription.PlaceholderText = ""
-        txtdescription.SelectedText = ""
-        txtdescription.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtdescription.Size = New Size(347, 33)
-        txtdescription.TabIndex = 5
-        ' 
         ' Strand
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -297,6 +297,7 @@ Partial Class Strand
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
+        KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False
         Name = "Strand"

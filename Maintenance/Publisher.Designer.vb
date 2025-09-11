@@ -334,6 +334,7 @@ Partial Class Publisher
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
+        KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False
         Name = "Publisher"
