@@ -52,6 +52,16 @@ Public Class Grade
 
         Try
             con.Open()
+
+            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `grade_tbl` WHERE `Grade` = @grade", con)
+            coms.Parameters.AddWithValue("@grade", grds)
+            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+
+            If count > 0 Then
+                MsgBox("This grade is already exists.", vbExclamation, "Duplication not allowed.")
+                Exit Sub
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `grade_tbl`(`Grade`) VALUES (@grade)", con)
             com.Parameters.AddWithValue("@grade", grds)
             com.ExecuteNonQuery()
@@ -111,6 +121,16 @@ Public Class Grade
 
             Try
                 con.Open()
+
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `grade_tbl` WHERE `Grade` = @grade", con)
+                coms.Parameters.AddWithValue("@grade", grd)
+                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+
+                If count > 0 Then
+                    MsgBox("This grade is already exists.", vbExclamation, "Duplication not allowed.")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("UPDATE `grade_tbl` SET `Grade`= @grade WHERE  `ID` = @id", con)
                 com.Parameters.AddWithValue("@grade", grd)
                 com.Parameters.AddWithValue("@id", ID)

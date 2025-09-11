@@ -22,7 +22,6 @@ Partial Class login
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        components = New ComponentModel.Container()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -38,7 +37,6 @@ Partial Class login
         Label3 = New Label()
         CheckBox1 = New CheckBox()
         Panel_btnlogin = New Panel()
-
         Panel1.SuspendLayout()
         Panel_btnlogin.SuspendLayout()
         SuspendLayout()
@@ -92,7 +90,7 @@ Partial Class login
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        Label1.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label1.Location = New Point(65, 122)
         Label1.Name = "Label1"
@@ -103,7 +101,7 @@ Partial Class login
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        Label2.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label2.Location = New Point(69, 166)
         Label2.Name = "Label2"
@@ -120,7 +118,7 @@ Partial Class login
         btnlogin.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
         btnlogin.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
         btnlogin.FillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnlogin.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        btnlogin.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         btnlogin.ForeColor = Color.White
         btnlogin.Location = New Point(21, 12)
         btnlogin.Name = "btnlogin"
@@ -136,7 +134,7 @@ Partial Class login
         Panel1.Dock = DockStyle.Top
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(486, 58)
+        Panel1.Size = New Size(486, 62)
         Panel1.TabIndex = 5
         ' 
         ' Label3
@@ -145,7 +143,7 @@ Partial Class login
         Label3.AutoSize = True
         Label3.Font = New Font("Baskerville Old Face", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.White
-        Label3.Location = New Point(102, 9)
+        Label3.Location = New Point(107, 7)
         Label3.Name = "Label3"
         Label3.Size = New Size(279, 56)
         Label3.TabIndex = 1
@@ -170,7 +168,7 @@ Partial Class login
         ' 
         ' login
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(486, 280)
         ControlBox = False

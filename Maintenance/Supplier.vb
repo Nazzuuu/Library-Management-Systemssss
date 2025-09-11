@@ -48,6 +48,18 @@ Public Class Supplier
 
         Try
             con.Open()
+
+            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier OR `Address` = @address OR `ContactNumber` = @contact", con)
+            comsu.Parameters.AddWithValue("@supplier", supp)
+            comsu.Parameters.AddWithValue("@address", address)
+            comsu.Parameters.AddWithValue("@contact", contact)
+
+            Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
+            If count > 0 Then
+                MsgBox("Duplication is not allowed", vbExclamation, "Warning")
+                Exit Sub
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `supplier_tbl`(`SupplierName`, `Address`, `ContactNumber`) VALUES (@supplier, @address, @contact)", con)
 
             com.Parameters.AddWithValue("@supplier", supp)
@@ -95,6 +107,18 @@ Public Class Supplier
 
             Try
                 con.Open()
+
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier OR `Address` = @address OR `ContactNumber` = @contact", con)
+                comsu.Parameters.AddWithValue("@supplier", supp)
+                comsu.Parameters.AddWithValue("@address", address)
+                comsu.Parameters.AddWithValue("@contact", contact)
+
+                Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
+                If count > 0 Then
+                    MsgBox("Duplication is not allowed", vbExclamation, "Warning")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("UPDATE `supplier_tbl` SET `SupplierName`= @supplier,`Address`= @address,`ContactNumber`= @contact  WHERE `ID` = @id", con)
 
                 com.Parameters.AddWithValue("@supplier", supp)
@@ -141,7 +165,7 @@ Public Class Supplier
                     con.Open()
 
 
-                    Dim acquisitionCom As New MySqlCommand("SELECT COUNT(*) FROM `acquisition_tbl` WHERE Supplier = @supplier", con)
+                    Dim acquisitionCom As New MySqlCommand("SELECT COUNT(*) FROM `acquisition_tbl` WHERE SupplierName = @supplier", con)
                     acquisitionCom.Parameters.AddWithValue("@supplier", supplierName)
                     Dim acquisitionCount As Integer = CInt(acquisitionCom.ExecuteScalar())
 

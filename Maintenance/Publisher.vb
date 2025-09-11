@@ -53,6 +53,18 @@ Public Class Publisher
 
         Try
             con.Open()
+
+            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher OR `Address` = @address OR `ContactNumber` = @contact", con)
+            comsu.Parameters.AddWithValue("@publisher", publisher)
+            comsu.Parameters.AddWithValue("@address", address)
+            comsu.Parameters.AddWithValue("@contact", contact)
+
+            Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
+            If count > 0 Then
+                MsgBox("Duplication is not allowed", vbExclamation, "Warning")
+                Exit Sub
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `publisher_tbl`(`PublisherName`, `Address`, `ContactNumber`) VALUES (@publisher, @address, @contact)", con)
 
             com.Parameters.AddWithValue("@publisher", publisher)
@@ -99,6 +111,18 @@ Public Class Publisher
 
             Try
                 con.Open()
+
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher OR `Address` = @address OR `ContactNumber` = @contact", con)
+                comsu.Parameters.AddWithValue("@publisher", pub)
+                comsu.Parameters.AddWithValue("@address", address)
+                comsu.Parameters.AddWithValue("@contact", contact)
+
+                Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
+                If count > 0 Then
+                    MsgBox("Duplication is not allowed", vbExclamation, "Warning")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("UPDATE `publisher_tbl` SET `PublisherName`= @publisher,`Address`= @address,`ContactNumber`= @contact  WHERE `ID` = @id", con)
 
                 com.Parameters.AddWithValue("@publisher", pub)

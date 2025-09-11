@@ -1,4 +1,5 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.Runtime.InteropServices
+Imports MySql.Data.MySqlClient
 
 Public Class Language
     Private Sub Language_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -38,6 +39,16 @@ Public Class Language
 
         Try
             con.Open()
+
+            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `language_tbl` WHERE `Language` = @language", con)
+            coms.Parameters.AddWithValue("@language", lang)
+            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+
+            If count > 0 Then
+                MsgBox("This language is already exists.", vbExclamation, "Duplication not allowed.")
+                Exit Sub
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `language_tbl`(`Language`) VALUES (@language)", con)
             com.Parameters.AddWithValue("@language", lang)
             com.ExecuteNonQuery()
@@ -79,6 +90,16 @@ Public Class Language
 
             Try
                 con.Open()
+
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `language_tbl` WHERE `Language` = @language", con)
+                coms.Parameters.AddWithValue("@language", lang)
+                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+
+                If count > 0 Then
+                    MsgBox("This language is already exists.", vbExclamation, "Duplication not allowed.")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("UPDATE `language_tbl` SET `Language`= @language WHERE  `ID` = @id", con)
                 com.Parameters.AddWithValue("@language", lang)
                 com.Parameters.AddWithValue("@id", ID)

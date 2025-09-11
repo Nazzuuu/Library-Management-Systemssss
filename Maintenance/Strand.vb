@@ -38,6 +38,16 @@ Public Class Strand
 
         Try
             con.Open()
+
+            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE `Strand` = @strand", con)
+            coms.Parameters.AddWithValue("@strand", strandd)
+            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+
+            If count > 0 Then
+                MsgBox("This strand is already exists.", vbExclamation, "Duplication not allowed.")
+                Exit Sub
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `strand_tbl`(`Strand`) VALUES (@strand)", con)
             com.Parameters.AddWithValue("@strand", strandd)
             com.ExecuteNonQuery()
@@ -86,6 +96,16 @@ Public Class Strand
 
             Try
                 con.Open()
+
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE `Strand` = @strand", con)
+                coms.Parameters.AddWithValue("@strand", strandd)
+                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+
+                If count > 0 Then
+                    MsgBox("This strand is already exists.", vbExclamation, "Duplication not allowed.")
+                    Exit Sub
+                End If
+
                 Dim com As New MySqlCommand("UPDATE `strand_tbl` SET `Strand`= @strand WHERE  `ID` = @id", con)
                 com.Parameters.AddWithValue("@strand", strandd)
                 com.Parameters.AddWithValue("@id", ID)
