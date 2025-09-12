@@ -25,7 +25,6 @@ Partial Class MainForm
         components = New ComponentModel.Container()
         Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -72,7 +71,6 @@ Partial Class MainForm
         AccessionToolStripMenuItem = New ToolStripMenuItem()
         StudentLogsToolStripMenuItem = New ToolStripMenuItem()
         TimeInToolStripMenuItem = New ToolStripMenuItem()
-        TimeOutToolStripMenuItem = New ToolStripMenuItem()
         CirculationToolStripMenuItem = New ToolStripMenuItem()
         BorrowToolStripMenuItem = New ToolStripMenuItem()
         ReturnToolStripMenuItem = New ToolStripMenuItem()
@@ -318,7 +316,7 @@ Partial Class MainForm
         ' 
         ' StudentLogsToolStripMenuItem
         ' 
-        StudentLogsToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {TimeInToolStripMenuItem, TimeOutToolStripMenuItem})
+        StudentLogsToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {TimeInToolStripMenuItem})
         StudentLogsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         StudentLogsToolStripMenuItem.Name = "StudentLogsToolStripMenuItem"
         StudentLogsToolStripMenuItem.Size = New Size(180, 22)
@@ -328,15 +326,8 @@ Partial Class MainForm
         ' 
         TimeInToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         TimeInToolStripMenuItem.Name = "TimeInToolStripMenuItem"
-        TimeInToolStripMenuItem.Size = New Size(142, 22)
-        TimeInToolStripMenuItem.Text = "Time-in"
-        ' 
-        ' TimeOutToolStripMenuItem
-        ' 
-        TimeOutToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        TimeOutToolStripMenuItem.Name = "TimeOutToolStripMenuItem"
-        TimeOutToolStripMenuItem.Size = New Size(142, 22)
-        TimeOutToolStripMenuItem.Text = "Time-out"
+        TimeInToolStripMenuItem.Size = New Size(180, 22)
+        TimeInToolStripMenuItem.Text = "Time-in/out"
         ' 
         ' CirculationToolStripMenuItem
         ' 
@@ -409,7 +400,7 @@ Partial Class MainForm
         ' 
         Audit_Trail.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Audit_Trail.Name = "Audit_Trail"
-        Audit_Trail.Size = New Size(154, 22)
+        Audit_Trail.Size = New Size(180, 22)
         Audit_Trail.Text = "Audit Trail"
         ' 
         ' ReportsToolStripMenuItem1
@@ -417,7 +408,7 @@ Partial Class MainForm
         ReportsToolStripMenuItem1.DropDownItems.AddRange(New ToolStripItem() {BorrowerReportsToolStripMenuItem1, BookReportsToolStripMenuItem1})
         ReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReportsToolStripMenuItem1.Name = "ReportsToolStripMenuItem1"
-        ReportsToolStripMenuItem1.Size = New Size(154, 22)
+        ReportsToolStripMenuItem1.Size = New Size(180, 22)
         ReportsToolStripMenuItem1.Text = "Reports"
         ' 
         ' BorrowerReportsToolStripMenuItem1
@@ -438,7 +429,7 @@ Partial Class MainForm
         ' 
         logout.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         logout.Name = "logout"
-        logout.Size = New Size(154, 22)
+        logout.Size = New Size(180, 22)
         logout.Text = "Logout"
         ' 
         ' Panel1
@@ -486,7 +477,7 @@ Partial Class MainForm
         ' 
         Label1.Anchor = AnchorStyles.Top
         Label1.AutoSize = True
-        Label1.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label1.Location = New Point(242, 14)
         Label1.Name = "Label1"
         Label1.Size = New Size(550, 54)
@@ -539,14 +530,13 @@ Partial Class MainForm
         tbl_paneldash.Location = New Point(27, 39)
         tbl_paneldash.Name = "tbl_paneldash"
         tbl_paneldash.RowCount = 2
-        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50.0F))
-        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50.0F))
+        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
+        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
         tbl_paneldash.Size = New Size(851, 246)
         tbl_paneldash.TabIndex = 0
         ' 
         ' Guna2GroupBox1
         ' 
-        Guna2GroupBox1.BackgroundImage = CType(resources.GetObject("Guna2GroupBox1.BackgroundImage"), Image)
         Guna2GroupBox1.BackgroundImageLayout = ImageLayout.Zoom
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 25
@@ -601,7 +591,6 @@ Partial Class MainForm
         ' 
         ' dsh_borrow
         ' 
-        dsh_borrow.BackgroundImage = CType(resources.GetObject("dsh_borrow.BackgroundImage"), Image)
         dsh_borrow.BackgroundImageLayout = ImageLayout.Zoom
         dsh_borrow.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         dsh_borrow.BorderRadius = 25
@@ -657,7 +646,6 @@ Partial Class MainForm
         ' 
         ' dsh_overdue
         ' 
-        dsh_overdue.BackgroundImage = CType(resources.GetObject("dsh_overdue.BackgroundImage"), Image)
         dsh_overdue.BackgroundImageLayout = ImageLayout.Zoom
         dsh_overdue.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         dsh_overdue.BorderRadius = 25
@@ -712,7 +700,6 @@ Partial Class MainForm
         ' 
         ' dsh_replace
         ' 
-        dsh_replace.BackgroundImage = CType(resources.GetObject("dsh_replace.BackgroundImage"), Image)
         dsh_replace.BackgroundImageLayout = ImageLayout.Zoom
         dsh_replace.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         dsh_replace.BorderRadius = 25
@@ -767,7 +754,6 @@ Partial Class MainForm
         ' 
         ' dsh_return
         ' 
-        dsh_return.BackgroundImage = CType(resources.GetObject("dsh_return.BackgroundImage"), Image)
         dsh_return.BackgroundImageLayout = ImageLayout.Zoom
         dsh_return.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         dsh_return.BorderRadius = 25
@@ -859,7 +845,7 @@ Partial Class MainForm
         ' 
         ' MainForm
         ' 
-        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
+        AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1015, 515)
         ControlBox = False
@@ -968,7 +954,6 @@ Partial Class MainForm
     Friend WithEvents btn_dmg As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents StudentLogsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TimeInToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents TimeOutToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CategoryToolStripMenuItem As ToolStripMenuItem
 
 End Class

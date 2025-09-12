@@ -332,5 +332,16 @@
             Panel_dash.Controls.Add(Accession)
             .Show()
         End With
+
+
+    End Sub
+
+    Private Sub TimeInToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TimeInToolStripMenuItem.Click
+
+        Panel_dash.Controls.Clear()
+
+
+
+
     End Sub
 End Class
