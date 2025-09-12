@@ -294,7 +294,7 @@ Partial Class MainForm
         ' 
         ' ProcessStripMenuItem
         ' 
-        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem, CatalogToolStripMenuItem})
+        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, CatalogToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem})
         ProcessStripMenuItem.ForeColor = Color.White
         ProcessStripMenuItem.Name = "ProcessStripMenuItem"
         ProcessStripMenuItem.Size = New Size(79, 22)
@@ -400,7 +400,7 @@ Partial Class MainForm
         ' 
         Audit_Trail.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Audit_Trail.Name = "Audit_Trail"
-        Audit_Trail.Size = New Size(180, 22)
+        Audit_Trail.Size = New Size(154, 22)
         Audit_Trail.Text = "Audit Trail"
         ' 
         ' ReportsToolStripMenuItem1
@@ -408,7 +408,7 @@ Partial Class MainForm
         ReportsToolStripMenuItem1.DropDownItems.AddRange(New ToolStripItem() {BorrowerReportsToolStripMenuItem1, BookReportsToolStripMenuItem1})
         ReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReportsToolStripMenuItem1.Name = "ReportsToolStripMenuItem1"
-        ReportsToolStripMenuItem1.Size = New Size(180, 22)
+        ReportsToolStripMenuItem1.Size = New Size(154, 22)
         ReportsToolStripMenuItem1.Text = "Reports"
         ' 
         ' BorrowerReportsToolStripMenuItem1
@@ -429,7 +429,7 @@ Partial Class MainForm
         ' 
         logout.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         logout.Name = "logout"
-        logout.Size = New Size(180, 22)
+        logout.Size = New Size(154, 22)
         logout.Text = "Logout"
         ' 
         ' Panel1

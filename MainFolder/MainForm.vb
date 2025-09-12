@@ -61,6 +61,7 @@
         Panel_dash.Controls.Remove(Users_Staffs)
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
+        Panel_dash.Controls.Remove(oras)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -93,6 +94,7 @@
         Panel_dash.Controls.Remove(Users_Staffs)
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
+        Panel_dash.Controls.Remove(oras)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -118,6 +120,7 @@
         Panel_dash.Controls.Remove(Users_Staffs)
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
+        Panel_dash.Controls.Remove(oras)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -143,6 +146,7 @@
         Panel_dash.Controls.Remove(Users_Staffs)
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
+        Panel_dash.Controls.Remove(oras)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -340,8 +344,14 @@
 
         Panel_dash.Controls.Clear()
 
+        With oras
 
+            .TopMost = True
+            .TopLevel = False
+            .BringToFront()
+            Panel_dash.Controls.Add(oras)
+            .Show()
 
-
+        End With
     End Sub
 End Class

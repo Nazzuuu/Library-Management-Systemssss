@@ -22,15 +22,12 @@ Partial Class RegisteredBrwr
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        components = New ComponentModel.Container()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
-        Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         ListView1 = New ListView()
         txtborrower = New ColumnHeader()
         txtfname = New ColumnHeader()
@@ -43,6 +40,7 @@ Partial Class RegisteredBrwr
         txtgrade = New ColumnHeader()
         txtsection = New ColumnHeader()
         txtstrand = New ColumnHeader()
+        Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GroupBox1.SuspendLayout()
         SuspendLayout()
@@ -52,7 +50,7 @@ Partial Class RegisteredBrwr
         PictureBox1.BackColor = Color.White
         PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
         PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        PictureBox1.Location = New Point(755, 19)
+        PictureBox1.Location = New Point(755, 25)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(20, 18)
         PictureBox1.TabIndex = 22
@@ -62,7 +60,7 @@ Partial Class RegisteredBrwr
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges5
+        txtsearch.CustomizableEdges = CustomizableEdges1
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -72,39 +70,19 @@ Partial Class RegisteredBrwr
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Location = New Point(13, 13)
+        txtsearch.Location = New Point(13, 20)
         txtsearch.Margin = New Padding(4)
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrwer"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtsearch.Size = New Size(774, 30)
         txtsearch.TabIndex = 23
-        ' 
-        ' Guna2Elipse1
-        ' 
-        Guna2Elipse1.TargetControl = ListView1
-        ' 
-        ' Guna2GroupBox1
-        ' 
-        Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2GroupBox1.BorderRadius = 8
-        Guna2GroupBox1.BorderThickness = 2
-        Guna2GroupBox1.Controls.Add(ListView1)
-        Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges7
-        Guna2GroupBox1.FillColor = SystemColors.Control
-        Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
-        Guna2GroupBox1.ForeColor = Color.Transparent
-        Guna2GroupBox1.Location = New Point(13, 63)
-        Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
-        Guna2GroupBox1.Size = New Size(1170, 294)
-        Guna2GroupBox1.TabIndex = 24
         ' 
         ' ListView1
         ' 
         ListView1.Columns.AddRange(New ColumnHeader() {txtborrower, txtfname, txtlname, txtmname, txtlrn, txtemployeeno, txtcontactno, txtdepartment, txtgrade, txtsection, txtstrand})
+        ListView1.Cursor = Cursors.Hand
         ListView1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         ListView1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ListView1.FullRowSelect = True
@@ -124,61 +102,79 @@ Partial Class RegisteredBrwr
         ' txtfname
         ' 
         txtfname.Text = "FirstName"
-        txtfname.Width = 115
+        txtfname.Width = 120
         ' 
         ' txtlname
         ' 
         txtlname.Text = "LastName"
-        txtlname.Width = 115
+        txtlname.Width = 120
         ' 
         ' txtmname
         ' 
         txtmname.Text = "MiddleName"
-        txtmname.Width = 115
+        txtmname.Width = 120
         ' 
         ' txtlrn
         ' 
         txtlrn.Text = "LRN"
-        txtlrn.Width = 70
+        txtlrn.Width = 80
         ' 
         ' txtemployeeno
         ' 
         txtemployeeno.Text = "EmployeeNo"
-        txtemployeeno.Width = 120
+        txtemployeeno.Width = 125
         ' 
         ' txtcontactno
         ' 
         txtcontactno.Text = "ContactNumber"
-        txtcontactno.Width = 115
+        txtcontactno.Width = 117
         ' 
         ' txtdepartment
         ' 
         txtdepartment.Text = "Department"
-        txtdepartment.Width = 150
+        txtdepartment.Width = 152
         ' 
         ' txtgrade
         ' 
         txtgrade.Text = "Grade"
-        txtgrade.Width = 50
+        txtgrade.Width = 65
         ' 
         ' txtsection
         ' 
         txtsection.Text = "Section"
-        txtsection.Width = 90
+        txtsection.Width = 100
         ' 
         ' txtstrand
         ' 
         txtstrand.Text = "Strand"
-        txtstrand.Width = 100
+        txtstrand.Width = 120
+        ' 
+        ' Guna2GroupBox1
+        ' 
+        Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2GroupBox1.BorderRadius = 8
+        Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(ListView1)
+        Guna2GroupBox1.CustomBorderColor = Color.Transparent
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges3
+        Guna2GroupBox1.FillColor = SystemColors.Control
+        Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
+        Guna2GroupBox1.ForeColor = Color.Transparent
+        Guna2GroupBox1.Location = New Point(13, 143)
+        Guna2GroupBox1.Name = "Guna2GroupBox1"
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        Guna2GroupBox1.Size = New Size(1170, 294)
+        Guna2GroupBox1.TabIndex = 24
         ' 
         ' RegisteredBrwr
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1196, 369)
+        ClientSize = New Size(1196, 470)
         Controls.Add(Guna2GroupBox1)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
+        KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False
         Name = "RegisteredBrwr"
@@ -191,7 +187,6 @@ Partial Class RegisteredBrwr
 
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents Guna2GroupBox1 As Guna.UI2.WinForms.Guna2GroupBox
     Friend WithEvents ListView1 As ListView
     Friend WithEvents txtborrower As ColumnHeader
