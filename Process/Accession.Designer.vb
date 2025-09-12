@@ -45,14 +45,16 @@ Partial Class Accession
         Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges23 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges24 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         Datagridview1 = New DataGridView()
         txtbookprice = New Guna.UI2.WinForms.Guna2TextBox()
@@ -78,6 +80,8 @@ Partial Class Accession
         txtaccessionid = New Guna.UI2.WinForms.Guna2TextBox()
         cbtransactionno = New Guna.UI2.WinForms.Guna2ComboBox()
         panel_accession = New Panel()
+        cbshelf = New Guna.UI2.WinForms.Guna2ComboBox()
+        Label8 = New Label()
         CType(Datagridview1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -399,6 +403,8 @@ Partial Class Accession
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label8)
+        Guna2GroupBox1.Controls.Add(cbshelf)
         Guna2GroupBox1.Controls.Add(Label4)
         Guna2GroupBox1.Controls.Add(rbavailable)
         Guna2GroupBox1.Controls.Add(txtbooktitle)
@@ -421,13 +427,13 @@ Partial Class Accession
         Guna2GroupBox1.Controls.Add(Label2)
         Guna2GroupBox1.Controls.Add(Label1)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges25
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges27
         Guna2GroupBox1.FillColor = Color.Transparent
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = SystemColors.Control
         Guna2GroupBox1.Location = New Point(12, 13)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges26
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
@@ -436,7 +442,7 @@ Partial Class Accession
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(1029, 142)
+        Label4.Location = New Point(991, 186)
         Label4.Name = "Label4"
         Label4.Size = New Size(55, 16)
         Label4.TabIndex = 80
@@ -447,7 +453,7 @@ Partial Class Accession
         rbavailable.AutoSize = True
         rbavailable.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbavailable.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbavailable.Location = New Point(1087, 141)
+        rbavailable.Location = New Point(1049, 185)
         rbavailable.Name = "rbavailable"
         rbavailable.Size = New Size(76, 20)
         rbavailable.TabIndex = 79
@@ -459,7 +465,7 @@ Partial Class Accession
         ' 
         txtbooktitle.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtbooktitle.BorderRadius = 12
-        txtbooktitle.CustomizableEdges = CustomizableEdges19
+        txtbooktitle.CustomizableEdges = CustomizableEdges21
         txtbooktitle.DefaultText = ""
         txtbooktitle.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtbooktitle.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -473,7 +479,7 @@ Partial Class Accession
         txtbooktitle.Name = "txtbooktitle"
         txtbooktitle.PlaceholderText = ""
         txtbooktitle.SelectedText = ""
-        txtbooktitle.ShadowDecoration.CustomizableEdges = CustomizableEdges20
+        txtbooktitle.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         txtbooktitle.Size = New Size(232, 36)
         txtbooktitle.TabIndex = 78
         ' 
@@ -481,7 +487,7 @@ Partial Class Accession
         ' 
         txtaccessionid.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtaccessionid.BorderRadius = 12
-        txtaccessionid.CustomizableEdges = CustomizableEdges21
+        txtaccessionid.CustomizableEdges = CustomizableEdges23
         txtaccessionid.DefaultText = ""
         txtaccessionid.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtaccessionid.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -495,7 +501,7 @@ Partial Class Accession
         txtaccessionid.Name = "txtaccessionid"
         txtaccessionid.PlaceholderText = ""
         txtaccessionid.SelectedText = ""
-        txtaccessionid.ShadowDecoration.CustomizableEdges = CustomizableEdges22
+        txtaccessionid.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         txtaccessionid.Size = New Size(232, 36)
         txtaccessionid.TabIndex = 77
         ' 
@@ -504,7 +510,7 @@ Partial Class Accession
         cbtransactionno.BackColor = Color.Transparent
         cbtransactionno.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         cbtransactionno.BorderRadius = 12
-        cbtransactionno.CustomizableEdges = CustomizableEdges23
+        cbtransactionno.CustomizableEdges = CustomizableEdges25
         cbtransactionno.DrawMode = DrawMode.OwnerDrawFixed
         cbtransactionno.DropDownStyle = ComboBoxStyle.DropDownList
         cbtransactionno.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
@@ -514,7 +520,7 @@ Partial Class Accession
         cbtransactionno.ItemHeight = 30
         cbtransactionno.Location = New Point(25, 95)
         cbtransactionno.Name = "cbtransactionno"
-        cbtransactionno.ShadowDecoration.CustomizableEdges = CustomizableEdges24
+        cbtransactionno.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         cbtransactionno.Size = New Size(232, 36)
         cbtransactionno.TabIndex = 76
         ' 
@@ -526,6 +532,36 @@ Partial Class Accession
         panel_accession.Name = "panel_accession"
         panel_accession.Size = New Size(1370, 700)
         panel_accession.TabIndex = 2
+        ' 
+        ' cbshelf
+        ' 
+        cbshelf.BackColor = Color.Transparent
+        cbshelf.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        cbshelf.BorderRadius = 12
+        cbshelf.CustomizableEdges = CustomizableEdges19
+        cbshelf.DrawMode = DrawMode.OwnerDrawFixed
+        cbshelf.DropDownStyle = ComboBoxStyle.DropDownList
+        cbshelf.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        cbshelf.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        cbshelf.Font = New Font("Segoe UI", 10F)
+        cbshelf.ForeColor = Color.Black
+        cbshelf.ItemHeight = 30
+        cbshelf.Location = New Point(992, 95)
+        cbshelf.Name = "cbshelf"
+        cbshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges20
+        cbshelf.Size = New Size(232, 36)
+        cbshelf.TabIndex = 81
+        ' 
+        ' Label8
+        ' 
+        Label8.AutoSize = True
+        Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label8.Location = New Point(992, 73)
+        Label8.Name = "Label8"
+        Label8.Size = New Size(79, 16)
+        Label8.TabIndex = 82
+        Label8.Text = "Book Shelf:"
         ' 
         ' Accession
         ' 
@@ -570,4 +606,6 @@ Partial Class Accession
     Friend WithEvents txtbooktitle As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents rbavailable As RadioButton
     Friend WithEvents Label4 As Label
+    Friend WithEvents Label8 As Label
+    Friend WithEvents cbshelf As Guna.UI2.WinForms.Guna2ComboBox
 End Class

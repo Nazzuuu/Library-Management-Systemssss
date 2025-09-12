@@ -354,4 +354,8 @@
 
         End With
     End Sub
+
+    Private Sub ShelfToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ShelfToolStripMenuItem.Click
+        Shelf.ShowDialog()
+    End Sub
 End Class

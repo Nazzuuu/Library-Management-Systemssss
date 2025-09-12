@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class Grade
+Partial Class Shelf
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -41,7 +41,7 @@ Partial Class Grade
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         Label1 = New Label()
-        txtgrade = New Guna.UI2.WinForms.Guna2TextBox()
+        txtshelf = New Guna.UI2.WinForms.Guna2TextBox()
         btndelete = New Guna.UI2.WinForms.Guna2Button()
         btnedit = New Guna.UI2.WinForms.Guna2Button()
         btnadd = New Guna.UI2.WinForms.Guna2Button()
@@ -60,16 +60,16 @@ Partial Class Grade
         Guna2GradientPanel1.BorderRadius = 9
         Guna2GradientPanel1.BorderThickness = 2
         Guna2GradientPanel1.Controls.Add(Label1)
-        Guna2GradientPanel1.Controls.Add(txtgrade)
+        Guna2GradientPanel1.Controls.Add(txtshelf)
         Guna2GradientPanel1.Controls.Add(btndelete)
         Guna2GradientPanel1.Controls.Add(btnedit)
         Guna2GradientPanel1.Controls.Add(btnadd)
         Guna2GradientPanel1.CustomizableEdges = CustomizableEdges9
-        Guna2GradientPanel1.Location = New Point(28, 69)
+        Guna2GradientPanel1.Location = New Point(27, 70)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         Guna2GradientPanel1.Size = New Size(415, 150)
-        Guna2GradientPanel1.TabIndex = 26
+        Guna2GradientPanel1.TabIndex = 30
         ' 
         ' Label1
         ' 
@@ -78,33 +78,33 @@ Partial Class Grade
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label1.Location = New Point(36, 27)
         Label1.Name = "Label1"
-        Label1.Size = New Size(50, 16)
+        Label1.Size = New Size(44, 16)
         Label1.TabIndex = 4
-        Label1.Text = "Grade:"
+        Label1.Text = "Shelf:"
         ' 
-        ' txtgrade
+        ' txtshelf
         ' 
-        txtgrade.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtgrade.BorderRadius = 12
-        txtgrade.CustomizableEdges = CustomizableEdges1
-        txtgrade.DefaultText = ""
-        txtgrade.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
-        txtgrade.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
-        txtgrade.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtgrade.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtgrade.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgrade.Font = New Font("Microsoft Sans Serif", 9F)
-        txtgrade.ForeColor = Color.Black
-        txtgrade.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtgrade.Location = New Point(36, 55)
-        txtgrade.Margin = New Padding(3, 4, 3, 4)
-        txtgrade.MaxLength = 2
-        txtgrade.Name = "txtgrade"
-        txtgrade.PlaceholderText = ""
-        txtgrade.SelectedText = ""
-        txtgrade.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtgrade.Size = New Size(347, 33)
-        txtgrade.TabIndex = 3
+        txtshelf.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtshelf.BorderRadius = 12
+        txtshelf.CustomizableEdges = CustomizableEdges1
+        txtshelf.DefaultText = ""
+        txtshelf.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtshelf.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtshelf.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtshelf.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtshelf.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtshelf.Font = New Font("Microsoft Sans Serif", 9F)
+        txtshelf.ForeColor = Color.Black
+        txtshelf.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtshelf.Location = New Point(36, 55)
+        txtshelf.Margin = New Padding(3, 4, 3, 4)
+        txtshelf.MaxLength = 2
+        txtshelf.Name = "txtshelf"
+        txtshelf.PlaceholderText = ""
+        txtshelf.SelectedText = ""
+        txtshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtshelf.Size = New Size(347, 33)
+        txtshelf.TabIndex = 3
         ' 
         ' btndelete
         ' 
@@ -171,10 +171,10 @@ Partial Class Grade
         PictureBox1.BackColor = Color.White
         PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
         PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        PictureBox1.Location = New Point(417, 26)
+        PictureBox1.Location = New Point(416, 27)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(20, 18)
-        PictureBox1.TabIndex = 24
+        PictureBox1.TabIndex = 28
         PictureBox1.TabStop = False
         ' 
         ' txtsearch
@@ -191,14 +191,14 @@ Partial Class Grade
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Location = New Point(27, 20)
+        txtsearch.Location = New Point(26, 21)
         txtsearch.Margin = New Padding(4)
         txtsearch.Name = "txtsearch"
-        txtsearch.PlaceholderText = "Search Grade"
+        txtsearch.PlaceholderText = "Search Shelf Number"
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         txtsearch.Size = New Size(420, 30)
-        txtsearch.TabIndex = 25
+        txtsearch.TabIndex = 29
         ' 
         ' Guna2Elipse1
         ' 
@@ -230,7 +230,7 @@ Partial Class Grade
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(29, 241)
+        DataGridView1.Location = New Point(28, 242)
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
@@ -247,33 +247,33 @@ Partial Class Grade
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.Size = New Size(420, 150)
-        DataGridView1.TabIndex = 27
+        DataGridView1.TabIndex = 31
         ' 
-        ' Grade
+        ' Shelf
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(474, 413)
-        Controls.Add(DataGridView1)
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
+        Controls.Add(DataGridView1)
         KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False
-        Name = "Grade"
-        ShowIcon = False
+        Name = "Shelf"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Grade"
+        Text = "Shelf"
         Guna2GradientPanel1.ResumeLayout(False)
         Guna2GradientPanel1.PerformLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub
+
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents Label1 As Label
-    Friend WithEvents txtgrade As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents txtshelf As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents btndelete As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents btnedit As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents btnadd As Guna.UI2.WinForms.Guna2Button

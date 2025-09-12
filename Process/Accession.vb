@@ -25,5 +25,22 @@ Public Class Accession
         rbavailable.Checked = True
         Label4.Visible = False
 
+        shelfsu()
+    End Sub
+
+    Public Sub shelfsu()
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT ID, Shelf FROM `shelf_tbl`"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim dt As New DataTable
+
+        adap.Fill(dt)
+
+        cbshelf.DataSource = dt
+        cbshelf.DisplayMember = "Shelf"
+        cbshelf.ValueMember = "ID"
+        cbshelf.SelectedIndex = -1
+
     End Sub
 End Class

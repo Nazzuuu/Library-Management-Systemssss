@@ -55,6 +55,7 @@ Partial Class MainForm
         PublisherMaintenanceToolStripMenuItem = New ToolStripMenuItem()
         LanguageToolStripMenuItem = New ToolStripMenuItem()
         CategoryToolStripMenuItem = New ToolStripMenuItem()
+        ShelfToolStripMenuItem = New ToolStripMenuItem()
         BookMaintenanceToolStripMenuItem = New ToolStripMenuItem()
         DepartmentToolStripMenuItem = New ToolStripMenuItem()
         SectionToolStripMenuItem1 = New ToolStripMenuItem()
@@ -69,12 +70,12 @@ Partial Class MainForm
         ProcessStripMenuItem = New ToolStripMenuItem()
         AcquisitionToolStripMenuItem = New ToolStripMenuItem()
         AccessionToolStripMenuItem = New ToolStripMenuItem()
+        CatalogToolStripMenuItem = New ToolStripMenuItem()
         StudentLogsToolStripMenuItem = New ToolStripMenuItem()
         TimeInToolStripMenuItem = New ToolStripMenuItem()
         CirculationToolStripMenuItem = New ToolStripMenuItem()
         BorrowToolStripMenuItem = New ToolStripMenuItem()
         ReturnToolStripMenuItem = New ToolStripMenuItem()
-        CatalogToolStripMenuItem = New ToolStripMenuItem()
         Guna2Elipse3 = New Guna.UI2.WinForms.Guna2Elipse(components)
         pnl_report = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_Studentlogs = New Panel()
@@ -161,7 +162,7 @@ Partial Class MainForm
         ' 
         ' MaintenanceToolStripMenuItem
         ' 
-        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AuthorMaintenanceToolStripMenuItem, GenreMaintenanceToolStripMenuItem, SupplierMaintenanceToolStripMenuItem, PublisherMaintenanceToolStripMenuItem, LanguageToolStripMenuItem, CategoryToolStripMenuItem, BookMaintenanceToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem})
+        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AuthorMaintenanceToolStripMenuItem, GenreMaintenanceToolStripMenuItem, SupplierMaintenanceToolStripMenuItem, PublisherMaintenanceToolStripMenuItem, LanguageToolStripMenuItem, CategoryToolStripMenuItem, ShelfToolStripMenuItem, BookMaintenanceToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem})
         MaintenanceToolStripMenuItem.ForeColor = Color.White
         MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
         MaintenanceToolStripMenuItem.Size = New Size(115, 22)
@@ -208,6 +209,13 @@ Partial Class MainForm
         CategoryToolStripMenuItem.Name = "CategoryToolStripMenuItem"
         CategoryToolStripMenuItem.Size = New Size(181, 22)
         CategoryToolStripMenuItem.Text = "Category"
+        ' 
+        ' ShelfToolStripMenuItem
+        ' 
+        ShelfToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        ShelfToolStripMenuItem.Name = "ShelfToolStripMenuItem"
+        ShelfToolStripMenuItem.Size = New Size(181, 22)
+        ShelfToolStripMenuItem.Text = "Shelf"
         ' 
         ' BookMaintenanceToolStripMenuItem
         ' 
@@ -304,29 +312,36 @@ Partial Class MainForm
         ' 
         AcquisitionToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AcquisitionToolStripMenuItem.Name = "AcquisitionToolStripMenuItem"
-        AcquisitionToolStripMenuItem.Size = New Size(180, 22)
+        AcquisitionToolStripMenuItem.Size = New Size(160, 22)
         AcquisitionToolStripMenuItem.Text = "Acquisition"
         ' 
         ' AccessionToolStripMenuItem
         ' 
         AccessionToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AccessionToolStripMenuItem.Name = "AccessionToolStripMenuItem"
-        AccessionToolStripMenuItem.Size = New Size(180, 22)
+        AccessionToolStripMenuItem.Size = New Size(160, 22)
         AccessionToolStripMenuItem.Text = "Accession"
+        ' 
+        ' CatalogToolStripMenuItem
+        ' 
+        CatalogToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        CatalogToolStripMenuItem.Name = "CatalogToolStripMenuItem"
+        CatalogToolStripMenuItem.Size = New Size(160, 22)
+        CatalogToolStripMenuItem.Text = "Catalog"
         ' 
         ' StudentLogsToolStripMenuItem
         ' 
         StudentLogsToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {TimeInToolStripMenuItem})
         StudentLogsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         StudentLogsToolStripMenuItem.Name = "StudentLogsToolStripMenuItem"
-        StudentLogsToolStripMenuItem.Size = New Size(180, 22)
+        StudentLogsToolStripMenuItem.Size = New Size(160, 22)
         StudentLogsToolStripMenuItem.Text = "Attendance"
         ' 
         ' TimeInToolStripMenuItem
         ' 
         TimeInToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         TimeInToolStripMenuItem.Name = "TimeInToolStripMenuItem"
-        TimeInToolStripMenuItem.Size = New Size(180, 22)
+        TimeInToolStripMenuItem.Size = New Size(165, 22)
         TimeInToolStripMenuItem.Text = "Time-in/out"
         ' 
         ' CirculationToolStripMenuItem
@@ -334,7 +349,7 @@ Partial Class MainForm
         CirculationToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BorrowToolStripMenuItem, ReturnToolStripMenuItem})
         CirculationToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         CirculationToolStripMenuItem.Name = "CirculationToolStripMenuItem"
-        CirculationToolStripMenuItem.Size = New Size(180, 22)
+        CirculationToolStripMenuItem.Size = New Size(160, 22)
         CirculationToolStripMenuItem.Text = "Circulation"
         ' 
         ' BorrowToolStripMenuItem
@@ -350,13 +365,6 @@ Partial Class MainForm
         ReturnToolStripMenuItem.Name = "ReturnToolStripMenuItem"
         ReturnToolStripMenuItem.Size = New Size(154, 22)
         ReturnToolStripMenuItem.Text = "Returning"
-        ' 
-        ' CatalogToolStripMenuItem
-        ' 
-        CatalogToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CatalogToolStripMenuItem.Name = "CatalogToolStripMenuItem"
-        CatalogToolStripMenuItem.Size = New Size(180, 22)
-        CatalogToolStripMenuItem.Text = "Catalog"
         ' 
         ' Guna2Elipse3
         ' 
@@ -955,5 +963,6 @@ Partial Class MainForm
     Friend WithEvents StudentLogsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TimeInToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CategoryToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ShelfToolStripMenuItem As ToolStripMenuItem
 
 End Class
