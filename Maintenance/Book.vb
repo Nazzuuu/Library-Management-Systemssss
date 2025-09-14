@@ -122,6 +122,17 @@ Public Class Book
         Dim booktitle As String = txtbooktitle.Text.Trim()
         Dim deyts As DateTime = DateTimePicker1.Value
 
+        Dim bookStatus As String = ""
+        If rbloanable.Checked Then
+            bookStatus = "Borrowable"
+        ElseIf rbforlibraryonly.Checked Then
+            bookStatus = "For In-Library Use Only"
+        Else
+            MsgBox("Please select the book status.", vbExclamation, "Validation Error")
+            Exit Sub
+        End If
+
+
         If rbgenerate.Checked Then
             isbn = DBNull.Value
             barcode = lblrandom.Text.Trim()
@@ -133,7 +144,7 @@ Public Class Book
                 con.Open()
                 Dim count As Integer = CInt(coms.ExecuteScalar())
                 If count > 0 Then
-                    MsgBox("The Barcode already exists.", vbExclamation, "Duplication not allowed.")
+                    MsgBox("This book already exists.", vbExclamation, "Duplication not allowed.")
                     Exit Sub
                 End If
             Catch ex As Exception
@@ -188,7 +199,7 @@ Public Class Book
 
         Try
             con.Open()
-            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`Barcode`,`ISBN`, `BookTitle`, `Author`, `Genre`, `Category`, `Publisher`, `Language`, `YearPublished`) VALUES (@barcode, @isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished )", con)
+            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`Barcode`,`ISBN`, `BookTitle`, `Author`, `Genre`, `Category`, `Publisher`, `Language`, `YearPublished`, `Status`) VALUES (@barcode, @isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished,@status )", con)
 
             com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcode), DBNull.Value, barcode))
             com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbn), DBNull.Value, isbn))
@@ -199,6 +210,7 @@ Public Class Book
             com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
             com.Parameters.AddWithValue("@language", cblanguage.Text)
             com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
+            com.Parameters.AddWithValue("@status", bookStatus)
             com.ExecuteNonQuery()
 
             MsgBox("Book added successfully", vbInformation)
@@ -225,6 +237,16 @@ Public Class Book
                 Exit Sub
             End If
 
+            Dim bookStatus As String = ""
+            If rbloanable.Checked Then
+                bookStatus = "Borrowable"
+            ElseIf rbforlibraryonly.Checked Then
+                bookStatus = "For In-Library Use Only"
+            Else
+                MsgBox("Please select the book status.", vbExclamation, "Validation Error")
+                Exit Sub
+            End If
+
             Dim con As New MySqlConnection(connectionString)
             Dim deyts As DateTime = DateTimePicker1.Value
 
@@ -244,7 +266,7 @@ Public Class Book
                     con.Open()
                     Dim count As Integer = CInt(coms.ExecuteScalar())
                     If count > 0 Then
-                        MsgBox("The Barcode already exists.", vbExclamation, "Duplication not allowed.")
+                        MsgBox("This book already exists.", vbExclamation, "Duplication not allowed.")
                         Exit Sub
                     End If
                 Catch ex As Exception
@@ -296,7 +318,7 @@ Public Class Book
 
             Try
                 con.Open()
-                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished WHERE `ID` = @id", con)
+                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished, `Status` = @status WHERE `ID` = @id", con)
 
                 com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcodeValue), DBNull.Value, barcodeValue))
                 com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbnValue), DBNull.Value, isbnValue))
@@ -308,6 +330,7 @@ Public Class Book
                 com.Parameters.AddWithValue("@language", cblanguage.Text)
                 com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
                 com.Parameters.AddWithValue("@id", bookID)
+                com.Parameters.AddWithValue("@status", bookStatus)
                 com.ExecuteNonQuery()
 
                 MsgBox("Book updated successfully", vbInformation)
@@ -357,6 +380,12 @@ Public Class Book
             cblanguage.Text = row.Cells("Language").Value.ToString()
             DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
 
+            Dim bookStatus As String = row.Cells("Status").Value.ToString()
+            If bookStatus = "Borrowable" Then
+                rbloanable.Checked = True
+            ElseIf bookStatus = "For In-Library Use Only" Then
+                rbforlibraryonly.Checked = True
+            End If
 
             rbgenerate.Enabled = False
             isbarcode = False
@@ -432,7 +461,8 @@ Public Class Book
         cbpublisher.DataSource = Nothing
         cblanguage.DataSource = Nothing
         rbgenerate.Checked = False
-
+        rbloanable.Checked = False
+        rbforlibraryonly.Checked = False
 
         cbauthorr()
         cbgenree()
@@ -511,7 +541,7 @@ Public Class Book
 
         If Not isbarcode Then
             If rbgenerate.Checked Then
-                lblrandom.Text = jinireyt()
+                lblrandom.Text = jinireyt
                 txtisbn.Enabled = False
                 txtisbn.Text = ""
             Else

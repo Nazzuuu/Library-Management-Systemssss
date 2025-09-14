@@ -59,6 +59,10 @@ Partial Class Book
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_book = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Panel1 = New Panel()
+        rbforlibraryonly = New RadioButton()
+        Label9 = New Label()
+        rbloanable = New RadioButton()
         Label10 = New Label()
         lblrandom = New Label()
         rbgenerate = New RadioButton()
@@ -89,6 +93,7 @@ Partial Class Book
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         panel_book.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
+        Panel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -108,6 +113,7 @@ Partial Class Book
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Panel1)
         Guna2GroupBox1.Controls.Add(Label10)
         Guna2GroupBox1.Controls.Add(lblrandom)
         Guna2GroupBox1.Controls.Add(rbgenerate)
@@ -144,6 +150,53 @@ Partial Class Book
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' Panel1
+        ' 
+        Panel1.Controls.Add(rbforlibraryonly)
+        Panel1.Controls.Add(Label9)
+        Panel1.Controls.Add(rbloanable)
+        Panel1.Location = New Point(658, 237)
+        Panel1.Name = "Panel1"
+        Panel1.Size = New Size(443, 36)
+        Panel1.TabIndex = 77
+        ' 
+        ' rbforlibraryonly
+        ' 
+        rbforlibraryonly.AutoSize = True
+        rbforlibraryonly.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        rbforlibraryonly.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        rbforlibraryonly.Location = New Point(241, 8)
+        rbforlibraryonly.Name = "rbforlibraryonly"
+        rbforlibraryonly.Size = New Size(173, 20)
+        rbforlibraryonly.TabIndex = 82
+        rbforlibraryonly.TabStop = True
+        rbforlibraryonly.Text = "For In-Library Use Only"
+        rbforlibraryonly.UseVisualStyleBackColor = True
+        ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label9.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label9.Location = New Point(24, 8)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(90, 16)
+        Label9.TabIndex = 81
+        Label9.Text = "Book Status:"
+        ' 
+        ' rbloanable
+        ' 
+        rbloanable.AutoSize = True
+        rbloanable.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        rbloanable.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        rbloanable.Location = New Point(131, 8)
+        rbloanable.Name = "rbloanable"
+        rbloanable.Size = New Size(99, 20)
+        rbloanable.TabIndex = 80
+        rbloanable.TabStop = True
+        rbloanable.Text = "Borrowable"
+        rbloanable.UseVisualStyleBackColor = True
         ' 
         ' Label10
         ' 
@@ -618,6 +671,8 @@ Partial Class Book
         panel_book.ResumeLayout(False)
         Guna2GroupBox1.ResumeLayout(False)
         Guna2GroupBox1.PerformLayout()
+        Panel1.ResumeLayout(False)
+        Panel1.PerformLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         Guna2GradientPanel1.ResumeLayout(False)
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
@@ -654,4 +709,8 @@ Partial Class Book
     Friend WithEvents Label10 As Label
     Friend WithEvents lblrandom As Label
     Friend WithEvents rbgenerate As RadioButton
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents rbforlibraryonly As RadioButton
+    Friend WithEvents Label9 As Label
+    Friend WithEvents rbloanable As RadioButton
 End Class

@@ -58,7 +58,7 @@
 
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
-        Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_dash.Controls.Remove(Users)
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
@@ -91,7 +91,7 @@
 
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
-        Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_dash.Controls.Remove(Users)
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
@@ -117,7 +117,7 @@
 
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
-        Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_dash.Controls.Remove(Users)
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
@@ -143,7 +143,7 @@
 
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
-        Panel_dash.Controls.Remove(Users_Staffs)
+        Panel_dash.Controls.Remove(Users)
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
@@ -291,11 +291,11 @@
 
         Panel_dash.Controls.Clear()
 
-        With Users_Staffs
+        With Users
             .TopLevel = False
             .TopMost = True
-            Panel_dash.Controls.Add(Users_Staffs)
-            Users_Staffs.Size = New Size(1370, 700)
+            Panel_dash.Controls.Add(Users)
+            Users.Size = New Size(1370, 700)
             .Show()
         End With
 
@@ -357,5 +357,9 @@
 
     Private Sub ShelfToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ShelfToolStripMenuItem.Click
         Shelf.ShowDialog()
+    End Sub
+
+    Private Sub PenaltyManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PenaltyManagementToolStripMenuItem.Click
+        Penalty_Management.ShowDialog()
     End Sub
 End Class

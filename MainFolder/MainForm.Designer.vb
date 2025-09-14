@@ -113,6 +113,7 @@ Partial Class MainForm
         lbl_currentuser = New Label()
         Label2 = New Label()
         btnn_borrowed = New Guna.UI2.WinForms.Guna2Elipse(components)
+        PenaltyManagementToolStripMenuItem = New ToolStripMenuItem()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
         Panel_Process.SuspendLayout()
@@ -162,7 +163,7 @@ Partial Class MainForm
         ' 
         ' MaintenanceToolStripMenuItem
         ' 
-        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AuthorMaintenanceToolStripMenuItem, GenreMaintenanceToolStripMenuItem, SupplierMaintenanceToolStripMenuItem, PublisherMaintenanceToolStripMenuItem, LanguageToolStripMenuItem, CategoryToolStripMenuItem, ShelfToolStripMenuItem, BookMaintenanceToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem})
+        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AuthorMaintenanceToolStripMenuItem, GenreMaintenanceToolStripMenuItem, SupplierMaintenanceToolStripMenuItem, PublisherMaintenanceToolStripMenuItem, LanguageToolStripMenuItem, CategoryToolStripMenuItem, ShelfToolStripMenuItem, BookMaintenanceToolStripMenuItem, PenaltyManagementToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem})
         MaintenanceToolStripMenuItem.ForeColor = Color.White
         MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
         MaintenanceToolStripMenuItem.Size = New Size(115, 22)
@@ -172,56 +173,56 @@ Partial Class MainForm
         ' 
         AuthorMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AuthorMaintenanceToolStripMenuItem.Name = "AuthorMaintenanceToolStripMenuItem"
-        AuthorMaintenanceToolStripMenuItem.Size = New Size(181, 22)
+        AuthorMaintenanceToolStripMenuItem.Size = New Size(232, 22)
         AuthorMaintenanceToolStripMenuItem.Text = "Author"
         ' 
         ' GenreMaintenanceToolStripMenuItem
         ' 
         GenreMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         GenreMaintenanceToolStripMenuItem.Name = "GenreMaintenanceToolStripMenuItem"
-        GenreMaintenanceToolStripMenuItem.Size = New Size(181, 22)
+        GenreMaintenanceToolStripMenuItem.Size = New Size(232, 22)
         GenreMaintenanceToolStripMenuItem.Text = "Genre"
         ' 
         ' SupplierMaintenanceToolStripMenuItem
         ' 
         SupplierMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         SupplierMaintenanceToolStripMenuItem.Name = "SupplierMaintenanceToolStripMenuItem"
-        SupplierMaintenanceToolStripMenuItem.Size = New Size(181, 22)
+        SupplierMaintenanceToolStripMenuItem.Size = New Size(232, 22)
         SupplierMaintenanceToolStripMenuItem.Text = "Supplier"
         ' 
         ' PublisherMaintenanceToolStripMenuItem
         ' 
         PublisherMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         PublisherMaintenanceToolStripMenuItem.Name = "PublisherMaintenanceToolStripMenuItem"
-        PublisherMaintenanceToolStripMenuItem.Size = New Size(181, 22)
+        PublisherMaintenanceToolStripMenuItem.Size = New Size(232, 22)
         PublisherMaintenanceToolStripMenuItem.Text = "Publisher"
         ' 
         ' LanguageToolStripMenuItem
         ' 
         LanguageToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         LanguageToolStripMenuItem.Name = "LanguageToolStripMenuItem"
-        LanguageToolStripMenuItem.Size = New Size(181, 22)
+        LanguageToolStripMenuItem.Size = New Size(232, 22)
         LanguageToolStripMenuItem.Text = "Language"
         ' 
         ' CategoryToolStripMenuItem
         ' 
         CategoryToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         CategoryToolStripMenuItem.Name = "CategoryToolStripMenuItem"
-        CategoryToolStripMenuItem.Size = New Size(181, 22)
+        CategoryToolStripMenuItem.Size = New Size(232, 22)
         CategoryToolStripMenuItem.Text = "Category"
         ' 
         ' ShelfToolStripMenuItem
         ' 
         ShelfToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ShelfToolStripMenuItem.Name = "ShelfToolStripMenuItem"
-        ShelfToolStripMenuItem.Size = New Size(181, 22)
+        ShelfToolStripMenuItem.Size = New Size(232, 22)
         ShelfToolStripMenuItem.Text = "Shelf"
         ' 
         ' BookMaintenanceToolStripMenuItem
         ' 
         BookMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BookMaintenanceToolStripMenuItem.Name = "BookMaintenanceToolStripMenuItem"
-        BookMaintenanceToolStripMenuItem.Size = New Size(181, 22)
+        BookMaintenanceToolStripMenuItem.Size = New Size(232, 22)
         BookMaintenanceToolStripMenuItem.Text = "Books"
         ' 
         ' DepartmentToolStripMenuItem
@@ -229,7 +230,7 @@ Partial Class MainForm
         DepartmentToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {SectionToolStripMenuItem1, SectionToolStripMenuItem2, GradeToolStripMenuItem1, StrandToolStripMenuItem1})
         DepartmentToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DepartmentToolStripMenuItem.Name = "DepartmentToolStripMenuItem"
-        DepartmentToolStripMenuItem.Size = New Size(181, 22)
+        DepartmentToolStripMenuItem.Size = New Size(232, 22)
         DepartmentToolStripMenuItem.Text = "Student Info's"
         ' 
         ' SectionToolStripMenuItem1
@@ -264,14 +265,14 @@ Partial Class MainForm
         ' 
         RegisterToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         RegisterToolStripMenuItem.Name = "RegisterToolStripMenuItem"
-        RegisterToolStripMenuItem.Size = New Size(181, 22)
+        RegisterToolStripMenuItem.Size = New Size(232, 22)
         RegisterToolStripMenuItem.Text = "Borrowers"
         ' 
         ' UserMaintenanceToolStripMenuItem
         ' 
         UserMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         UserMaintenanceToolStripMenuItem.Name = "UserMaintenanceToolStripMenuItem"
-        UserMaintenanceToolStripMenuItem.Size = New Size(181, 22)
+        UserMaintenanceToolStripMenuItem.Size = New Size(232, 22)
         UserMaintenanceToolStripMenuItem.Text = "User"
         ' 
         ' pnl_process
@@ -853,6 +854,13 @@ Partial Class MainForm
         btnn_borrowed.BorderRadius = 9
         btnn_borrowed.TargetControl = btn_borrowed
         ' 
+        ' PenaltyManagementToolStripMenuItem
+        ' 
+        PenaltyManagementToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        PenaltyManagementToolStripMenuItem.Name = "PenaltyManagementToolStripMenuItem"
+        PenaltyManagementToolStripMenuItem.Size = New Size(232, 22)
+        PenaltyManagementToolStripMenuItem.Text = "Penalty Management"
+        ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -966,5 +974,6 @@ Partial Class MainForm
     Friend WithEvents TimeInToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CategoryToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ShelfToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents PenaltyManagementToolStripMenuItem As ToolStripMenuItem
 
 End Class

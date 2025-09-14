@@ -220,6 +220,11 @@ Public Class Borrower
             Borrower_Load(sender, e)
             ClearFields()
 
+            Dim registeredForm As RegisteredBrwr = Application.OpenForms.OfType(Of RegisteredBrwr)().FirstOrDefault()
+            If registeredForm IsNot Nothing Then
+                registeredForm.ludeyngborrower()
+            End If
+
             cbstrand.Visible = True
             cbstrand.Location = New Point(942, 285)
             lblstrand.Visible = True
@@ -321,6 +326,12 @@ Public Class Borrower
             Borrower_Load(sender, e)
             ClearFields()
 
+            Dim registeredForm As RegisteredBrwr = Application.OpenForms.OfType(Of RegisteredBrwr)().FirstOrDefault()
+            If registeredForm IsNot Nothing Then
+                registeredForm.ludeyngborrower()
+            End If
+
+
             cbstrand.Visible = True
             cbstrand.Location = New Point(942, 285)
             lblstrand.Visible = True
@@ -359,6 +370,11 @@ Public Class Borrower
                     MsgBox("Borrower deleted successfully.", vbInformation)
                     Borrower_Load(sender, e)
                     ClearFields()
+
+                    Dim registeredForm As RegisteredBrwr = Application.OpenForms.OfType(Of RegisteredBrwr)().FirstOrDefault()
+                    If registeredForm IsNot Nothing Then
+                        registeredForm.ludeyngborrower()
+                    End If
 
                     cbstrand.Visible = True
                     cbstrand.Location = New Point(942, 285)
