@@ -67,6 +67,16 @@ Public Class Users_Staffs
             Exit Sub
         End If
 
+        Dim role As String = ""
+
+        If rbassistant.Checked Then
+            role = "Assistant Librarian"
+        ElseIf rbstaff.Checked Then
+            role = "Staff"
+        Else
+            MsgBox("Please select a role.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
 
         Dim middleName As String
         If CheckBox2.Checked Then
@@ -89,7 +99,7 @@ Public Class Users_Staffs
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleName`, `Username`, `Password`, `Email`, `ContactNumber`, `Gender`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @gender)", con)
+            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleName`, `Username`, `Password`, `Email`, `ContactNumber`, `Gender`, `Role`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @gender, @role)", con)
             com.Parameters.AddWithValue("@firstName", firstName)
             com.Parameters.AddWithValue("@lastName", lastName)
             com.Parameters.AddWithValue("@middleName", middleName)
@@ -98,9 +108,10 @@ Public Class Users_Staffs
             com.Parameters.AddWithValue("@email", email)
             com.Parameters.AddWithValue("@contact", contact)
             com.Parameters.AddWithValue("@gender", gender)
+            com.Parameters.AddWithValue("@role", role)
             com.ExecuteNonQuery()
 
-            MsgBox("Staff member added successfully!", vbInformation)
+            MsgBox("User added successfully!", vbInformation)
             Users_Staffs_Load(sender, e)
             clearfields()
 
@@ -171,6 +182,16 @@ Public Class Users_Staffs
             Exit Sub
         End If
 
+        Dim role As String = ""
+
+        If rbassistant.Checked Then
+            role = "Assistant Librarian"
+        ElseIf rbstaff.Checked Then
+            role = "Staff"
+        Else
+            MsgBox("Please select a role.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
 
         Dim middleName As String
         If CheckBox2.Checked Then
@@ -194,7 +215,7 @@ Public Class Users_Staffs
                 Exit Sub
             End If
 
-            Dim Coms As New MySqlCommand("UPDATE `user_staff_tbl` SET `FirstName` = @firstName, `LastName` = @lastName, `MiddleName` = @middleName, `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender WHERE `ID` = @id", con)
+            Dim Coms As New MySqlCommand("UPDATE `user_staff_tbl` SET `FirstName` = @firstName, `LastName` = @lastName, `MiddleName` = @middleName, `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender, `Role` = @role WHERE `ID` = @id", con)
             Coms.Parameters.AddWithValue("@firstName", firstName)
             Coms.Parameters.AddWithValue("@lastName", lastName)
             Coms.Parameters.AddWithValue("@middleName", middleName)
@@ -203,10 +224,11 @@ Public Class Users_Staffs
             Coms.Parameters.AddWithValue("@email", email)
             Coms.Parameters.AddWithValue("@contact", contact)
             Coms.Parameters.AddWithValue("@gender", gender)
+            Coms.Parameters.AddWithValue("@role", role)
             Coms.Parameters.AddWithValue("@id", ID)
             Coms.ExecuteNonQuery()
 
-            MsgBox("Staff member updated successfully!", vbInformation)
+            MsgBox("User updated successfully!", vbInformation)
             Users_Staffs_Load(sender, e)
             clearfields()
 
@@ -244,7 +266,7 @@ Public Class Users_Staffs
                         End If
                     Next
 
-                    MsgBox("Staff member deleted successfully.", vbInformation)
+                    MsgBox("User deleted successfully.", vbInformation)
                     Users_Staffs_Load(sender, e)
                     clearfields()
 
@@ -286,6 +308,12 @@ Public Class Users_Staffs
             Dim gender As String = If(IsDBNull(row.Cells("Gender").Value), String.Empty, row.Cells("Gender").Value.ToString())
             rbmale.Checked = (gender = "Male")
             rbfemale.Checked = (gender = "Female")
+
+
+            Dim role As String = If(IsDBNull(row.Cells("Role").Value), String.Empty, row.Cells("Role").Value.ToString())
+
+            rbassistant.Checked = (role = "Assistant Librarian")
+            rbstaff.Checked = (role = "Staff")
 
             Dim middleName As String = If(IsDBNull(row.Cells("MiddleName").Value), String.Empty, row.Cells("MiddleName").Value.ToString())
 
@@ -333,6 +361,8 @@ Public Class Users_Staffs
 
         rbmale.Checked = False
         rbfemale.Checked = False
+        rbassistant.Checked = False
+        rbstaff.Checked = False
         CheckBox2.Checked = False
 
         txtmname.Enabled = True
@@ -485,6 +515,8 @@ Public Class Users_Staffs
     Private Sub Users_Staffs_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
         clearfields()
     End Sub
+
+
 
 
 

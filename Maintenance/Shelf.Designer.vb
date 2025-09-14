@@ -262,6 +262,7 @@ Partial Class Shelf
         MaximizeBox = False
         MinimizeBox = False
         Name = "Shelf"
+        ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
         Text = "Shelf"
         Guna2GradientPanel1.ResumeLayout(False)

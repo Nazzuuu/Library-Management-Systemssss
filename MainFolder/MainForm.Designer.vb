@@ -488,9 +488,9 @@ Partial Class MainForm
         Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label1.Location = New Point(242, 14)
         Label1.Name = "Label1"
-        Label1.Size = New Size(550, 54)
+        Label1.Size = New Size(471, 54)
         Label1.TabIndex = 0
-        Label1.Text = "Monlimar Development Academy Integrated Library Management System " & vbCrLf & "                                            (MDILS)" & vbCrLf & "                                       "
+        Label1.Text = "Monlimar Development Academy Library Management System " & vbCrLf & "                                          (MDA-LMS)" & vbCrLf & "                                       "
         ' 
         ' Panel_dash
         ' 
@@ -819,13 +819,14 @@ Partial Class MainForm
         Panel_User.Anchor = AnchorStyles.Top Or AnchorStyles.Right
         Panel_User.Controls.Add(lbl_currentuser)
         Panel_User.Controls.Add(Label2)
-        Panel_User.Location = New Point(733, 2)
+        Panel_User.Location = New Point(687, 2)
         Panel_User.Name = "Panel_User"
         Panel_User.Size = New Size(266, 39)
         Panel_User.TabIndex = 17
         ' 
         ' lbl_currentuser
         ' 
+        lbl_currentuser.Anchor = AnchorStyles.None
         lbl_currentuser.AutoSize = True
         lbl_currentuser.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         lbl_currentuser.ForeColor = Color.Gray
@@ -837,6 +838,7 @@ Partial Class MainForm
         ' 
         ' Label2
         ' 
+        Label2.Anchor = AnchorStyles.None
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))

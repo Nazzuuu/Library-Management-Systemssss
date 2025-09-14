@@ -15,50 +15,66 @@ Public Class login
 
 
         If User = "Librarian01" And Pass = "Librarian123" Then
-
             MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
             MainForm.Show()
             MainForm.lbl_currentuser.Text = "Librarian"
+
             Me.Hide()
             clear()
-
             Return
         End If
 
-
         Dim con As New MySqlConnection(connectionString)
-        Dim com As New MySqlCommand("SELECT COUNT(*) FROM user_staff_tbl WHERE Username = @username AND Password = @password", con)
 
+        Dim com As New MySqlCommand("SELECT * FROM user_staff_tbl WHERE Username = @username AND Password = @password", con)
         com.Parameters.AddWithValue("@username", User)
         com.Parameters.AddWithValue("@password", Pass)
 
         Try
             con.Open()
+            Dim lahatngrole As MySqlDataReader = com.ExecuteReader()
 
-            Dim userCount As Integer = Convert.ToInt32(com.ExecuteScalar())
+            If lahatngrole.Read() Then
+                Dim role As String = lahatngrole("Role").ToString()
 
-            If userCount > 0 Then
+                If role = "Staff" Then
 
-                MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MainForm.Show()
+                    MainForm.lbl_currentuser.Text = "Staff"
 
-                MainForm.Show()
-                MainForm.lbl_currentuser.Text = "Staff"
+                    MainForm.AuthorMaintenanceToolStripMenuItem.Visible = False
+                    MainForm.GenreMaintenanceToolStripMenuItem.Visible = False
+                    MainForm.SupplierMaintenanceToolStripMenuItem.Visible = False
+                    MainForm.PublisherMaintenanceToolStripMenuItem.Visible = False
+                    MainForm.LanguageToolStripMenuItem.Visible = False
+                    MainForm.CategoryToolStripMenuItem.Visible = False
+                    MainForm.AcquisitionToolStripMenuItem.Visible = False
+                    MainForm.AccessionToolStripMenuItem.Visible = False
+                    MainForm.ReportsToolStripMenuItem1.Visible = False
+                    MainForm.UserMaintenanceToolStripMenuItem.Visible = False
+                    MainForm.Audit_Trail.Visible = False
 
-                MainForm.AuthorMaintenanceToolStripMenuItem.Visible = False
-                MainForm.GenreMaintenanceToolStripMenuItem.Visible = False
-                MainForm.SupplierMaintenanceToolStripMenuItem.Visible = False
-                MainForm.PublisherMaintenanceToolStripMenuItem.Visible = False
-                MainForm.LanguageToolStripMenuItem.Visible = False
-                MainForm.CategoryToolStripMenuItem.Visible = False
-                MainForm.AcquisitionToolStripMenuItem.Visible = False
-                MainForm.AccessionToolStripMenuItem.Visible = False
-                MainForm.ReportsToolStripMenuItem1.Visible = False
-                MainForm.UserMaintenanceToolStripMenuItem.Visible = False
-                MainForm.Audit_Trail.Visible = False
+                    Me.Hide()
+                    clear()
 
-                Me.Hide()
-                clear()
+                ElseIf role = "Assistant Librarian" Then
+
+                    MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MainForm.Show()
+                    MainForm.lbl_currentuser.Text = "Asst. Librarian"
+
+
+                    MainForm.UserMaintenanceToolStripMenuItem.Visible = False
+                    MainForm.Audit_Trail.Visible = False
+                    Me.Hide()
+                    clear()
+                Else
+                    MessageBox.Show("Invalid role.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End If
+
+
+
 
             Else
 
@@ -68,10 +84,11 @@ Public Class login
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         Finally
-            con.Close()
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
     End Sub
-
 
 
 

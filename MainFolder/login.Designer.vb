@@ -22,6 +22,7 @@ Partial Class login
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        components = New ComponentModel.Container()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -37,6 +38,7 @@ Partial Class login
         Label3 = New Label()
         CheckBox1 = New CheckBox()
         Panel_btnlogin = New Panel()
+        Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel1.SuspendLayout()
         Panel_btnlogin.SuspendLayout()
         SuspendLayout()
@@ -134,7 +136,7 @@ Partial Class login
         Panel1.Dock = DockStyle.Top
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(486, 62)
+        Panel1.Size = New Size(482, 62)
         Panel1.TabIndex = 5
         ' 
         ' Label3
@@ -143,11 +145,11 @@ Partial Class login
         Label3.AutoSize = True
         Label3.Font = New Font("Baskerville Old Face", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.White
-        Label3.Location = New Point(107, 7)
+        Label3.Location = New Point(139, 12)
         Label3.Name = "Label3"
-        Label3.Size = New Size(279, 56)
+        Label3.Size = New Size(212, 56)
         Label3.TabIndex = 1
-        Label3.Text = "Monlimar Development Academy Integrated" & vbCrLf & "                        Library System" & vbCrLf & "                             (MDILS)" & vbCrLf & "                                        "
+        Label3.Text = "Monlimar Development Academy" & vbCrLf & "    Library Management System" & vbCrLf & "                 (MDA-LMS)" & vbCrLf & "                                        "
         ' 
         ' CheckBox1
         ' 
@@ -166,11 +168,16 @@ Partial Class login
         Panel_btnlogin.Size = New Size(191, 57)
         Panel_btnlogin.TabIndex = 7
         ' 
+        ' Guna2Elipse1
+        ' 
+        Guna2Elipse1.BorderRadius = 9
+        Guna2Elipse1.TargetControl = Me
+        ' 
         ' login
         ' 
-        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
+        AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(486, 280)
+        ClientSize = New Size(482, 276)
         ControlBox = False
         Controls.Add(Panel_btnlogin)
         Controls.Add(CheckBox1)
@@ -179,6 +186,9 @@ Partial Class login
         Controls.Add(Label1)
         Controls.Add(txtpass)
         Controls.Add(txtuser)
+        FormBorderStyle = FormBorderStyle.None
+        MaximizeBox = False
+        MinimizeBox = False
         Name = "login"
         ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
@@ -199,4 +209,5 @@ Partial Class login
     Friend WithEvents CheckBox1 As CheckBox
     Friend WithEvents Panel_btnlogin As Panel
     Friend WithEvents logintimer As Timer
+    Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
 End Class

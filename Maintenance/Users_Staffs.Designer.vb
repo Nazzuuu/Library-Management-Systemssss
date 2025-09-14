@@ -87,11 +87,16 @@ Partial Class Users_Staffs
         txtusername = New Guna.UI2.WinForms.Guna2TextBox()
         panel_book = New Panel()
         OpenFileDialog1 = New OpenFileDialog()
+        Panel1 = New Panel()
+        rbassistant = New RadioButton()
+        rbstaff = New RadioButton()
+        Label9 = New Label()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
         groupbox.SuspendLayout()
         panel_book.SuspendLayout()
+        Panel1.SuspendLayout()
         SuspendLayout()
         ' 
         ' Guna2Elipse1
@@ -287,6 +292,7 @@ Partial Class Users_Staffs
         groupbox.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         groupbox.BorderRadius = 9
         groupbox.BorderThickness = 2
+        groupbox.Controls.Add(Panel1)
         groupbox.Controls.Add(CheckBox2)
         groupbox.Controls.Add(Label8)
         groupbox.Controls.Add(Label7)
@@ -630,6 +636,53 @@ Partial Class Users_Staffs
         ' 
         OpenFileDialog1.FileName = "OpenFileDialog1"
         ' 
+        ' Panel1
+        ' 
+        Panel1.Controls.Add(rbassistant)
+        Panel1.Controls.Add(rbstaff)
+        Panel1.Controls.Add(Label9)
+        Panel1.Location = New Point(597, 211)
+        Panel1.Name = "Panel1"
+        Panel1.Size = New Size(341, 44)
+        Panel1.TabIndex = 80
+        ' 
+        ' rbassistant
+        ' 
+        rbassistant.AutoSize = True
+        rbassistant.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        rbassistant.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        rbassistant.Location = New Point(89, 12)
+        rbassistant.Name = "rbassistant"
+        rbassistant.Size = New Size(148, 20)
+        rbassistant.TabIndex = 85
+        rbassistant.TabStop = True
+        rbassistant.Text = "Assistant Librarian"
+        rbassistant.UseVisualStyleBackColor = True
+        ' 
+        ' rbstaff
+        ' 
+        rbstaff.AutoSize = True
+        rbstaff.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        rbstaff.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        rbstaff.Location = New Point(246, 12)
+        rbstaff.Name = "rbstaff"
+        rbstaff.Size = New Size(57, 20)
+        rbstaff.TabIndex = 84
+        rbstaff.TabStop = True
+        rbstaff.Text = "Staff"
+        rbstaff.UseVisualStyleBackColor = True
+        ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label9.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label9.Location = New Point(37, 14)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(40, 16)
+        Label9.TabIndex = 83
+        Label9.Text = "Role:"
+        ' 
         ' Users_Staffs
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -645,6 +698,8 @@ Partial Class Users_Staffs
         groupbox.ResumeLayout(False)
         groupbox.PerformLayout()
         panel_book.ResumeLayout(False)
+        Panel1.ResumeLayout(False)
+        Panel1.PerformLayout()
         ResumeLayout(False)
     End Sub
 
@@ -680,4 +735,8 @@ Partial Class Users_Staffs
     Friend WithEvents Label5 As Label
     Friend WithEvents txtmname As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents CheckBox2 As CheckBox
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents rbassistant As RadioButton
+    Friend WithEvents rbstaff As RadioButton
+    Friend WithEvents Label9 As Label
 End Class
