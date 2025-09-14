@@ -5,7 +5,7 @@ Imports MySql.Data.MySqlClient
 Imports TheArtOfDevHtmlRenderer.Adapters
 Imports Windows.Win32.System
 Imports System.Text.RegularExpressions
-Public Class Users_Staffs
+Public Class Users
 
     Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
