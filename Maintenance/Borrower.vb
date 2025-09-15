@@ -939,4 +939,14 @@ Public Class Borrower
     Private Sub Borrower_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
         ClearFields()
     End Sub
+
+    Private Sub txtcontactnumber_KeyUp(sender As Object, e As KeyEventArgs) Handles txtcontactnumber.KeyUp
+
+
+        If e.KeyCode = Keys.Back Then
+            AddHandler txtcontactnumber.TextChanged, AddressOf txtcontactnumber_TextChanged
+
+        End If
+
+    End Sub
 End Class

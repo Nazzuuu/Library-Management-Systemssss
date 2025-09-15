@@ -249,6 +249,43 @@ Public Class Author
         End If
     End Sub
 
+    Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
+
+        Me.Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub btnadd_Mouseleave(sender As Object, e As EventArgs) Handles btnadd.MouseLeave
+
+        Me.Cursor = Cursors.Default
+
+    End Sub
+
+    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+
+        Me.Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub btnedit_Mouseleave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
+
+        Me.Cursor = Cursors.Default
+
+    End Sub
+
+    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
+
+        Me.Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub btndelete_Mouseleave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
+
+        Me.Cursor = Cursors.Default
+
+    End Sub
+
+
 
 
 

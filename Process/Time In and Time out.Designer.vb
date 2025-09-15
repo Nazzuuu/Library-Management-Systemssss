@@ -23,8 +23,8 @@ Partial Class oras
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges39 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges40 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges37 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges38 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -51,12 +51,12 @@ Partial Class oras
         Dim CustomizableEdges24 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -65,8 +65,6 @@ Partial Class oras
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges35 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges36 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges37 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges38 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_timein = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         Label13 = New Label()
@@ -90,8 +88,6 @@ Partial Class oras
         Label1 = New Label()
         txtemployee = New Guna.UI2.WinForms.Guna2TextBox()
         btnregisterview = New Guna.UI2.WinForms.Guna2Button()
-        DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
-        Label8 = New Label()
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         btnclear = New Guna.UI2.WinForms.Guna2Button()
@@ -148,8 +144,6 @@ Partial Class oras
         Guna2GroupBox1.Controls.Add(Label1)
         Guna2GroupBox1.Controls.Add(txtemployee)
         Guna2GroupBox1.Controls.Add(btnregisterview)
-        Guna2GroupBox1.Controls.Add(DateTimePicker1)
-        Guna2GroupBox1.Controls.Add(Label8)
         Guna2GroupBox1.Controls.Add(PictureBox1)
         Guna2GroupBox1.Controls.Add(txtsearch)
         Guna2GroupBox1.Controls.Add(btnclear)
@@ -162,13 +156,13 @@ Partial Class oras
         Guna2GroupBox1.Controls.Add(Label6)
         Guna2GroupBox1.Controls.Add(txtlrn)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges39
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges37
         Guna2GroupBox1.FillColor = Color.Transparent
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = SystemColors.Control
         Guna2GroupBox1.Location = New Point(12, 13)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges40
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges38
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
@@ -513,38 +507,6 @@ Partial Class oras
         btnregisterview.TabIndex = 72
         btnregisterview.Text = "Select Borrower"
         ' 
-        ' DateTimePicker1
-        ' 
-        DateTimePicker1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DateTimePicker1.BorderRadius = 8
-        DateTimePicker1.BorderThickness = 1
-        DateTimePicker1.Checked = True
-        DateTimePicker1.CustomFormat = "yyyy"
-        DateTimePicker1.CustomizableEdges = CustomizableEdges21
-        DateTimePicker1.FillColor = Color.White
-        DateTimePicker1.Font = New Font("Segoe UI", 9F)
-        DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DateTimePicker1.Format = DateTimePickerFormat.Custom
-        DateTimePicker1.Location = New Point(800, 221)
-        DateTimePicker1.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
-        DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
-        DateTimePicker1.Name = "DateTimePicker1"
-        DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges22
-        DateTimePicker1.Size = New Size(108, 33)
-        DateTimePicker1.TabIndex = 71
-        DateTimePicker1.Value = New Date(2025, 8, 25, 19, 46, 49, 668)
-        ' 
-        ' Label8
-        ' 
-        Label8.AutoSize = True
-        Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label8.Location = New Point(800, 202)
-        Label8.Name = "Label8"
-        Label8.Size = New Size(43, 16)
-        Label8.TabIndex = 70
-        Label8.Text = "Date:"
-        ' 
         ' PictureBox1
         ' 
         PictureBox1.BackColor = Color.White
@@ -560,7 +522,7 @@ Partial Class oras
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges23
+        txtsearch.CustomizableEdges = CustomizableEdges21
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -575,7 +537,7 @@ Partial Class oras
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrower"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges24
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         txtsearch.Size = New Size(889, 30)
         txtsearch.TabIndex = 48
         ' 
@@ -584,7 +546,7 @@ Partial Class oras
         btnclear.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnclear.BorderRadius = 9
         btnclear.BorderThickness = 1
-        btnclear.CustomizableEdges = CustomizableEdges25
+        btnclear.CustomizableEdges = CustomizableEdges23
         btnclear.DisabledState.BorderColor = Color.DarkGray
         btnclear.DisabledState.CustomBorderColor = Color.DarkGray
         btnclear.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -594,7 +556,7 @@ Partial Class oras
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnclear.Location = New Point(417, 274)
         btnclear.Name = "btnclear"
-        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges26
+        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         btnclear.Size = New Size(90, 27)
         btnclear.TabIndex = 46
         btnclear.Text = "CLEAR"
@@ -605,10 +567,10 @@ Partial Class oras
         Guna2GradientPanel1.BorderRadius = 9
         Guna2GradientPanel1.BorderThickness = 2
         Guna2GradientPanel1.Controls.Add(DataGridView1)
-        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges27
+        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges25
         Guna2GradientPanel1.Location = New Point(25, 329)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
-        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges28
+        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         Guna2GradientPanel1.Size = New Size(1283, 280)
         Guna2GradientPanel1.TabIndex = 45
         ' 
@@ -660,7 +622,7 @@ Partial Class oras
         btndelete.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btndelete.BorderRadius = 9
         btndelete.BorderThickness = 1
-        btndelete.CustomizableEdges = CustomizableEdges29
+        btndelete.CustomizableEdges = CustomizableEdges27
         btndelete.DisabledState.BorderColor = Color.DarkGray
         btndelete.DisabledState.CustomBorderColor = Color.DarkGray
         btndelete.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -670,7 +632,7 @@ Partial Class oras
         btndelete.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btndelete.Location = New Point(288, 274)
         btndelete.Name = "btndelete"
-        btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges30
+        btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         btndelete.Size = New Size(90, 27)
         btndelete.TabIndex = 44
         btndelete.Text = "DELETE"
@@ -680,7 +642,7 @@ Partial Class oras
         btnedit.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnedit.BorderRadius = 9
         btnedit.BorderThickness = 1
-        btnedit.CustomizableEdges = CustomizableEdges31
+        btnedit.CustomizableEdges = CustomizableEdges29
         btnedit.DisabledState.BorderColor = Color.DarkGray
         btnedit.DisabledState.CustomBorderColor = Color.DarkGray
         btnedit.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -690,7 +652,7 @@ Partial Class oras
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnedit.Location = New Point(158, 274)
         btnedit.Name = "btnedit"
-        btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges32
+        btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         btnedit.Size = New Size(90, 27)
         btnedit.TabIndex = 43
         btnedit.Text = "EDIT"
@@ -700,7 +662,7 @@ Partial Class oras
         btnadd.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnadd.BorderRadius = 9
         btnadd.BorderThickness = 1
-        btnadd.CustomizableEdges = CustomizableEdges33
+        btnadd.CustomizableEdges = CustomizableEdges31
         btnadd.DisabledState.BorderColor = Color.DarkGray
         btnadd.DisabledState.CustomBorderColor = Color.DarkGray
         btnadd.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -710,7 +672,7 @@ Partial Class oras
         btnadd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnadd.Location = New Point(30, 274)
         btnadd.Name = "btnadd"
-        btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges34
+        btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges32
         btnadd.Size = New Size(90, 27)
         btnadd.TabIndex = 42
         btnadd.Text = "ADD"
@@ -730,7 +692,7 @@ Partial Class oras
         ' 
         txtborrower.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtborrower.BorderRadius = 12
-        txtborrower.CustomizableEdges = CustomizableEdges35
+        txtborrower.CustomizableEdges = CustomizableEdges33
         txtborrower.DefaultText = ""
         txtborrower.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtborrower.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -744,7 +706,7 @@ Partial Class oras
         txtborrower.Name = "txtborrower"
         txtborrower.PlaceholderText = ""
         txtborrower.SelectedText = ""
-        txtborrower.ShadowDecoration.CustomizableEdges = CustomizableEdges36
+        txtborrower.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         txtborrower.Size = New Size(232, 33)
         txtborrower.TabIndex = 40
         ' 
@@ -763,7 +725,7 @@ Partial Class oras
         ' 
         txtlrn.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtlrn.BorderRadius = 12
-        txtlrn.CustomizableEdges = CustomizableEdges37
+        txtlrn.CustomizableEdges = CustomizableEdges35
         txtlrn.DefaultText = ""
         txtlrn.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtlrn.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -777,7 +739,7 @@ Partial Class oras
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
         txtlrn.SelectedText = ""
-        txtlrn.ShadowDecoration.CustomizableEdges = CustomizableEdges38
+        txtlrn.ShadowDecoration.CustomizableEdges = CustomizableEdges36
         txtlrn.Size = New Size(232, 33)
         txtlrn.TabIndex = 38
         ' 
@@ -806,8 +768,6 @@ Partial Class oras
 
     Friend WithEvents panel_timein As Panel
     Friend WithEvents Guna2GroupBox1 As Guna.UI2.WinForms.Guna2GroupBox
-    Friend WithEvents DateTimePicker1 As Guna.UI2.WinForms.Guna2DateTimePicker
-    Friend WithEvents Label8 As Label
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents btnclear As Guna.UI2.WinForms.Guna2Button
