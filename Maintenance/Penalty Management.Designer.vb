@@ -194,7 +194,7 @@ Partial Class Penalty_Management
         cbpenaltytype.DropDownStyle = ComboBoxStyle.DropDownList
         cbpenaltytype.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbpenaltytype.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbpenaltytype.Font = New Font("Microsoft Sans Serif", 9F)
+        cbpenaltytype.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbpenaltytype.ForeColor = Color.Black
         cbpenaltytype.ItemHeight = 30
         cbpenaltytype.Items.AddRange(New Object() {"Overdue", "Lost Book", "Damaged Book - Minor", "Damaged Book - Major", "Damaged Book - Irreparable"})

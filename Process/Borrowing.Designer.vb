@@ -151,7 +151,7 @@ Partial Class Borrowing
         Label9.AutoSize = True
         Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label9.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label9.Location = New Point(839, 69)
+        Label9.Location = New Point(837, 78)
         Label9.Name = "Label9"
         Label9.Size = New Size(74, 16)
         Label9.TabIndex = 92
@@ -171,7 +171,7 @@ Partial Class Borrowing
         txtbooktitle.Font = New Font("Segoe UI", 9F)
         txtbooktitle.ForeColor = Color.Black
         txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbooktitle.Location = New Point(839, 88)
+        txtbooktitle.Location = New Point(837, 97)
         txtbooktitle.Name = "txtbooktitle"
         txtbooktitle.PlaceholderText = ""
         txtbooktitle.SelectedText = ""
@@ -192,7 +192,7 @@ Partial Class Borrowing
         Guna2Button1.FillColor = Color.Empty
         Guna2Button1.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         Guna2Button1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2Button1.Location = New Point(1112, 88)
+        Guna2Button1.Location = New Point(1105, 97)
         Guna2Button1.Name = "Guna2Button1"
         Guna2Button1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         Guna2Button1.Size = New Size(179, 36)
@@ -204,7 +204,7 @@ Partial Class Borrowing
         Label5.AutoSize = True
         Label5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(839, 140)
+        Label5.Location = New Point(837, 149)
         Label5.Name = "Label5"
         Label5.Size = New Size(67, 16)
         Label5.TabIndex = 89
@@ -224,7 +224,7 @@ Partial Class Borrowing
         txtduedate.Font = New Font("Segoe UI", 9F)
         txtduedate.ForeColor = Color.Black
         txtduedate.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtduedate.Location = New Point(839, 159)
+        txtduedate.Location = New Point(837, 168)
         txtduedate.Name = "txtduedate"
         txtduedate.PlaceholderText = ""
         txtduedate.SelectedText = ""
@@ -244,7 +244,7 @@ Partial Class Borrowing
         DateTimePicker1.Font = New Font("Segoe UI", 9F)
         DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DateTimePicker1.Format = DateTimePickerFormat.Custom
-        DateTimePicker1.Location = New Point(567, 159)
+        DateTimePicker1.Location = New Point(567, 168)
         DateTimePicker1.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
         DateTimePicker1.Name = "DateTimePicker1"
@@ -258,7 +258,7 @@ Partial Class Borrowing
         Label8.AutoSize = True
         Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label8.Location = New Point(567, 140)
+        Label8.Location = New Point(567, 149)
         Label8.Name = "Label8"
         Label8.Size = New Size(110, 16)
         Label8.TabIndex = 86
@@ -278,7 +278,7 @@ Partial Class Borrowing
         cbborrowertype.ForeColor = Color.Black
         cbborrowertype.ItemHeight = 30
         cbborrowertype.Items.AddRange(New Object() {"Teacher", "Student"})
-        cbborrowertype.Location = New Point(30, 88)
+        cbborrowertype.Location = New Point(30, 97)
         cbborrowertype.Name = "cbborrowertype"
         cbborrowertype.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         cbborrowertype.Size = New Size(232, 36)
@@ -298,7 +298,7 @@ Partial Class Borrowing
         txtlrn.Font = New Font("Segoe UI", 9F)
         txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlrn.Location = New Point(297, 159)
+        txtlrn.Location = New Point(298, 168)
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
         txtlrn.SelectedText = ""
@@ -311,7 +311,7 @@ Partial Class Borrowing
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(297, 140)
+        Label3.Location = New Point(298, 149)
         Label3.Name = "Label3"
         Label3.Size = New Size(36, 16)
         Label3.TabIndex = 84
@@ -322,7 +322,7 @@ Partial Class Borrowing
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(297, 69)
+        Label2.Location = New Point(298, 78)
         Label2.Name = "Label2"
         Label2.Size = New Size(41, 16)
         Label2.TabIndex = 82
@@ -342,7 +342,7 @@ Partial Class Borrowing
         txtisbn.Font = New Font("Segoe UI", 9F)
         txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtisbn.Location = New Point(297, 88)
+        txtisbn.Location = New Point(298, 97)
         txtisbn.Name = "txtisbn"
         txtisbn.PlaceholderText = ""
         txtisbn.SelectedText = ""
@@ -355,7 +355,7 @@ Partial Class Borrowing
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(1112, 69)
+        Label4.Location = New Point(1105, 78)
         Label4.Name = "Label4"
         Label4.Size = New Size(86, 16)
         Label4.TabIndex = 80
@@ -366,7 +366,7 @@ Partial Class Borrowing
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(30, 140)
+        Label1.Location = New Point(30, 149)
         Label1.Name = "Label1"
         Label1.Size = New Size(93, 16)
         Label1.TabIndex = 74
@@ -386,7 +386,7 @@ Partial Class Borrowing
         txtemployee.Font = New Font("Segoe UI", 9F)
         txtemployee.ForeColor = Color.Black
         txtemployee.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemployee.Location = New Point(30, 159)
+        txtemployee.Location = New Point(30, 168)
         txtemployee.Name = "txtemployee"
         txtemployee.PlaceholderText = ""
         txtemployee.SelectedText = ""
@@ -441,7 +441,7 @@ Partial Class Borrowing
         btnclear.FillColor = Color.Empty
         btnclear.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclear.Location = New Point(417, 274)
+        btnclear.Location = New Point(417, 249)
         btnclear.Name = "btnclear"
         btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         btnclear.Size = New Size(90, 27)
@@ -455,7 +455,7 @@ Partial Class Borrowing
         Guna2GradientPanel1.BorderThickness = 2
         Guna2GradientPanel1.Controls.Add(DataGridView1)
         Guna2GradientPanel1.CustomizableEdges = CustomizableEdges21
-        Guna2GradientPanel1.Location = New Point(25, 329)
+        Guna2GradientPanel1.Location = New Point(25, 304)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         Guna2GradientPanel1.Size = New Size(1283, 280)
@@ -467,7 +467,7 @@ Partial Class Borrowing
         DataGridView1.AllowUserToDeleteRows = False
         DataGridView1.AllowUserToResizeColumns = False
         DataGridView1.AllowUserToResizeRows = False
-        DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+        DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         DataGridView1.BackgroundColor = SystemColors.Control
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle1.BackColor = Color.RosyBrown
@@ -519,7 +519,7 @@ Partial Class Borrowing
         btndelete.FillColor = Color.Empty
         btndelete.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btndelete.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btndelete.Location = New Point(288, 274)
+        btndelete.Location = New Point(288, 249)
         btndelete.Name = "btndelete"
         btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         btndelete.Size = New Size(90, 27)
@@ -539,7 +539,7 @@ Partial Class Borrowing
         btnedit.FillColor = Color.Empty
         btnedit.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnedit.Location = New Point(158, 274)
+        btnedit.Location = New Point(158, 249)
         btnedit.Name = "btnedit"
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         btnedit.Size = New Size(90, 27)
@@ -559,7 +559,7 @@ Partial Class Borrowing
         btnadd.FillColor = Color.Empty
         btnadd.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnadd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnadd.Location = New Point(30, 274)
+        btnadd.Location = New Point(30, 249)
         btnadd.Name = "btnadd"
         btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         btnadd.Size = New Size(90, 27)
@@ -571,7 +571,7 @@ Partial Class Borrowing
         Label7.AutoSize = True
         Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(30, 69)
+        Label7.Location = New Point(30, 78)
         Label7.Name = "Label7"
         Label7.Size = New Size(108, 16)
         Label7.TabIndex = 41
@@ -582,7 +582,7 @@ Partial Class Borrowing
         Label6.AutoSize = True
         Label6.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(567, 69)
+        Label6.Location = New Point(567, 78)
         Label6.Name = "Label6"
         Label6.Size = New Size(65, 16)
         Label6.TabIndex = 39
@@ -602,7 +602,7 @@ Partial Class Borrowing
         txtbarcode.Font = New Font("Segoe UI", 9F)
         txtbarcode.ForeColor = Color.Black
         txtbarcode.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbarcode.Location = New Point(567, 88)
+        txtbarcode.Location = New Point(567, 97)
         txtbarcode.Name = "txtbarcode"
         txtbarcode.PlaceholderText = ""
         txtbarcode.SelectedText = ""

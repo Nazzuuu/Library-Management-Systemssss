@@ -428,7 +428,7 @@ Partial Class Borrower
         cbstrand.DropDownStyle = ComboBoxStyle.DropDownList
         cbstrand.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbstrand.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbstrand.Font = New Font("Segoe UI", 10F)
+        cbstrand.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbstrand.ForeColor = Color.Black
         cbstrand.ItemHeight = 30
         cbstrand.Location = New Point(942, 285)
@@ -458,7 +458,7 @@ Partial Class Borrower
         cbsection.DropDownStyle = ComboBoxStyle.DropDownList
         cbsection.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbsection.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbsection.Font = New Font("Segoe UI", 10F)
+        cbsection.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbsection.ForeColor = Color.Black
         cbsection.ItemHeight = 30
         cbsection.Location = New Point(942, 216)
@@ -488,7 +488,7 @@ Partial Class Borrower
         cbgrade.DropDownStyle = ComboBoxStyle.DropDownList
         cbgrade.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgrade.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbgrade.Font = New Font("Segoe UI", 10F)
+        cbgrade.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbgrade.ForeColor = Color.Black
         cbgrade.ItemHeight = 30
         cbgrade.Location = New Point(942, 151)
@@ -518,7 +518,7 @@ Partial Class Borrower
         cbdepartment.DropDownStyle = ComboBoxStyle.DropDownList
         cbdepartment.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbdepartment.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbdepartment.Font = New Font("Segoe UI", 10F)
+        cbdepartment.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbdepartment.ForeColor = Color.Black
         cbdepartment.ItemHeight = 30
         cbdepartment.Location = New Point(942, 85)

@@ -62,6 +62,7 @@
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
+        Panel_dash.Controls.Remove(Borrowing)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -95,6 +96,7 @@
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
+        Panel_dash.Controls.Remove(Borrowing)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -121,6 +123,7 @@
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
+        Panel_dash.Controls.Remove(Borrowing)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -147,6 +150,7 @@
         Panel_dash.Controls.Remove(Acquisition)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
+        Panel_dash.Controls.Remove(Borrowing)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -368,6 +372,11 @@
         With Borrowing
 
             Panel_dash.Controls.Clear()
+            .TopMost = True
+            .TopLevel = False
+            .BringToFront()
+            Panel_dash.Controls.Add(Borrowing)
+            .Show()
 
 
         End With

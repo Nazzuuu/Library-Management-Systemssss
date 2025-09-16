@@ -513,7 +513,7 @@ Partial Class Book
         cblanguage.DropDownStyle = ComboBoxStyle.DropDownList
         cblanguage.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cblanguage.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cblanguage.Font = New Font("Segoe UI", 10F)
+        cblanguage.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cblanguage.ForeColor = Color.Black
         cblanguage.ItemHeight = 30
         cblanguage.Location = New Point(1014, 113)
@@ -532,7 +532,7 @@ Partial Class Book
         cbpublisher.DropDownStyle = ComboBoxStyle.DropDownList
         cbpublisher.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbpublisher.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbpublisher.Font = New Font("Segoe UI", 10F)
+        cbpublisher.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbpublisher.ForeColor = Color.Black
         cbpublisher.ItemHeight = 30
         cbpublisher.Location = New Point(682, 187)
@@ -551,7 +551,7 @@ Partial Class Book
         cbcategory.DropDownStyle = ComboBoxStyle.DropDownList
         cbcategory.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbcategory.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbcategory.Font = New Font("Segoe UI", 10F)
+        cbcategory.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbcategory.ForeColor = Color.Black
         cbcategory.ItemHeight = 30
         cbcategory.Location = New Point(682, 113)
@@ -570,7 +570,7 @@ Partial Class Book
         cbgenre.DropDownStyle = ComboBoxStyle.DropDownList
         cbgenre.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgenre.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbgenre.Font = New Font("Segoe UI", 10F)
+        cbgenre.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbgenre.ForeColor = Color.Black
         cbgenre.ItemHeight = 30
         cbgenre.Location = New Point(363, 182)
@@ -589,7 +589,7 @@ Partial Class Book
         cbauthor.DropDownStyle = ComboBoxStyle.DropDownList
         cbauthor.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbauthor.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbauthor.Font = New Font("Segoe UI", 10F)
+        cbauthor.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbauthor.ForeColor = Color.Black
         cbauthor.ItemHeight = 30
         cbauthor.Location = New Point(363, 113)

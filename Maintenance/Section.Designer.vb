@@ -190,7 +190,7 @@ Partial Class Section
         cbdepartment.DropDownStyle = ComboBoxStyle.DropDownList
         cbdepartment.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbdepartment.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbdepartment.Font = New Font("Segoe UI", 10F)
+        cbdepartment.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbdepartment.ForeColor = Color.Black
         cbdepartment.ItemHeight = 30
         cbdepartment.Location = New Point(36, 82)
@@ -291,7 +291,7 @@ Partial Class Section
         cbgrade.DropDownStyle = ComboBoxStyle.DropDownList
         cbgrade.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         cbgrade.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbgrade.Font = New Font("Segoe UI", 10F)
+        cbgrade.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         cbgrade.ForeColor = Color.Black
         cbgrade.ItemHeight = 30
         cbgrade.Location = New Point(202, 82)
