@@ -337,6 +337,7 @@ Partial Class Acquisition
         DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
         dgv_acquisition.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         dgv_acquisition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgv_acquisition.Cursor = Cursors.Hand
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
         DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)

@@ -8,9 +8,10 @@ Public Class oras
 
     Private Sub btnregisterview_Click(sender As Object, e As EventArgs) Handles btnregisterview.Click
 
-        RegisteredBrwr.ShowDialog()
-        RegisteredBrwr.ludeyngborrower()
-        RegisteredBrwr.ludeyngtimedinborrower()
+        RegisteredBrwr.ListView1.Enabled = True
+        RegisteredBrwr.ShowDialog
+        RegisteredBrwr.ludeyngborrower
+        RegisteredBrwr.ludeyngtimedinborrower
 
     End Sub
 
@@ -18,6 +19,7 @@ Public Class oras
 
         ludeyngoras()
         clearlahat()
+
 
     End Sub
 
@@ -38,6 +40,8 @@ Public Class oras
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+
 
         Catch ex As Exception
             MessageBox.Show("Error loading time records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -62,6 +66,7 @@ Public Class oras
         txtstrand.Enabled = False
         rbtimeout.Enabled = False
         rbtimeout.Checked = False
+
 
         txtborrower.Text = ""
         txtcontact.Text = ""
@@ -153,6 +158,7 @@ Public Class oras
             cmd.ExecuteNonQuery()
             MessageBox.Show("Time-in recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
+            btnview.Visible = True
             ludeyngoras()
             clearlahat()
 
@@ -198,6 +204,8 @@ Public Class oras
             con.Open()
             cmd.ExecuteNonQuery()
             MessageBox.Show("Time-out recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+            btnview.Visible = True
 
             ludeyngoras()
             clearlahat()
@@ -246,6 +254,9 @@ Public Class oras
                     delete.ExecuteNonQuery()
 
                     MessageBox.Show("Record deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+
                     ludeyngoras()
                     clearlahat()
 
@@ -298,5 +309,25 @@ Public Class oras
 
     End Sub
 
+    Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
+        RegisteredBrwr.ListView1.Enabled = False
+        RegisteredBrwr.ShowDialog()
+        RegisteredBrwr.ludeyngborrower()
+        RegisteredBrwr.ludeyngtimedinborrower()
 
+    End Sub
+
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        If dt IsNot Nothing Then
+            If txtsearch.Text.Trim() <> "" Then
+                Dim filter As String = String.Format("Borrower LIKE '*{0}*' OR FirstName LIKE '*{0}*' OR LastName LIKE '*{0}*'", txtsearch.Text.Trim())
+                dt.DefaultView.RowFilter = filter
+            Else
+                dt.DefaultView.RowFilter = ""
+            End If
+        End If
+
+    End Sub
 End Class

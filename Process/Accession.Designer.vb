@@ -47,14 +47,14 @@ Partial Class Accession
         Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges23 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges24 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         Datagridview1 = New DataGridView()
         txtbookprice = New Guna.UI2.WinForms.Guna2TextBox()
@@ -74,14 +74,14 @@ Partial Class Accession
         Label2 = New Label()
         Label1 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label8 = New Label()
+        cbshelf = New Guna.UI2.WinForms.Guna2ComboBox()
         Label4 = New Label()
         rbavailable = New RadioButton()
         txtbooktitle = New Guna.UI2.WinForms.Guna2TextBox()
         txtaccessionid = New Guna.UI2.WinForms.Guna2TextBox()
         cbtransactionno = New Guna.UI2.WinForms.Guna2ComboBox()
         panel_accession = New Panel()
-        cbshelf = New Guna.UI2.WinForms.Guna2ComboBox()
-        Label8 = New Label()
         CType(Datagridview1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -111,6 +111,7 @@ Partial Class Accession
         DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
         Datagridview1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         Datagridview1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Datagridview1.Cursor = Cursors.Hand
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
         DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
@@ -437,6 +438,36 @@ Partial Class Accession
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' Label8
+        ' 
+        Label8.AutoSize = True
+        Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label8.Location = New Point(992, 73)
+        Label8.Name = "Label8"
+        Label8.Size = New Size(79, 16)
+        Label8.TabIndex = 82
+        Label8.Text = "Book Shelf:"
+        ' 
+        ' cbshelf
+        ' 
+        cbshelf.BackColor = Color.Transparent
+        cbshelf.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        cbshelf.BorderRadius = 12
+        cbshelf.CustomizableEdges = CustomizableEdges19
+        cbshelf.DrawMode = DrawMode.OwnerDrawFixed
+        cbshelf.DropDownStyle = ComboBoxStyle.DropDownList
+        cbshelf.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        cbshelf.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        cbshelf.Font = New Font("Segoe UI", 10F)
+        cbshelf.ForeColor = Color.Black
+        cbshelf.ItemHeight = 30
+        cbshelf.Location = New Point(992, 95)
+        cbshelf.Name = "cbshelf"
+        cbshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges20
+        cbshelf.Size = New Size(232, 36)
+        cbshelf.TabIndex = 81
+        ' 
         ' Label4
         ' 
         Label4.AutoSize = True
@@ -532,36 +563,6 @@ Partial Class Accession
         panel_accession.Name = "panel_accession"
         panel_accession.Size = New Size(1370, 700)
         panel_accession.TabIndex = 2
-        ' 
-        ' cbshelf
-        ' 
-        cbshelf.BackColor = Color.Transparent
-        cbshelf.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        cbshelf.BorderRadius = 12
-        cbshelf.CustomizableEdges = CustomizableEdges19
-        cbshelf.DrawMode = DrawMode.OwnerDrawFixed
-        cbshelf.DropDownStyle = ComboBoxStyle.DropDownList
-        cbshelf.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbshelf.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        cbshelf.Font = New Font("Segoe UI", 10F)
-        cbshelf.ForeColor = Color.Black
-        cbshelf.ItemHeight = 30
-        cbshelf.Location = New Point(992, 95)
-        cbshelf.Name = "cbshelf"
-        cbshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges20
-        cbshelf.Size = New Size(232, 36)
-        cbshelf.TabIndex = 81
-        ' 
-        ' Label8
-        ' 
-        Label8.AutoSize = True
-        Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label8.Location = New Point(992, 73)
-        Label8.Name = "Label8"
-        Label8.Size = New Size(79, 16)
-        Label8.TabIndex = 82
-        Label8.Text = "Book Shelf:"
         ' 
         ' Accession
         ' 

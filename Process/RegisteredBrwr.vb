@@ -161,4 +161,9 @@ Public Class RegisteredBrwr
 
     End Sub
 
+    Private Sub RegisteredBrwr_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+
+        oras.btnview.Visible = False
+
+    End Sub
 End Class
