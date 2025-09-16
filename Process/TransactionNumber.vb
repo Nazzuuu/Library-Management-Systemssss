@@ -2,7 +2,7 @@
 
 Public Class TransactionNumber
 
-
+    'punyeta pagod na ako. aray kooo:>''
 
     Private Sub TransactionNumber_load(sender As Object, e As EventArgs) Handles MyBase.Load
         ludtransaksyun()

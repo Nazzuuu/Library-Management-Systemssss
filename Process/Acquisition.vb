@@ -2,12 +2,8 @@
 
 Public Class Acquisition
 
-    ' I-delete na ang TNForm at lastTransactionNo dahil hindi na kailangan sa bagong logic
-    ' Dim tnForm As New TransactionNumber()
-    ' Private lastTransactionNo As String = ""
-
     Private Sub Acquisition_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' ... (No change sa DGV loading)
+
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `acquisition_tbl`"
         Dim adp As New MySqlDataAdapter(com, con)
