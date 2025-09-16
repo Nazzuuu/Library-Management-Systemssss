@@ -57,6 +57,7 @@ Partial Class MainForm
         CategoryToolStripMenuItem = New ToolStripMenuItem()
         ShelfToolStripMenuItem = New ToolStripMenuItem()
         BookMaintenanceToolStripMenuItem = New ToolStripMenuItem()
+        PenaltyManagementToolStripMenuItem = New ToolStripMenuItem()
         DepartmentToolStripMenuItem = New ToolStripMenuItem()
         SectionToolStripMenuItem1 = New ToolStripMenuItem()
         SectionToolStripMenuItem2 = New ToolStripMenuItem()
@@ -113,7 +114,6 @@ Partial Class MainForm
         lbl_currentuser = New Label()
         Label2 = New Label()
         btnn_borrowed = New Guna.UI2.WinForms.Guna2Elipse(components)
-        PenaltyManagementToolStripMenuItem = New ToolStripMenuItem()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
         Panel_Process.SuspendLayout()
@@ -225,6 +225,13 @@ Partial Class MainForm
         BookMaintenanceToolStripMenuItem.Size = New Size(232, 22)
         BookMaintenanceToolStripMenuItem.Text = "Books"
         ' 
+        ' PenaltyManagementToolStripMenuItem
+        ' 
+        PenaltyManagementToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        PenaltyManagementToolStripMenuItem.Name = "PenaltyManagementToolStripMenuItem"
+        PenaltyManagementToolStripMenuItem.Size = New Size(232, 22)
+        PenaltyManagementToolStripMenuItem.Text = "Penalty Management"
+        ' 
         ' DepartmentToolStripMenuItem
         ' 
         DepartmentToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {SectionToolStripMenuItem1, SectionToolStripMenuItem2, GradeToolStripMenuItem1, StrandToolStripMenuItem1})
@@ -313,21 +320,21 @@ Partial Class MainForm
         ' 
         AcquisitionToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AcquisitionToolStripMenuItem.Name = "AcquisitionToolStripMenuItem"
-        AcquisitionToolStripMenuItem.Size = New Size(160, 22)
+        AcquisitionToolStripMenuItem.Size = New Size(180, 22)
         AcquisitionToolStripMenuItem.Text = "Acquisition"
         ' 
         ' AccessionToolStripMenuItem
         ' 
         AccessionToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AccessionToolStripMenuItem.Name = "AccessionToolStripMenuItem"
-        AccessionToolStripMenuItem.Size = New Size(160, 22)
+        AccessionToolStripMenuItem.Size = New Size(180, 22)
         AccessionToolStripMenuItem.Text = "Accession"
         ' 
         ' CatalogToolStripMenuItem
         ' 
         CatalogToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         CatalogToolStripMenuItem.Name = "CatalogToolStripMenuItem"
-        CatalogToolStripMenuItem.Size = New Size(160, 22)
+        CatalogToolStripMenuItem.Size = New Size(180, 22)
         CatalogToolStripMenuItem.Text = "Catalog"
         ' 
         ' StudentLogsToolStripMenuItem
@@ -335,14 +342,14 @@ Partial Class MainForm
         StudentLogsToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {TimeInToolStripMenuItem})
         StudentLogsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         StudentLogsToolStripMenuItem.Name = "StudentLogsToolStripMenuItem"
-        StudentLogsToolStripMenuItem.Size = New Size(160, 22)
+        StudentLogsToolStripMenuItem.Size = New Size(180, 22)
         StudentLogsToolStripMenuItem.Text = "Attendance"
         ' 
         ' TimeInToolStripMenuItem
         ' 
         TimeInToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         TimeInToolStripMenuItem.Name = "TimeInToolStripMenuItem"
-        TimeInToolStripMenuItem.Size = New Size(165, 22)
+        TimeInToolStripMenuItem.Size = New Size(180, 22)
         TimeInToolStripMenuItem.Text = "Time-in/out"
         ' 
         ' CirculationToolStripMenuItem
@@ -350,21 +357,21 @@ Partial Class MainForm
         CirculationToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BorrowToolStripMenuItem, ReturnToolStripMenuItem})
         CirculationToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         CirculationToolStripMenuItem.Name = "CirculationToolStripMenuItem"
-        CirculationToolStripMenuItem.Size = New Size(160, 22)
+        CirculationToolStripMenuItem.Size = New Size(180, 22)
         CirculationToolStripMenuItem.Text = "Circulation"
         ' 
         ' BorrowToolStripMenuItem
         ' 
         BorrowToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowToolStripMenuItem.Name = "BorrowToolStripMenuItem"
-        BorrowToolStripMenuItem.Size = New Size(154, 22)
+        BorrowToolStripMenuItem.Size = New Size(180, 22)
         BorrowToolStripMenuItem.Text = "Borrowing"
         ' 
         ' ReturnToolStripMenuItem
         ' 
         ReturnToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReturnToolStripMenuItem.Name = "ReturnToolStripMenuItem"
-        ReturnToolStripMenuItem.Size = New Size(154, 22)
+        ReturnToolStripMenuItem.Size = New Size(180, 22)
         ReturnToolStripMenuItem.Text = "Returning"
         ' 
         ' Guna2Elipse3
@@ -853,13 +860,6 @@ Partial Class MainForm
         ' 
         btnn_borrowed.BorderRadius = 9
         btnn_borrowed.TargetControl = btn_borrowed
-        ' 
-        ' PenaltyManagementToolStripMenuItem
-        ' 
-        PenaltyManagementToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        PenaltyManagementToolStripMenuItem.Name = "PenaltyManagementToolStripMenuItem"
-        PenaltyManagementToolStripMenuItem.Size = New Size(232, 22)
-        PenaltyManagementToolStripMenuItem.Text = "Penalty Management"
         ' 
         ' MainForm
         ' 

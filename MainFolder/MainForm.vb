@@ -362,4 +362,14 @@
     Private Sub PenaltyManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PenaltyManagementToolStripMenuItem.Click
         Penalty_Management.ShowDialog()
     End Sub
+
+    Private Sub BorrowToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowToolStripMenuItem.Click
+
+        With Borrowing
+
+            Panel_dash.Controls.Clear()
+
+
+        End With
+    End Sub
 End Class
