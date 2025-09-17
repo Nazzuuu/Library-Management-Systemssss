@@ -29,12 +29,15 @@ Partial Class login
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         txtuser = New Guna.UI2.WinForms.Guna2TextBox()
         txtpass = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
         Label2 = New Label()
         btnlogin = New Guna.UI2.WinForms.Guna2Button()
         Panel1 = New Panel()
+        Guna2ControlBox1 = New Guna.UI2.WinForms.Guna2ControlBox()
         Label3 = New Label()
         CheckBox1 = New CheckBox()
         Panel_btnlogin = New Panel()
@@ -92,7 +95,7 @@ Partial Class login
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label1.Location = New Point(65, 122)
         Label1.Name = "Label1"
@@ -103,7 +106,7 @@ Partial Class login
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        Label2.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label2.Location = New Point(69, 166)
         Label2.Name = "Label2"
@@ -120,7 +123,7 @@ Partial Class login
         btnlogin.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
         btnlogin.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
         btnlogin.FillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnlogin.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        btnlogin.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         btnlogin.ForeColor = Color.White
         btnlogin.Location = New Point(21, 12)
         btnlogin.Name = "btnlogin"
@@ -132,12 +135,25 @@ Partial Class login
         ' Panel1
         ' 
         Panel1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Panel1.Controls.Add(Guna2ControlBox1)
         Panel1.Controls.Add(Label3)
         Panel1.Dock = DockStyle.Top
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(482, 62)
         Panel1.TabIndex = 5
+        ' 
+        ' Guna2ControlBox1
+        ' 
+        Guna2ControlBox1.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        Guna2ControlBox1.CustomizableEdges = CustomizableEdges7
+        Guna2ControlBox1.FillColor = Color.Transparent
+        Guna2ControlBox1.IconColor = Color.White
+        Guna2ControlBox1.Location = New Point(435, 1)
+        Guna2ControlBox1.Name = "Guna2ControlBox1"
+        Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        Guna2ControlBox1.Size = New Size(45, 29)
+        Guna2ControlBox1.TabIndex = 2
         ' 
         ' Label3
         ' 
@@ -210,4 +226,5 @@ Partial Class login
     Friend WithEvents Panel_btnlogin As Panel
     Friend WithEvents logintimer As Timer
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
+    Friend WithEvents Guna2ControlBox1 As Guna.UI2.WinForms.Guna2ControlBox
 End Class
