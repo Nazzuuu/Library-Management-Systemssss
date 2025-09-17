@@ -2,6 +2,7 @@
 
 Public Class Accession
     Public Sub RefreshAccessionData()
+
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `acession_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -17,6 +18,8 @@ Public Class Accession
         Datagridview1.Columns("ID").Visible = False
 
         shelfsu()
+        Datagridview1.ClearSelection()
+
     End Sub
 
     Private Sub Acession_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -82,6 +85,7 @@ Public Class Accession
 
             If count > 0 Then
                 MessageBox.Show("This Transaction Number has already been used. Cannot add records with this number again.", "Duplicate Transaction", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                clearlahat()
                 Return
             End If
 
@@ -246,6 +250,23 @@ Public Class Accession
 
     Private Sub Datagridview1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles Datagridview1.CellClick
 
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = Me.Datagridview1.Rows(e.RowIndex)
+
+            txtaccessionid.Text = row.Cells("AccessionID").Value.ToString()
+            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString()
+            txtisbn.Text = row.Cells("ISBN").Value.ToString()
+            txtbarcodes.Text = row.Cells("Barcode").Value.ToString()
+            txtsuppliername.Text = row.Cells("SupplierName").Value.ToString()
+            txttransactionno.Text = row.Cells("TransactionNo").Value.ToString()
+
+
+            Dim shelfValue As String = row.Cells("Shelf").Value.ToString()
+            cbshelf.SelectedIndex = cbshelf.FindStringExact(shelfValue)
+
+
+
+        End If
     End Sub
 
     Public Sub clearlahat()
@@ -257,7 +278,10 @@ Public Class Accession
         txtsuppliername.Text = ""
         txttransactionno.Text = ""
 
-        cbshelf.SelectedIndex = -1
+        cbshelf.DataSource = Nothing
+        shelfsu()
+
+        Datagridview1.ClearSelection()
 
     End Sub
 

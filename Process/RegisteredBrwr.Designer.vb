@@ -22,10 +22,10 @@ Partial Class RegisteredBrwr
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         ListView1 = New ListView()
@@ -44,6 +44,8 @@ Partial Class RegisteredBrwr
         Label1 = New Label()
         Label2 = New Label()
         Label3 = New Label()
+        Label4 = New Label()
+        lbl_action = New Label()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GroupBox1.SuspendLayout()
         SuspendLayout()
@@ -63,7 +65,7 @@ Partial Class RegisteredBrwr
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges1
+        txtsearch.CustomizableEdges = CustomizableEdges5
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -78,7 +80,7 @@ Partial Class RegisteredBrwr
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrwer"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtsearch.Size = New Size(774, 30)
         txtsearch.TabIndex = 23
         ' 
@@ -160,13 +162,13 @@ Partial Class RegisteredBrwr
         Guna2GroupBox1.BorderThickness = 2
         Guna2GroupBox1.Controls.Add(ListView1)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges3
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges7
         Guna2GroupBox1.FillColor = SystemColors.Control
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.Transparent
         Guna2GroupBox1.Location = New Point(13, 143)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         Guna2GroupBox1.Size = New Size(1170, 294)
         Guna2GroupBox1.TabIndex = 24
         ' 
@@ -197,17 +199,41 @@ Partial Class RegisteredBrwr
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.Black
-        Label3.Location = New Point(26, 88)
+        Label3.Location = New Point(27, 89)
         Label3.Name = "Label3"
         Label3.Size = New Size(49, 16)
         Label3.TabIndex = 88
         Label3.Text = "Notes:"
+        ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Font = New Font("Tahoma", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label4.ForeColor = Color.DimGray
+        Label4.Location = New Point(909, 80)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(134, 19)
+        Label4.TabIndex = 89
+        Label4.Text = "Current Action:"
+        ' 
+        ' lbl_action
+        ' 
+        lbl_action.AutoSize = True
+        lbl_action.Font = New Font("Tahoma", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lbl_action.ForeColor = Color.Black
+        lbl_action.Location = New Point(1045, 81)
+        lbl_action.Name = "lbl_action"
+        lbl_action.Size = New Size(61, 19)
+        lbl_action.TabIndex = 90
+        lbl_action.Text = "Action"
         ' 
         ' RegisteredBrwr
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1196, 470)
+        Controls.Add(lbl_action)
+        Controls.Add(Label4)
         Controls.Add(Label3)
         Controls.Add(Label2)
         Controls.Add(Label1)
@@ -218,6 +244,7 @@ Partial Class RegisteredBrwr
         MaximizeBox = False
         MinimizeBox = False
         Name = "RegisteredBrwr"
+        ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
         Text = "RegisteredBrwr"
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
@@ -244,4 +271,6 @@ Partial Class RegisteredBrwr
     Friend WithEvents Label1 As Label
     Friend WithEvents Label2 As Label
     Friend WithEvents Label3 As Label
+    Friend WithEvents Label4 As Label
+    Friend WithEvents lbl_action As Label
 End Class

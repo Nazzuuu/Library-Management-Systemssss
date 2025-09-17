@@ -367,9 +367,6 @@ Public Class Acquisition
 
         If e.RowIndex >= 0 Then
 
-            clear()
-
-
             txtisbn.Enabled = False
             txtbarcodes.Enabled = False
             txtbooktitle.Enabled = False

@@ -1,7 +1,7 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports Windows.Win32.System
 Public Class RegisteredBrwr
-
+    Public IsInViewMode As Boolean = False
     Private con As New MySqlConnection(connectionString)
 
     Private Sub RegisteredBrwr_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -43,7 +43,11 @@ Public Class RegisteredBrwr
 
     End Sub
 
-    Private Sub ListView1_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles ListView1.MouseDoubleClick
+    Public Sub ListView1_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles ListView1.MouseDoubleClick
+
+        If IsInViewMode Then
+            Exit Sub
+        End If
 
         Dim selectedItem As ListViewItem = ListView1.GetItemAt(e.X, e.Y)
         If selectedItem IsNot Nothing Then

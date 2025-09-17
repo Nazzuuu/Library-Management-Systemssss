@@ -8,6 +8,11 @@ Public Class oras
 
     Private Sub btnregisterview_Click(sender As Object, e As EventArgs) Handles btnregisterview.Click
 
+        AddHandler RegisteredBrwr.ListView1.MouseDoubleClick, AddressOf RegisteredBrwr.ListView1_MouseDoubleClick
+
+        RegisteredBrwr.lbl_action.ForeColor = Color.Red
+        RegisteredBrwr.lbl_action.Text = "Selecting"
+
         RegisteredBrwr.ListView1.Enabled = True
         RegisteredBrwr.ShowDialog
         RegisteredBrwr.ludeyngborrower
@@ -151,7 +156,7 @@ Public Class oras
         cmd.Parameters.AddWithValue("@Grade", If(String.IsNullOrWhiteSpace(txtgrade.Text), DBNull.Value, txtgrade.Text))
         cmd.Parameters.AddWithValue("@Section", If(String.IsNullOrWhiteSpace(txtsection.Text), DBNull.Value, txtsection.Text))
         cmd.Parameters.AddWithValue("@Strand", If(String.IsNullOrWhiteSpace(txtstrand.Text), DBNull.Value, txtstrand.Text))
-        cmd.Parameters.AddWithValue("@TimeIn", DateTime.Now)
+        cmd.Parameters.AddWithValue("@TimeIn", DateTime.Now.ToString("MM/dd/yyyy h:mm tt"))
 
         Try
             con.Open()
@@ -197,7 +202,7 @@ Public Class oras
         Dim com As String = "UPDATE `oras_tbl` SET `TimeOut` = @TimeOut WHERE `ID` = @ID"
         Dim cmd As New MySqlCommand(com, con)
 
-        cmd.Parameters.AddWithValue("@TimeOut", DateTime.Now)
+        cmd.Parameters.AddWithValue("@TimeOut", DateTime.Now.ToString("MM/dd/yyyy h:mm tt"))
         cmd.Parameters.AddWithValue("@ID", selectedID)
 
         Try
@@ -310,10 +315,23 @@ Public Class oras
     End Sub
 
     Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
-        RegisteredBrwr.ListView1.Enabled = False
+
+        RegisteredBrwr.IsInViewMode = True
+
+        RegisteredBrwr.lbl_action.ForeColor = Color.Green
+        RegisteredBrwr.lbl_action.Text = "Viewing"
+
+        RegisteredBrwr.ListView1.FullRowSelect = True
+        RegisteredBrwr.ListView1.MultiSelect = False
+        RegisteredBrwr.ListView1.HideSelection = False
+        RegisteredBrwr.ListView1.LabelEdit = False
+
         RegisteredBrwr.ShowDialog()
         RegisteredBrwr.ludeyngborrower()
         RegisteredBrwr.ludeyngtimedinborrower()
+
+
+        RegisteredBrwr.IsInViewMode = False
 
     End Sub
 
