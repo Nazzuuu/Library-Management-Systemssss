@@ -43,6 +43,8 @@ Partial Class Supplier
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         Label3 = New Label()
         txtcontact = New Guna.UI2.WinForms.Guna2TextBox()
@@ -57,9 +59,11 @@ Partial Class Supplier
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
+        Guna2GradientPanel2 = New Guna.UI2.WinForms.Guna2GradientPanel()
         Guna2GradientPanel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
+        Guna2GradientPanel2.SuspendLayout()
         SuspendLayout()
         ' 
         ' Guna2GradientPanel1
@@ -290,11 +294,11 @@ Partial Class Supplier
         DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         DataGridView1.BackgroundColor = SystemColors.Control
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle1.BackColor = Color.RosyBrown
+        DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = SystemColors.WindowText
-        DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle1.ForeColor = Color.White
+        DataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle1.SelectionForeColor = Color.White
         DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
         DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
@@ -302,12 +306,13 @@ Partial Class Supplier
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
         DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle2.ForeColor = SystemColors.Control
+        DataGridViewCellStyle2.ForeColor = Color.White
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(31, 338)
+        DataGridView1.Location = New Point(24, 26)
+        DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
@@ -318,20 +323,35 @@ Partial Class Supplier
         DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
         DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
+        DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
         DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
         DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
-        DataGridView1.Size = New Size(661, 186)
-        DataGridView1.TabIndex = 28
+        DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        DataGridView1.Size = New Size(615, 229)
+        DataGridView1.TabIndex = 30
+        ' 
+        ' Guna2GradientPanel2
+        ' 
+        Guna2GradientPanel2.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2GradientPanel2.BorderRadius = 9
+        Guna2GradientPanel2.BorderThickness = 2
+        Guna2GradientPanel2.Controls.Add(DataGridView1)
+        Guna2GradientPanel2.CustomizableEdges = CustomizableEdges17
+        Guna2GradientPanel2.Location = New Point(28, 342)
+        Guna2GradientPanel2.Name = "Guna2GradientPanel2"
+        Guna2GradientPanel2.ShadowDecoration.CustomizableEdges = CustomizableEdges18
+        Guna2GradientPanel2.Size = New Size(664, 283)
+        Guna2GradientPanel2.TabIndex = 23
         ' 
         ' Supplier
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(725, 555)
-        Controls.Add(DataGridView1)
+        ClientSize = New Size(725, 652)
+        Controls.Add(Guna2GradientPanel2)
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
@@ -346,6 +366,7 @@ Partial Class Supplier
         Guna2GradientPanel1.PerformLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
+        Guna2GradientPanel2.ResumeLayout(False)
         ResumeLayout(False)
     End Sub
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
@@ -361,5 +382,6 @@ Partial Class Supplier
     Friend WithEvents Label3 As Label
     Friend WithEvents txtcontact As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
+    Friend WithEvents Guna2GradientPanel2 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents DataGridView1 As DataGridView
 End Class

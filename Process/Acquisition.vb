@@ -10,12 +10,12 @@ Public Class Acquisition
         Dim dt As New DataSet
 
         adp.Fill(dt, "INFO")
-        dgv_acquisition.DataSource = dt.Tables("INFO")
+        Datagridview1.DataSource = dt.Tables("INFO")
 
-        dgv_acquisition.Columns("ID").Visible = False
-        dgv_acquisition.EnableHeadersVisualStyles = False
-        dgv_acquisition.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        dgv_acquisition.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        Datagridview1.Columns("ID").Visible = False
+        Datagridview1.EnableHeadersVisualStyles = False
+        Datagridview1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        Datagridview1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
 
         jineret()
@@ -41,7 +41,7 @@ Public Class Acquisition
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
-        Dim dt As DataTable = DirectCast(dgv_acquisition.DataSource, DataTable)
+        Dim dt As DataTable = DirectCast(Datagridview1.DataSource, DataTable)
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
                 Dim filter As String = String.Format("BookTitle LIKE '*{0}*' OR ISBN LIKE '*{0}*'", txtsearch.Text.Trim())
@@ -180,12 +180,12 @@ Public Class Acquisition
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
 
-        If dgv_acquisition.SelectedRows.Count = 0 Then
+        If Datagridview1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a record to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
 
-        Dim selectedRow As DataGridViewRow = dgv_acquisition.SelectedRows(0)
+        Dim selectedRow As DataGridViewRow = Datagridview1.SelectedRows(0)
         Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
         Dim old As Integer = CInt(selectedRow.Cells("Quantity").Value)
         Dim neww As Integer = CInt(NumericUpDown1.Value)
@@ -328,11 +328,11 @@ Public Class Acquisition
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
-        If dgv_acquisition.SelectedRows.Count > 0 Then
+        If Datagridview1.SelectedRows.Count > 0 Then
             Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this acquisition record?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
             If dialogResult = DialogResult.Yes Then
                 Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow As DataGridViewRow = dgv_acquisition.SelectedRows(0)
+                Dim selectedRow As DataGridViewRow = Datagridview1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Try
                     con.Open()
@@ -363,7 +363,7 @@ Public Class Acquisition
 
     End Sub
 
-    Private Sub dgv_acquisition_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgv_acquisition.CellClick
+    Private Sub dgv_acquisition_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles Datagridview1.CellClick
 
         If e.RowIndex >= 0 Then
 
@@ -373,20 +373,20 @@ Public Class Acquisition
             txttotalcost.Enabled = False
             txttransactionno.Enabled = False
 
-            Dim selectedRow As DataGridViewRow = dgv_acquisition.Rows(e.RowIndex)
+            Dim selectedRow = DataGridView1.Rows(e.RowIndex)
 
 
-            txtisbn.Text = selectedRow.Cells("ISBN").Value.ToString()
+            txtisbn.Text = selectedRow.Cells("ISBN").Value.ToString
             If selectedRow.Cells("Barcode").Value IsNot DBNull.Value AndAlso selectedRow.Cells("Barcode").Value IsNot Nothing Then
-                txtbarcodes.Text = selectedRow.Cells("Barcode").Value.ToString()
+                txtbarcodes.Text = selectedRow.Cells("Barcode").Value.ToString
             Else
                 txtbarcodes.Text = ""
             End If
-            txtbooktitle.Text = selectedRow.Cells("BookTitle").Value.ToString()
-            cbsuppliername.Text = selectedRow.Cells("SupplierName").Value.ToString()
+            txtbooktitle.Text = selectedRow.Cells("BookTitle").Value.ToString
+            cbsuppliername.Text = selectedRow.Cells("SupplierName").Value.ToString
             NumericUpDown1.Value = Convert.ToDecimal(selectedRow.Cells("Quantity").Value)
-            txtbookprice.Text = selectedRow.Cells("BookPrice").Value.ToString()
-            txttotalcost.Text = selectedRow.Cells("TotalCost").Value.ToString()
+            txtbookprice.Text = selectedRow.Cells("BookPrice").Value.ToString
+            txttotalcost.Text = selectedRow.Cells("TotalCost").Value.ToString
             DateTimePicker1.Value = CDate(selectedRow.Cells("DateAcquired").Value)
         End If
 
@@ -469,7 +469,7 @@ Public Class Acquisition
         rbisbn.Checked = False
 
         DateTimePicker1.Value = DateTime.Now
-        dgv_acquisition.ClearSelection()
+        Datagridview1.ClearSelection()
     End Sub
 
 

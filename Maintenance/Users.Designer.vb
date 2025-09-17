@@ -112,7 +112,6 @@ Partial Class Users
         DataGridView1.AllowUserToResizeRows = False
         DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         DataGridView1.BackgroundColor = SystemColors.Control
-        DataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)

@@ -33,10 +33,10 @@ Public Class Section
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(connectionString)
-        Dim dept As String = ""
-        Dim grade As String = ""
-        Dim secs As String = ""
-        Dim strand As String = ""
+        Dim dept = ""
+        Dim grade = ""
+        Dim secs = ""
+        Dim strand = ""
 
         If cbdepartment.SelectedIndex <> -1 Then
             dept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
@@ -72,25 +72,25 @@ Public Class Section
 
 
         Try
-            con.Open()
+            con.Open
             Dim com As New MySqlCommand("INSERT INTO `section_tbl`(`Department`, `GradeLevel`, `Section`, `Strand`) VALUES (@dept, @grade, @section, @strand)", con)
             com.Parameters.AddWithValue("@dept", dept)
             com.Parameters.AddWithValue("@grade", grade)
-            com.Parameters.AddWithValue("@section", If(secs = "", CType(DBNull.Value, Object), secs))
-            com.Parameters.AddWithValue("@strand", If(strand = "", CType(DBNull.Value, Object), strand))
-            com.ExecuteNonQuery()
+            com.Parameters.AddWithValue("@section", If(secs = "", DBNull.Value, secs))
+            com.Parameters.AddWithValue("@strand", If(strand = "", DBNull.Value, strand))
+            com.ExecuteNonQuery
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Borrower Then
                     Dim borrower = DirectCast(form, Borrower)
-                    borrower.cbsecs()
+                    borrower.cbsecs
                 End If
             Next
 
             MsgBox("Section added successfully", vbInformation)
             Section_Load(sender, e)
 
-            clearlahat()
+            clearlahat
 
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
@@ -146,13 +146,13 @@ Public Class Section
         If DataGridView1.SelectedRows.Count > 0 Then
 
             Dim con As New MySqlConnection(connectionString)
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim selectedRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = selectedRow.Cells("ID").Value
 
-            Dim newDept As String = ""
-            Dim newGrade As String = ""
-            Dim newSecs As String = ""
-            Dim newStrand As String = ""
+            Dim newDept = ""
+            Dim newGrade = ""
+            Dim newSecs = ""
+            Dim newStrand = ""
 
             If cbdepartment.SelectedIndex <> -1 Then
                 newDept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
@@ -187,26 +187,26 @@ Public Class Section
             End If
 
             Try
-                con.Open()
+                con.Open
                 Dim com As New MySqlCommand("UPDATE `section_tbl` SET `Department` = @dept, `GradeLevel` = @grade, `Section` = @section, `Strand` = @strand WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@dept", newDept)
                 com.Parameters.AddWithValue("@grade", newGrade)
-                com.Parameters.AddWithValue("@section", If(newSecs = "", CType(DBNull.Value, Object), newSecs))
-                com.Parameters.AddWithValue("@strand", If(newStrand = "", CType(DBNull.Value, Object), newStrand))
+                com.Parameters.AddWithValue("@section", If(newSecs = "", DBNull.Value, newSecs))
+                com.Parameters.AddWithValue("@strand", If(newStrand = "", DBNull.Value, newStrand))
                 com.Parameters.AddWithValue("@id", ID)
-                com.ExecuteNonQuery()
+                com.ExecuteNonQuery
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Borrower Then
                         Dim borrower = DirectCast(form, Borrower)
-                        borrower.cbsecs()
+                        borrower.cbsecs
                     End If
                 Next
 
                 MsgBox("Updated successfully!", vbInformation)
                 Section_Load(sender, e)
 
-                clearlahat()
+                clearlahat
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
@@ -261,26 +261,26 @@ Public Class Section
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this section?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            Dim dialogResult = MessageBox.Show("Are you sure you want to delete this section?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 
             If dialogResult = DialogResult.Yes Then
 
                 Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim dept As String = selectedRow.Cells("Department").Value.ToString().Trim()
-                Dim grade As String = selectedRow.Cells("GradeLevel").Value.ToString().Trim()
-                Dim section As String = ""
-                Dim strand As String = ""
+                Dim selectedRow = DataGridView1.SelectedRows(0)
+                Dim ID As Integer = selectedRow.Cells("ID").Value
+                Dim dept = selectedRow.Cells("Department").Value.ToString.Trim
+                Dim grade = selectedRow.Cells("GradeLevel").Value.ToString.Trim
+                Dim section = ""
+                Dim strand = ""
 
                 If dept = "Junior High School" OrElse dept = "Elementary" Then
-                    section = selectedRow.Cells("Section").Value.ToString().Trim()
+                    section = selectedRow.Cells("Section").Value.ToString.Trim
                 ElseIf dept = "Senior High School" Then
-                    strand = selectedRow.Cells("Strand").Value.ToString().Trim()
+                    strand = selectedRow.Cells("Strand").Value.ToString.Trim
                 End If
 
                 Try
-                    con.Open()
+                    con.Open
 
                     Dim borrowerQuery As New MySqlCommand("", con)
 
@@ -297,7 +297,7 @@ Public Class Section
                         borrowerQuery.Parameters.AddWithValue("@strand", strand)
                     End If
 
-                    Dim borrowerCount As Integer = CInt(borrowerQuery.ExecuteScalar())
+                    Dim borrowerCount As Integer = borrowerQuery.ExecuteScalar()
 
                     If borrowerCount > 0 Then
                         MessageBox.Show("Cannot delete this section/strand. It is currently assigned to " & borrowerCount & " borrower(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -307,57 +307,33 @@ Public Class Section
 
                     Dim delete As New MySqlCommand("DELETE FROM `section_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery()
+                    delete.ExecuteNonQuery
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Borrower Then
-                            DirectCast(form, Borrower).cbsecs()
+                            DirectCast(form, Borrower).cbsecs
                         End If
                     Next
 
                     MsgBox("Section deleted successfully.", vbInformation)
                     Section_Load(sender, e)
-                    clearlahat()
+                    clearlahat
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+                    Dim rowCount As Long = count.ExecuteScalar()
 
                     If rowCount = 0 Then
                         Dim reset As New MySqlCommand("ALTER TABLE `section_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery()
+                        reset.ExecuteNonQuery
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 Finally
                     If con.State = ConnectionState.Open Then
-                        con.Close()
+                        con.Close
                     End If
                 End Try
-            End If
-        End If
-    End Sub
-
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-        If e.RowIndex >= 0 Then
-            Dim row = DataGridView1.Rows(e.RowIndex)
-
-
-            cbdepartment.Text = row.Cells("Department").Value.ToString
-            cbgrade.Text = row.Cells("GradeLevel").Value.ToString
-
-            Dim sectionValue As Object = row.Cells("Section").Value
-            Dim strandValue As Object = row.Cells("Strand").Value
-
-
-            If Not IsDBNull(sectionValue) AndAlso sectionValue.ToString <> "" Then
-                txtsection.Visible = True
-                cbstrand.Visible = False
-                txtsection.Text = sectionValue.ToString
-            ElseIf Not IsDBNull(strandValue) AndAlso strandValue.ToString <> "" Then
-                cbstrand.Visible = True
-                txtsection.Visible = False
-                cbstrand.Text = strandValue.ToString
             End If
         End If
     End Sub
@@ -467,10 +443,10 @@ Public Class Section
     Private Sub cbdepartment_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbdepartment.SelectedIndexChanged
 
         If cbdepartment.SelectedIndex <> -1 Then
-            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
+            Dim selectedDept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
             cbgrade.DataSource = Nothing
-            cbgrade.Items.Clear()
+            cbgrade.Items.Clear
 
 
             cbgrade.Enabled = False
@@ -479,7 +455,7 @@ Public Class Section
 
             If selectedDept = "Junior High School" Then
                 Dim con As New MySqlConnection(connectionString)
-                Dim com As String = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 7 AND 10"
+                Dim com = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 7 AND 10"
                 Dim adap As New MySqlDataAdapter(com, con)
                 Dim ds As New DataTable
                 adap.Fill(ds)
@@ -499,7 +475,7 @@ Public Class Section
 
             ElseIf selectedDept = "Senior High School" Then
                 Dim con As New MySqlConnection(connectionString)
-                Dim com As String = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 11 AND 12"
+                Dim com = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 11 AND 12"
                 Dim adap As New MySqlDataAdapter(com, con)
                 Dim ds As New DataTable
                 adap.Fill(ds)
@@ -512,7 +488,7 @@ Public Class Section
                 cbstrand.Visible = True
                 txtsection.Visible = False
 
-                cbstrandsu()
+                cbstrandsu
 
                 lbl_sectionandstrand.Text = "Strand:"
 
@@ -521,7 +497,7 @@ Public Class Section
             ElseIf selectedDept = "Elementary" Then
 
                 Dim con As New MySqlConnection(connectionString)
-                Dim com As String = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 1 AND 6"
+                Dim com = "SELECT ID, Grade FROM `grade_tbl` WHERE Grade BETWEEN 1 AND 6"
                 Dim adap As New MySqlDataAdapter(com, con)
                 Dim ds As New DataTable
                 adap.Fill(ds)
@@ -542,7 +518,7 @@ Public Class Section
     End Sub
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-        clearlahat()
+        clearlahat
     End Sub
 
     Public Sub clearlahat()
@@ -586,7 +562,7 @@ Public Class Section
     Private Sub cbgrade_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbgrade.SelectedIndexChanged
 
         If cbgrade.SelectedIndex <> -1 Then
-            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
+            Dim selectedDept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
             If selectedDept = "Junior High School" Then
                 txtsection.Enabled = True
@@ -604,7 +580,7 @@ Public Class Section
 
     Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles rbjhs.CheckedChanged
 
-        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        Dim dt = DirectCast(DataGridView1.DataSource, DataTable)
 
         If dt IsNot Nothing AndAlso rbjhs.Checked Then
             dt.DefaultView.RowFilter = "Department = 'Junior High School'"
@@ -614,7 +590,7 @@ Public Class Section
 
     Private Sub RadioButton2_CheckedChanged(sender As Object, e As EventArgs) Handles rbshs.CheckedChanged
 
-        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        Dim dt = DirectCast(DataGridView1.DataSource, DataTable)
 
         If dt IsNot Nothing AndAlso rbshs.Checked Then
             dt.DefaultView.RowFilter = "Department = 'Senior High School'"
@@ -629,11 +605,36 @@ Public Class Section
     End Sub
 
     Private Sub rbelem_CheckedChanged(sender As Object, e As EventArgs) Handles rbelem.CheckedChanged
-        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        Dim dt = DirectCast(DataGridView1.DataSource, DataTable)
 
         If dt IsNot Nothing AndAlso rbelem.Checked Then
             dt.DefaultView.RowFilter = "Department = 'Elementary'"
         End If
     End Sub
 
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+            Dim row = DataGridView1.Rows(e.RowIndex)
+
+
+            cbdepartment.Text = row.Cells("Department").Value.ToString
+            cbgrade.Text = row.Cells("GradeLevel").Value.ToString
+
+            Dim sectionValue = row.Cells("Section").Value
+            Dim strandValue = row.Cells("Strand").Value
+
+
+            If Not IsDBNull(sectionValue) AndAlso sectionValue.ToString <> "" Then
+                txtsection.Visible = True
+                cbstrand.Visible = False
+                txtsection.Text = sectionValue.ToString
+            ElseIf Not IsDBNull(strandValue) AndAlso strandValue.ToString <> "" Then
+                cbstrand.Visible = True
+                txtsection.Visible = False
+                cbstrand.Text = strandValue.ToString
+            End If
+        End If
+
+    End Sub
 End Class

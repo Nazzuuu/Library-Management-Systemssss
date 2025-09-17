@@ -43,10 +43,6 @@ Partial Class Acquisition
         Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -59,6 +55,10 @@ Partial Class Acquisition
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         panel_acquisition = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         rbbarcode = New RadioButton()
@@ -74,7 +74,6 @@ Partial Class Acquisition
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         btnclear = New Guna.UI2.WinForms.Guna2Button()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
-        dgv_acquisition = New DataGridView()
         btndelete = New Guna.UI2.WinForms.Guna2Button()
         btnedit = New Guna.UI2.WinForms.Guna2Button()
         btnadd = New Guna.UI2.WinForms.Guna2Button()
@@ -88,12 +87,13 @@ Partial Class Acquisition
         Label2 = New Label()
         Label1 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        DataGridView1 = New DataGridView()
         panel_acquisition.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(NumericUpDown1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
-        CType(dgv_acquisition, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' panel_acquisition
@@ -366,58 +366,13 @@ Partial Class Acquisition
         Guna2GradientPanel1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GradientPanel1.BorderRadius = 9
         Guna2GradientPanel1.BorderThickness = 2
-        Guna2GradientPanel1.Controls.Add(dgv_acquisition)
+        Guna2GradientPanel1.Controls.Add(DataGridView1)
         Guna2GradientPanel1.CustomizableEdges = CustomizableEdges17
         Guna2GradientPanel1.Location = New Point(25, 268)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         Guna2GradientPanel1.Size = New Size(1283, 341)
         Guna2GradientPanel1.TabIndex = 45
-        ' 
-        ' dgv_acquisition
-        ' 
-        dgv_acquisition.AllowUserToAddRows = False
-        dgv_acquisition.AllowUserToDeleteRows = False
-        dgv_acquisition.AllowUserToResizeColumns = False
-        dgv_acquisition.AllowUserToResizeRows = False
-        dgv_acquisition.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-        dgv_acquisition.BackgroundColor = SystemColors.Control
-        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle1.BackColor = Color.RosyBrown
-        DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = SystemColors.WindowText
-        DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
-        dgv_acquisition.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
-        dgv_acquisition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        dgv_acquisition.Cursor = Cursors.Hand
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = SystemColors.Window
-        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle2.ForeColor = SystemColors.Control
-        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
-        dgv_acquisition.DefaultCellStyle = DataGridViewCellStyle2
-        dgv_acquisition.Location = New Point(25, 27)
-        dgv_acquisition.Name = "dgv_acquisition"
-        dgv_acquisition.ReadOnly = True
-        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle3.BackColor = SystemColors.Control
-        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
-        DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
-        dgv_acquisition.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
-        dgv_acquisition.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
-        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        DataGridViewCellStyle4.ForeColor = Color.Black
-        dgv_acquisition.RowsDefaultCellStyle = DataGridViewCellStyle4
-        dgv_acquisition.Size = New Size(1234, 289)
-        dgv_acquisition.TabIndex = 22
         ' 
         ' btndelete
         ' 
@@ -611,7 +566,56 @@ Partial Class Acquisition
         ' Guna2Elipse1
         ' 
         Guna2Elipse1.BorderRadius = 9
-        Guna2Elipse1.TargetControl = dgv_acquisition
+        Guna2Elipse1.TargetControl = DataGridView1
+        ' 
+        ' DataGridView1
+        ' 
+        DataGridView1.AllowUserToAddRows = False
+        DataGridView1.AllowUserToDeleteRows = False
+        DataGridView1.AllowUserToResizeColumns = False
+        DataGridView1.AllowUserToResizeRows = False
+        DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        DataGridView1.BackgroundColor = SystemColors.Control
+        DataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal
+        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        DataGridViewCellStyle1.ForeColor = Color.White
+        DataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle1.SelectionForeColor = Color.White
+        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
+        DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridView1.Cursor = Cursors.Hand
+        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = SystemColors.Window
+        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle2.ForeColor = SystemColors.Control
+        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
+        DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridView1.Location = New Point(24, 25)
+        DataGridView1.MultiSelect = False
+        DataGridView1.Name = "DataGridView1"
+        DataGridView1.ReadOnly = True
+        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle3.BackColor = SystemColors.Control
+        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
+        DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
+        DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
+        DataGridView1.RowHeadersVisible = False
+        DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
+        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
+        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle4.ForeColor = Color.Black
+        DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
+        DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        DataGridView1.Size = New Size(1234, 293)
+        DataGridView1.TabIndex = 25
         ' 
         ' Acquisition
         ' 
@@ -628,7 +632,7 @@ Partial Class Acquisition
         CType(NumericUpDown1, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         Guna2GradientPanel1.ResumeLayout(False)
-        CType(dgv_acquisition, ComponentModel.ISupportInitialize).EndInit()
+        CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub
 
@@ -657,8 +661,8 @@ Partial Class Acquisition
     Friend WithEvents txtbookprice As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents NumericUpDown1 As Guna.UI2.WinForms.Guna2NumericUpDown
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
-    Friend WithEvents dgv_acquisition As DataGridView
     Friend WithEvents txtbarcodes As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents rbbarcode As RadioButton
     Friend WithEvents rbisbn As RadioButton
+    Friend WithEvents DataGridView1 As DataGridView
 End Class

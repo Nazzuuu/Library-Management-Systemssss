@@ -205,19 +205,6 @@ Public Class Publisher
         End If
     End Sub
 
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-
-        If e.RowIndex >= 0 Then
-
-            Dim row = DataGridView1.Rows(e.RowIndex)
-            txtpublisher.Text = row.Cells("PublisherName").Value.ToString
-            txtaddress.Text = row.Cells("Address").Value.ToString
-            txtcontact.Text = row.Cells("ContactNumber").Value.ToString
-
-        End If
-
-    End Sub
-
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
 
@@ -330,5 +317,19 @@ Public Class Publisher
         If e.KeyCode = Keys.Escape Then
             Me.Close()
         End If
+    End Sub
+
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+
+            Dim row = DataGridView1.Rows(e.RowIndex)
+            txtpublisher.Text = row.Cells("PublisherName").Value.ToString
+            txtaddress.Text = row.Cells("Address").Value.ToString
+            txtcontact.Text = row.Cells("ContactNumber").Value.ToString
+
+        End If
+
+
     End Sub
 End Class

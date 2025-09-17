@@ -248,27 +248,6 @@ Public Class Accession
         clearlahat()
     End Sub
 
-    Private Sub Datagridview1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles Datagridview1.CellClick
-
-        If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = Me.Datagridview1.Rows(e.RowIndex)
-
-            txtaccessionid.Text = row.Cells("AccessionID").Value.ToString()
-            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString()
-            txtisbn.Text = row.Cells("ISBN").Value.ToString()
-            txtbarcodes.Text = row.Cells("Barcode").Value.ToString()
-            txtsuppliername.Text = row.Cells("SupplierName").Value.ToString()
-            txttransactionno.Text = row.Cells("TransactionNo").Value.ToString()
-
-
-            Dim shelfValue As String = row.Cells("Shelf").Value.ToString()
-            cbshelf.SelectedIndex = cbshelf.FindStringExact(shelfValue)
-
-
-
-        End If
-    End Sub
-
     Public Sub clearlahat()
 
         txtbarcodes.Text = ""
@@ -285,6 +264,25 @@ Public Class Accession
 
     End Sub
 
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+            Dim row = DataGridView1.Rows(e.RowIndex)
+
+            txtaccessionid.Text = row.Cells("AccessionID").Value.ToString
+            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
+            txtisbn.Text = row.Cells("ISBN").Value.ToString
+            txtbarcodes.Text = row.Cells("Barcode").Value.ToString
+            txtsuppliername.Text = row.Cells("SupplierName").Value.ToString
+            txttransactionno.Text = row.Cells("TransactionNo").Value.ToString
 
 
+            Dim shelfValue = row.Cells("Shelf").Value.ToString
+            cbshelf.SelectedIndex = cbshelf.FindStringExact(shelfValue)
+
+
+
+        End If
+
+    End Sub
 End Class

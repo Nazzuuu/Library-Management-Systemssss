@@ -105,12 +105,12 @@ Public Class Penalty_Management
             Return
         End If
 
-        Dim penaltyType As String = cbpenaltytype.Text
-        Dim amount As Decimal = Decimal.Parse(txtamount.Text)
-        Dim description As String = txtdescription.Text
+        Dim penaltyType = cbpenaltytype.Text
+        Dim amount = Decimal.Parse(txtamount.Text)
+        Dim description = txtdescription.Text
 
         Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "INSERT INTO `penalty_management_tbl` (`PenaltyType`, `Amount`, `Description`) VALUES (@type, @amount, @desc)"
+        Dim com = "INSERT INTO `penalty_management_tbl` (`PenaltyType`, `Amount`, `Description`) VALUES (@type, @amount, @desc)"
         Dim cmd As New MySqlCommand(com, con)
 
         cmd.Parameters.AddWithValue("@type", penaltyType)
@@ -118,15 +118,15 @@ Public Class Penalty_Management
         cmd.Parameters.AddWithValue("@desc", description)
 
         Try
-            con.Open()
-            cmd.ExecuteNonQuery()
+            con.Open
+            cmd.ExecuteNonQuery
             MessageBox.Show("Penalty added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Penalty_Management_Load(sender, e)
-            clearlahat()
+            clearlahat
         Catch ex As Exception
             MessageBox.Show("Error adding penalty: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
-            con.Close()
+            con.Close
         End Try
 
     End Sub
@@ -143,12 +143,12 @@ Public Class Penalty_Management
             Return
         End If
 
-        Dim penaltyType As String = cbpenaltytype.Text
-        Dim amount As Decimal = Decimal.Parse(txtamount.Text)
-        Dim description As String = txtdescription.Text
+        Dim penaltyType = cbpenaltytype.Text
+        Dim amount = Decimal.Parse(txtamount.Text)
+        Dim description = txtdescription.Text
 
         Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "UPDATE `penalty_management_tbl` SET `PenaltyType` = @type, `Amount` = @amount, `Description` = @desc WHERE `ID` = @id"
+        Dim com = "UPDATE `penalty_management_tbl` SET `PenaltyType` = @type, `Amount` = @amount, `Description` = @desc WHERE `ID` = @id"
         Dim cmd As New MySqlCommand(com, con)
 
         cmd.Parameters.AddWithValue("@type", penaltyType)
@@ -157,15 +157,15 @@ Public Class Penalty_Management
         cmd.Parameters.AddWithValue("@id", selectrow)
 
         Try
-            con.Open()
-            cmd.ExecuteNonQuery()
+            con.Open
+            cmd.ExecuteNonQuery
             MessageBox.Show("Penalty updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Penalty_Management_Load(sender, e)
-            clearlahat()
+            clearlahat
         Catch ex As Exception
             MessageBox.Show("Error updating penalty: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
-            con.Close()
+            con.Close
         End Try
 
     End Sub
@@ -174,42 +174,42 @@ Public Class Penalty_Management
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this penalty?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            Dim dialogResult = MessageBox.Show("Are you sure you want to delete this penalty?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 
             If dialogResult = DialogResult.Yes Then
 
                 Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim penaltyType As String = selectedRow.Cells("PenaltyType").Value.ToString().Trim()
+                Dim selectedRow = DataGridView1.SelectedRows(0)
+                Dim ID As Integer = selectedRow.Cells("ID").Value
+                Dim penaltyType = selectedRow.Cells("PenaltyType").Value.ToString.Trim
 
                 Try
-                    con.Open()
+                    con.Open
 
 
 
                     Dim delete As New MySqlCommand("DELETE FROM `penalty_management_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery()
+                    delete.ExecuteNonQuery
 
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `penalty_management_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+                    Dim rowCount As Long = count.ExecuteScalar()
 
                     If rowCount = 0 Then
                         Dim reset As New MySqlCommand("ALTER TABLE `penalty_management_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery()
+                        reset.ExecuteNonQuery
                     End If
 
                     MessageBox.Show("Penalty deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
                     Penalty_Management_Load(sender, e)
-                    clearlahat()
+                    clearlahat
 
                 Catch ex As Exception
                     MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Finally
-                    con.Close()
+                    con.Close
                 End Try
             End If
         Else
@@ -218,22 +218,25 @@ Public Class Penalty_Management
 
     End Sub
 
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+    Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
+        clearlahat
+    End Sub
+
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
 
         If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+            Dim row = DataGridView1.Rows(e.RowIndex)
 
             selectrow = Convert.ToInt32(row.Cells("ID").Value)
 
-            cbpenaltytype.Text = row.Cells("PenaltyType").Value.ToString()
-            txtamount.Text = row.Cells("Amount").Value.ToString()
-            txtdescription.Text = row.Cells("Description").Value.ToString()
+            cbpenaltytype.Text = row.Cells("PenaltyType").Value.ToString
+            txtamount.Text = row.Cells("Amount").Value.ToString
+            txtdescription.Text = row.Cells("Description").Value.ToString
 
         End If
 
-    End Sub
 
-    Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-        clearlahat()
     End Sub
 End Class

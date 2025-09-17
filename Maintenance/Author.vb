@@ -195,15 +195,7 @@ Public Class Author
         End If
     End Sub
 
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
-        If e.RowIndex >= 0 Then
-
-            Dim row As DataGridViewRow = Me.DataGridView1.Rows(e.RowIndex)
-            txtauthor.Text = row.Cells("AuthorName").Value.ToString
-
-        End If
-    End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
@@ -282,6 +274,17 @@ Public Class Author
     Private Sub btndelete_Mouseleave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
 
         Me.Cursor = Cursors.Default
+
+    End Sub
+
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+
+            Dim row = DataGridView1.Rows(e.RowIndex)
+            txtauthor.Text = row.Cells("AuthorName").Value.ToString
+
+        End If
 
     End Sub
 

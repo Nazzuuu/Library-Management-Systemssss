@@ -37,9 +37,9 @@ Public Class Supplier
 
         Dim con As New MySqlConnection(connectionString)
 
-        Dim supp As String = txtsupplier.Text.Trim
-        Dim address As String = txtaddress.Text.Trim
-        Dim contact As String = txtcontact.Text.Trim
+        Dim supp = txtsupplier.Text.Trim
+        Dim address = txtaddress.Text.Trim
+        Dim contact = txtcontact.Text.Trim
 
         If String.IsNullOrWhiteSpace(supp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -47,12 +47,12 @@ Public Class Supplier
         End If
 
         Try
-            con.Open()
+            con.Open
 
             Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier", con)
             comsu.Parameters.AddWithValue("@supplier", supp)
 
-            Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
+            Dim count = Convert.ToInt32(comsu.ExecuteScalar)
             If count > 0 Then
                 MsgBox("Supplier name already exists.", vbExclamation, "Warning")
                 Exit Sub
@@ -63,12 +63,12 @@ Public Class Supplier
             com.Parameters.AddWithValue("@supplier", supp)
             com.Parameters.AddWithValue("@address", address)
             com.Parameters.AddWithValue("@contact", contact)
-            com.ExecuteNonQuery()
+            com.ExecuteNonQuery
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Acquisition Then
                     Dim acq = DirectCast(form, Acquisition)
-                    acq.cbsupplierr()
+                    acq.cbsupplierr
                 End If
             Next
 
@@ -78,7 +78,7 @@ Public Class Supplier
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         Finally
-            clear()
+            clear
         End Try
 
     End Sub
@@ -91,12 +91,12 @@ Public Class Supplier
 
             Dim con As New MySqlConnection(connectionString)
 
-            Dim supp As String = txtsupplier.Text.Trim
-            Dim address As String = txtaddress.Text.Trim
-            Dim contact As String = txtcontact.Text.Trim
+            Dim supp = txtsupplier.Text.Trim
+            Dim address = txtaddress.Text.Trim
+            Dim contact = txtcontact.Text.Trim
 
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim selectedRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = selectedRow.Cells("ID").Value
 
             If String.IsNullOrWhiteSpace(supp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -104,12 +104,12 @@ Public Class Supplier
             End If
 
             Try
-                con.Open()
+                con.Open
 
                 Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier", con)
                 comsu.Parameters.AddWithValue("@supplier", supp)
 
-                Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
+                Dim count = Convert.ToInt32(comsu.ExecuteScalar)
                 If count > 0 Then
                     MsgBox("Supplier name already exists.", vbExclamation, "Warning")
                     Exit Sub
@@ -121,12 +121,12 @@ Public Class Supplier
                 com.Parameters.AddWithValue("@address", address)
                 com.Parameters.AddWithValue("@contact", contact)
                 com.Parameters.AddWithValue("@id", ID)
-                com.ExecuteNonQuery()
+                com.ExecuteNonQuery
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Acquisition Then
                         Dim acq = DirectCast(form, Acquisition)
-                        acq.cbsupplierr()
+                        acq.cbsupplierr
                     End If
                 Next
 
@@ -136,7 +136,7 @@ Public Class Supplier
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             Finally
-                clear()
+                clear
             End Try
         Else
             MsgBox("Please select a row before edit.", vbExclamation)
@@ -148,22 +148,22 @@ Public Class Supplier
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this supplier?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            Dim dialogResult = MessageBox.Show("Are you sure you want to delete this supplier?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 
             If dialogResult = DialogResult.Yes Then
 
                 Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim supplierName As String = selectedRow.Cells("SupplierName").Value.ToString().Trim()
+                Dim selectedRow = DataGridView1.SelectedRows(0)
+                Dim ID As Integer = selectedRow.Cells("ID").Value
+                Dim supplierName = selectedRow.Cells("SupplierName").Value.ToString.Trim
 
                 Try
-                    con.Open()
+                    con.Open
 
 
                     Dim acquisitionCom As New MySqlCommand("SELECT COUNT(*) FROM `acquisition_tbl` WHERE SupplierName = @supplier", con)
                     acquisitionCom.Parameters.AddWithValue("@supplier", supplierName)
-                    Dim acquisitionCount As Integer = CInt(acquisitionCom.ExecuteScalar())
+                    Dim acquisitionCount As Integer = acquisitionCom.ExecuteScalar()
 
                     If acquisitionCount > 0 Then
                         MessageBox.Show("Cannot delete this supplier. They are assigned to " & acquisitionCount & " acquisition(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -172,25 +172,25 @@ Public Class Supplier
 
                     Dim delete As New MySqlCommand("DELETE FROM `supplier_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery()
+                    delete.ExecuteNonQuery
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Acquisition Then
                             Dim acq = DirectCast(form, Acquisition)
-                            acq.cbsupplierr()
+                            acq.cbsupplierr
                         End If
                     Next
 
                     MsgBox("Supplier deleted successfully.", vbInformation)
                     Supplier_Load(sender, e)
-                    clear()
+                    clear
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+                    Dim rowCount As Long = count.ExecuteScalar()
 
                     If rowCount = 0 Then
                         Dim reset As New MySqlCommand("ALTER TABLE `supplier_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery()
+                        reset.ExecuteNonQuery
                     End If
 
                 Catch ex As Exception
@@ -198,19 +198,6 @@ Public Class Supplier
                 End Try
             End If
         End If
-    End Sub
-
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-
-        If e.RowIndex >= 0 Then
-
-            Dim row = DataGridView1.Rows(e.RowIndex)
-            txtsupplier.Text = row.Cells("SupplierName").Value.ToString
-            txtaddress.Text = row.Cells("Address").Value.ToString
-            txtcontact.Text = row.Cells("ContactNumber").Value.ToString
-
-        End If
-
     End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
@@ -283,7 +270,7 @@ Public Class Supplier
 
     Private Sub txtcontact_TextChanged(sender As Object, e As EventArgs) Handles txtcontact.TextChanged
 
-        Dim oreyjeynal As String = txtcontact.Text
+        Dim oreyjeynal = txtcontact.Text
 
         If String.IsNullOrEmpty(oreyjeynal) Then
             Return
@@ -294,7 +281,7 @@ Public Class Supplier
         Else
 
             If oreyjeynal.Length > 0 Then
-                txtcontact.Clear()
+                txtcontact.Clear
                 txtcontact.Text = "09"
                 txtcontact.SelectionStart = 2
             End If
@@ -322,5 +309,18 @@ Public Class Supplier
         If e.KeyCode = Keys.Escape Then
             Me.Close()
         End If
+    End Sub
+
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+
+            Dim row = DataGridView1.Rows(e.RowIndex)
+            txtsupplier.Text = row.Cells("SupplierName").Value.ToString
+            txtaddress.Text = row.Cells("Address").Value.ToString
+            txtcontact.Text = row.Cells("ContactNumber").Value.ToString
+
+        End If
+
     End Sub
 End Class

@@ -348,49 +348,6 @@ Public Class Book
         End If
     End Sub
 
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-        If e.RowIndex >= 0 AndAlso Not DataGridView1.Rows(e.RowIndex).IsNewRow Then
-
-            isbarcode = True
-
-            Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
-
-            lblrandom.Text = row.Cells("Barcode").Value.ToString()
-
-
-            Dim isbnValue As Object = row.Cells("ISBN").Value
-
-            If IsDBNull(isbnValue) OrElse String.IsNullOrEmpty(isbnValue.ToString()) Then
-
-                rbgenerate.Checked = True
-                txtisbn.Enabled = False
-                txtisbn.Text = ""
-            Else
-
-                rbgenerate.Checked = False
-                txtisbn.Enabled = True
-                txtisbn.Text = isbnValue.ToString()
-            End If
-
-            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString()
-            cbauthor.Text = row.Cells("Author").Value.ToString()
-            cbgenre.Text = row.Cells("Genre").Value.ToString()
-            cbcategory.Text = row.Cells("Category").Value.ToString()
-            cbpublisher.Text = row.Cells("Publisher").Value.ToString()
-            cblanguage.Text = row.Cells("Language").Value.ToString()
-            DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
-
-            Dim bookStatus As String = row.Cells("Status").Value.ToString()
-            If bookStatus = "Borrowable" Then
-                rbloanable.Checked = True
-            ElseIf bookStatus = "For In-Library Use Only" Then
-                rbforlibraryonly.Checked = True
-            End If
-
-            rbgenerate.Enabled = False
-            isbarcode = False
-        End If
-    End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
         If DataGridView1.SelectedRows.Count > 0 Then
@@ -551,4 +508,49 @@ Public Class Book
         End If
     End Sub
 
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 AndAlso Not DataGridView1.Rows(e.RowIndex).IsNewRow Then
+
+            isbarcode = True
+
+            Dim row = DataGridView1.Rows(e.RowIndex)
+
+            lblrandom.Text = row.Cells("Barcode").Value.ToString
+
+
+            Dim isbnValue = row.Cells("ISBN").Value
+
+            If IsDBNull(isbnValue) OrElse String.IsNullOrEmpty(isbnValue.ToString) Then
+
+                rbgenerate.Checked = True
+                txtisbn.Enabled = False
+                txtisbn.Text = ""
+            Else
+
+                rbgenerate.Checked = False
+                txtisbn.Enabled = True
+                txtisbn.Text = isbnValue.ToString
+            End If
+
+            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
+            cbauthor.Text = row.Cells("Author").Value.ToString
+            cbgenre.Text = row.Cells("Genre").Value.ToString
+            cbcategory.Text = row.Cells("Category").Value.ToString
+            cbpublisher.Text = row.Cells("Publisher").Value.ToString
+            cblanguage.Text = row.Cells("Language").Value.ToString
+            DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
+
+            Dim bookStatus = row.Cells("Status").Value.ToString
+            If bookStatus = "Borrowable" Then
+                rbloanable.Checked = True
+            ElseIf bookStatus = "For In-Library Use Only" Then
+                rbforlibraryonly.Checked = True
+            End If
+
+            rbgenerate.Enabled = False
+            isbarcode = False
+        End If
+
+    End Sub
 End Class

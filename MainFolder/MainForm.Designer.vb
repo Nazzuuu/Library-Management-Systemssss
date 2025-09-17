@@ -23,28 +23,28 @@ Partial Class MainForm
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges221 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges222 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges225 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges226 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges223 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges224 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges229 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges230 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges227 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges228 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges233 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges234 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges231 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges232 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges237 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges238 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges235 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges236 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges241 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges242 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges239 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges240 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         pnl_maintenance = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_maintenance = New Panel()
         MenuStrip1 = New MenuStrip()
@@ -114,6 +114,7 @@ Partial Class MainForm
         lbl_currentuser = New Label()
         Label2 = New Label()
         btnn_borrowed = New Guna.UI2.WinForms.Guna2Elipse(components)
+        PenaltyToolStripMenuItem = New ToolStripMenuItem()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
         Panel_Process.SuspendLayout()
@@ -147,7 +148,7 @@ Partial Class MainForm
         Panel_maintenance.Controls.Add(MenuStrip1)
         Panel_maintenance.Location = New Point(25, 13)
         Panel_maintenance.Name = "Panel_maintenance"
-        Panel_maintenance.Size = New Size(147, 26)
+        Panel_maintenance.Size = New Size(162, 26)
         Panel_maintenance.TabIndex = 1
         ' 
         ' MenuStrip1
@@ -157,7 +158,7 @@ Partial Class MainForm
         MenuStrip1.Items.AddRange(New ToolStripItem() {MaintenanceToolStripMenuItem})
         MenuStrip1.Location = New Point(0, 0)
         MenuStrip1.Name = "MenuStrip1"
-        MenuStrip1.Size = New Size(147, 26)
+        MenuStrip1.Size = New Size(162, 26)
         MenuStrip1.TabIndex = 0
         MenuStrip1.Text = "MenuStrip1"
         ' 
@@ -166,8 +167,8 @@ Partial Class MainForm
         MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AuthorMaintenanceToolStripMenuItem, GenreMaintenanceToolStripMenuItem, SupplierMaintenanceToolStripMenuItem, PublisherMaintenanceToolStripMenuItem, LanguageToolStripMenuItem, CategoryToolStripMenuItem, ShelfToolStripMenuItem, BookMaintenanceToolStripMenuItem, PenaltyManagementToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem})
         MaintenanceToolStripMenuItem.ForeColor = Color.White
         MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
-        MaintenanceToolStripMenuItem.Size = New Size(115, 22)
-        MaintenanceToolStripMenuItem.Text = "Maintenance"
+        MaintenanceToolStripMenuItem.Size = New Size(138, 22)
+        MaintenanceToolStripMenuItem.Text = "🔨 Maintenance"
         ' 
         ' AuthorMaintenanceToolStripMenuItem
         ' 
@@ -180,107 +181,107 @@ Partial Class MainForm
         ' 
         GenreMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         GenreMaintenanceToolStripMenuItem.Name = "GenreMaintenanceToolStripMenuItem"
-        GenreMaintenanceToolStripMenuItem.Size = New Size(232, 22)
-        GenreMaintenanceToolStripMenuItem.Text = "Genre"
+        GenreMaintenanceToolStripMenuItem.Size = New Size(255, 22)
+        GenreMaintenanceToolStripMenuItem.Text = "🔖 Genre"
         ' 
         ' SupplierMaintenanceToolStripMenuItem
         ' 
         SupplierMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         SupplierMaintenanceToolStripMenuItem.Name = "SupplierMaintenanceToolStripMenuItem"
-        SupplierMaintenanceToolStripMenuItem.Size = New Size(232, 22)
-        SupplierMaintenanceToolStripMenuItem.Text = "Supplier"
+        SupplierMaintenanceToolStripMenuItem.Size = New Size(255, 22)
+        SupplierMaintenanceToolStripMenuItem.Text = "📦 Supplier"
         ' 
         ' PublisherMaintenanceToolStripMenuItem
         ' 
         PublisherMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         PublisherMaintenanceToolStripMenuItem.Name = "PublisherMaintenanceToolStripMenuItem"
         PublisherMaintenanceToolStripMenuItem.Size = New Size(232, 22)
-        PublisherMaintenanceToolStripMenuItem.Text = "Publisher"
+        PublisherMaintenanceToolStripMenuItem.Text = "👨‍🏫 Publisher"
         ' 
         ' LanguageToolStripMenuItem
         ' 
         LanguageToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         LanguageToolStripMenuItem.Name = "LanguageToolStripMenuItem"
         LanguageToolStripMenuItem.Size = New Size(232, 22)
-        LanguageToolStripMenuItem.Text = "Language"
+        LanguageToolStripMenuItem.Text = "🌐 Language"
         ' 
         ' CategoryToolStripMenuItem
         ' 
         CategoryToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         CategoryToolStripMenuItem.Name = "CategoryToolStripMenuItem"
         CategoryToolStripMenuItem.Size = New Size(232, 22)
-        CategoryToolStripMenuItem.Text = "Category"
+        CategoryToolStripMenuItem.Text = "🗂️ Category"
         ' 
         ' ShelfToolStripMenuItem
         ' 
         ShelfToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ShelfToolStripMenuItem.Name = "ShelfToolStripMenuItem"
         ShelfToolStripMenuItem.Size = New Size(232, 22)
-        ShelfToolStripMenuItem.Text = "Shelf"
+        ShelfToolStripMenuItem.Text = "🚪 Shelf"
         ' 
         ' BookMaintenanceToolStripMenuItem
         ' 
         BookMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BookMaintenanceToolStripMenuItem.Name = "BookMaintenanceToolStripMenuItem"
-        BookMaintenanceToolStripMenuItem.Size = New Size(232, 22)
-        BookMaintenanceToolStripMenuItem.Text = "Books"
+        BookMaintenanceToolStripMenuItem.Size = New Size(255, 22)
+        BookMaintenanceToolStripMenuItem.Text = "📖 Books"
         ' 
         ' PenaltyManagementToolStripMenuItem
         ' 
         PenaltyManagementToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         PenaltyManagementToolStripMenuItem.Name = "PenaltyManagementToolStripMenuItem"
-        PenaltyManagementToolStripMenuItem.Size = New Size(232, 22)
-        PenaltyManagementToolStripMenuItem.Text = "Penalty Management"
+        PenaltyManagementToolStripMenuItem.Size = New Size(255, 22)
+        PenaltyManagementToolStripMenuItem.Text = "💰 Penalty Management"
         ' 
         ' DepartmentToolStripMenuItem
         ' 
         DepartmentToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {SectionToolStripMenuItem1, SectionToolStripMenuItem2, GradeToolStripMenuItem1, StrandToolStripMenuItem1})
         DepartmentToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DepartmentToolStripMenuItem.Name = "DepartmentToolStripMenuItem"
-        DepartmentToolStripMenuItem.Size = New Size(232, 22)
-        DepartmentToolStripMenuItem.Text = "Student Info's"
+        DepartmentToolStripMenuItem.Size = New Size(255, 22)
+        DepartmentToolStripMenuItem.Text = "👨‍🎓 Student Info's"
         ' 
         ' SectionToolStripMenuItem1
         ' 
         SectionToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         SectionToolStripMenuItem1.Name = "SectionToolStripMenuItem1"
-        SectionToolStripMenuItem1.Size = New Size(164, 22)
-        SectionToolStripMenuItem1.Text = "Department"
+        SectionToolStripMenuItem1.Size = New Size(187, 22)
+        SectionToolStripMenuItem1.Text = "🏬 Department"
         ' 
         ' SectionToolStripMenuItem2
         ' 
         SectionToolStripMenuItem2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         SectionToolStripMenuItem2.Name = "SectionToolStripMenuItem2"
-        SectionToolStripMenuItem2.Size = New Size(164, 22)
-        SectionToolStripMenuItem2.Text = "Section"
+        SectionToolStripMenuItem2.Size = New Size(187, 22)
+        SectionToolStripMenuItem2.Text = "📚 Section"
         ' 
         ' GradeToolStripMenuItem1
         ' 
         GradeToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         GradeToolStripMenuItem1.Name = "GradeToolStripMenuItem1"
-        GradeToolStripMenuItem1.Size = New Size(164, 22)
-        GradeToolStripMenuItem1.Text = "Grade"
+        GradeToolStripMenuItem1.Size = New Size(187, 22)
+        GradeToolStripMenuItem1.Text = "📶 Grade"
         ' 
         ' StrandToolStripMenuItem1
         ' 
         StrandToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         StrandToolStripMenuItem1.Name = "StrandToolStripMenuItem1"
-        StrandToolStripMenuItem1.Size = New Size(164, 22)
-        StrandToolStripMenuItem1.Text = "Strand"
+        StrandToolStripMenuItem1.Size = New Size(187, 22)
+        StrandToolStripMenuItem1.Text = "📘 Strand"
         ' 
         ' RegisterToolStripMenuItem
         ' 
         RegisterToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         RegisterToolStripMenuItem.Name = "RegisterToolStripMenuItem"
-        RegisterToolStripMenuItem.Size = New Size(232, 22)
-        RegisterToolStripMenuItem.Text = "Borrowers"
+        RegisterToolStripMenuItem.Size = New Size(255, 22)
+        RegisterToolStripMenuItem.Text = ChrW(55358) & ChrW(56785) & "‍" & ChrW(55358) & ChrW(56605) & "‍" & ChrW(55358) & ChrW(56785) & " Borrowers"
         ' 
         ' UserMaintenanceToolStripMenuItem
         ' 
         UserMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         UserMaintenanceToolStripMenuItem.Name = "UserMaintenanceToolStripMenuItem"
-        UserMaintenanceToolStripMenuItem.Size = New Size(232, 22)
-        UserMaintenanceToolStripMenuItem.Text = "User"
+        UserMaintenanceToolStripMenuItem.Size = New Size(255, 22)
+        UserMaintenanceToolStripMenuItem.Text = "👨🏻‍💻 User"
         ' 
         ' pnl_process
         ' 
@@ -313,66 +314,66 @@ Partial Class MainForm
         ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, CatalogToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem})
         ProcessStripMenuItem.ForeColor = Color.White
         ProcessStripMenuItem.Name = "ProcessStripMenuItem"
-        ProcessStripMenuItem.Size = New Size(79, 22)
-        ProcessStripMenuItem.Text = "Process"
+        ProcessStripMenuItem.Size = New Size(102, 22)
+        ProcessStripMenuItem.Text = "🛠️ Process"
         ' 
         ' AcquisitionToolStripMenuItem
         ' 
         AcquisitionToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AcquisitionToolStripMenuItem.Name = "AcquisitionToolStripMenuItem"
-        AcquisitionToolStripMenuItem.Size = New Size(160, 22)
-        AcquisitionToolStripMenuItem.Text = "Acquisition"
+        AcquisitionToolStripMenuItem.Size = New Size(183, 22)
+        AcquisitionToolStripMenuItem.Text = "🛍️ Acquisition"
         ' 
         ' AccessionToolStripMenuItem
         ' 
         AccessionToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AccessionToolStripMenuItem.Name = "AccessionToolStripMenuItem"
-        AccessionToolStripMenuItem.Size = New Size(160, 22)
-        AccessionToolStripMenuItem.Text = "Accession"
+        AccessionToolStripMenuItem.Size = New Size(183, 22)
+        AccessionToolStripMenuItem.Text = "🔢 Accession"
         ' 
         ' CatalogToolStripMenuItem
         ' 
         CatalogToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         CatalogToolStripMenuItem.Name = "CatalogToolStripMenuItem"
-        CatalogToolStripMenuItem.Size = New Size(160, 22)
-        CatalogToolStripMenuItem.Text = "Catalog"
+        CatalogToolStripMenuItem.Size = New Size(183, 22)
+        CatalogToolStripMenuItem.Text = "📑 Catalog"
         ' 
         ' StudentLogsToolStripMenuItem
         ' 
         StudentLogsToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {TimeInToolStripMenuItem})
         StudentLogsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         StudentLogsToolStripMenuItem.Name = "StudentLogsToolStripMenuItem"
-        StudentLogsToolStripMenuItem.Size = New Size(160, 22)
-        StudentLogsToolStripMenuItem.Text = "Attendance"
+        StudentLogsToolStripMenuItem.Size = New Size(183, 22)
+        StudentLogsToolStripMenuItem.Text = "📝 Attendance"
         ' 
         ' TimeInToolStripMenuItem
         ' 
         TimeInToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         TimeInToolStripMenuItem.Name = "TimeInToolStripMenuItem"
-        TimeInToolStripMenuItem.Size = New Size(165, 22)
-        TimeInToolStripMenuItem.Text = "Time-in/out"
+        TimeInToolStripMenuItem.Size = New Size(188, 22)
+        TimeInToolStripMenuItem.Text = "🕒 Time-in/out"
         ' 
         ' CirculationToolStripMenuItem
         ' 
         CirculationToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BorrowToolStripMenuItem, ReturnToolStripMenuItem})
         CirculationToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         CirculationToolStripMenuItem.Name = "CirculationToolStripMenuItem"
-        CirculationToolStripMenuItem.Size = New Size(160, 22)
-        CirculationToolStripMenuItem.Text = "Circulation"
+        CirculationToolStripMenuItem.Size = New Size(183, 22)
+        CirculationToolStripMenuItem.Text = "🔄 Circulation"
         ' 
         ' BorrowToolStripMenuItem
         ' 
         BorrowToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowToolStripMenuItem.Name = "BorrowToolStripMenuItem"
-        BorrowToolStripMenuItem.Size = New Size(154, 22)
-        BorrowToolStripMenuItem.Text = "Borrowing"
+        BorrowToolStripMenuItem.Size = New Size(180, 22)
+        BorrowToolStripMenuItem.Text = "📥 Borrowing"
         ' 
         ' ReturnToolStripMenuItem
         ' 
         ReturnToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReturnToolStripMenuItem.Name = "ReturnToolStripMenuItem"
-        ReturnToolStripMenuItem.Size = New Size(154, 22)
-        ReturnToolStripMenuItem.Text = "Returning"
+        ReturnToolStripMenuItem.Size = New Size(180, 22)
+        ReturnToolStripMenuItem.Text = "📤 Returning"
         ' 
         ' Guna2Elipse3
         ' 
@@ -406,47 +407,47 @@ Partial Class MainForm
         ' 
         ' SettingsStripMenuItem
         ' 
-        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {Audit_Trail, ReportsToolStripMenuItem1, logout})
+        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, ReportsToolStripMenuItem1, Audit_Trail, logout})
         SettingsStripMenuItem.ForeColor = Color.White
         SettingsStripMenuItem.Name = "SettingsStripMenuItem"
-        SettingsStripMenuItem.Size = New Size(82, 22)
-        SettingsStripMenuItem.Text = "Settings"
+        SettingsStripMenuItem.Size = New Size(105, 22)
+        SettingsStripMenuItem.Text = "⚙️ Settings"
         ' 
         ' Audit_Trail
         ' 
         Audit_Trail.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Audit_Trail.Name = "Audit_Trail"
-        Audit_Trail.Size = New Size(154, 22)
-        Audit_Trail.Text = "Audit Trail"
+        Audit_Trail.Size = New Size(177, 22)
+        Audit_Trail.Text = "📜 Audit Trail"
         ' 
         ' ReportsToolStripMenuItem1
         ' 
         ReportsToolStripMenuItem1.DropDownItems.AddRange(New ToolStripItem() {BorrowerReportsToolStripMenuItem1, BookReportsToolStripMenuItem1})
         ReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReportsToolStripMenuItem1.Name = "ReportsToolStripMenuItem1"
-        ReportsToolStripMenuItem1.Size = New Size(154, 22)
-        ReportsToolStripMenuItem1.Text = "Reports"
+        ReportsToolStripMenuItem1.Size = New Size(177, 22)
+        ReportsToolStripMenuItem1.Text = "📑 Reports"
         ' 
         ' BorrowerReportsToolStripMenuItem1
         ' 
         BorrowerReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowerReportsToolStripMenuItem1.Name = "BorrowerReportsToolStripMenuItem1"
-        BorrowerReportsToolStripMenuItem1.Size = New Size(210, 22)
-        BorrowerReportsToolStripMenuItem1.Text = "Borrower Reports"
+        BorrowerReportsToolStripMenuItem1.Size = New Size(233, 22)
+        BorrowerReportsToolStripMenuItem1.Text = "🙋 Borrower Reports"
         ' 
         ' BookReportsToolStripMenuItem1
         ' 
         BookReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BookReportsToolStripMenuItem1.Name = "BookReportsToolStripMenuItem1"
-        BookReportsToolStripMenuItem1.Size = New Size(210, 22)
-        BookReportsToolStripMenuItem1.Text = "Book Reports"
+        BookReportsToolStripMenuItem1.Size = New Size(233, 22)
+        BookReportsToolStripMenuItem1.Text = "📋 Book Reports"
         ' 
         ' logout
         ' 
         logout.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         logout.Name = "logout"
-        logout.Size = New Size(154, 22)
-        logout.Text = "Logout"
+        logout.Size = New Size(177, 22)
+        logout.Text = "↩️ Logout"
         ' 
         ' Panel1
         ' 
@@ -519,13 +520,13 @@ Partial Class MainForm
         dshboard.BorderThickness = 2
         dshboard.Controls.Add(tbl_paneldash)
         dshboard.CustomBorderColor = Color.Transparent
-        dshboard.CustomizableEdges = CustomizableEdges21
+        dshboard.CustomizableEdges = CustomizableEdges221
         dshboard.FillColor = Color.Transparent
         dshboard.Font = New Font("Tahoma", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         dshboard.ForeColor = Color.PaleVioletRed
         dshboard.Location = New Point(35, 42)
         dshboard.Name = "dshboard"
-        dshboard.ShadowDecoration.CustomizableEdges = CustomizableEdges22
+        dshboard.ShadowDecoration.CustomizableEdges = CustomizableEdges222
         dshboard.Size = New Size(930, 310)
         dshboard.TabIndex = 18
         dshboard.Text = "Dashboard"
@@ -559,7 +560,7 @@ Partial Class MainForm
         Guna2GroupBox1.Controls.Add(btn_lost)
         Guna2GroupBox1.Controls.Add(lbl_lost)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges3
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges225
         Guna2GroupBox1.Dock = DockStyle.Fill
         Guna2GroupBox1.FillColor = Color.Transparent
         Guna2GroupBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -567,7 +568,7 @@ Partial Class MainForm
         Guna2GroupBox1.Location = New Point(298, 138)
         Guna2GroupBox1.Margin = New Padding(15)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges226
         Guna2GroupBox1.Size = New Size(253, 93)
         Guna2GroupBox1.TabIndex = 65
         Guna2GroupBox1.Text = "Lost Books"
@@ -578,7 +579,7 @@ Partial Class MainForm
         btn_lost.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_lost.BorderRadius = 9
         btn_lost.BorderThickness = 2
-        btn_lost.CustomizableEdges = CustomizableEdges1
+        btn_lost.CustomizableEdges = CustomizableEdges223
         btn_lost.DisabledState.BorderColor = Color.DarkGray
         btn_lost.DisabledState.CustomBorderColor = Color.DarkGray
         btn_lost.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -588,7 +589,7 @@ Partial Class MainForm
         btn_lost.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_lost.Location = New Point(157, 7)
         btn_lost.Name = "btn_lost"
-        btn_lost.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        btn_lost.ShadowDecoration.CustomizableEdges = CustomizableEdges224
         btn_lost.Size = New Size(89, 26)
         btn_lost.TabIndex = 20
         btn_lost.Text = "View"
@@ -613,7 +614,7 @@ Partial Class MainForm
         dsh_borrow.Controls.Add(btn_borrowed)
         dsh_borrow.Controls.Add(lbl_borrow)
         dsh_borrow.CustomBorderColor = Color.Transparent
-        dsh_borrow.CustomizableEdges = CustomizableEdges7
+        dsh_borrow.CustomizableEdges = CustomizableEdges229
         dsh_borrow.Dock = DockStyle.Fill
         dsh_borrow.FillColor = Color.Transparent
         dsh_borrow.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -621,7 +622,7 @@ Partial Class MainForm
         dsh_borrow.Location = New Point(15, 15)
         dsh_borrow.Margin = New Padding(15)
         dsh_borrow.Name = "dsh_borrow"
-        dsh_borrow.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        dsh_borrow.ShadowDecoration.CustomizableEdges = CustomizableEdges230
         dsh_borrow.Size = New Size(253, 93)
         dsh_borrow.TabIndex = 60
         dsh_borrow.Text = "Borrowed Books"
@@ -632,7 +633,7 @@ Partial Class MainForm
         btn_borrowed.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_borrowed.BorderRadius = 9
         btn_borrowed.BorderThickness = 2
-        btn_borrowed.CustomizableEdges = CustomizableEdges5
+        btn_borrowed.CustomizableEdges = CustomizableEdges227
         btn_borrowed.DisabledState.BorderColor = Color.DarkGray
         btn_borrowed.DisabledState.CustomBorderColor = Color.DarkGray
         btn_borrowed.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -642,7 +643,7 @@ Partial Class MainForm
         btn_borrowed.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_borrowed.Location = New Point(156, 7)
         btn_borrowed.Name = "btn_borrowed"
-        btn_borrowed.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        btn_borrowed.ShadowDecoration.CustomizableEdges = CustomizableEdges228
         btn_borrowed.Size = New Size(89, 26)
         btn_borrowed.TabIndex = 19
         btn_borrowed.Text = "View"
@@ -668,7 +669,7 @@ Partial Class MainForm
         dsh_overdue.Controls.Add(btn_overdue)
         dsh_overdue.Controls.Add(lbl_overdue)
         dsh_overdue.CustomBorderColor = Color.Transparent
-        dsh_overdue.CustomizableEdges = CustomizableEdges11
+        dsh_overdue.CustomizableEdges = CustomizableEdges233
         dsh_overdue.Dock = DockStyle.Fill
         dsh_overdue.FillColor = Color.Transparent
         dsh_overdue.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -676,7 +677,7 @@ Partial Class MainForm
         dsh_overdue.Location = New Point(581, 15)
         dsh_overdue.Margin = New Padding(15)
         dsh_overdue.Name = "dsh_overdue"
-        dsh_overdue.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        dsh_overdue.ShadowDecoration.CustomizableEdges = CustomizableEdges234
         dsh_overdue.Size = New Size(255, 93)
         dsh_overdue.TabIndex = 62
         dsh_overdue.Text = "Overdue Books"
@@ -687,7 +688,7 @@ Partial Class MainForm
         btn_overdue.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_overdue.BorderRadius = 9
         btn_overdue.BorderThickness = 2
-        btn_overdue.CustomizableEdges = CustomizableEdges9
+        btn_overdue.CustomizableEdges = CustomizableEdges231
         btn_overdue.DisabledState.BorderColor = Color.DarkGray
         btn_overdue.DisabledState.CustomBorderColor = Color.DarkGray
         btn_overdue.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -697,7 +698,7 @@ Partial Class MainForm
         btn_overdue.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_overdue.Location = New Point(159, 8)
         btn_overdue.Name = "btn_overdue"
-        btn_overdue.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        btn_overdue.ShadowDecoration.CustomizableEdges = CustomizableEdges232
         btn_overdue.Size = New Size(89, 26)
         btn_overdue.TabIndex = 21
         btn_overdue.Text = "View"
@@ -722,7 +723,7 @@ Partial Class MainForm
         dsh_replace.Controls.Add(btn_dmg)
         dsh_replace.Controls.Add(lbl_damage)
         dsh_replace.CustomBorderColor = Color.Transparent
-        dsh_replace.CustomizableEdges = CustomizableEdges15
+        dsh_replace.CustomizableEdges = CustomizableEdges237
         dsh_replace.Dock = DockStyle.Fill
         dsh_replace.FillColor = Color.Transparent
         dsh_replace.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -730,7 +731,7 @@ Partial Class MainForm
         dsh_replace.Location = New Point(15, 138)
         dsh_replace.Margin = New Padding(15)
         dsh_replace.Name = "dsh_replace"
-        dsh_replace.ShadowDecoration.CustomizableEdges = CustomizableEdges16
+        dsh_replace.ShadowDecoration.CustomizableEdges = CustomizableEdges238
         dsh_replace.Size = New Size(253, 93)
         dsh_replace.TabIndex = 64
         dsh_replace.Text = "Damage Books"
@@ -741,7 +742,7 @@ Partial Class MainForm
         btn_dmg.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_dmg.BorderRadius = 9
         btn_dmg.BorderThickness = 2
-        btn_dmg.CustomizableEdges = CustomizableEdges13
+        btn_dmg.CustomizableEdges = CustomizableEdges235
         btn_dmg.DisabledState.BorderColor = Color.DarkGray
         btn_dmg.DisabledState.CustomBorderColor = Color.DarkGray
         btn_dmg.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -751,7 +752,7 @@ Partial Class MainForm
         btn_dmg.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_dmg.Location = New Point(156, 7)
         btn_dmg.Name = "btn_dmg"
-        btn_dmg.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        btn_dmg.ShadowDecoration.CustomizableEdges = CustomizableEdges236
         btn_dmg.Size = New Size(89, 26)
         btn_dmg.TabIndex = 20
         btn_dmg.Text = "View"
@@ -776,7 +777,7 @@ Partial Class MainForm
         dsh_return.Controls.Add(btn_rtn)
         dsh_return.Controls.Add(lbl_return)
         dsh_return.CustomBorderColor = Color.Transparent
-        dsh_return.CustomizableEdges = CustomizableEdges19
+        dsh_return.CustomizableEdges = CustomizableEdges241
         dsh_return.Dock = DockStyle.Fill
         dsh_return.FillColor = Color.Transparent
         dsh_return.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -784,7 +785,7 @@ Partial Class MainForm
         dsh_return.Location = New Point(298, 15)
         dsh_return.Margin = New Padding(15)
         dsh_return.Name = "dsh_return"
-        dsh_return.ShadowDecoration.CustomizableEdges = CustomizableEdges20
+        dsh_return.ShadowDecoration.CustomizableEdges = CustomizableEdges242
         dsh_return.Size = New Size(253, 93)
         dsh_return.TabIndex = 63
         dsh_return.Text = "Returned Books"
@@ -795,7 +796,7 @@ Partial Class MainForm
         btn_rtn.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_rtn.BorderRadius = 9
         btn_rtn.BorderThickness = 2
-        btn_rtn.CustomizableEdges = CustomizableEdges17
+        btn_rtn.CustomizableEdges = CustomizableEdges239
         btn_rtn.DisabledState.BorderColor = Color.DarkGray
         btn_rtn.DisabledState.CustomBorderColor = Color.DarkGray
         btn_rtn.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -805,7 +806,7 @@ Partial Class MainForm
         btn_rtn.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_rtn.Location = New Point(157, 8)
         btn_rtn.Name = "btn_rtn"
-        btn_rtn.ShadowDecoration.CustomizableEdges = CustomizableEdges18
+        btn_rtn.ShadowDecoration.CustomizableEdges = CustomizableEdges240
         btn_rtn.Size = New Size(89, 26)
         btn_rtn.TabIndex = 20
         btn_rtn.Text = "View"
@@ -860,6 +861,13 @@ Partial Class MainForm
         ' 
         btnn_borrowed.BorderRadius = 9
         btnn_borrowed.TargetControl = btn_borrowed
+        ' 
+        ' PenaltyToolStripMenuItem
+        ' 
+        PenaltyToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        PenaltyToolStripMenuItem.Name = "PenaltyToolStripMenuItem"
+        PenaltyToolStripMenuItem.Size = New Size(177, 22)
+        PenaltyToolStripMenuItem.Text = "⚠️ Penalty"
         ' 
         ' MainForm
         ' 
@@ -975,5 +983,6 @@ Partial Class MainForm
     Friend WithEvents CategoryToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ShelfToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PenaltyManagementToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents PenaltyToolStripMenuItem As ToolStripMenuItem
 
 End Class
