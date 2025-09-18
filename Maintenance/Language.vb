@@ -12,12 +12,14 @@ Public Class Language
         Dim dt As New DataSet
 
         adap.Fill(dt, "INFO")
-        DataGridView1.DataSource = dt.Tables("INFO")
 
+        DataGridView1.DataSource = dt.Tables("INFO")
+        DataGridView1.Columns("ID").Visible = False
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-        DataGridView1.Columns("ID").Visible = False
+
+        DataGridView1.ClearSelection()
 
     End Sub
 

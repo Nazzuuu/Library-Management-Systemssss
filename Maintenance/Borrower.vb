@@ -16,6 +16,7 @@ Public Class Borrower
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.ClearSelection()
         Catch ex As Exception
             MessageBox.Show("Error loading data: " & ex.Message)
         Finally

@@ -17,6 +17,8 @@ Public Class Section
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         DataGridView1.Columns("ID").Visible = False
+        DataGridView1.ClearSelection()
+
         cbdeptss()
         clearlahat()
 

@@ -21,6 +21,7 @@ Public Class Users
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        DataGridView1.ClearSelection()
 
         AddHandler DataGridView1.CellFormatting, AddressOf Me.DataGridView1_CellFormatting
 

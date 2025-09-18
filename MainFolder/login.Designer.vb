@@ -149,10 +149,10 @@ Partial Class login
         Guna2ControlBox1.CustomizableEdges = CustomizableEdges7
         Guna2ControlBox1.FillColor = Color.Transparent
         Guna2ControlBox1.IconColor = Color.White
-        Guna2ControlBox1.Location = New Point(435, 1)
+        Guna2ControlBox1.Location = New Point(444, 2)
         Guna2ControlBox1.Name = "Guna2ControlBox1"
         Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
-        Guna2ControlBox1.Size = New Size(45, 29)
+        Guna2ControlBox1.Size = New Size(36, 30)
         Guna2ControlBox1.TabIndex = 2
         ' 
         ' Label3

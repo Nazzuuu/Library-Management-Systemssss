@@ -21,6 +21,7 @@ Public Class Penalty_Management
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
         DataGridView1.Columns("ID").Visible = False
+        DataGridView1.ClearSelection()
 
     End Sub
 

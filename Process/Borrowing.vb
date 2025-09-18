@@ -38,5 +38,10 @@ Public Class Borrowing
 
     Public Sub clearlahat()
 
+
+        DataGridView1.ClearSelection()
+
     End Sub
+
+
 End Class

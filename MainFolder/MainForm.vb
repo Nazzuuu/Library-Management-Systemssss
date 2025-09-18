@@ -159,6 +159,10 @@
             lumabasna = True
         End If
 
+        Accession.DataGridView1.ClearSelection()
+        Acquisition.DataGridView1.ClearSelection()
+        oras.DataGridView1.ClearSelection()
+
     End Sub
 
     Private Sub ToolStripMenuItem2_MouseHover(sender As Object, e As EventArgs) Handles SettingsStripMenuItem.MouseHover

@@ -18,6 +18,8 @@ Public Class Grade
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
         DataGridView1.Columns("ID").Visible = False
+        DataGridView1.ClearSelection()
+
     End Sub
 
     Private Sub Grade_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed

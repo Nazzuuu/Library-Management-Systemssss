@@ -1,4 +1,5 @@
 ﻿Imports MySql.Data.MySqlClient
+Imports Mysqlx.XDevAPI.Relational
 
 Public Class Acquisition
 
@@ -10,13 +11,13 @@ Public Class Acquisition
         Dim dt As New DataSet
 
         adp.Fill(dt, "INFO")
-        Datagridview1.DataSource = dt.Tables("INFO")
+        DataGridView1.DataSource = dt.Tables("INFO")
 
-        Datagridview1.Columns("ID").Visible = False
-        Datagridview1.EnableHeadersVisualStyles = False
-        Datagridview1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        Datagridview1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
+        DataGridView1.Columns("ID").Visible = False
+        DataGridView1.EnableHeadersVisualStyles = False
+        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        DataGridView1.ClearSelection()
 
         jineret()
         cbsupplierr()
@@ -41,7 +42,7 @@ Public Class Acquisition
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
-        Dim dt As DataTable = DirectCast(Datagridview1.DataSource, DataTable)
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
                 Dim filter As String = String.Format("BookTitle LIKE '*{0}*' OR ISBN LIKE '*{0}*'", txtsearch.Text.Trim())
@@ -129,19 +130,19 @@ Public Class Acquisition
                 counts.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
                 Dim bilang As Integer = CInt(counts.ExecuteScalar())
                 If bilang > 0 Then
-                    MessageBox.Show("This Transaction Number already exists.", "Duplication Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("This Transaction Number already exists.", "Duplication Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     jineret()
                     Return
                 End If
             End If
 
             If Not String.IsNullOrWhiteSpace(txtbarcodes.Text) Then
-                Dim comsis As String = "SELECT COUNT(*) FROM book_tbl WHERE Barcode = @Barcode"
+                Dim comsis As String = "SELECT COUNT(*) FROM acquisition_tbl WHERE Barcode = @Barcode"
                 Dim kownts As New MySqlCommand(comsis, con)
                 kownts.Parameters.AddWithValue("@Barcode", txtbarcodes.Text)
                 Dim sotired As Integer = CInt(kownts.ExecuteScalar())
                 If sotired > 0 Then
-                    MessageBox.Show("This Barcode already exists.", "Duplication Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("This Barcode already exists.", "Duplication Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     Return
                 End If
             End If
@@ -180,20 +181,20 @@ Public Class Acquisition
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
 
-        If Datagridview1.SelectedRows.Count = 0 Then
+        If DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a record to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         End If
 
-        Dim selectedRow As DataGridViewRow = Datagridview1.SelectedRows(0)
+        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
         Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
         Dim old As Integer = CInt(selectedRow.Cells("Quantity").Value)
         Dim neww As Integer = CInt(NumericUpDown1.Value)
 
-        If String.IsNullOrWhiteSpace(txtisbn.Text) OrElse String.IsNullOrWhiteSpace(txtbooktitle.Text) Then
-            MessageBox.Show("Please fill out the required fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Return
-        End If
+        'If String.IsNullOrWhiteSpace(txtisbn.Text) OrElse String.IsNullOrWhiteSpace(txtbooktitle.Text) Then
+        '    MessageBox.Show("Please fill out the required fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        '    Return
+        'End If
 
         Dim con As New MySqlConnection(connectionString)
         Dim originalShelf As Object = DBNull.Value
@@ -209,8 +210,6 @@ Public Class Acquisition
             con.Open()
 
             Dim transactionNo As String = selectedRow.Cells("TransactionNo").Value.ToString()
-
-
 
             If neww < old Then
                 Dim recordsdelete As Integer = old - neww
@@ -328,11 +327,11 @@ Public Class Acquisition
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
-        If Datagridview1.SelectedRows.Count > 0 Then
+        If DataGridView1.SelectedRows.Count > 0 Then
             Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this acquisition record?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
             If dialogResult = DialogResult.Yes Then
                 Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow As DataGridViewRow = Datagridview1.SelectedRows(0)
+                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Try
                     con.Open()
@@ -363,7 +362,7 @@ Public Class Acquisition
 
     End Sub
 
-    Private Sub dgv_acquisition_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles Datagridview1.CellClick
+    Private Sub dgv_acquisition_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
         If e.RowIndex >= 0 Then
 
@@ -382,12 +381,15 @@ Public Class Acquisition
             Else
                 txtbarcodes.Text = ""
             End If
+
             txtbooktitle.Text = selectedRow.Cells("BookTitle").Value.ToString
             cbsuppliername.Text = selectedRow.Cells("SupplierName").Value.ToString
             NumericUpDown1.Value = Convert.ToDecimal(selectedRow.Cells("Quantity").Value)
             txtbookprice.Text = selectedRow.Cells("BookPrice").Value.ToString
             txttotalcost.Text = selectedRow.Cells("TotalCost").Value.ToString
             DateTimePicker1.Value = CDate(selectedRow.Cells("DateAcquired").Value)
+
+
         End If
 
     End Sub
@@ -525,4 +527,36 @@ Public Class Acquisition
 
     End Sub
 
+    Private Sub txtisbn_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtisbn.KeyPress
+
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtisbn_KeyDown(sender As Object, e As KeyEventArgs) Handles txtisbn.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtbarcodes_KeyDown(sender As Object, e As KeyEventArgs) Handles txtbarcodes.KeyDown
+
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtbarcodes_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtbarcodes.KeyPress
+
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
 End Class

@@ -24,7 +24,7 @@ Public Class oras
 
         ludeyngoras()
         clearlahat()
-
+        DataGridView1.ClearSelection()
 
     End Sub
 
