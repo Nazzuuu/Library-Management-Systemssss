@@ -5,6 +5,7 @@ Public Class Language
     Private Sub Language_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
+        Me.Refresh()
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `language_tbl`"
@@ -28,6 +29,8 @@ Public Class Language
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtlanguage.Text = ""
+        Me.Dispose()
+
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click

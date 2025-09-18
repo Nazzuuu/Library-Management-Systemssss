@@ -7,6 +7,7 @@ Public Class Penalty_Management
     Private Sub Penalty_Management_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
+        Me.Refresh()
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `penalty_management_tbl`"
@@ -32,6 +33,7 @@ Public Class Penalty_Management
         txtamount.Text = ""
         txtdescription.Text = ""
         cbpenaltytype.SelectedIndex = -1
+        Me.Dispose()
 
     End Sub
 

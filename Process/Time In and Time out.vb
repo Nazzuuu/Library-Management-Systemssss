@@ -20,13 +20,18 @@ Public Class oras
 
     End Sub
 
+
     Private Sub oras_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         ludeyngoras()
         clearlahat()
+
         DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
+
 
     End Sub
+
 
     Public Sub ludeyngoras()
 

@@ -4,6 +4,7 @@ Imports MySql.Data.MySqlClient
 Public Class Shelf
     Private Sub Shelf_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         TopMost = True
+        Me.Refresh()
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `shelf_tbl`"
@@ -213,5 +214,6 @@ Public Class Shelf
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtshelf.Text = ""
+        Me.Dispose()
     End Sub
 End Class

@@ -4,6 +4,7 @@ Public Class Publisher
     Private Sub Publisher_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
+        Me.Refresh()
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `publisher_tbl`"
@@ -28,7 +29,7 @@ Public Class Publisher
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
+        Me.Dispose()
         clear()
     End Sub
 

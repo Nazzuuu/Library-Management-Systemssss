@@ -3,6 +3,7 @@ Public Class Genre
     Private Sub Genre_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
+        Me.Refresh()
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `genre_tbl`"
@@ -29,6 +30,8 @@ Public Class Genre
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtgenre.Text = ""
+        Me.Dispose()
+
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click

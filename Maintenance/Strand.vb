@@ -4,6 +4,7 @@ Public Class Strand
     Private Sub Strand_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
+        Me.Refresh()
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `strand_tbl`"
@@ -27,6 +28,8 @@ Public Class Strand
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtstrand.Text = ""
         txtdescription.Text = ""
+        Me.Dispose()
+
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click

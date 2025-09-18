@@ -272,6 +272,7 @@ Partial Class Author
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
         Controls.Add(Guna2GradientPanel1)
+        DoubleBuffered = True
         Font = New Font("Tahoma", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         ForeColor = Color.White
         FormBorderStyle = FormBorderStyle.FixedDialog

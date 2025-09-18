@@ -18,7 +18,9 @@ Public Class Accession
         Datagridview1.Columns("ID").Visible = False
 
         shelfsu()
-        Datagridview1.ClearSelection()
+        DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
+
 
     End Sub
 

@@ -4,7 +4,7 @@ Public Class Grade
     Private Sub Grade_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
-
+        Me.Refresh()
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `grade_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -27,6 +27,7 @@ Public Class Grade
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtgrade.Text = ""
+        Me.Dispose()
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click

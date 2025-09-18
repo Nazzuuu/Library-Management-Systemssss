@@ -4,6 +4,7 @@ Public Class Category
     Private Sub Category_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
+        Me.Refresh()
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `category_tbl`"
@@ -26,6 +27,7 @@ Public Class Category
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtcategory.Text = ""
+        Me.Dispose()
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
@@ -240,4 +242,6 @@ Public Class Category
             Me.Close()
         End If
     End Sub
+
+
 End Class

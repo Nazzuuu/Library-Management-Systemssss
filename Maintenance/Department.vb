@@ -7,7 +7,7 @@ Public Class Department
     Private Sub Department_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
-
+        Me.Refresh()
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `department_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -29,6 +29,8 @@ Public Class Department
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtdepartment.Text = ""
+        Me.Dispose()
+
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click

@@ -26,14 +26,17 @@ Public Class Book
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
         DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
 
 
         cbauthorr()
         cbgenree()
         cbpublisherr()
         cblang()
-        cbcategoryy
+        cbcategoryy()
+
 
     End Sub
 

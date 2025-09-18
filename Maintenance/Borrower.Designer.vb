@@ -157,6 +157,7 @@ Partial Class Borrower
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         DataGridView1.Size = New Size(1234, 231)
         DataGridView1.TabIndex = 24
+        DataGridView1.TabStop = False
         ' 
         ' PictureBox1
         ' 

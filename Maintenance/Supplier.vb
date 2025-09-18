@@ -4,6 +4,7 @@ Public Class Supplier
     Private Sub Supplier_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
+        Me.Refresh()
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `supplier_tbl`"
@@ -24,6 +25,7 @@ Public Class Supplier
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+        Me.Dispose()
         clear()
     End Sub
 

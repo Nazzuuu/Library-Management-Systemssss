@@ -6,7 +6,6 @@ Public Class Author
     Private Sub Author_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         TopMost = True
-
         Me.Font = New Font("Baskerville Old Face", 9)
         Me.Refresh()
 
@@ -16,13 +15,19 @@ Public Class Author
         Dim adap As New MySqlDataAdapter(comm, con)
         Dim ds As New DataSet
         adap.Fill(ds, "INFO")
+
+
         DataGridView1.DataSource = ds.Tables("INFO")
+
+
+        DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
+
 
         DataGridView1.Columns("ID").Visible = False
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-        DataGridView1.ClearSelection()
     End Sub
 
     Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs)
@@ -31,10 +36,11 @@ Public Class Author
     End Sub
 
     Private Sub Author_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtauthor.Text = ""
-
+        Me.Dispose()
     End Sub
 
 

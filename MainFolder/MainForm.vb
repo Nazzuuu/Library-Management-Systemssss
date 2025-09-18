@@ -1,4 +1,6 @@
-﻿Public Class MainForm
+﻿Imports Microsoft.VisualBasic.ApplicationServices
+
+Public Class MainForm
 
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -74,9 +76,12 @@
     End Sub
 
     Private Sub AuthorMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AuthorMaintenanceToolStripMenuItem.Click
+        Author.DataGridView1.CurrentCell = Nothing
+        Author.DataGridView1.ClearSelection()
         MaintenanceToolStripMenuItem.ForeColor = Color.White
         Author.ShowDialog()
-
+        Author.DataGridView1.CurrentCell = Nothing
+        Author.DataGridView1.ClearSelection()
     End Sub
 
     Private Sub MaintenanceToolStripMenuItem_DropDownClosed(sender As Object, e As EventArgs) Handles MaintenanceToolStripMenuItem.DropDownClosed
@@ -192,8 +197,14 @@
 
     Private Sub logout_Click(sender As Object, e As EventArgs) Handles logout.Click
 
-        Me.Close()
-        login.Show()
+        Dim dialogResult As DialogResult = MessageBox.Show("logout ka na yah?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+        If dialogResult = DialogResult.Yes Then
+            Me.Close()
+            login.Show()
+        End If
+
+
     End Sub
 
     Private Sub btn_borrowed_MouseHover(sender As Object, e As EventArgs) Handles btn_borrowed.MouseHover
@@ -271,7 +282,11 @@
             .BringToFront()
             Panel_dash.Controls.Add(Book)
             Book.Size = New Size(1370, 700)
+
             .Show()
+
+            Book.DataGridView1.ClearSelection()
+            Book.DataGridView1.CurrentCell = Nothing
         End With
 
     End Sub
@@ -290,7 +305,12 @@
             .TopMost = True
             Panel_dash.Controls.Add(Borrower)
             Borrower.Size = New Size(1370, 700)
+
             .Show()
+
+            Borrower.DataGridView1.ClearSelection()
+            Borrower.DataGridView1.CurrentCell = Nothing
+
         End With
 
     End Sub
@@ -304,7 +324,11 @@
             .TopMost = True
             Panel_dash.Controls.Add(Users)
             Users.Size = New Size(1370, 700)
+
             .Show()
+
+            Users.DataGridView1.ClearSelection()
+            Users.DataGridView1.CurrentCell = Nothing
         End With
 
     End Sub
@@ -327,7 +351,13 @@
             .TopLevel = False
             .BringToFront()
             Panel_dash.Controls.Add(Acquisition)
+
+
             .Show()
+
+            Acquisition.DataGridView1.ClearSelection()
+            Acquisition.DataGridView1.CurrentCell = Nothing
+
 
         End With
 
@@ -342,7 +372,12 @@
             .TopLevel = False
             .BringToFront()
             Panel_dash.Controls.Add(Accession)
+
             .Show()
+
+            Accession.DataGridView1.ClearSelection()
+            Accession.DataGridView1.CurrentCell = Nothing
+
         End With
 
 
@@ -358,7 +393,12 @@
             .TopLevel = False
             .BringToFront()
             Panel_dash.Controls.Add(oras)
+
             .Show()
+
+            oras.DataGridView1.ClearSelection()
+            oras.DataGridView1.CurrentCell = Nothing
+
 
         End With
     End Sub
@@ -380,8 +420,12 @@
             .TopLevel = False
             .BringToFront()
             Panel_dash.Controls.Add(Borrowing)
+
+
             .Show()
 
+            Borrowing.DataGridView1.ClearSelection()
+            Borrowing.DataGridView1.CurrentCell = Nothing
 
         End With
     End Sub

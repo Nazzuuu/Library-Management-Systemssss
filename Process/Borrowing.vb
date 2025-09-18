@@ -40,6 +40,8 @@ Public Class Borrowing
 
 
         DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
+
 
     End Sub
 
