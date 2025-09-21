@@ -494,9 +494,7 @@ Public Class Book
 
     End Sub
 
-    Private Sub Book_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
-        clear()
-    End Sub
+
 
     Private Sub rbgenerate_CheckedChanged(sender As Object, e As EventArgs) Handles rbgenerate.CheckedChanged
 

@@ -102,6 +102,7 @@ Partial Class Book
         ' panel_book
         ' 
         panel_book.Controls.Add(Guna2GroupBox1)
+        panel_book.Dock = DockStyle.Fill
         panel_book.Location = New Point(0, 0)
         panel_book.Name = "panel_book"
         panel_book.Size = New Size(1370, 700)

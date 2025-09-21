@@ -14,10 +14,18 @@ Public Class Category
         adap.Fill(dt, "INFO")
         DataGridView1.DataSource = dt.Tables("INFO")
 
+
+
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         DataGridView1.Columns("ID").Visible = False
+
+
+    End Sub
+
+    Private Sub Category_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
         DataGridView1.ClearSelection()
 
     End Sub
@@ -27,7 +35,7 @@ Public Class Category
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtcategory.Text = ""
-        Me.Dispose()
+
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
@@ -89,6 +97,9 @@ Public Class Category
                 Exit Sub
             End If
 
+            Dim oldcats As String = selectedRow.Cells("Category").Value.ToString()
+            Dim newcats As String = txtcategory.Text.Trim()
+
             Try
                 con.Open()
 
@@ -101,10 +112,18 @@ Public Class Category
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `category_tbl` SET `Category`= @category WHERE  `ID` = @id", con)
-                com.Parameters.AddWithValue("@category", cat)
-                com.Parameters.AddWithValue("@id", ID)
+
+
+                Dim com As New MySqlCommand("UPDATE `category_tbl` SET `Category` = @newCat WHERE `Category` = @oldCat", con)
+                com.Parameters.AddWithValue("@newCat", newcats)
+                com.Parameters.AddWithValue("@oldCat", oldcats)
                 com.ExecuteNonQuery()
+
+
+                Dim comsus As New MySqlCommand("UPDATE `book_tbl` SET `Category` = @newCat WHERE `Category` = @oldCat", con)
+                comsus.Parameters.AddWithValue("@newCat", newcats)
+                comsus.Parameters.AddWithValue("@oldCat", oldcats)
+                comsus.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then
