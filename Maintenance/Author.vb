@@ -35,12 +35,18 @@ Public Class Author
 
     End Sub
 
+    Private Sub Author_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
+
     Private Sub Author_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtauthor.Text = ""
-        Me.Dispose()
+
     End Sub
 
 

@@ -21,11 +21,16 @@ Public Class Supplier
 
     End Sub
 
+    Private Sub Supplier_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
     Private Sub Supplier_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
-        Me.Dispose()
+
         clear()
     End Sub
 

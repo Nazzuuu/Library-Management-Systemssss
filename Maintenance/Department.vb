@@ -20,6 +20,12 @@ Public Class Department
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         DataGridView1.Columns("ID").Visible = False
+
+
+    End Sub
+
+    Private Sub Department_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
         DataGridView1.ClearSelection()
 
     End Sub
@@ -29,7 +35,7 @@ Public Class Department
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtdepartment.Text = ""
-        Me.Dispose()
+
 
     End Sub
 

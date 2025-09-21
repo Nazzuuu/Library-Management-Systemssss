@@ -17,20 +17,25 @@ Public Class Section
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         DataGridView1.Columns("ID").Visible = False
-        DataGridView1.ClearSelection()
+
 
         cbdeptss()
         clearlahat()
 
     End Sub
 
+    Private Sub Section_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
 
     Private Sub Section_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         clearlahat()
-        Me.Dispose()
+
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click

@@ -128,6 +128,11 @@ Public Class Borrower
 
     End Sub
 
+    Private Sub Borrower_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)

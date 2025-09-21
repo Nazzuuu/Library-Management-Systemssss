@@ -18,10 +18,6 @@ Public Class Acquisition
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
-        DataGridView1.ClearSelection()
-        DataGridView1.CurrentCell = Nothing
-
-
         jineret()
         cbsupplierr()
         clear()
@@ -41,6 +37,13 @@ Public Class Acquisition
         cbsuppliername.DisplayMember = "SupplierName"
         cbsuppliername.ValueMember = "ID"
         cbsuppliername.SelectedIndex = -1
+    End Sub
+
+
+    Private Sub Acquisition_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
     End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged

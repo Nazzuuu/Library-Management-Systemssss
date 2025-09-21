@@ -19,6 +19,11 @@ Public Class Borrowing
 
     End Sub
 
+    Private Sub Borrowing_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
     End Sub

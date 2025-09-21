@@ -18,9 +18,13 @@ Public Class Accession
         Datagridview1.Columns("ID").Visible = False
 
         shelfsu()
-        DataGridView1.ClearSelection()
-        DataGridView1.CurrentCell = Nothing
 
+
+    End Sub
+
+    Private Sub Accession_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
 
     End Sub
 

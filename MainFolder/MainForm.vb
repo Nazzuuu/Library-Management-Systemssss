@@ -8,7 +8,7 @@ Public Class MainForm
         Me.WindowState = FormWindowState.Maximized
         sizelocation()
 
-
+        btninfo.Visible = False
 
     End Sub
 
@@ -70,6 +70,7 @@ Public Class MainForm
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
+            Panel_dash.Controls.Add(btninfo)
             lumabasna = True
         End If
 
@@ -106,6 +107,7 @@ Public Class MainForm
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
+            Panel_dash.Controls.Add(btninfo)
             lumabasna = True
         End If
 
@@ -133,6 +135,7 @@ Public Class MainForm
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
+            Panel_dash.Controls.Add(btninfo)
             lumabasna = True
         End If
 
@@ -161,6 +164,7 @@ Public Class MainForm
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
+            Panel_dash.Controls.Add(btninfo)
             lumabasna = True
         End If
 
@@ -208,7 +212,7 @@ Public Class MainForm
     End Sub
 
     Private Sub btn_borrowed_MouseHover(sender As Object, e As EventArgs) Handles btn_borrowed.MouseHover
-        Me.Cursor = Cursors.Hand
+        Cursor = Cursors.Hand
 
     End Sub
 
@@ -230,7 +234,7 @@ Public Class MainForm
     End Sub
 
     Private Sub btn_borrowed_MouseLeave(sender As Object, e As EventArgs) Handles btn_borrowed.MouseLeave
-        Me.Cursor = Cursors.Default
+        Cursor = Cursors.Default
     End Sub
 
     Private Sub btn_rtn_MouseLeave(sender As Object, e As EventArgs) Handles btn_rtn.MouseLeave
@@ -428,5 +432,23 @@ Public Class MainForm
             Borrowing.DataGridView1.CurrentCell = Nothing
 
         End With
+    End Sub
+
+    Private Sub btninfo_MouseHover(sender As Object, e As EventArgs) Handles btninfo.MouseHover
+
+        Me.Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub btninfo_Mouseleave(sender As Object, e As EventArgs) Handles btninfo.MouseLeave
+
+        Me.Cursor = Cursors.Default
+
+    End Sub
+
+    Private Sub btninfo_Click(sender As Object, e As EventArgs) Handles btninfo.Click
+
+        Superadmin.ShowDialog()
+
     End Sub
 End Class

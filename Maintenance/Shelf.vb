@@ -214,6 +214,12 @@ Public Class Shelf
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtshelf.Text = ""
-        Me.Dispose()
+
+    End Sub
+
+    Private Sub Shelf_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
     End Sub
 End Class

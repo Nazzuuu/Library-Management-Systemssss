@@ -20,17 +20,22 @@ Public Class Genre
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
-        DataGridView1.ClearSelection()
+
         txtgenre.Text = ""
 
     End Sub
 
+    Private Sub Genre_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
 
     Private Sub Genre_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtgenre.Text = ""
-        Me.Dispose()
+
 
     End Sub
 

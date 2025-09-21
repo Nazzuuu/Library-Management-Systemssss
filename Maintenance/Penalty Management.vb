@@ -22,6 +22,12 @@ Public Class Penalty_Management
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
         DataGridView1.Columns("ID").Visible = False
+
+
+    End Sub
+
+    Private Sub Penalty_Management_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
         DataGridView1.ClearSelection()
 
     End Sub
@@ -33,7 +39,7 @@ Public Class Penalty_Management
         txtamount.Text = ""
         txtdescription.Text = ""
         cbpenaltytype.SelectedIndex = -1
-        Me.Dispose()
+
 
     End Sub
 

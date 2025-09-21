@@ -4,7 +4,7 @@ Public Class login
     Public Sub clear()
         txtpass.Text = ""
         txtuser.Text = ""
-        CheckBox1.Checked = False
+
     End Sub
 
 
@@ -13,20 +13,14 @@ Public Class login
         Dim User As String = txtuser.Text.Trim()
         Dim Pass As String = txtpass.Text.Trim()
 
-
-        If User = "Librarian01" And Pass = "Librarian123" Then
-            MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            MainForm.Show()
-            MainForm.lbl_currentuser.Text = "Librarian"
-
-            Me.Hide()
-            clear()
-            Return
-        End If
-
         Dim con As New MySqlConnection(connectionString)
 
-        Dim com As New MySqlCommand("SELECT * FROM user_staff_tbl WHERE Username = @username AND Password = @password", con)
+
+        Dim comsus As String = "SELECT Username, Password, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
+                            "UNION " &
+                            "SELECT Username, Password, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
+
+        Dim com As New MySqlCommand(comsus, con)
         com.Parameters.AddWithValue("@username", User)
         com.Parameters.AddWithValue("@password", Pass)
 
@@ -37,11 +31,20 @@ Public Class login
             If lahatngrole.Read() Then
                 Dim role As String = lahatngrole("Role").ToString()
 
-                If role = "Staff" Then
+                If role = "Librarian" Then
+                    MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MainForm.Show()
+                    MainForm.lbl_currentuser.Text = "Librarian"
+                    MainForm.btninfo.Visible = True
+                    Me.Hide()
+                    clear()
 
+
+                ElseIf role = "Staff" Then
                     MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
                     MainForm.lbl_currentuser.Text = "Staff"
+
 
                     MainForm.AuthorMaintenanceToolStripMenuItem.Visible = False
                     MainForm.GenreMaintenanceToolStripMenuItem.Visible = False
@@ -59,7 +62,6 @@ Public Class login
                     clear()
 
                 ElseIf role = "Assistant Librarian" Then
-
                     MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
                     MainForm.lbl_currentuser.Text = "Asst. Librarian"
@@ -69,16 +71,12 @@ Public Class login
                     MainForm.Audit_Trail.Visible = False
                     Me.Hide()
                     clear()
+
                 Else
                     MessageBox.Show("Invalid role.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End If
-
-
-
-
             Else
-
-                MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("Invalid Credentials.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
 
         Catch ex As Exception
@@ -93,39 +91,58 @@ Public Class login
 
 
     Private Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         TopMost = True
         koneksyon()
 
 
+        txtpass.PasswordChar = "•"
+        PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As New MySqlCommand("SELECT COUNT(*) FROM superadmin_tbl WHERE Role = 'Librarian'", con)
+
+        Try
+            con.Open()
+            Dim count As Integer = CInt(com.ExecuteScalar())
+
+            If count = 0 Then
+
+                MessageBox.Show("No Librarian or Superadmin account found. Please create one.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Superadmin.ShowDialog()
+
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error checking for superadmin account: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+
 
     End Sub
 
-    Private Sub txtpass_TextChanged(sender As Object, e As EventArgs) Handles txtpass.TextChanged
-        If CheckBox1.Checked = True Then
-            txtpass.UseSystemPasswordChar = False
-        Else
-            txtpass.UseSystemPasswordChar = True
-        End If
-    End Sub
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
 
-    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+        If txtpass.PasswordChar = "•" Then
 
-        If CheckBox1.Checked = True Then
-            txtpass.UseSystemPasswordChar = False
+            PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\dilat.png")
+            txtpass.PasswordChar = ""
+
         Else
-            txtpass.UseSystemPasswordChar = True
+
+            PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+
+            txtpass.PasswordChar = "•"
         End If
 
     End Sub
 
     Private Sub txtpass_KeyDown(sender As Object, e As KeyEventArgs) Handles txtpass.KeyDown
-
         If e.KeyCode = Keys.Enter Then
             btnlogin_Click(sender, e)
             e.Handled = True
         End If
-
     End Sub
 
     Private Sub btnlogin_KeyDown(sender As Object, e As KeyEventArgs) Handles btnlogin.KeyDown
@@ -149,19 +166,19 @@ Public Class login
 
     End Sub
 
-    Private Sub CheckBox1_MouseHover(sender As Object, e As EventArgs) Handles CheckBox1.MouseHover
+    Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs) Handles Guna2ControlBox1.Click
+        Me.Close()
+    End Sub
+
+    Private Sub PictureBox1_MouseHover_1(sender As Object, e As EventArgs) Handles PictureBox1.MouseHover
 
         Cursor = Cursors.Hand
 
     End Sub
 
-    Private Sub CheckBox1_MouseLeave(sender As Object, e As EventArgs) Handles CheckBox1.MouseLeave
+    Private Sub PictureBox1_MouseLeave_1(sender As Object, e As EventArgs) Handles PictureBox1.MouseLeave
 
         Cursor = Cursors.Default
 
-    End Sub
-
-    Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs) Handles Guna2ControlBox1.Click
-        Me.Close()
     End Sub
 End Class

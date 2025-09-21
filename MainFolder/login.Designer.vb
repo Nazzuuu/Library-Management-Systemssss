@@ -39,11 +39,12 @@ Partial Class login
         Panel1 = New Panel()
         Guna2ControlBox1 = New Guna.UI2.WinForms.Guna2ControlBox()
         Label3 = New Label()
-        CheckBox1 = New CheckBox()
         Panel_btnlogin = New Panel()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        PictureBox1 = New PictureBox()
         Panel1.SuspendLayout()
         Panel_btnlogin.SuspendLayout()
+        CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' txtuser
@@ -108,7 +109,7 @@ Partial Class login
         Label2.AutoSize = True
         Label2.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(69, 166)
+        Label2.Location = New Point(65, 169)
         Label2.Name = "Label2"
         Label2.Size = New Size(81, 18)
         Label2.TabIndex = 3
@@ -167,15 +168,6 @@ Partial Class login
         Label3.TabIndex = 1
         Label3.Text = "Monlimar Development Academy" & vbCrLf & "    Library Management System" & vbCrLf & "                 (MDA-LMS)" & vbCrLf & "                                        "
         ' 
-        ' CheckBox1
-        ' 
-        CheckBox1.AutoSize = True
-        CheckBox1.Location = New Point(370, 171)
-        CheckBox1.Name = "CheckBox1"
-        CheckBox1.Size = New Size(15, 14)
-        CheckBox1.TabIndex = 6
-        CheckBox1.UseVisualStyleBackColor = True
-        ' 
         ' Panel_btnlogin
         ' 
         Panel_btnlogin.Controls.Add(btnlogin)
@@ -189,14 +181,26 @@ Partial Class login
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = Me
         ' 
+        ' PictureBox1
+        ' 
+        PictureBox1.BackColor = Color.White
+        PictureBox1.BackgroundImageLayout = ImageLayout.Zoom
+        PictureBox1.Location = New Point(356, 169)
+        PictureBox1.Name = "PictureBox1"
+        PictureBox1.Size = New Size(28, 18)
+        PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
+        PictureBox1.TabIndex = 8
+        PictureBox1.TabStop = False
+        ' 
         ' login
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
+        BackColor = Color.White
         ClientSize = New Size(482, 276)
         ControlBox = False
+        Controls.Add(PictureBox1)
         Controls.Add(Panel_btnlogin)
-        Controls.Add(CheckBox1)
         Controls.Add(Panel1)
         Controls.Add(Label2)
         Controls.Add(Label1)
@@ -211,6 +215,7 @@ Partial Class login
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         Panel_btnlogin.ResumeLayout(False)
+        CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -222,9 +227,9 @@ Partial Class login
     Friend WithEvents btnlogin As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Label3 As Label
-    Friend WithEvents CheckBox1 As CheckBox
     Friend WithEvents Panel_btnlogin As Panel
     Friend WithEvents logintimer As Timer
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents Guna2ControlBox1 As Guna.UI2.WinForms.Guna2ControlBox
+    Friend WithEvents PictureBox1 As PictureBox
 End Class

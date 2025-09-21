@@ -18,6 +18,12 @@ Public Class Grade
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
         DataGridView1.Columns("ID").Visible = False
+
+
+    End Sub
+
+    Private Sub Grade_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
         DataGridView1.ClearSelection()
 
     End Sub
@@ -27,7 +33,7 @@ Public Class Grade
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtgrade.Text = ""
-        Me.Dispose()
+
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click

@@ -20,6 +20,12 @@ Public Class Language
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
+
+
+    End Sub
+
+    Private Sub Language_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
         DataGridView1.ClearSelection()
 
     End Sub
@@ -29,7 +35,7 @@ Public Class Language
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtlanguage.Text = ""
-        Me.Dispose()
+
 
     End Sub
 
