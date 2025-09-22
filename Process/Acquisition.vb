@@ -213,11 +213,6 @@ Public Class Acquisition
         Dim old As Integer = CInt(selectedRow.Cells("Quantity").Value)
         Dim neww As Integer = CInt(NumericUpDown1.Value)
 
-        'If String.IsNullOrWhiteSpace(txtisbn.Text) OrElse String.IsNullOrWhiteSpace(txtbooktitle.Text) Then
-        '    MessageBox.Show("Please fill out the required fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        '    Return
-        'End If
-
         Dim con As New MySqlConnection(connectionString)
         Dim originalShelf As Object = DBNull.Value
 
@@ -411,8 +406,25 @@ Public Class Acquisition
             txttotalcost.Text = selectedRow.Cells("TotalCost").Value.ToString
             DateTimePicker1.Value = CDate(selectedRow.Cells("DateAcquired").Value)
 
+            If Not String.IsNullOrEmpty(selectedRow.Cells("Barcode").Value?.ToString()) Then
+
+                rbbarcode.Checked = True
+                rbisbn.Checked = False
+
+            ElseIf Not String.IsNullOrEmpty(selectedRow.Cells("ISBN").Value?.ToString()) Then
+
+                rbisbn.Checked = True
+                rbbarcode.Checked = False
+
+            Else
+
+                rbbarcode.Checked = False
+                rbisbn.Checked = False
+
+            End If
 
         End If
+
 
     End Sub
 

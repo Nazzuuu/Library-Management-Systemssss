@@ -90,6 +90,7 @@ Public Class Users
             middleName = txtmname.Text.Trim()
         End If
 
+
         Dim con As New MySqlConnection(connectionString)
         Try
             con.Open()
@@ -205,7 +206,9 @@ Public Class Users
             middleName = txtmname.Text.Trim()
         End If
 
+
         Dim con As New MySqlConnection(connectionString)
+
         Try
             con.Open()
 
@@ -233,6 +236,11 @@ Public Class Users
             Coms.Parameters.AddWithValue("@id", ID)
             Coms.ExecuteNonQuery()
 
+
+            If MainForm.lblgmail.Text = DataGridView1.CurrentRow.Cells("Email").Value.ToString Then
+                MainForm.lblgmail.Text = txtemail.Text.Trim
+            End If
+
             MsgBox("User updated successfully!", vbInformation)
             Users_Staffs_Load(sender, e)
             clearfields()
@@ -245,7 +253,6 @@ Public Class Users
             End If
         End Try
     End Sub
-
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then

@@ -419,7 +419,7 @@ Public Class Borrower
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
 
-        ClearFields()
+        ClearFields
 
         cbstrand.Visible = True
         cbstrand.Location = New Point(942, 285)
@@ -923,7 +923,7 @@ Public Class Borrower
 
     Private Sub txtcontactnumber_TextChanged(sender As Object, e As EventArgs) Handles txtcontactnumber.TextChanged
 
-        Dim oreyjeynal As String = txtcontactnumber.Text
+        Dim oreyjeynal = txtcontactnumber.Text
 
         If String.IsNullOrEmpty(oreyjeynal) Then
             Return
@@ -934,7 +934,7 @@ Public Class Borrower
         Else
 
             If oreyjeynal.Length > 0 Then
-                txtcontactnumber.Clear()
+                txtcontactnumber.Clear
                 txtcontactnumber.Text = "09"
                 txtcontactnumber.SelectionStart = 2
             End If

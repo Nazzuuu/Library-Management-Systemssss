@@ -95,7 +95,7 @@ Partial Class Superadmin
         btnedit.FillColor = Color.Empty
         btnedit.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnedit.Location = New Point(160, 295)
+        btnedit.Location = New Point(160, 275)
         btnedit.Name = "btnedit"
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnedit.Size = New Size(90, 27)
@@ -115,7 +115,7 @@ Partial Class Superadmin
         btnadd.FillColor = Color.Empty
         btnadd.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnadd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnadd.Location = New Point(31, 295)
+        btnadd.Location = New Point(31, 275)
         btnadd.Name = "btnadd"
         btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnadd.Size = New Size(90, 27)
@@ -135,6 +135,7 @@ Partial Class Superadmin
         DataGridView1.AllowUserToResizeRows = False
         DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         DataGridView1.BackgroundColor = SystemColors.Control
+        DataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -145,15 +146,15 @@ Partial Class Superadmin
         DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridView1.Cursor = Cursors.Hand
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
         DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle2.ForeColor = Color.White
+        DataGridViewCellStyle2.ForeColor = SystemColors.Control
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(31, 340)
+        DataGridView1.Location = New Point(31, 326)
         DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
@@ -172,7 +173,7 @@ Partial Class Superadmin
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        DataGridView1.Size = New Size(927, 204)
+        DataGridView1.Size = New Size(932, 230)
         DataGridView1.TabIndex = 126
         ' 
         ' btnclear
@@ -188,7 +189,7 @@ Partial Class Superadmin
         btnclear.FillColor = Color.Empty
         btnclear.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclear.Location = New Point(292, 295)
+        btnclear.Location = New Point(292, 275)
         btnclear.Name = "btnclear"
         btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btnclear.Size = New Size(90, 27)
@@ -200,7 +201,7 @@ Partial Class Superadmin
         CheckBox1.AutoSize = True
         CheckBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         CheckBox1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CheckBox1.Location = New Point(274, 231)
+        CheckBox1.Location = New Point(274, 211)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(52, 20)
         CheckBox1.TabIndex = 125
@@ -211,7 +212,7 @@ Partial Class Superadmin
         ' 
         PictureBox1.BackColor = Color.White
         PictureBox1.BackgroundImageLayout = ImageLayout.Zoom
-        PictureBox1.Location = New Point(898, 165)
+        PictureBox1.Location = New Point(898, 145)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(28, 18)
         PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
@@ -223,7 +224,7 @@ Partial Class Superadmin
         lblexample.AutoSize = True
         lblexample.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         lblexample.ForeColor = SystemColors.WindowFrame
-        lblexample.Location = New Point(493, 137)
+        lblexample.Location = New Point(493, 117)
         lblexample.Name = "lblexample"
         lblexample.Size = New Size(104, 13)
         lblexample.TabIndex = 123
@@ -234,7 +235,7 @@ Partial Class Superadmin
         Panel1.Controls.Add(rbfemale)
         Panel1.Controls.Add(Label9)
         Panel1.Controls.Add(rbmale)
-        Panel1.Location = New Point(684, 215)
+        Panel1.Location = New Point(684, 195)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(242, 36)
         Panel1.TabIndex = 122
@@ -281,7 +282,7 @@ Partial Class Superadmin
         Label8.AutoSize = True
         Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label8.Location = New Point(692, 134)
+        Label8.Location = New Point(696, 117)
         Label8.Name = "Label8"
         Label8.Size = New Size(75, 16)
         Label8.TabIndex = 121
@@ -292,7 +293,7 @@ Partial Class Superadmin
         Label7.AutoSize = True
         Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(692, 55)
+        Label7.Location = New Point(692, 45)
         Label7.Name = "Label7"
         Label7.Size = New Size(76, 16)
         Label7.TabIndex = 119
@@ -312,7 +313,7 @@ Partial Class Superadmin
         txtusername.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtusername.ForeColor = Color.Black
         txtusername.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtusername.Location = New Point(692, 82)
+        txtusername.Location = New Point(692, 62)
         txtusername.Margin = New Padding(3, 5, 3, 5)
         txtusername.Name = "txtusername"
         txtusername.PlaceholderText = ""
@@ -326,7 +327,7 @@ Partial Class Superadmin
         Label6.AutoSize = True
         Label6.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(360, 198)
+        Label6.Location = New Point(360, 178)
         Label6.Name = "Label6"
         Label6.Size = New Size(130, 16)
         Label6.TabIndex = 117
@@ -346,7 +347,7 @@ Partial Class Superadmin
         txtaddress.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtaddress.ForeColor = Color.Black
         txtaddress.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtaddress.Location = New Point(360, 225)
+        txtaddress.Location = New Point(360, 205)
         txtaddress.Margin = New Padding(3, 5, 3, 5)
         txtaddress.Name = "txtaddress"
         txtaddress.PlaceholderText = ""
@@ -360,7 +361,7 @@ Partial Class Superadmin
         Label5.AutoSize = True
         Label5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(360, 134)
+        Label5.Location = New Point(360, 114)
         Label5.Name = "Label5"
         Label5.Size = New Size(44, 16)
         Label5.TabIndex = 115
@@ -380,7 +381,7 @@ Partial Class Superadmin
         txtemail.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtemail.ForeColor = Color.Black
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemail.Location = New Point(360, 155)
+        txtemail.Location = New Point(360, 135)
         txtemail.Margin = New Padding(3, 5, 3, 5)
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
@@ -394,7 +395,7 @@ Partial Class Superadmin
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(360, 55)
+        Label4.Location = New Point(360, 45)
         Label4.Name = "Label4"
         Label4.Size = New Size(116, 16)
         Label4.TabIndex = 113
@@ -414,7 +415,7 @@ Partial Class Superadmin
         txtcontact.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtcontact.ForeColor = Color.Black
         txtcontact.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtcontact.Location = New Point(360, 82)
+        txtcontact.Location = New Point(360, 62)
         txtcontact.Margin = New Padding(3, 5, 3, 5)
         txtcontact.Name = "txtcontact"
         txtcontact.PlaceholderText = ""
@@ -428,7 +429,7 @@ Partial Class Superadmin
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(31, 204)
+        Label3.Location = New Point(31, 184)
         Label3.Name = "Label3"
         Label3.Size = New Size(92, 16)
         Label3.TabIndex = 111
@@ -448,7 +449,7 @@ Partial Class Superadmin
         txtmname.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtmname.ForeColor = Color.Black
         txtmname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtmname.Location = New Point(31, 225)
+        txtmname.Location = New Point(31, 205)
         txtmname.Margin = New Padding(3, 5, 3, 5)
         txtmname.Name = "txtmname"
         txtmname.PlaceholderText = ""
@@ -462,7 +463,7 @@ Partial Class Superadmin
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(31, 134)
+        Label2.Location = New Point(31, 117)
         Label2.Name = "Label2"
         Label2.Size = New Size(79, 16)
         Label2.TabIndex = 109
@@ -482,7 +483,7 @@ Partial Class Superadmin
         txtlname.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtlname.ForeColor = Color.Black
         txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlname.Location = New Point(31, 158)
+        txtlname.Location = New Point(31, 138)
         txtlname.Margin = New Padding(3, 5, 3, 5)
         txtlname.Name = "txtlname"
         txtlname.PlaceholderText = ""
@@ -496,7 +497,7 @@ Partial Class Superadmin
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(31, 67)
+        Label1.Location = New Point(31, 47)
         Label1.Name = "Label1"
         Label1.Size = New Size(79, 16)
         Label1.TabIndex = 107
@@ -516,7 +517,7 @@ Partial Class Superadmin
         txtfname.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtfname.ForeColor = Color.Black
         txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtfname.Location = New Point(31, 88)
+        txtfname.Location = New Point(31, 68)
         txtfname.Margin = New Padding(3, 5, 3, 5)
         txtfname.Name = "txtfname"
         txtfname.PlaceholderText = ""
@@ -539,7 +540,7 @@ Partial Class Superadmin
         txtpassword.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         txtpassword.ForeColor = Color.Black
         txtpassword.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtpassword.Location = New Point(692, 158)
+        txtpassword.Location = New Point(692, 138)
         txtpassword.Margin = New Padding(3, 5, 3, 5)
         txtpassword.Name = "txtpassword"
         txtpassword.PlaceholderText = ""

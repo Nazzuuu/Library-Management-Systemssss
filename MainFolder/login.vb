@@ -16,9 +16,10 @@ Public Class login
         Dim con As New MySqlConnection(connectionString)
 
 
-        Dim comsus As String = "SELECT Username, Password, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
-                            "UNION " &
-                            "SELECT Username, Password, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
+
+        Dim comsus As String = "SELECT Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
+              "UNION " &
+              "SELECT Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
 
         Dim com As New MySqlCommand(comsus, con)
         com.Parameters.AddWithValue("@username", User)
@@ -30,12 +31,14 @@ Public Class login
 
             If lahatngrole.Read() Then
                 Dim role As String = lahatngrole("Role").ToString()
+                Dim userEmail As String = lahatngrole("Email").ToString()
 
                 If role = "Librarian" Then
                     MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
                     MainForm.lbl_currentuser.Text = "Librarian"
                     MainForm.btninfo.Visible = True
+                    MainForm.lblgmail.Text = userEmail
                     Me.Hide()
                     clear()
 
@@ -58,6 +61,7 @@ Public Class login
                     MainForm.UserMaintenanceToolStripMenuItem.Visible = False
                     MainForm.Audit_Trail.Visible = False
 
+                    MainForm.lblgmail.Text = userEmail
                     Me.Hide()
                     clear()
 
@@ -69,6 +73,7 @@ Public Class login
 
                     MainForm.UserMaintenanceToolStripMenuItem.Visible = False
                     MainForm.Audit_Trail.Visible = False
+                    MainForm.lblgmail.Text = userEmail
                     Me.Hide()
                     clear()
 
@@ -107,12 +112,12 @@ Public Class login
 
             If count = 0 Then
 
-                MessageBox.Show("No Librarian or Superadmin account found. Please create one.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                MessageBox.Show("No Librarian account found. Please create one.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Superadmin.ShowDialog()
 
             End If
         Catch ex As Exception
-            MessageBox.Show("Error checking for superadmin account: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Errort: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
                 con.Close()

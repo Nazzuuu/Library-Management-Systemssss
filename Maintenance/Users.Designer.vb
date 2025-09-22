@@ -284,7 +284,7 @@ Partial Class Users
         Label6.AutoSize = True
         Label6.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(646, 76)
+        Label6.Location = New Point(975, 76)
         Label6.Name = "Label6"
         Label6.Size = New Size(76, 16)
         Label6.TabIndex = 39
@@ -498,7 +498,7 @@ Partial Class Users
         lblexample.AutoSize = True
         lblexample.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         lblexample.ForeColor = SystemColors.WindowFrame
-        lblexample.Location = New Point(1106, 79)
+        lblexample.Location = New Point(786, 79)
         lblexample.Name = "lblexample"
         lblexample.Size = New Size(104, 13)
         lblexample.TabIndex = 72
@@ -509,7 +509,7 @@ Partial Class Users
         CheckBox1.AutoSize = True
         CheckBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         CheckBox1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CheckBox1.Location = New Point(883, 172)
+        CheckBox1.Location = New Point(1212, 172)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(61, 20)
         CheckBox1.TabIndex = 71
@@ -558,7 +558,7 @@ Partial Class Users
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(978, 145)
+        Label3.Location = New Point(658, 145)
         Label3.Name = "Label3"
         Label3.Size = New Size(116, 16)
         Label3.TabIndex = 60
@@ -578,7 +578,7 @@ Partial Class Users
         txtcontactnumber.Font = New Font("Segoe UI", 9F)
         txtcontactnumber.ForeColor = Color.Black
         txtcontactnumber.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtcontactnumber.Location = New Point(978, 164)
+        txtcontactnumber.Location = New Point(658, 164)
         txtcontactnumber.Name = "txtcontactnumber"
         txtcontactnumber.PlaceholderText = ""
         txtcontactnumber.SelectedText = ""
@@ -591,7 +591,7 @@ Partial Class Users
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(978, 76)
+        Label2.Location = New Point(658, 76)
         Label2.Name = "Label2"
         Label2.Size = New Size(44, 16)
         Label2.TabIndex = 58
@@ -611,7 +611,7 @@ Partial Class Users
         txtemail.Font = New Font("Segoe UI", 9F)
         txtemail.ForeColor = Color.Black
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemail.Location = New Point(978, 95)
+        txtemail.Location = New Point(658, 95)
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""
@@ -624,7 +624,7 @@ Partial Class Users
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(646, 145)
+        Label1.Location = New Point(975, 145)
         Label1.Name = "Label1"
         Label1.Size = New Size(75, 16)
         Label1.TabIndex = 56
@@ -644,7 +644,7 @@ Partial Class Users
         txtpassword.Font = New Font("Segoe UI", 9F)
         txtpassword.ForeColor = Color.Black
         txtpassword.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtpassword.Location = New Point(646, 164)
+        txtpassword.Location = New Point(975, 164)
         txtpassword.Name = "txtpassword"
         txtpassword.PlaceholderText = ""
         txtpassword.SelectedText = ""
@@ -666,7 +666,7 @@ Partial Class Users
         txtusername.Font = New Font("Segoe UI", 9F)
         txtusername.ForeColor = Color.Black
         txtusername.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtusername.Location = New Point(646, 95)
+        txtusername.Location = New Point(975, 95)
         txtusername.Name = "txtusername"
         txtusername.PlaceholderText = ""
         txtusername.SelectedText = ""

@@ -53,6 +53,15 @@ Public Class Superadmin
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
+        Dim email As String = txtemail.Text.Trim()
+        If Not String.IsNullOrEmpty(email) Then
+            Dim emailRegex As New Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
+            If Not emailRegex.IsMatch(email) Then
+                MessageBox.Show("Please enter a valid email address.", "Invalid Email", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+        End If
+
         Dim gender As String = ""
         Dim middlename As String = txtmname.Text.Trim
 
@@ -113,9 +122,19 @@ Public Class Superadmin
     End Sub
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+
         If DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a row to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
+        End If
+
+        Dim email As String = txtemail.Text.Trim()
+        If Not String.IsNullOrEmpty(email) Then
+            Dim emailRegex As New Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
+            If Not emailRegex.IsMatch(email) Then
+                MessageBox.Show("Please enter a valid email address.", "Invalid Email", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
         End If
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
@@ -156,6 +175,12 @@ Public Class Superadmin
         Try
             con.Open()
             com.ExecuteNonQuery()
+
+
+            If MainForm.lblgmail.Text = selectedRow.Cells("Email").Value.ToString Then
+                MainForm.lblgmail.Text = txtemail.Text.Trim
+            End If
+
             MessageBox.Show("Librarian account successfully updated!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Superadmin_Load(sender, e)
             clearlahat()
@@ -401,6 +426,14 @@ Public Class Superadmin
 
     End Sub
 
+    Private Sub Superadmin_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+
+        If DataGridView1.Rows.Count = 0 Then
+            Dim result As DialogResult = MessageBox.Show("You must add at least one librarian account.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            e.Cancel = True
+        End If
+
+    End Sub
     'hatdoggggg'''
 
 End Class

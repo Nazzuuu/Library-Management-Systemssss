@@ -70,6 +70,7 @@ Public Class MainForm
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
+            Panel_dash.Controls.Add(Panel_welcome)
             Panel_dash.Controls.Add(btninfo)
             lumabasna = True
         End If
@@ -107,6 +108,7 @@ Public Class MainForm
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
+            Panel_dash.Controls.Add(Panel_welcome)
             Panel_dash.Controls.Add(btninfo)
             lumabasna = True
         End If
@@ -135,6 +137,7 @@ Public Class MainForm
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
+            Panel_dash.Controls.Add(Panel_welcome)
             Panel_dash.Controls.Add(btninfo)
             lumabasna = True
         End If
@@ -164,6 +167,7 @@ Public Class MainForm
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
+            Panel_dash.Controls.Add(Panel_welcome)
             Panel_dash.Controls.Add(btninfo)
             lumabasna = True
         End If

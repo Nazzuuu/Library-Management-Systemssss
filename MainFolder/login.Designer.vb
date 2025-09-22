@@ -29,20 +29,24 @@ Partial Class login
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(login))
         Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         txtuser = New Guna.UI2.WinForms.Guna2TextBox()
         txtpass = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
         Label2 = New Label()
         btnlogin = New Guna.UI2.WinForms.Guna2Button()
         Panel1 = New Panel()
+        Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Guna2ControlBox1 = New Guna.UI2.WinForms.Guna2ControlBox()
         Label3 = New Label()
         Panel_btnlogin = New Panel()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         PictureBox1 = New PictureBox()
         Panel1.SuspendLayout()
+        CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Panel_btnlogin.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
@@ -136,6 +140,7 @@ Partial Class login
         ' Panel1
         ' 
         Panel1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Panel1.Controls.Add(Guna2CirclePictureBox1)
         Panel1.Controls.Add(Guna2ControlBox1)
         Panel1.Controls.Add(Label3)
         Panel1.Dock = DockStyle.Top
@@ -144,15 +149,29 @@ Partial Class login
         Panel1.Size = New Size(482, 62)
         Panel1.TabIndex = 5
         ' 
+        ' Guna2CirclePictureBox1
+        ' 
+        Guna2CirclePictureBox1.BackgroundImageLayout = ImageLayout.Stretch
+        Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), Image)
+        Guna2CirclePictureBox1.ImageRotate = 0F
+        Guna2CirclePictureBox1.Location = New Point(17, 4)
+        Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
+        Guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges7
+        Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
+        Guna2CirclePictureBox1.Size = New Size(82, 53)
+        Guna2CirclePictureBox1.SizeMode = PictureBoxSizeMode.StretchImage
+        Guna2CirclePictureBox1.TabIndex = 9
+        Guna2CirclePictureBox1.TabStop = False
+        ' 
         ' Guna2ControlBox1
         ' 
         Guna2ControlBox1.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        Guna2ControlBox1.CustomizableEdges = CustomizableEdges7
+        Guna2ControlBox1.CustomizableEdges = CustomizableEdges8
         Guna2ControlBox1.FillColor = Color.Transparent
         Guna2ControlBox1.IconColor = Color.White
         Guna2ControlBox1.Location = New Point(444, 2)
         Guna2ControlBox1.Name = "Guna2ControlBox1"
-        Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges9
         Guna2ControlBox1.Size = New Size(36, 30)
         Guna2ControlBox1.TabIndex = 2
         ' 
@@ -214,6 +233,7 @@ Partial Class login
         StartPosition = FormStartPosition.CenterScreen
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
+        CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).EndInit()
         Panel_btnlogin.ResumeLayout(False)
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
@@ -232,4 +252,5 @@ Partial Class login
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents Guna2ControlBox1 As Guna.UI2.WinForms.Guna2ControlBox
     Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
 End Class
