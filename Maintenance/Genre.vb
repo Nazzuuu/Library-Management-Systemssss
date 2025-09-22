@@ -100,6 +100,9 @@ Public Class Genre
                 Exit Sub
             End If
 
+            Dim old As String = selectedRow.Cells("Genre").Value.ToString()
+            Dim neww As String = txtgenre.Text.Trim()
+
             Try
                 con.Open()
 
@@ -113,10 +116,15 @@ Public Class Genre
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `genre_tbl` SET `Genre`= @genre WHERE  `ID` = @id", con)
-                com.Parameters.AddWithValue("@genre", genree)
-                com.Parameters.AddWithValue("@id", ID)
+                Dim com As New MySqlCommand("UPDATE `genre_tbl` SET `Genre` = @new WHERE `Genre` = @old", con)
+                com.Parameters.AddWithValue("@new", neww)
+                com.Parameters.AddWithValue("@old", old)
                 com.ExecuteNonQuery()
+
+                Dim comsis As New MySqlCommand("UPDATE `book_tbl` SET `Genre` = @new WHERE `Genre` = @old", con)
+                comsis.Parameters.AddWithValue("@new", neww)
+                comsis.Parameters.AddWithValue("@old", old)
+                comsis.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then

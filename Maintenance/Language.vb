@@ -89,38 +89,43 @@ Public Class Language
         If DataGridView1.SelectedRows.Count > 0 Then
 
             Dim con As New MySqlConnection(connectionString)
-
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
+            Dim oldLang As String = selectedRow.Cells("Language").Value.ToString()
             Dim lang As String = txtlanguage.Text.Trim
 
             If String.IsNullOrWhiteSpace(lang) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
-
             Try
                 con.Open()
 
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `language_tbl` WHERE `Language` = @language", con)
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `language_tbl` WHERE `Language` = @language AND `ID` <> @id", con)
                 coms.Parameters.AddWithValue("@language", lang)
+                coms.Parameters.AddWithValue("@id", ID)
+
                 Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
 
                 If count > 0 Then
-                    MsgBox("This language is already exists.", vbExclamation, "Duplication not allowed.")
+                    MsgBox("This language already exists.", vbExclamation, "Duplication not allowed.")
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `language_tbl` SET `Language`= @language WHERE  `ID` = @id", con)
+                Dim com As New MySqlCommand("UPDATE `language_tbl` SET `Language` = @language WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@language", lang)
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
+                Dim comss As New MySqlCommand("UPDATE `book_tbl` SET `Language` = @newLanguage WHERE `Language` = @oldLanguage", con)
+                comss.Parameters.AddWithValue("@newLanguage", lang)
+                comss.Parameters.AddWithValue("@oldLanguage", oldLang)
+                comss.ExecuteNonQuery()
+
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then
                         Dim book = DirectCast(form, Book)
-
                         book.cblang()
                     End If
                 Next
@@ -128,10 +133,10 @@ Public Class Language
                 MsgBox("Updated successfully!", vbInformation)
                 Language_Load(sender, e)
                 txtlanguage.Clear()
+
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
-
         End If
 
     End Sub

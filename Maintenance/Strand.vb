@@ -99,13 +99,12 @@ Public Class Strand
         If DataGridView1.SelectedRows.Count > 0 Then
 
             Dim con As New MySqlConnection(connectionString)
-
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim ids As Integer = CInt(DataGridView1.CurrentRow.Cells("ID").Value)
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
+            Dim oldStrand As String = selectedRow.Cells("Strand").Value.ToString()
             Dim strandd As String = txtstrand.Text.Trim
             Dim des As String = txtdescription.Text.Trim
-
 
             If String.IsNullOrWhiteSpace(strandd) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -115,32 +114,42 @@ Public Class Strand
             Try
                 con.Open()
 
-
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE `Strand` = @strand OR `Description` = @description AND `ID` <> @id", con)
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE (`Strand` = @strand OR `Description` = @description) AND `ID` <> @id", con)
                 coms.Parameters.AddWithValue("@strand", strandd)
                 coms.Parameters.AddWithValue("@description", des)
-                coms.Parameters.AddWithValue("@id", ids)
+                coms.Parameters.AddWithValue("@id", ID)
+
                 Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
 
                 If count > 0 Then
-                    MsgBox("This strand is already exists.", vbExclamation, "Duplication not allowed.")
+                    MsgBox("This strand already exists.", vbExclamation, "Duplication not allowed.")
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `strand_tbl` SET `Strand`= @strand, `Description` = @description WHERE  `ID` = @id", con)
+                Dim com As New MySqlCommand("UPDATE `strand_tbl` SET `Strand`= @strand, `Description` = @description WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@strand", strandd)
                 com.Parameters.AddWithValue("@description", des)
-                com.Parameters.AddWithValue("@id", ids)
+                com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
+
+                Dim comsus As New MySqlCommand("UPDATE `section_tbl` SET `Strand` = @newStrand WHERE `Strand` = @oldStrand", con)
+                comsus.Parameters.AddWithValue("@newStrand", strandd)
+                comsus.Parameters.AddWithValue("@oldStrand", oldStrand)
+                comsus.ExecuteNonQuery()
+
+                Dim comsis As New MySqlCommand("UPDATE `borrower_tbl` SET `Strand` = @newStrand WHERE `Strand` = @oldStrand", con)
+                comsis.Parameters.AddWithValue("@newStrand", strandd)
+                comsis.Parameters.AddWithValue("@oldStrand", oldStrand)
+                comsis.ExecuteNonQuery()
+
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Borrower Then
                         Dim borrower = DirectCast(form, Borrower)
                         borrower.cbstrandd()
+                        borrower.refreshData()
                     End If
-                Next
 
-                For Each form In Application.OpenForms
                     If TypeOf form Is Section Then
                         Dim strnd = DirectCast(form, Section)
                         strnd.cbstrandsu()
@@ -154,7 +163,6 @@ Public Class Strand
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
-
         End If
 
     End Sub

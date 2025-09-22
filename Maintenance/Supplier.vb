@@ -95,56 +95,75 @@ Public Class Supplier
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-
-
             Dim con As New MySqlConnection(connectionString)
-
-            Dim supp = txtsupplier.Text.Trim
-            Dim address = txtaddress.Text.Trim
-            Dim contact = txtcontact.Text.Trim
-
             Dim selectedRow = DataGridView1.SelectedRows(0)
-            Dim ID As Integer = selectedRow.Cells("ID").Value
 
-            If String.IsNullOrWhiteSpace(supp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+            Dim oldSupp As String = selectedRow.Cells("SupplierName").Value.ToString()
+            Dim newSupp As String = txtsupplier.Text.Trim
+            Dim address As String = txtaddress.Text.Trim
+            Dim contact As String = txtcontact.Text.Trim
+
+            If String.IsNullOrWhiteSpace(newSupp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
 
             Try
-                con.Open
+                con.Open()
 
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier", con)
-                comsu.Parameters.AddWithValue("@supplier", supp)
-
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier AND `ID` <> @id", con)
+                comsu.Parameters.AddWithValue("@supplier", newSupp)
+                comsu.Parameters.AddWithValue("@id", ID)
                 Dim count = Convert.ToInt32(comsu.ExecuteScalar)
                 If count > 0 Then
                     MsgBox("Supplier name already exists.", vbExclamation, "Warning")
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `supplier_tbl` SET `SupplierName`= @supplier,`Address`= @address,`ContactNumber`= @contact  WHERE `ID` = @id", con)
-
-                com.Parameters.AddWithValue("@supplier", supp)
+                Dim com As New MySqlCommand("UPDATE `supplier_tbl` SET `SupplierName` = @supplier, `Address` = @address, `ContactNumber` = @contact WHERE `ID` = @id", con)
+                com.Parameters.AddWithValue("@supplier", newSupp)
                 com.Parameters.AddWithValue("@address", address)
                 com.Parameters.AddWithValue("@contact", contact)
                 com.Parameters.AddWithValue("@id", ID)
-                com.ExecuteNonQuery
+                com.ExecuteNonQuery()
+
+                Dim comss As New MySqlCommand("UPDATE `acquisition_tbl` SET `SupplierName` = @newSupplier WHERE `SupplierName` = @oldSupplier", con)
+                comss.Parameters.AddWithValue("@newSupplier", newSupp)
+                comss.Parameters.AddWithValue("@oldSupplier", oldSupp)
+                comss.ExecuteNonQuery()
+
+                Dim comsuss As New MySqlCommand("UPDATE `acession_tbl` SET `SupplierName` = @newSupplier WHERE `SupplierName` = @oldSupplier", con)
+                comsuss.Parameters.AddWithValue("@newSupplier", newSupp)
+                comsuss.Parameters.AddWithValue("@oldSupplier", oldSupp)
+                comsuss.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Acquisition Then
                         Dim acq = DirectCast(form, Acquisition)
-                        acq.cbsupplierr
+
+                        acq.cbsupplierr()
+                        acq.refreshData()
+                    End If
+                Next
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Accession Then
+                        Dim acs = DirectCast(form, Accession)
+                        acs.RefreshAccessionData()
                     End If
                 Next
 
                 MsgBox("Updated successfully", vbInformation)
                 Supplier_Load(sender, e)
-
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             Finally
-                clear
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
+                clear()
             End Try
         Else
             MsgBox("Please select a row before edit.", vbExclamation)

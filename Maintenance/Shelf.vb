@@ -63,18 +63,26 @@ Public Class Shelf
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then
-            Dim con As New MySqlConnection(connectionString)
 
+            Dim con As New MySqlConnection(connectionString)
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
+            Dim old As String = selectedRow.Cells("Shelf").Value.ToString()
             Dim shelf As String = txtshelf.Text.Trim
 
-
+            If String.IsNullOrWhiteSpace(shelf) Then
+                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
             Try
                 con.Open()
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `shelf_tbl` WHERE `Shelf` = @shelf", con)
+
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `shelf_tbl` WHERE `Shelf` = @shelf AND `ID` <> @id", con)
                 comsu.Parameters.AddWithValue("@shelf", shelf)
+                comsu.Parameters.AddWithValue("@id", ID)
+
                 Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
 
                 If count > 0 Then
@@ -82,10 +90,15 @@ Public Class Shelf
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `shelf_tbl` SET `Shelf`= @shelf WHERE  `ID` = @id", con)
+                Dim com As New MySqlCommand("UPDATE `shelf_tbl` SET `Shelf` = @shelf WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@shelf", shelf)
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
+
+                Dim comss As New MySqlCommand("UPDATE `acession_tbl` SET `Shelf` = @newShelf WHERE `Shelf` = @oldShelf", con)
+                comss.Parameters.AddWithValue("@newShelf", shelf)
+                comss.Parameters.AddWithValue("@oldShelf", old)
+                comss.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Accession Then
@@ -94,13 +107,14 @@ Public Class Shelf
                     End If
                 Next
 
-                MsgBox("Update successfully!!", vbExclamation)
+                MsgBox("Update successfully!!", vbInformation)
                 txtshelf.Clear()
                 Shelf_Load(sender, e)
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
         End If
+
     End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click

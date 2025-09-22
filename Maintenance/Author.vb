@@ -61,6 +61,7 @@ Public Class Author
             Exit Sub
         End If
 
+
         Try
             con.Open()
 
@@ -114,6 +115,8 @@ Public Class Author
                 Exit Sub
             End If
 
+            Dim oldawtor As String = selectedRow.Cells("AuthorName").Value.ToString()
+            Dim newawtor As String = txtauthor.Text.Trim()
 
             Try
                 con.Open()
@@ -127,10 +130,16 @@ Public Class Author
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `author_tbl` SET `AuthorName`= @author WHERE  `ID` = @id", con)
-                com.Parameters.AddWithValue("@author", author)
-                com.Parameters.AddWithValue("@id", ID)
+                Dim com As New MySqlCommand("UPDATE `author_tbl` SET `AuthorName` = @newawtor WHERE `AuthorName` = @oldawtor", con)
+                com.Parameters.AddWithValue("@newawtor", newawtor)
+                com.Parameters.AddWithValue("@oldawtor", oldawtor)
                 com.ExecuteNonQuery()
+
+
+                Dim comsus As New MySqlCommand("UPDATE `book_tbl` SET `Author` = @newawtor WHERE `Author` = @oldawtor", con)
+                comsus.Parameters.AddWithValue("@newawtor", newawtor)
+                comsus.Parameters.AddWithValue("@oldawtor", oldawtor)
+                comsus.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then

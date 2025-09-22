@@ -3,6 +3,12 @@
 Public Class Section
     Private Sub Section_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        refreshsecs()
+
+    End Sub
+
+    Public Sub refreshsecs()
+
         TopMost = True
 
         Dim con As New MySqlConnection(connectionString)
@@ -152,20 +158,32 @@ Public Class Section
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then
-
             Dim con As New MySqlConnection(connectionString)
             Dim selectedRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = selectedRow.Cells("ID").Value
 
-            Dim newDept = ""
-            Dim newGrade = ""
-            Dim newSecs = ""
-            Dim newStrand = ""
+
+            Dim oldDept As String = selectedRow.Cells("Department").Value.ToString()
+            Dim oldGrade As String = selectedRow.Cells("GradeLevel").Value.ToString()
+            Dim oldSecs As String = ""
+
+            If Not IsDBNull(selectedRow.Cells("Section").Value) Then
+                oldSecs = selectedRow.Cells("Section").Value.ToString()
+            End If
+            Dim oldStrand As String = ""
+            If Not IsDBNull(selectedRow.Cells("Strand").Value) Then
+                oldStrand = selectedRow.Cells("Strand").Value.ToString()
+            End If
+
+
+            Dim newDept As String = ""
+            Dim newGrade As String = ""
+            Dim newSecs As String = ""
+            Dim newStrand As String = ""
 
             If cbdepartment.SelectedIndex <> -1 Then
                 newDept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
             End If
-
             If cbgrade.SelectedIndex <> -1 Then
                 newGrade = cbgrade.GetItemText(cbgrade.SelectedItem)
             End If
@@ -188,37 +206,47 @@ Public Class Section
                 End If
             End If
 
-
             If duplication(newDept, newGrade, newSecs, newStrand, ID) Then
-                MsgBox("The updated entry already exists in the database. Please use an another Section or Strand name.", vbExclamation, "Duplication Error")
+                MsgBox("The updated entry already exists in the database. Please use another Section or Strand name.", vbExclamation, "Duplication Error")
                 Exit Sub
             End If
 
             Try
-                con.Open
-                Dim com As New MySqlCommand("UPDATE `section_tbl` SET `Department` = @dept, `GradeLevel` = @grade, `Section` = @section, `Strand` = @strand WHERE `ID` = @id", con)
-                com.Parameters.AddWithValue("@dept", newDept)
-                com.Parameters.AddWithValue("@grade", newGrade)
-                com.Parameters.AddWithValue("@section", If(newSecs = "", DBNull.Value, newSecs))
-                com.Parameters.AddWithValue("@strand", If(newStrand = "", DBNull.Value, newStrand))
+                con.Open()
+
+                Dim com As New MySqlCommand("UPDATE `section_tbl` SET `Department` = @newDept, `GradeLevel` = @newGrade, `Section` = @newSection, `Strand` = @newStrand WHERE `ID` = @id", con)
+                com.Parameters.AddWithValue("@newDept", newDept)
+                com.Parameters.AddWithValue("@newGrade", newGrade)
+                com.Parameters.AddWithValue("@newSection", If(newSecs = "", DBNull.Value, newSecs))
+                com.Parameters.AddWithValue("@newStrand", If(newStrand = "", DBNull.Value, newStrand))
                 com.Parameters.AddWithValue("@id", ID)
-                com.ExecuteNonQuery
+                com.ExecuteNonQuery()
+
+
+                Dim comsss As New MySqlCommand("UPDATE `borrower_tbl` SET `Section` = @newSection WHERE `Department` = @oldDept AND `Grade` = @oldGrade AND `Section` = @oldSection", con)
+                comsss.Parameters.AddWithValue("@newSection", newSecs)
+                comsss.Parameters.AddWithValue("@oldDept", oldDept)
+                comsss.Parameters.AddWithValue("@oldGrade", oldGrade)
+                comsss.Parameters.AddWithValue("@oldSection", oldSecs)
+                comsss.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Borrower Then
                         Dim borrower = DirectCast(form, Borrower)
-                        borrower.cbsecs
+                        borrower.cbsecs()
+                        borrower.refreshData()
                     End If
                 Next
 
+
                 MsgBox("Updated successfully!", vbInformation)
                 Section_Load(sender, e)
-
-                clearlahat
+                clearlahat()
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
         End If
+
     End Sub
 
 

@@ -79,6 +79,7 @@ Public Class Grade
                 If TypeOf form Is Borrower Then
                     Dim borrower = DirectCast(form, Borrower)
                     borrower.cbgradee()
+                    borrower.refreshData()
                 End If
             Next
 
@@ -87,6 +88,7 @@ Public Class Grade
                 If TypeOf form Is Section Then
                     Dim gradesucakes = DirectCast(form, Section)
                     gradesucakes.cbgradesu()
+                    gradesucakes.refreshsecs()
                 End If
             Next
 
@@ -106,10 +108,10 @@ Public Class Grade
         If DataGridView1.SelectedRows.Count > 0 Then
 
             Dim con As New MySqlConnection(connectionString)
-
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
+            Dim oldGrade As String = selectedRow.Cells("Grade").Value.ToString()
             Dim grd As String = txtgrade.Text.Trim
 
             If String.IsNullOrWhiteSpace(grd) Then
@@ -131,29 +133,39 @@ Public Class Grade
             Try
                 con.Open()
 
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `grade_tbl` WHERE `Grade` = @grade", con)
+                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `grade_tbl` WHERE `Grade` = @grade AND `ID` <> @id", con)
                 coms.Parameters.AddWithValue("@grade", grd)
+                coms.Parameters.AddWithValue("@id", ID)
+
                 Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
 
                 If count > 0 Then
-                    MsgBox("This grade is already exists.", vbExclamation, "Duplication not allowed.")
+                    MsgBox("This grade already exists.", vbExclamation, "Duplication not allowed.")
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `grade_tbl` SET `Grade`= @grade WHERE  `ID` = @id", con)
+                Dim com As New MySqlCommand("UPDATE `grade_tbl` SET `Grade`= @grade WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@grade", grd)
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
+
+                Dim comss As New MySqlCommand("UPDATE `section_tbl` SET `GradeLevel` = @newGrade WHERE `GradeLevel` = @oldGrade", con)
+                comss.Parameters.AddWithValue("@newGrade", grd)
+                comss.Parameters.AddWithValue("@oldGrade", oldGrade)
+                comss.ExecuteNonQuery()
+
+                Dim comsiss As New MySqlCommand("UPDATE `borrower_tbl` SET `GradeLevel` = @newGrade WHERE `GradeLevel` = @oldGrade", con)
+                comsiss.Parameters.AddWithValue("@newGrade", grd)
+                comsiss.Parameters.AddWithValue("@oldGrade", oldGrade)
+                comsiss.ExecuteNonQuery()
+
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Borrower Then
                         Dim borrower = DirectCast(form, Borrower)
                         borrower.cbgradee()
                     End If
-                Next
 
-
-                For Each form In Application.OpenForms
                     If TypeOf form Is Section Then
                         Dim gradesucakes = DirectCast(form, Section)
                         gradesucakes.cbgradesu()
@@ -166,7 +178,6 @@ Public Class Grade
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
-
         End If
 
     End Sub

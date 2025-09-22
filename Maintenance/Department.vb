@@ -100,9 +100,12 @@ Public Class Department
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then
+
             Dim con As New MySqlConnection(connectionString)
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+            Dim oldDept As String = selectedRow.Cells("Department").Value.ToString()
             Dim dept As String = txtdepartment.Text.Trim()
 
             If String.IsNullOrWhiteSpace(dept) Then
@@ -115,10 +118,10 @@ Public Class Department
                 Try
                     con.Open()
 
-                    Dim command As New MySqlCommand("SELECT COUNT(*) FROM `department_tbl` WHERE `Department` = @department", con)
+                    Dim command As New MySqlCommand("SELECT COUNT(*) FROM `department_tbl` WHERE `Department` = @department AND `ID` <> @id", con)
                     command.Parameters.AddWithValue("@department", dept)
+                    command.Parameters.AddWithValue("@id", ID)
                     Dim count As Integer = Convert.ToInt32(command.ExecuteScalar)
-
                     If count > 0 Then
                         MsgBox("This department already exists.", vbExclamation, "Duplication is not allowed.")
                         Exit Sub
@@ -129,14 +132,23 @@ Public Class Department
                     com.Parameters.AddWithValue("@id", ID)
                     com.ExecuteNonQuery()
 
+                    Dim comss As New MySqlCommand("UPDATE `section_tbl` SET `Department` = @newDept WHERE `Department` = @oldDept", con)
+                    comss.Parameters.AddWithValue("@newDept", dept)
+                    comss.Parameters.AddWithValue("@oldDept", oldDept)
+                    comss.ExecuteNonQuery()
+
+                    Dim comsuss As New MySqlCommand("UPDATE `borrower_tbl` SET `Department` = @newDept WHERE `Department` = @oldDept", con)
+                    comsuss.Parameters.AddWithValue("@newDept", dept)
+                    comsuss.Parameters.AddWithValue("@oldDept", oldDept)
+                    comsuss.ExecuteNonQuery()
+
+
                     For Each form In Application.OpenForms
                         If TypeOf form Is Borrower Then
                             Dim borrower = DirectCast(form, Borrower)
                             borrower.cbdepts()
                         End If
-                    Next
 
-                    For Each form In Application.OpenForms
                         If TypeOf form Is Section Then
                             Dim depsu = DirectCast(form, Section)
                             depsu.cbdeptss()
@@ -145,6 +157,7 @@ Public Class Department
 
                     MsgBox("Updated successfully!", vbInformation)
                     Department_Load(sender, e)
+
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
                 Finally
@@ -154,10 +167,11 @@ Public Class Department
                     End If
                 End Try
             Else
-                MessageBox.Show("Invalid input. Please enter ''Elementary' or Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                MessageBox.Show("Invalid input. Please enter 'Elementary' or 'Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 txtdepartment.Text = ""
             End If
         End If
+
     End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click

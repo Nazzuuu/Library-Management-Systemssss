@@ -4,10 +4,17 @@ Public Class Borrower
 
     Private Sub Borrower_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        refreshData()
+
+    End Sub
+
+    Public Sub refreshData()
+
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `borrower_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
+
         Try
             con.Open()
             adap.Fill(dt, "INFO")
@@ -16,11 +23,12 @@ Public Class Borrower
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
         Catch ex As Exception
             MessageBox.Show("Error loading data: " & ex.Message)
         Finally
-            con.Close()
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
 
         DataGridView1.ClearSelection()
@@ -30,8 +38,6 @@ Public Class Borrower
         cbsecs()
         cbdepts()
         cbstrandd()
-
-
 
         ClearFields()
         strandlocation()

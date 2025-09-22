@@ -24,6 +24,22 @@ Public Class Acquisition
 
     End Sub
 
+    Public Sub refreshData()
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT * FROM `acquisition_tbl`"
+        Dim adp As New MySqlDataAdapter(com, con)
+        Dim dt As New DataSet
+        Try
+            adp.Fill(dt, "INFO")
+            DataGridView1.DataSource = dt.Tables("INFO")
+
+            DataGridView1.ClearSelection()
+        Catch ex As Exception
+            MessageBox.Show("Error refreshing data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+        cbsupplierr()
+    End Sub
+
     Public Sub cbsupplierr()
 
         Dim con As New MySqlConnection(connectionString)

@@ -240,8 +240,11 @@ Public Class Book
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            Dim booktitle As String = txtbooktitle.Text.Trim()
-            If String.IsNullOrEmpty(booktitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
+
+            Dim oldBookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
+            Dim newBookTitle As String = txtbooktitle.Text.Trim()
+
+            If String.IsNullOrEmpty(newBookTitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
                 MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
                 Exit Sub
             End If
@@ -265,8 +268,6 @@ Public Class Book
             If rbgenerate.Checked Then
                 isbnValue = DBNull.Value
                 barcodeValue = lblrandom.Text.Trim()
-
-
                 Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `Barcode` = @barcode AND `ID` <> @id", con)
                 coms.Parameters.AddWithValue("@barcode", barcodeValue)
                 coms.Parameters.AddWithValue("@id", bookID)
@@ -293,12 +294,9 @@ Public Class Book
                     MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
                     Exit Sub
                 End If
-
-
                 Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `ISBN` = @isbn AND `ID` <> @id", con)
                 coms.Parameters.AddWithValue("@isbn", isbnValue)
                 coms.Parameters.AddWithValue("@id", bookID)
-
                 Try
                     con.Open()
                     Dim count As Integer = CInt(coms.ExecuteScalar())
@@ -314,7 +312,6 @@ Public Class Book
                         con.Close()
                     End If
                 End Try
-
                 barcodeValue = DBNull.Value
             End If
 
@@ -322,16 +319,15 @@ Public Class Book
                 MsgBox("You cannot select a future date.", vbExclamation)
                 Exit Sub
             End If
-
             Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
 
             Try
                 con.Open()
-                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished, `Status` = @status WHERE `ID` = @id", con)
 
+                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished, `Status` = @status WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcodeValue), DBNull.Value, barcodeValue))
                 com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbnValue), DBNull.Value, isbnValue))
-                com.Parameters.AddWithValue("@booktitle", booktitle)
+                com.Parameters.AddWithValue("@booktitle", newBookTitle)
                 com.Parameters.AddWithValue("@author", cbauthor.Text)
                 com.Parameters.AddWithValue("@genre", cbgenre.Text)
                 com.Parameters.AddWithValue("@category", cbcategory.Text)
@@ -342,9 +338,43 @@ Public Class Book
                 com.Parameters.AddWithValue("@status", bookStatus)
                 com.ExecuteNonQuery()
 
+
+                Dim comAcquisition As New MySqlCommand("UPDATE `acquisition_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
+                comAcquisition.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+                comAcquisition.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+                comAcquisition.ExecuteNonQuery()
+
+                Dim comAcession As New MySqlCommand("UPDATE `acession_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
+                comAcession.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+                comAcession.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+                comAcession.ExecuteNonQuery()
+
+                Dim comBorrowing As New MySqlCommand("UPDATE `borrowing_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
+                comBorrowing.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+                comBorrowing.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+                comBorrowing.ExecuteNonQuery()
+
+
+                For Each form In Application.OpenForms
+
+                    If TypeOf form Is Acquisition Then
+                        DirectCast(form, Acquisition).refreshData()
+                    End If
+
+                    If TypeOf form Is Accession Then
+                        DirectCast(form, Accession).RefreshAccessionData()
+                    End If
+
+                    If TypeOf form Is Borrowing Then
+                        DirectCast(form, Borrowing).refreshborrowingsu()
+                    End If
+
+                Next
+
                 MsgBox("Book updated successfully", vbInformation)
                 clear()
                 Book_Load(sender, e)
+
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             Finally
@@ -355,21 +385,40 @@ Public Class Book
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
         End If
+
     End Sub
 
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
+
         If DataGridView1.SelectedRows.Count > 0 Then
 
             Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this book?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 
             If dialogResult = DialogResult.Yes Then
+
                 Dim con As New MySqlConnection(connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+
                 Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+                Dim bookISBN As String = selectedRow.Cells("ISBN").Value.ToString()
+                Dim bookBarcode As String = selectedRow.Cells("Barcode").Value.ToString()
 
                 Try
                     con.Open()
+
+
+                    Dim acs As New MySqlCommand("SELECT COUNT(*) FROM `acession_tbl` WHERE `ISBN` = @ISBN OR `Barcode` = @Barcode", con)
+                    acs.Parameters.AddWithValue("@ISBN", bookISBN)
+                    acs.Parameters.AddWithValue("@Barcode", bookBarcode)
+
+                    Dim countss As Integer = CInt(acs.ExecuteScalar())
+
+                    If countss > 0 Then
+                        MsgBox("Cannot delete this book. It has existing accession records.", vbCritical, "Deletion Blocked")
+                        Exit Sub
+                    End If
 
 
                     Dim delete As New MySqlCommand("DELETE FROM `book_tbl` WHERE `ID` = @id", con)
@@ -377,17 +426,17 @@ Public Class Book
                     delete.ExecuteNonQuery()
 
                     MsgBox("Book deleted successfully.", vbInformation)
-                    clear()
 
+
+                    Book_Load(sender, e)
+                    clear()
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `book_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
@@ -397,14 +446,11 @@ Public Class Book
                         con.Close()
                     End If
                 End Try
-
-
-                Book_Load(sender, e)
-
             End If
         Else
             MsgBox("Please select a row to delete.", vbExclamation)
         End If
+
     End Sub
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click

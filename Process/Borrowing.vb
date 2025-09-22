@@ -3,6 +3,12 @@
 Public Class Borrowing
     Private Sub Borrowing_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        refreshborrowingsu()
+
+    End Sub
+
+    Public Sub refreshborrowingsu()
+
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `borrowing_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -18,7 +24,6 @@ Public Class Borrowing
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
     End Sub
-
     Private Sub Borrowing_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
         DataGridView1.ClearSelection()

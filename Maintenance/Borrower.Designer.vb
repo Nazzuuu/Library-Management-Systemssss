@@ -291,7 +291,7 @@ Partial Class Borrower
         Label6.AutoSize = True
         Label6.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(30, 111)
+        Label6.Location = New Point(30, 69)
         Label6.Name = "Label6"
         Label6.Size = New Size(79, 16)
         Label6.TabIndex = 39
@@ -347,7 +347,7 @@ Partial Class Borrower
         Label10.AutoSize = True
         Label10.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label10.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label10.Location = New Point(644, 113)
+        Label10.Location = New Point(643, 66)
         Label10.Name = "Label10"
         Label10.Size = New Size(116, 16)
         Label10.TabIndex = 72
@@ -367,7 +367,7 @@ Partial Class Borrower
         txtcontactnumber.Font = New Font("Segoe UI", 9F)
         txtcontactnumber.ForeColor = Color.Black
         txtcontactnumber.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtcontactnumber.Location = New Point(644, 132)
+        txtcontactnumber.Location = New Point(643, 85)
         txtcontactnumber.Name = "txtcontactnumber"
         txtcontactnumber.PlaceholderText = ""
         txtcontactnumber.SelectedText = ""
@@ -380,7 +380,7 @@ Partial Class Borrower
         Panel1.Controls.Add(rbteacher)
         Panel1.Controls.Add(Label9)
         Panel1.Controls.Add(rbstudent)
-        Panel1.Location = New Point(418, 54)
+        Panel1.Location = New Point(616, 154)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(275, 37)
         Panel1.TabIndex = 70
@@ -547,7 +547,7 @@ Partial Class Borrower
         lblborrowertype.AutoSize = True
         lblborrowertype.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblborrowertype.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblborrowertype.Location = New Point(306, 178)
+        lblborrowertype.Location = New Point(306, 135)
         lblborrowertype.Name = "lblborrowertype"
         lblborrowertype.Size = New Size(36, 16)
         lblborrowertype.TabIndex = 58
@@ -567,7 +567,7 @@ Partial Class Borrower
         txtlrn.Font = New Font("Segoe UI", 9F)
         txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlrn.Location = New Point(306, 197)
+        txtlrn.Location = New Point(306, 154)
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
         txtlrn.SelectedText = ""
@@ -580,7 +580,7 @@ Partial Class Borrower
         rbnone.AutoSize = True
         rbnone.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbnone.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbnone.Location = New Point(550, 139)
+        rbnone.Location = New Point(550, 95)
         rbnone.Name = "rbnone"
         rbnone.Size = New Size(51, 20)
         rbnone.TabIndex = 56
@@ -593,7 +593,7 @@ Partial Class Borrower
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(306, 113)
+        Label2.Location = New Point(306, 69)
         Label2.Name = "Label2"
         Label2.Size = New Size(92, 16)
         Label2.TabIndex = 55
@@ -613,7 +613,7 @@ Partial Class Borrower
         txtmname.Font = New Font("Segoe UI", 9F)
         txtmname.ForeColor = Color.Black
         txtmname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtmname.Location = New Point(306, 132)
+        txtmname.Location = New Point(306, 88)
         txtmname.Name = "txtmname"
         txtmname.PlaceholderText = ""
         txtmname.SelectedText = ""
@@ -626,7 +626,7 @@ Partial Class Borrower
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(30, 177)
+        Label1.Location = New Point(30, 135)
         Label1.Name = "Label1"
         Label1.Size = New Size(79, 16)
         Label1.TabIndex = 53
@@ -646,7 +646,7 @@ Partial Class Borrower
         txtlname.Font = New Font("Segoe UI", 9F)
         txtlname.ForeColor = Color.Black
         txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlname.Location = New Point(30, 196)
+        txtlname.Location = New Point(30, 154)
         txtlname.Name = "txtlname"
         txtlname.PlaceholderText = ""
         txtlname.SelectedText = ""
@@ -668,7 +668,7 @@ Partial Class Borrower
         txtfname.Font = New Font("Segoe UI", 9F)
         txtfname.ForeColor = Color.Black
         txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtfname.Location = New Point(30, 130)
+        txtfname.Location = New Point(30, 88)
         txtfname.Name = "txtfname"
         txtfname.PlaceholderText = ""
         txtfname.SelectedText = ""
@@ -689,7 +689,7 @@ Partial Class Borrower
         txtemployeeno.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemployeeno.Font = New Font("Segoe UI", 9F)
         txtemployeeno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemployeeno.Location = New Point(306, 197)
+        txtemployeeno.Location = New Point(306, 154)
         txtemployeeno.Name = "txtemployeeno"
         txtemployeeno.PlaceholderText = ""
         txtemployeeno.SelectedText = ""

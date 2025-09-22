@@ -102,44 +102,47 @@ Public Class Publisher
         If DataGridView1.SelectedRows.Count > 0 Then
 
             Dim con As New MySqlConnection(connectionString)
-
-            Dim pub As String = txtpublisher.Text.Trim
-            Dim address As String = txtaddress.Text.Trim
-            Dim contact As String = txtcontact.Text.Trim
-
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
+            Dim old As String = selectedRow.Cells("PublisherName").Value.ToString()
+            Dim pub As String = txtpublisher.Text.Trim
+
+            Dim address As String = txtaddress.Text.Trim
+            Dim contact As String = txtcontact.Text.Trim
             If String.IsNullOrWhiteSpace(pub) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
-
             Try
                 con.Open()
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher", con)
-                comsu.Parameters.AddWithValue("@publisher", pub)
 
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher AND `ID` <> @id", con)
+                comsu.Parameters.AddWithValue("@publisher", pub)
+                comsu.Parameters.AddWithValue("@id", ID)
                 Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
                 If count > 0 Then
                     MsgBox("Publisher name already exists.", vbExclamation, "Warning")
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `publisher_tbl` SET `PublisherName`= @publisher,`Address`= @address,`ContactNumber`= @contact  WHERE `ID` = @id", con)
-
+                Dim com As New MySqlCommand("UPDATE `publisher_tbl` SET `PublisherName` = @publisher, `Address` = @address, `ContactNumber` = @contact WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@publisher", pub)
                 com.Parameters.AddWithValue("@address", address)
                 com.Parameters.AddWithValue("@contact", contact)
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
-                For Each form In Application.OpenForms
+                Dim comsus As New MySqlCommand("UPDATE `book_tbl` SET `Publisher` = @newPublisher WHERE `Publisher` = @oldPublisher", con)
+                comsus.Parameters.AddWithValue("@newPublisher", pub)
+                comsus.Parameters.AddWithValue("@oldPublisher", old)
 
+                comsus.ExecuteNonQuery()
+                For Each form In Application.OpenForms
                     If TypeOf form Is Book Then
                         Dim book = DirectCast(form, Book)
                         book.cbpublisherr()
-
                     End If
                 Next
 
@@ -154,6 +157,7 @@ Public Class Publisher
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
         End If
+
     End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
