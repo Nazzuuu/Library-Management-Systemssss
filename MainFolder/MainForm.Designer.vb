@@ -505,7 +505,7 @@ Partial Class MainForm
         Label1.Anchor = AnchorStyles.Top
         Label1.AutoSize = True
         Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
-        Label1.Location = New Point(242, 14)
+        Label1.Location = New Point(260, 14)
         Label1.Name = "Label1"
         Label1.Size = New Size(471, 54)
         Label1.TabIndex = 0
