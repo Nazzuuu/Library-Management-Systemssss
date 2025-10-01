@@ -22,6 +22,7 @@ Partial Class ReserveCopies
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        components = New ComponentModel.Container()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
@@ -37,6 +38,7 @@ Partial Class ReserveCopies
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         PictureBox1 = New PictureBox()
         btnpush = New Guna.UI2.WinForms.Guna2Button()
+        Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         Guna2GradientPanel1.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -158,6 +160,11 @@ Partial Class ReserveCopies
         btnpush.TabIndex = 51
         btnpush.Text = "PUSH TO ACCESSION"
         ' 
+        ' Guna2Elipse1
+        ' 
+        Guna2Elipse1.BorderRadius = 9
+        Guna2Elipse1.TargetControl = DataGridView1
+        ' 
         ' ReserveCopies
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -185,4 +192,5 @@ Partial Class ReserveCopies
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents btnpush As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
 End Class
