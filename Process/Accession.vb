@@ -42,9 +42,7 @@ Public Class Accession
         txtbarcodes.Enabled = False
         txttransactionno.Enabled = False
         txtsuppliername.Enabled = False
-        rbavailable.Visible = False
-        rbavailable.Checked = True
-        Label4.Visible = False
+
     End Sub
 
     Public Sub shelfsu()
@@ -84,38 +82,45 @@ Public Class Accession
             End If
 
 
-            Dim kowm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo"
+            Dim kowm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND AccessionID IN (@AccessionIDs)" ' Binago para i-check ang AccessionID duplicates sa loob ng TransactionNo
             Dim gogo As New MySqlCommand(kowm, con)
             gogo.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
-            Dim count As Integer = CInt(gogo.ExecuteScalar())
-
-            If count > 0 Then
-                MessageBox.Show("This Transaction Number has already been used. Cannot add records with this number again.", "Duplicate Transaction", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-                clearlahat()
-                Return
-            End If
 
 
+            Dim statusValue As String = If(rbborrowable.Checked, "Available", "For In-Library Use Only")
             Dim accessionIDs As String() = txtaccessionid.Text.Split(","c)
 
 
             For Each accessionID As String In accessionIDs
-                Dim cleanedAccessionID As String = accessionID.Trim()
+                Dim acss As String = accessionID.Trim()
 
 
-                If Not String.IsNullOrWhiteSpace(cleanedAccessionID) Then
+                If Not String.IsNullOrWhiteSpace(acss) Then
+
+
+                    Dim ckacs As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE AccessionID = @AccessionID"
+                    Using comsx As New MySqlCommand(ckacs, con)
+                        comsx.Parameters.AddWithValue("@AccessionID", acss)
+                        If CInt(comsx.ExecuteScalar()) > 0 Then
+                            MessageBox.Show("Accession ID '" & acss & "' already exists. Please use a unique Accession ID.", "Duplicate Accession ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                            Continue For
+                        End If
+                    End Using
+
+
                     Dim com As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                    "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
+                                        "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
 
                     Using comsu As New MySqlCommand(com, con)
                         comsu.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
-                        comsu.Parameters.AddWithValue("@AccessionID", cleanedAccessionID)
+                        comsu.Parameters.AddWithValue("@AccessionID", acss)
                         comsu.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
                         comsu.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
                         comsu.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
                         comsu.Parameters.AddWithValue("@Shelf", cbshelf.Text)
                         comsu.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
-                        comsu.Parameters.AddWithValue("@Status", "Available")
+
+                        comsu.Parameters.AddWithValue("@Status", statusValue)
                         comsu.ExecuteNonQuery()
                     End Using
                 End If
@@ -137,13 +142,124 @@ Public Class Accession
 
     End Sub
 
+
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+
+        If DataGridView1.SelectedRows.Count = 0 Then
+            MessageBox.Show("Please select a record from the table to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+        Dim currentStatus As String = selectedRow.Cells("Status").Value.ToString().Trim()
+
+
+        Dim statsskie As New List(Of String) From {"Pending", "Lost", "Damage"}
+
+        If statsskie.Contains(currentStatus, StringComparer.OrdinalIgnoreCase) Then
+            MessageBox.Show($"Cannot edit this accession record. The current status is '{currentStatus}'.", "Editing Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+
+
+
+        If String.IsNullOrWhiteSpace(txttransactionno.Text) OrElse String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse cbshelf.SelectedIndex = -1 Then
+            MessageBox.Show("Please fill all required fields.", "Required Fields", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+        Dim acsss As String = selectedRow.Cells("AccessionID").Value.ToString().Trim()
+
+        Dim newAccessionID As String = txtaccessionid.Text.Trim()
+        Dim statusValue As String = If(rbborrowable.Checked, "Available", "For In-Library Use Only")
+
+        Try
+            con.Open()
+
+
+            If newAccessionID <> acsss Then
+                Dim checkAccSql As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE AccessionID = @AccessionID AND ID <> @ID"
+                Using checkCmd As New MySqlCommand(checkAccSql, con)
+                    checkCmd.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                    checkCmd.Parameters.AddWithValue("@ID", ID)
+                    If CInt(checkCmd.ExecuteScalar()) > 0 Then
+                        MessageBox.Show("Accession ID '" & newAccessionID & "' already exists for another record. Update aborted.", "Duplicate Accession ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                        Return
+                    End If
+                End Using
+            End If
+
+
+            Dim coms As String = "SELECT COUNT(*) FROM `borrowing_tbl` WHERE AccessionID = @accessionID"
+            Dim comsuu As New MySqlCommand(coms, con)
+            comsuu.Parameters.AddWithValue("@accessionID", acsss)
+            Dim isBorrowed As Integer = CInt(comsuu.ExecuteScalar())
+
+            If isBorrowed > 0 Then
+                MessageBox.Show("Cannot modify this accession record. It is currently being borrowed.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+
+            Dim updt As String = "UPDATE `acession_tbl` SET " &
+                                      "`TransactionNo` = @TransactionNo, " &
+                                      "`AccessionID` = @AccessionID, " &
+                                      "`ISBN` = @ISBN, " &
+                                      "`Barcode` = @Barcode, " &
+                                      "`BookTitle` = @BookTitle, " &
+                                      "`Shelf` = @Shelf, " &
+                                      "`SupplierName` = @SupplierName, " &
+                                      "`Status` = @Status " &
+                                      "WHERE `ID` = @ID"
+
+            Using updateCmd As New MySqlCommand(updt, con)
+                updateCmd.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
+                updateCmd.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                updateCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                updateCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                updateCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                updateCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                updateCmd.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
+                updateCmd.Parameters.AddWithValue("@Status", statusValue)
+                updateCmd.Parameters.AddWithValue("@ID", ID)
+
+                updateCmd.ExecuteNonQuery()
+            End Using
+
+            MessageBox.Show("Accession record updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+            Acession_Load(sender, e)
+            clearlahat()
+
+        Catch ex As Exception
+            MessageBox.Show("Error updating record: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+
 
     End Sub
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
-        If Datagridview1.SelectedRows.Count > 0 Then
+        If DataGridView1.SelectedRows.Count > 0 Then
+
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim statss As String = selectedRow.Cells("Status").Value.ToString().Trim()
+
+
+            Dim ristrik As New List(Of String) From {"Pending", "Lost", "Damage"}
+
+            If ristrik.Contains(statss, StringComparer.OrdinalIgnoreCase) Then
+                MessageBox.Show($"Cannot delete this accession record. The current status is '{statss}'.", "Deletion Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
 
 
             Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this accession record?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
@@ -151,7 +267,7 @@ Public Class Accession
             If dialogResult = DialogResult.Yes Then
 
                 Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow As DataGridViewRow = Datagridview1.SelectedRows(0)
+
 
 
                 Dim accessionID As String = selectedRow.Cells("AccessionID").Value.ToString().Trim()
@@ -196,6 +312,7 @@ Public Class Accession
         Else
             MessageBox.Show("Please select a row to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
         End If
+
     End Sub
 
     Private Sub btndeleteall_Click(sender As Object, e As EventArgs) Handles btndeleteall.Click
@@ -212,6 +329,17 @@ Public Class Accession
 
                 Try
                     con.Open()
+
+
+                    Dim comm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE `Status` IN ('Pending', 'Lost', 'Damage')"
+                    Dim comssu As New MySqlCommand(comm, con)
+                    Dim count As Integer = CInt(comssu.ExecuteScalar())
+
+                    If count > 0 Then
+                        MessageBox.Show("Cannot delete all accession records. There are currently " & count.ToString() & " record(s) with 'Pending', 'Lost', or 'Damage' status.", "Deletion Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+
 
 
                     Dim com As String = "SELECT COUNT(*) FROM `borrowing_tbl`"
@@ -248,6 +376,7 @@ Public Class Accession
                 End Try
             End If
         End If
+
     End Sub
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
@@ -266,7 +395,10 @@ Public Class Accession
         cbshelf.DataSource = Nothing
         shelfsu()
 
-        Datagridview1.ClearSelection()
+        DataGridView1.ClearSelection()
+
+        rbborrowable.Checked = False
+        rbforlibraryonly.Checked = False
 
     End Sub
 
@@ -282,15 +414,35 @@ Public Class Accession
             txtsuppliername.Text = row.Cells("SupplierName").Value.ToString
             txttransactionno.Text = row.Cells("TransactionNo").Value.ToString
 
-
             Dim shelfValue = row.Cells("Shelf").Value.ToString
             cbshelf.SelectedIndex = cbshelf.FindStringExact(shelfValue)
 
 
+            Dim statusValue As String = row.Cells("Status").Value.ToString
+
+            If statusValue.Equals("Available", StringComparison.OrdinalIgnoreCase) Then
+                rbborrowable.Checked = True
+            ElseIf statusValue.Equals("For In-Library Use Only", StringComparison.OrdinalIgnoreCase) Then
+                rbforlibraryonly.Checked = True
+            Else
+
+                rbborrowable.Checked = True
+            End If
 
         End If
 
     End Sub
 
+    Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
+
+
+
+        ReserveCopies.ShowDialog()
+
+    End Sub
+
+    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+
+    End Sub
 
 End Class
