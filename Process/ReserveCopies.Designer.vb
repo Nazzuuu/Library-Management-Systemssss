@@ -30,10 +30,13 @@ Partial Class ReserveCopies
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         DataGridView1 = New DataGridView()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         PictureBox1 = New PictureBox()
+        btnpush = New Guna.UI2.WinForms.Guna2Button()
         Guna2GradientPanel1.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -49,7 +52,7 @@ Partial Class ReserveCopies
         Guna2GradientPanel1.Location = New Point(42, 81)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        Guna2GradientPanel1.Size = New Size(1283, 300)
+        Guna2GradientPanel1.Size = New Size(1044, 300)
         Guna2GradientPanel1.TabIndex = 47
         ' 
         ' DataGridView1
@@ -98,7 +101,7 @@ Partial Class ReserveCopies
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        DataGridView1.Size = New Size(1234, 255)
+        DataGridView1.Size = New Size(985, 255)
         DataGridView1.TabIndex = 24
         ' 
         ' txtsearch
@@ -135,11 +138,32 @@ Partial Class ReserveCopies
         PictureBox1.TabIndex = 50
         PictureBox1.TabStop = False
         ' 
+        ' btnpush
+        ' 
+        btnpush.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnpush.BorderRadius = 9
+        btnpush.BorderThickness = 1
+        btnpush.CustomizableEdges = CustomizableEdges5
+        btnpush.DisabledState.BorderColor = Color.DarkGray
+        btnpush.DisabledState.CustomBorderColor = Color.DarkGray
+        btnpush.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btnpush.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btnpush.FillColor = Color.Empty
+        btnpush.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
+        btnpush.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnpush.Location = New Point(429, 401)
+        btnpush.Name = "btnpush"
+        btnpush.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        btnpush.Size = New Size(222, 27)
+        btnpush.TabIndex = 51
+        btnpush.Text = "PUSH TO ACCESSION"
+        ' 
         ' ReserveCopies
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1370, 454)
+        ClientSize = New Size(1120, 454)
+        Controls.Add(btnpush)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
         Controls.Add(Guna2GradientPanel1)
@@ -160,4 +184,5 @@ Partial Class ReserveCopies
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents btnpush As Guna.UI2.WinForms.Guna2Button
 End Class

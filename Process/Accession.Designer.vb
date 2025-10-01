@@ -78,6 +78,8 @@ Partial Class Accession
         Label2 = New Label()
         Label1 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        lblnote = New Label()
+        lblnotes = New Label()
         btnview = New Guna.UI2.WinForms.Guna2Button()
         CheckBox1 = New CheckBox()
         Panel1 = New Panel()
@@ -388,6 +390,8 @@ Partial Class Accession
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(lblnote)
+        Guna2GroupBox1.Controls.Add(lblnotes)
         Guna2GroupBox1.Controls.Add(btnview)
         Guna2GroupBox1.Controls.Add(CheckBox1)
         Guna2GroupBox1.Controls.Add(Panel1)
@@ -425,6 +429,30 @@ Partial Class Accession
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' lblnote
+        ' 
+        lblnote.AutoSize = True
+        lblnote.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblnote.ForeColor = Color.Red
+        lblnote.Location = New Point(348, 243)
+        lblnote.Name = "lblnote"
+        lblnote.Size = New Size(71, 16)
+        lblnote.TabIndex = 98
+        lblnote.Text = "messages"
+        lblnote.Visible = False
+        ' 
+        ' lblnotes
+        ' 
+        lblnotes.AutoSize = True
+        lblnotes.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblnotes.ForeColor = Color.Black
+        lblnotes.Location = New Point(348, 227)
+        lblnotes.Name = "lblnotes"
+        lblnotes.Size = New Size(42, 16)
+        lblnotes.TabIndex = 97
+        lblnotes.Text = "Note:"
+        lblnotes.Visible = False
+        ' 
         ' btnview
         ' 
         btnview.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -438,7 +466,7 @@ Partial Class Accession
         btnview.FillColor = Color.Empty
         btnview.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnview.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnview.Location = New Point(1052, 243)
+        btnview.Location = New Point(1075, 243)
         btnview.Name = "btnview"
         btnview.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         btnview.Size = New Size(133, 27)
@@ -451,7 +479,7 @@ Partial Class Accession
         CheckBox1.AutoSize = True
         CheckBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         CheckBox1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CheckBox1.Location = New Point(1031, 217)
+        CheckBox1.Location = New Point(1054, 217)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(170, 20)
         CheckBox1.TabIndex = 95
@@ -736,4 +764,6 @@ Partial Class Accession
     Friend WithEvents rbborrowable As RadioButton
     Friend WithEvents btnview As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents CheckBox1 As CheckBox
+    Friend WithEvents lblnote As Label
+    Friend WithEvents lblnotes As Label
 End Class

@@ -37,11 +37,6 @@ Public Class Book
         cblang()
         cbcategoryy()
 
-        ' ALISIN: Visibility ng Radio Buttons/Labels related sa Status (Kung mayroon, gawin mo ito sa designer/form load)
-        ' rbloanable.Visible = False
-        ' rbforlibraryonly.Visible = False
-        ' ...
-
     End Sub
 
     Public Sub cbauthorr()
@@ -581,4 +576,5 @@ Public Class Book
         End If
 
     End Sub
+
 End Class
