@@ -25,6 +25,8 @@ Public Class Borrowing
 
         clearlahat()
 
+        DateTimePicker1.Value = DateTime.Now
+
     End Sub
     Private Sub Borrowing_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
@@ -274,5 +276,9 @@ Public Class Borrowing
                 con.Close()
             End If
         End Try
+    End Sub
+
+    Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
+        txtduedate.Text = DateTimePicker1.Value.AddDays(7).ToString("MMMM-dd-yyyy")
     End Sub
 End Class

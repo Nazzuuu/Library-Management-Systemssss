@@ -37,6 +37,7 @@ Public Class Book
         cblang()
         cbcategoryy()
 
+        DateTimePicker1.Value = DateTime.Now
     End Sub
 
     Public Sub cbauthorr()

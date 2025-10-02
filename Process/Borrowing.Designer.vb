@@ -25,6 +25,8 @@ Partial Class Borrowing
         components = New ComponentModel.Container()
         Dim CustomizableEdges33 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -59,10 +61,10 @@ Partial Class Borrowing
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges32 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_borrowing = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        txtshelf = New Guna.UI2.WinForms.Guna2TextBox()
+        Label11 = New Label()
         Panel1 = New Panel()
         rbteacher = New RadioButton()
         Label10 = New Label()
@@ -94,8 +96,6 @@ Partial Class Borrowing
         Label6 = New Label()
         txtbarcode = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        txtshelf = New Guna.UI2.WinForms.Guna2TextBox()
-        Label11 = New Label()
         panel_borrowing.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         Panel1.SuspendLayout()
@@ -157,6 +157,39 @@ Partial Class Borrowing
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' txtshelf
+        ' 
+        txtshelf.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtshelf.BorderRadius = 12
+        txtshelf.CustomizableEdges = CustomizableEdges1
+        txtshelf.DefaultText = ""
+        txtshelf.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtshelf.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtshelf.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtshelf.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtshelf.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtshelf.Font = New Font("Segoe UI", 9F)
+        txtshelf.ForeColor = Color.Black
+        txtshelf.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtshelf.Location = New Point(1119, 168)
+        txtshelf.Name = "txtshelf"
+        txtshelf.PlaceholderText = ""
+        txtshelf.SelectedText = ""
+        txtshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtshelf.Size = New Size(185, 36)
+        txtshelf.TabIndex = 98
+        ' 
+        ' Label11
+        ' 
+        Label11.AutoSize = True
+        Label11.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label11.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label11.Location = New Point(1126, 149)
+        Label11.Name = "Label11"
+        Label11.Size = New Size(79, 16)
+        Label11.TabIndex = 97
+        Label11.Text = "Book Shelf:"
         ' 
         ' Panel1
         ' 
@@ -681,39 +714,6 @@ Partial Class Borrowing
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
-        ' 
-        ' txtshelf
-        ' 
-        txtshelf.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtshelf.BorderRadius = 12
-        txtshelf.CustomizableEdges = CustomizableEdges1
-        txtshelf.DefaultText = ""
-        txtshelf.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
-        txtshelf.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
-        txtshelf.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtshelf.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtshelf.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtshelf.Font = New Font("Segoe UI", 9F)
-        txtshelf.ForeColor = Color.Black
-        txtshelf.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtshelf.Location = New Point(1119, 168)
-        txtshelf.Name = "txtshelf"
-        txtshelf.PlaceholderText = ""
-        txtshelf.SelectedText = ""
-        txtshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        txtshelf.Size = New Size(185, 36)
-        txtshelf.TabIndex = 98
-        ' 
-        ' Label11
-        ' 
-        Label11.AutoSize = True
-        Label11.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label11.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label11.Location = New Point(1126, 149)
-        Label11.Name = "Label11"
-        Label11.Size = New Size(79, 16)
-        Label11.TabIndex = 97
-        Label11.Text = "Book Shelf:"
         ' 
         ' Borrowing
         ' 
