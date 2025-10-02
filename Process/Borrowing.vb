@@ -469,4 +469,54 @@ Public Class Borrowing
 
     End Sub
 
+    Private Sub txtemployee_KeyDown(sender As Object, e As KeyEventArgs) Handles txtemployee.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtemployee_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtemployee.KeyPress
+
+
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtlrn_KeyDown(sender As Object, e As KeyEventArgs) Handles txtlrn.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtlrn_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtlrn.KeyPress
+
+
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtaccessionid_KeyDown(sender As Object, e As KeyEventArgs) Handles txtaccessionid.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtaccessionid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtaccessionid.KeyPress
+
+
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
 End Class
