@@ -86,7 +86,7 @@ Public Class Accession
         CheckBox1.Checked = False
 
 
-        btnview.Visible = False
+        'btnview.Visible = False
 
     End Sub
 
@@ -140,9 +140,17 @@ Public Class Accession
             lblnotes.Visible = True
             lblnote.Visible = True
 
-            lblnote.Text = "Please hold the CTRL key and select multiple rows. Press ENTER to save."
+            lblnote.Text = "Please hold the 'CTRL' key and select multiple rows. Press 'ENTER' to save."
 
-            btnview.Visible = False
+            btnview.Visible = True
+
+            rbborrowable.Enabled = False
+            rbforlibraryonly.Enabled = False
+            cbshelf.Enabled = False
+
+
+            clearna()
+
 
         Else
 
@@ -159,7 +167,28 @@ Public Class Accession
 
             btnview.Visible = False
 
+            rbborrowable.Enabled = True
+            rbforlibraryonly.Enabled = True
+            cbshelf.Enabled = True
+
+
         End If
+    End Sub
+
+    Public Sub clearna()
+
+        txtbarcodes.Text = ""
+        txtisbn.Text = ""
+        txtbooktitle.Text = ""
+        txtaccessionid.Text = ""
+        txtsuppliername.Text = ""
+        txttransactionno.Text = ""
+
+        rbborrowable.Checked = False
+        rbforlibraryonly.Checked = False
+        cbshelf.DataSource = Nothing
+        shelfsu()
+
     End Sub
 
     Private Sub DataGridView1_KeyDown(sender As Object, e As KeyEventArgs) Handles DataGridView1.KeyDown
@@ -177,7 +206,7 @@ Public Class Accession
             End If
 
             If selectedRowsCount = availableRowCount Then
-                MessageBox.Show("Cannot reserve all available copies. Please select a subset of the available records.", "Action Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                MessageBox.Show("Cannot reserve all available copies", "Action Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return
             End If
 
@@ -185,6 +214,7 @@ Public Class Accession
             Dim dialogResult As DialogResult = MessageBox.Show($"Are you sure you want to reserve the {selectedRowsCount} selected copies?", "Confirm Reserve", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
             If dialogResult = DialogResult.Yes Then
+
                 SaveReserveCopies()
 
                 btnview.Visible = True
@@ -323,7 +353,28 @@ Public Class Accession
                 Return
             End If
 
-            Dim statusValue As String = If(rbborrowable.Checked, "Available", "For In-Library Use Only")
+            Dim kowm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo"
+            Dim gogo As New MySqlCommand(kowm, con)
+            gogo.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
+            Dim count As Integer = CInt(gogo.ExecuteScalar())
+
+            If count > 0 Then
+                MessageBox.Show("This Transaction Number has already been used. Cannot add records with this number again.", "Duplicate Transaction", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                clearlahat()
+                Return
+            End If
+
+
+            Dim statusValue As String = ""
+            If rbborrowable.Checked Then
+                statusValue = "Available"
+            ElseIf rbforlibraryonly.Checked Then
+                statusValue = "For In-Library Use Only"
+            Else
+                MsgBox("Please select a Book Status.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+
             Dim accessionIDs As String() = txtaccessionid.Text.Split(","c)
 
 
@@ -480,81 +531,6 @@ Public Class Accession
 
     End Sub
 
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
-
-        If CheckBox1.Checked Then
-            MessageBox.Show("Please uncheck 'Select Reserve Copies' to delete records.", "Action Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Return
-        End If
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim statss As String = selectedRow.Cells("Status").Value.ToString().Trim()
-
-
-            Dim ristrik As New List(Of String) From {"Pending", "Lost", "Damage"}
-
-            If ristrik.Contains(statss, StringComparer.OrdinalIgnoreCase) Then
-                MessageBox.Show($"Cannot delete this accession record. The current status is '{statss}'.", "Deletion Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                Return
-            End If
-
-
-
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this accession record?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-
-            If dialogResult = DialogResult.Yes Then
-
-                Dim con As New MySqlConnection(connectionString)
-
-
-
-                Dim accessionID As String = selectedRow.Cells("AccessionID").Value.ToString().Trim()
-                Dim transactionNo As String = selectedRow.Cells("TransactionNo").Value.ToString().Trim()
-
-
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-
-                Try
-                    con.Open()
-
-                    Dim coms As String = "SELECT COUNT(*) FROM `borrowing_tbl` WHERE AccessionID = @accessionID"
-                    Dim comsuu As New MySqlCommand(coms, con)
-                    comsuu.Parameters.AddWithValue("@accessionID", accessionID)
-                    Dim isBorrowed As Integer = CInt(comsuu.ExecuteScalar())
-
-                    If isBorrowed > 0 Then
-                        MessageBox.Show("Cannot delete this accession record. It is currently being borrowed.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        Return
-                    End If
-
-
-                    Dim koms As String = "DELETE FROM `acession_tbl` WHERE `ID` = @id"
-                    Dim komsi As New MySqlCommand(koms, con)
-                    komsi.Parameters.AddWithValue("@id", ID)
-                    komsi.ExecuteNonQuery()
-
-                    MsgBox("Accession record deleted successfully.", vbInformation)
-
-
-                    Acession_Load(sender, e)
-                    clearlahat()
-
-                Catch ex As Exception
-                    MsgBox("Error deleting record: " & ex.Message, vbCritical)
-                Finally
-                    If con.State = ConnectionState.Open Then
-                        con.Close()
-                    End If
-                End Try
-            End If
-        Else
-            MessageBox.Show("Please select a row to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        End If
-
-    End Sub
-
     Private Sub btndeleteall_Click(sender As Object, e As EventArgs) Handles btndeleteall.Click
 
         If CheckBox1.Checked Then
@@ -665,6 +641,13 @@ Public Class Accession
     End Sub
 
     Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is ReserveCopies Then
+                Dim risirb = DirectCast(form, ReserveCopies)
+                risirb.reserveload()
+            End If
+        Next
 
         ReserveCopies.ShowDialog()
 

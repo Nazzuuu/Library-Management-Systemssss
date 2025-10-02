@@ -333,6 +333,10 @@ Public Class Book
                 comBorrowing.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
                 comBorrowing.ExecuteNonQuery()
 
+                Dim comReserve As New MySqlCommand("UPDATE `reservecopiess_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
+                comReserve.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+                comReserve.Parameters.AddWithValue("oldBookTitle", oldBookTitle)
+                comReserve.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
 
@@ -344,9 +348,15 @@ Public Class Book
                         DirectCast(form, Accession).RefreshAccessionData()
                     End If
 
+                    If TypeOf form Is ReserveCopies Then
+                        DirectCast(form, ReserveCopies).reserveload()
+                    End If
+
                     If TypeOf form Is Borrowing Then
                         DirectCast(form, Borrowing).refreshborrowingsu()
                     End If
+
+
 
                 Next
 

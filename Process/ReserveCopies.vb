@@ -37,12 +37,21 @@ Public Class ReserveCopies
                 DataGridView1.Columns("ID").Visible = False
             End If
 
+            DataGridView1.Columns("Shelf").Visible = False
+
+
         Catch ex As Exception
             MessageBox.Show("Error loading reserved copies: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
         DataGridView1.ClearSelection()
+        DataGridView1.Refresh()
 
+    End Sub
+
+
+    Private Sub Accession_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        DataGridView1.ClearSelection()
     End Sub
 
     Private Sub ReserveCopies_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
@@ -109,7 +118,7 @@ Public Class ReserveCopies
 
                 MessageBox.Show($"Accession ID {accID} has been successfully pushed back to the accession form.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 reserveload()
-                Me.Close()
+
 
                 If Accession IsNot Nothing Then
                     Accession.RefreshAccessionData()
