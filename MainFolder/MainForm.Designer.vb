@@ -25,30 +25,28 @@ Partial Class MainForm
         components = New ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges24 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges23 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         pnl_maintenance = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_maintenance = New Panel()
         MenuStrip1 = New MenuStrip()
@@ -91,6 +89,7 @@ Partial Class MainForm
         BorrowerReportsToolStripMenuItem1 = New ToolStripMenuItem()
         BookReportsToolStripMenuItem1 = New ToolStripMenuItem()
         Audit_Trail = New ToolStripMenuItem()
+        EditInfoToolStripMenuItem = New ToolStripMenuItem()
         logout = New ToolStripMenuItem()
         Panel1 = New Panel()
         Panel_Menuscrip = New Panel()
@@ -107,7 +106,6 @@ Partial Class MainForm
         Panel_User = New Panel()
         lbl_currentuser = New Label()
         Label2 = New Label()
-        btninfo = New Guna.UI2.WinForms.Guna2Button()
         dshboard = New Guna.UI2.WinForms.Guna2GroupBox()
         tbl_paneldash = New TableLayoutPanel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
@@ -420,7 +418,7 @@ Partial Class MainForm
         ' 
         ' SettingsStripMenuItem
         ' 
-        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, ReportsToolStripMenuItem1, Audit_Trail, logout})
+        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, ReportsToolStripMenuItem1, Audit_Trail, EditInfoToolStripMenuItem, logout})
         SettingsStripMenuItem.ForeColor = Color.White
         SettingsStripMenuItem.Name = "SettingsStripMenuItem"
         SettingsStripMenuItem.Size = New Size(105, 22)
@@ -430,7 +428,7 @@ Partial Class MainForm
         ' 
         PenaltyToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         PenaltyToolStripMenuItem.Name = "PenaltyToolStripMenuItem"
-        PenaltyToolStripMenuItem.Size = New Size(177, 22)
+        PenaltyToolStripMenuItem.Size = New Size(180, 22)
         PenaltyToolStripMenuItem.Text = "⚠️ Penalty"
         ' 
         ' ReportsToolStripMenuItem1
@@ -438,7 +436,7 @@ Partial Class MainForm
         ReportsToolStripMenuItem1.DropDownItems.AddRange(New ToolStripItem() {BorrowerReportsToolStripMenuItem1, BookReportsToolStripMenuItem1})
         ReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReportsToolStripMenuItem1.Name = "ReportsToolStripMenuItem1"
-        ReportsToolStripMenuItem1.Size = New Size(177, 22)
+        ReportsToolStripMenuItem1.Size = New Size(180, 22)
         ReportsToolStripMenuItem1.Text = "📑 Reports"
         ' 
         ' BorrowerReportsToolStripMenuItem1
@@ -459,14 +457,21 @@ Partial Class MainForm
         ' 
         Audit_Trail.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Audit_Trail.Name = "Audit_Trail"
-        Audit_Trail.Size = New Size(177, 22)
+        Audit_Trail.Size = New Size(180, 22)
         Audit_Trail.Text = "📜 Audit Trail"
+        ' 
+        ' EditInfoToolStripMenuItem
+        ' 
+        EditInfoToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        EditInfoToolStripMenuItem.Name = "EditInfoToolStripMenuItem"
+        EditInfoToolStripMenuItem.Size = New Size(180, 22)
+        EditInfoToolStripMenuItem.Text = "✎ Edit Info"
         ' 
         ' logout
         ' 
         logout.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         logout.Name = "logout"
-        logout.Size = New Size(177, 22)
+        logout.Size = New Size(180, 22)
         logout.Text = "↩️ Logout"
         ' 
         ' Panel1
@@ -540,7 +545,6 @@ Partial Class MainForm
         ' 
         Panel_dash.Controls.Add(Panel_welcome)
         Panel_dash.Controls.Add(Panel_User)
-        Panel_dash.Controls.Add(btninfo)
         Panel_dash.Controls.Add(dshboard)
         Panel_dash.Dock = DockStyle.Fill
         Panel_dash.Location = New Point(0, 124)
@@ -642,27 +646,6 @@ Partial Class MainForm
         Label2.TabIndex = 0
         Label2.Text = "Current User:"
         ' 
-        ' btninfo
-        ' 
-        btninfo.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btninfo.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btninfo.BorderRadius = 9
-        btninfo.BorderThickness = 2
-        btninfo.CustomizableEdges = CustomizableEdges2
-        btninfo.DisabledState.BorderColor = Color.DarkGray
-        btninfo.DisabledState.CustomBorderColor = Color.DarkGray
-        btninfo.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btninfo.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btninfo.FillColor = Color.Transparent
-        btninfo.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btninfo.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btninfo.Location = New Point(237, 9)
-        btninfo.Name = "btninfo"
-        btninfo.ShadowDecoration.CustomizableEdges = CustomizableEdges3
-        btninfo.Size = New Size(147, 26)
-        btninfo.TabIndex = 20
-        btninfo.Text = "Edit Info"
-        ' 
         ' dshboard
         ' 
         dshboard.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
@@ -672,13 +655,13 @@ Partial Class MainForm
         dshboard.BorderThickness = 2
         dshboard.Controls.Add(tbl_paneldash)
         dshboard.CustomBorderColor = Color.Transparent
-        dshboard.CustomizableEdges = CustomizableEdges24
+        dshboard.CustomizableEdges = CustomizableEdges22
         dshboard.FillColor = Color.Transparent
         dshboard.Font = New Font("Tahoma", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         dshboard.ForeColor = Color.PaleVioletRed
         dshboard.Location = New Point(35, 42)
         dshboard.Name = "dshboard"
-        dshboard.ShadowDecoration.CustomizableEdges = CustomizableEdges25
+        dshboard.ShadowDecoration.CustomizableEdges = CustomizableEdges23
         dshboard.Size = New Size(930, 310)
         dshboard.TabIndex = 18
         dshboard.Text = "Dashboard"
@@ -712,7 +695,7 @@ Partial Class MainForm
         Guna2GroupBox1.Controls.Add(btn_lost)
         Guna2GroupBox1.Controls.Add(lbl_lost)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges6
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges4
         Guna2GroupBox1.Dock = DockStyle.Fill
         Guna2GroupBox1.FillColor = Color.Transparent
         Guna2GroupBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -720,7 +703,7 @@ Partial Class MainForm
         Guna2GroupBox1.Location = New Point(298, 138)
         Guna2GroupBox1.Margin = New Padding(15)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges7
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges5
         Guna2GroupBox1.Size = New Size(253, 93)
         Guna2GroupBox1.TabIndex = 65
         Guna2GroupBox1.Text = "Lost Books"
@@ -731,7 +714,7 @@ Partial Class MainForm
         btn_lost.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_lost.BorderRadius = 9
         btn_lost.BorderThickness = 2
-        btn_lost.CustomizableEdges = CustomizableEdges4
+        btn_lost.CustomizableEdges = CustomizableEdges2
         btn_lost.DisabledState.BorderColor = Color.DarkGray
         btn_lost.DisabledState.CustomBorderColor = Color.DarkGray
         btn_lost.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -741,7 +724,7 @@ Partial Class MainForm
         btn_lost.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_lost.Location = New Point(157, 7)
         btn_lost.Name = "btn_lost"
-        btn_lost.ShadowDecoration.CustomizableEdges = CustomizableEdges5
+        btn_lost.ShadowDecoration.CustomizableEdges = CustomizableEdges3
         btn_lost.Size = New Size(89, 26)
         btn_lost.TabIndex = 20
         btn_lost.Text = "View"
@@ -766,7 +749,7 @@ Partial Class MainForm
         dsh_borrow.Controls.Add(btn_borrowed)
         dsh_borrow.Controls.Add(lbl_borrow)
         dsh_borrow.CustomBorderColor = Color.Transparent
-        dsh_borrow.CustomizableEdges = CustomizableEdges10
+        dsh_borrow.CustomizableEdges = CustomizableEdges8
         dsh_borrow.Dock = DockStyle.Fill
         dsh_borrow.FillColor = Color.Transparent
         dsh_borrow.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -774,7 +757,7 @@ Partial Class MainForm
         dsh_borrow.Location = New Point(15, 15)
         dsh_borrow.Margin = New Padding(15)
         dsh_borrow.Name = "dsh_borrow"
-        dsh_borrow.ShadowDecoration.CustomizableEdges = CustomizableEdges11
+        dsh_borrow.ShadowDecoration.CustomizableEdges = CustomizableEdges9
         dsh_borrow.Size = New Size(253, 93)
         dsh_borrow.TabIndex = 60
         dsh_borrow.Text = "Borrowed Books"
@@ -785,7 +768,7 @@ Partial Class MainForm
         btn_borrowed.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_borrowed.BorderRadius = 9
         btn_borrowed.BorderThickness = 2
-        btn_borrowed.CustomizableEdges = CustomizableEdges8
+        btn_borrowed.CustomizableEdges = CustomizableEdges6
         btn_borrowed.DisabledState.BorderColor = Color.DarkGray
         btn_borrowed.DisabledState.CustomBorderColor = Color.DarkGray
         btn_borrowed.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -795,7 +778,7 @@ Partial Class MainForm
         btn_borrowed.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_borrowed.Location = New Point(156, 7)
         btn_borrowed.Name = "btn_borrowed"
-        btn_borrowed.ShadowDecoration.CustomizableEdges = CustomizableEdges9
+        btn_borrowed.ShadowDecoration.CustomizableEdges = CustomizableEdges7
         btn_borrowed.Size = New Size(89, 26)
         btn_borrowed.TabIndex = 19
         btn_borrowed.Text = "View"
@@ -821,7 +804,7 @@ Partial Class MainForm
         dsh_overdue.Controls.Add(btn_overdue)
         dsh_overdue.Controls.Add(lbl_overdue)
         dsh_overdue.CustomBorderColor = Color.Transparent
-        dsh_overdue.CustomizableEdges = CustomizableEdges14
+        dsh_overdue.CustomizableEdges = CustomizableEdges12
         dsh_overdue.Dock = DockStyle.Fill
         dsh_overdue.FillColor = Color.Transparent
         dsh_overdue.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -829,7 +812,7 @@ Partial Class MainForm
         dsh_overdue.Location = New Point(581, 15)
         dsh_overdue.Margin = New Padding(15)
         dsh_overdue.Name = "dsh_overdue"
-        dsh_overdue.ShadowDecoration.CustomizableEdges = CustomizableEdges15
+        dsh_overdue.ShadowDecoration.CustomizableEdges = CustomizableEdges13
         dsh_overdue.Size = New Size(255, 93)
         dsh_overdue.TabIndex = 62
         dsh_overdue.Text = "Overdue Books"
@@ -840,7 +823,7 @@ Partial Class MainForm
         btn_overdue.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_overdue.BorderRadius = 9
         btn_overdue.BorderThickness = 2
-        btn_overdue.CustomizableEdges = CustomizableEdges12
+        btn_overdue.CustomizableEdges = CustomizableEdges10
         btn_overdue.DisabledState.BorderColor = Color.DarkGray
         btn_overdue.DisabledState.CustomBorderColor = Color.DarkGray
         btn_overdue.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -850,7 +833,7 @@ Partial Class MainForm
         btn_overdue.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_overdue.Location = New Point(159, 8)
         btn_overdue.Name = "btn_overdue"
-        btn_overdue.ShadowDecoration.CustomizableEdges = CustomizableEdges13
+        btn_overdue.ShadowDecoration.CustomizableEdges = CustomizableEdges11
         btn_overdue.Size = New Size(89, 26)
         btn_overdue.TabIndex = 21
         btn_overdue.Text = "View"
@@ -875,7 +858,7 @@ Partial Class MainForm
         dsh_replace.Controls.Add(btn_dmg)
         dsh_replace.Controls.Add(lbl_damage)
         dsh_replace.CustomBorderColor = Color.Transparent
-        dsh_replace.CustomizableEdges = CustomizableEdges18
+        dsh_replace.CustomizableEdges = CustomizableEdges16
         dsh_replace.Dock = DockStyle.Fill
         dsh_replace.FillColor = Color.Transparent
         dsh_replace.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -883,7 +866,7 @@ Partial Class MainForm
         dsh_replace.Location = New Point(15, 138)
         dsh_replace.Margin = New Padding(15)
         dsh_replace.Name = "dsh_replace"
-        dsh_replace.ShadowDecoration.CustomizableEdges = CustomizableEdges19
+        dsh_replace.ShadowDecoration.CustomizableEdges = CustomizableEdges17
         dsh_replace.Size = New Size(253, 93)
         dsh_replace.TabIndex = 64
         dsh_replace.Text = "Damage Books"
@@ -894,7 +877,7 @@ Partial Class MainForm
         btn_dmg.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_dmg.BorderRadius = 9
         btn_dmg.BorderThickness = 2
-        btn_dmg.CustomizableEdges = CustomizableEdges16
+        btn_dmg.CustomizableEdges = CustomizableEdges14
         btn_dmg.DisabledState.BorderColor = Color.DarkGray
         btn_dmg.DisabledState.CustomBorderColor = Color.DarkGray
         btn_dmg.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -904,7 +887,7 @@ Partial Class MainForm
         btn_dmg.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_dmg.Location = New Point(156, 7)
         btn_dmg.Name = "btn_dmg"
-        btn_dmg.ShadowDecoration.CustomizableEdges = CustomizableEdges17
+        btn_dmg.ShadowDecoration.CustomizableEdges = CustomizableEdges15
         btn_dmg.Size = New Size(89, 26)
         btn_dmg.TabIndex = 20
         btn_dmg.Text = "View"
@@ -929,7 +912,7 @@ Partial Class MainForm
         dsh_return.Controls.Add(btn_rtn)
         dsh_return.Controls.Add(lbl_return)
         dsh_return.CustomBorderColor = Color.Transparent
-        dsh_return.CustomizableEdges = CustomizableEdges22
+        dsh_return.CustomizableEdges = CustomizableEdges20
         dsh_return.Dock = DockStyle.Fill
         dsh_return.FillColor = Color.Transparent
         dsh_return.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
@@ -937,7 +920,7 @@ Partial Class MainForm
         dsh_return.Location = New Point(298, 15)
         dsh_return.Margin = New Padding(15)
         dsh_return.Name = "dsh_return"
-        dsh_return.ShadowDecoration.CustomizableEdges = CustomizableEdges23
+        dsh_return.ShadowDecoration.CustomizableEdges = CustomizableEdges21
         dsh_return.Size = New Size(253, 93)
         dsh_return.TabIndex = 63
         dsh_return.Text = "Returned Books"
@@ -948,7 +931,7 @@ Partial Class MainForm
         btn_rtn.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_rtn.BorderRadius = 9
         btn_rtn.BorderThickness = 2
-        btn_rtn.CustomizableEdges = CustomizableEdges20
+        btn_rtn.CustomizableEdges = CustomizableEdges18
         btn_rtn.DisabledState.BorderColor = Color.DarkGray
         btn_rtn.DisabledState.CustomBorderColor = Color.DarkGray
         btn_rtn.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -958,7 +941,7 @@ Partial Class MainForm
         btn_rtn.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btn_rtn.Location = New Point(157, 8)
         btn_rtn.Name = "btn_rtn"
-        btn_rtn.ShadowDecoration.CustomizableEdges = CustomizableEdges21
+        btn_rtn.ShadowDecoration.CustomizableEdges = CustomizableEdges19
         btn_rtn.Size = New Size(89, 26)
         btn_rtn.TabIndex = 20
         btn_rtn.Text = "View"
@@ -1098,12 +1081,12 @@ Partial Class MainForm
     Friend WithEvents ShelfToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PenaltyManagementToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PenaltyToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents btninfo As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents Panel_welcome As Panel
     Friend WithEvents Label3 As Label
     Friend WithEvents Label4 As Label
     Friend WithEvents lblgmail As Label
     Friend WithEvents Label6 As Label
+    Friend WithEvents EditInfoToolStripMenuItem As ToolStripMenuItem
 
 End Class

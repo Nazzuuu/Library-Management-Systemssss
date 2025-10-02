@@ -8,7 +8,7 @@ Public Class MainForm
         Me.WindowState = FormWindowState.Maximized
         sizelocation()
 
-        btninfo.Visible = False
+
 
     End Sub
 
@@ -71,7 +71,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-            Panel_dash.Controls.Add(btninfo)
+
             lumabasna = True
         End If
 
@@ -109,7 +109,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-            Panel_dash.Controls.Add(btninfo)
+
             lumabasna = True
         End If
 
@@ -138,7 +138,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-            Panel_dash.Controls.Add(btninfo)
+
             lumabasna = True
         End If
 
@@ -168,7 +168,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-            Panel_dash.Controls.Add(btninfo)
+
             lumabasna = True
         End If
 
@@ -438,21 +438,19 @@ Public Class MainForm
         End With
     End Sub
 
-    Private Sub btninfo_MouseHover(sender As Object, e As EventArgs) Handles btninfo.MouseHover
+    Private Sub btninfo_MouseHover(sender As Object, e As EventArgs)
 
-        Me.Cursor = Cursors.Hand
-
-    End Sub
-
-    Private Sub btninfo_Mouseleave(sender As Object, e As EventArgs) Handles btninfo.MouseLeave
-
-        Me.Cursor = Cursors.Default
+        Cursor = Cursors.Hand
 
     End Sub
 
-    Private Sub btninfo_Click(sender As Object, e As EventArgs) Handles btninfo.Click
+    Private Sub btninfo_Mouseleave(sender As Object, e As EventArgs)
 
+        Cursor = Cursors.Default
+
+    End Sub
+
+    Private Sub EditInfoToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditInfoToolStripMenuItem.Click
         Superadmin.ShowDialog()
-
     End Sub
 End Class

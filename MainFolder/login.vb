@@ -37,7 +37,7 @@ Public Class login
                     MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
                     MainForm.lbl_currentuser.Text = "Librarian"
-                    MainForm.btninfo.Visible = True
+
                     MainForm.lblgmail.Text = userEmail
                     Me.Hide()
                     clear()
@@ -60,6 +60,7 @@ Public Class login
                     MainForm.ReportsToolStripMenuItem1.Visible = False
                     MainForm.UserMaintenanceToolStripMenuItem.Visible = False
                     MainForm.Audit_Trail.Visible = False
+                    MainForm.EditInfoToolStripMenuItem.Visible = False
 
                     MainForm.lblgmail.Text = userEmail
                     Me.Hide()
@@ -73,6 +74,8 @@ Public Class login
 
                     MainForm.UserMaintenanceToolStripMenuItem.Visible = False
                     MainForm.Audit_Trail.Visible = False
+                    MainForm.EditInfoToolStripMenuItem.Visible = False
+
                     MainForm.lblgmail.Text = userEmail
                     Me.Hide()
                     clear()

@@ -58,7 +58,11 @@ Public Class ReserveCopies
 
         If e.KeyCode = Keys.Escape Then
             Me.Close()
+            Accession.btnview.Visible = False
+            Accession.CheckBox1.Checked = False
+
         End If
+
 
     End Sub
 

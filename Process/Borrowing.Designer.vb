@@ -365,8 +365,9 @@ Partial Class Borrowing
         DateTimePicker1.BorderRadius = 8
         DateTimePicker1.BorderThickness = 1
         DateTimePicker1.Checked = True
-        DateTimePicker1.CustomFormat = "yyyy"
+        DateTimePicker1.CustomFormat = "MMMM-dd-yyyy"
         DateTimePicker1.CustomizableEdges = CustomizableEdges11
+        DateTimePicker1.Enabled = False
         DateTimePicker1.FillColor = Color.White
         DateTimePicker1.Font = New Font("Segoe UI", 9F)
         DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -376,9 +377,9 @@ Partial Class Borrowing
         DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
         DateTimePicker1.Name = "DateTimePicker1"
         DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges12
-        DateTimePicker1.Size = New Size(108, 36)
+        DateTimePicker1.Size = New Size(166, 36)
         DateTimePicker1.TabIndex = 87
-        DateTimePicker1.Value = New Date(2025, 8, 25, 19, 46, 49, 668)
+        DateTimePicker1.Value = New Date(2025, 10, 2, 0, 0, 0, 0)
         ' 
         ' Label8
         ' 
