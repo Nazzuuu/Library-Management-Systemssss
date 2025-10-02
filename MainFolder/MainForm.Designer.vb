@@ -27,6 +27,10 @@ Partial Class MainForm
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -47,10 +51,6 @@ Partial Class MainForm
         Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges23 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         pnl_maintenance = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_maintenance = New Panel()
         MenuStrip1 = New MenuStrip()
@@ -112,6 +112,9 @@ Partial Class MainForm
         Label2 = New Label()
         dshboard = New Guna.UI2.WinForms.Guna2GroupBox()
         tbl_paneldash = New TableLayoutPanel()
+        Guna2GroupBox2 = New Guna.UI2.WinForms.Guna2GroupBox()
+        btn_reserve = New Guna.UI2.WinForms.Guna2Button()
+        lbl_reserve = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         btn_lost = New Guna.UI2.WinForms.Guna2Button()
         lbl_lost = New Guna.UI2.WinForms.Guna2HtmlLabel()
@@ -128,9 +131,6 @@ Partial Class MainForm
         btn_rtn = New Guna.UI2.WinForms.Guna2Button()
         lbl_return = New Guna.UI2.WinForms.Guna2HtmlLabel()
         btnn_borrowed = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Guna2GroupBox2 = New Guna.UI2.WinForms.Guna2GroupBox()
-        btn_reserve = New Guna.UI2.WinForms.Guna2Button()
-        lbl_reserve = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
         Panel_Process.SuspendLayout()
@@ -147,12 +147,12 @@ Partial Class MainForm
         Panel_User.SuspendLayout()
         dshboard.SuspendLayout()
         tbl_paneldash.SuspendLayout()
+        Guna2GroupBox2.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         dsh_borrow.SuspendLayout()
         dsh_overdue.SuspendLayout()
         dsh_replace.SuspendLayout()
         dsh_return.SuspendLayout()
-        Guna2GroupBox2.SuspendLayout()
         SuspendLayout()
         ' 
         ' pnl_maintenance
@@ -696,6 +696,60 @@ Partial Class MainForm
         tbl_paneldash.Size = New Size(851, 246)
         tbl_paneldash.TabIndex = 0
         ' 
+        ' Guna2GroupBox2
+        ' 
+        Guna2GroupBox2.BackgroundImageLayout = ImageLayout.Zoom
+        Guna2GroupBox2.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2GroupBox2.BorderRadius = 25
+        Guna2GroupBox2.Controls.Add(btn_reserve)
+        Guna2GroupBox2.Controls.Add(lbl_reserve)
+        Guna2GroupBox2.CustomBorderColor = Color.Transparent
+        Guna2GroupBox2.CustomizableEdges = CustomizableEdges4
+        Guna2GroupBox2.Dock = DockStyle.Fill
+        Guna2GroupBox2.FillColor = Color.Transparent
+        Guna2GroupBox2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        Guna2GroupBox2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2GroupBox2.Location = New Point(581, 138)
+        Guna2GroupBox2.Margin = New Padding(15)
+        Guna2GroupBox2.Name = "Guna2GroupBox2"
+        Guna2GroupBox2.ShadowDecoration.CustomizableEdges = CustomizableEdges5
+        Guna2GroupBox2.Size = New Size(255, 93)
+        Guna2GroupBox2.TabIndex = 66
+        Guna2GroupBox2.Text = "Reserve Copies"
+        ' 
+        ' btn_reserve
+        ' 
+        btn_reserve.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btn_reserve.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btn_reserve.BorderRadius = 9
+        btn_reserve.BorderThickness = 2
+        btn_reserve.CustomizableEdges = CustomizableEdges2
+        btn_reserve.DisabledState.BorderColor = Color.DarkGray
+        btn_reserve.DisabledState.CustomBorderColor = Color.DarkGray
+        btn_reserve.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btn_reserve.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btn_reserve.FillColor = Color.Transparent
+        btn_reserve.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
+        btn_reserve.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btn_reserve.Location = New Point(159, 7)
+        btn_reserve.Name = "btn_reserve"
+        btn_reserve.ShadowDecoration.CustomizableEdges = CustomizableEdges3
+        btn_reserve.Size = New Size(89, 26)
+        btn_reserve.TabIndex = 20
+        btn_reserve.Text = "View"
+        ' 
+        ' lbl_reserve
+        ' 
+        lbl_reserve.BackColor = Color.Transparent
+        lbl_reserve.Font = New Font("Baskerville Old Face", 21.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lbl_reserve.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lbl_reserve.Location = New Point(95, 43)
+        lbl_reserve.Name = "lbl_reserve"
+        lbl_reserve.Size = New Size(48, 36)
+        lbl_reserve.TabIndex = 0
+        lbl_reserve.Text = "000"
+        lbl_reserve.TextAlignment = ContentAlignment.MiddleCenter
+        ' 
         ' Guna2GroupBox1
         ' 
         Guna2GroupBox1.BackgroundImageLayout = ImageLayout.Zoom
@@ -972,60 +1026,6 @@ Partial Class MainForm
         btnn_borrowed.BorderRadius = 9
         btnn_borrowed.TargetControl = btn_borrowed
         ' 
-        ' Guna2GroupBox2
-        ' 
-        Guna2GroupBox2.BackgroundImageLayout = ImageLayout.Zoom
-        Guna2GroupBox2.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2GroupBox2.BorderRadius = 25
-        Guna2GroupBox2.Controls.Add(btn_reserve)
-        Guna2GroupBox2.Controls.Add(lbl_reserve)
-        Guna2GroupBox2.CustomBorderColor = Color.Transparent
-        Guna2GroupBox2.CustomizableEdges = CustomizableEdges4
-        Guna2GroupBox2.Dock = DockStyle.Fill
-        Guna2GroupBox2.FillColor = Color.Transparent
-        Guna2GroupBox2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        Guna2GroupBox2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2GroupBox2.Location = New Point(581, 138)
-        Guna2GroupBox2.Margin = New Padding(15)
-        Guna2GroupBox2.Name = "Guna2GroupBox2"
-        Guna2GroupBox2.ShadowDecoration.CustomizableEdges = CustomizableEdges5
-        Guna2GroupBox2.Size = New Size(255, 93)
-        Guna2GroupBox2.TabIndex = 66
-        Guna2GroupBox2.Text = "Reserve Copies"
-        ' 
-        ' btn_reserve
-        ' 
-        btn_reserve.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btn_reserve.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btn_reserve.BorderRadius = 9
-        btn_reserve.BorderThickness = 2
-        btn_reserve.CustomizableEdges = CustomizableEdges2
-        btn_reserve.DisabledState.BorderColor = Color.DarkGray
-        btn_reserve.DisabledState.CustomBorderColor = Color.DarkGray
-        btn_reserve.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btn_reserve.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btn_reserve.FillColor = Color.Transparent
-        btn_reserve.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btn_reserve.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btn_reserve.Location = New Point(159, 7)
-        btn_reserve.Name = "btn_reserve"
-        btn_reserve.ShadowDecoration.CustomizableEdges = CustomizableEdges3
-        btn_reserve.Size = New Size(89, 26)
-        btn_reserve.TabIndex = 20
-        btn_reserve.Text = "View"
-        ' 
-        ' lbl_reserve
-        ' 
-        lbl_reserve.BackColor = Color.Transparent
-        lbl_reserve.Font = New Font("Baskerville Old Face", 21.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lbl_reserve.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbl_reserve.Location = New Point(95, 43)
-        lbl_reserve.Name = "lbl_reserve"
-        lbl_reserve.Size = New Size(48, 36)
-        lbl_reserve.TabIndex = 0
-        lbl_reserve.Text = "000"
-        lbl_reserve.TextAlignment = ContentAlignment.MiddleCenter
-        ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -1062,6 +1062,8 @@ Partial Class MainForm
         Panel_User.PerformLayout()
         dshboard.ResumeLayout(False)
         tbl_paneldash.ResumeLayout(False)
+        Guna2GroupBox2.ResumeLayout(False)
+        Guna2GroupBox2.PerformLayout()
         Guna2GroupBox1.ResumeLayout(False)
         Guna2GroupBox1.PerformLayout()
         dsh_borrow.ResumeLayout(False)
@@ -1072,8 +1074,6 @@ Partial Class MainForm
         dsh_replace.PerformLayout()
         dsh_return.ResumeLayout(False)
         dsh_return.PerformLayout()
-        Guna2GroupBox2.ResumeLayout(False)
-        Guna2GroupBox2.PerformLayout()
         ResumeLayout(False)
     End Sub
     Friend WithEvents pnl_maintenance As Guna.UI2.WinForms.Guna2Elipse

@@ -454,4 +454,13 @@ Public Class MainForm
     Private Sub EditInfoToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditInfoToolStripMenuItem.Click
         Superadmin.ShowDialog()
     End Sub
+
+    Private Sub btn_reserve_MouseHover(sender As Object, e As EventArgs) Handles btn_reserve.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btn_reserve_Mouseleave(sender As Object, e As EventArgs) Handles btn_reserve.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
 End Class
