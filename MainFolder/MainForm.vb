@@ -28,7 +28,7 @@ Public Class MainForm
             lbl_overdue.Location = New Point(150, 90)
             lbl_damage.Location = New Point(150, 90)
             lbl_lost.Location = New Point(150, 90)
-
+            lbl_reserve.Location = New Point(150, 90)
 
 
 
@@ -43,6 +43,7 @@ Public Class MainForm
             lbl_overdue.Location = New Point(95, 39)
             lbl_damage.Location = New Point(95, 39)
             lbl_lost.Location = New Point(95, 39)
+            lbl_reserve.Location = New Point(95, 39)
 
 
 
@@ -233,7 +234,7 @@ Public Class MainForm
     End Sub
 
     Private Sub btn_lost_MouseHover(sender As Object, e As EventArgs) Handles btn_lost.MouseHover
-        Me.Cursor = Cursors.Hand
+        Cursor = Cursors.Hand
 
     End Sub
 
@@ -254,7 +255,7 @@ Public Class MainForm
     End Sub
 
     Private Sub btn_lost_MouseLeave(sender As Object, e As EventArgs) Handles btn_lost.MouseLeave
-        Me.Cursor = Cursors.Default
+        Cursor = Cursors.Default
     End Sub
 
     Private Sub GenreMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles GenreMaintenanceToolStripMenuItem.Click

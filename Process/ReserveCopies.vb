@@ -163,4 +163,13 @@ Public Class ReserveCopies
         End If
 
     End Sub
+
+    Private Sub ReserveCopies_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+
+        Accession.btnview.Visible = False
+        Accession.CheckBox1.Checked = False
+
+    End Sub
+
+
 End Class
