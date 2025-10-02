@@ -202,7 +202,6 @@ Public Class Acquisition
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
-
         If DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a record to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
@@ -229,6 +228,22 @@ Public Class Acquisition
             Dim transactionNo As String = selectedRow.Cells("TransactionNo").Value.ToString()
 
             If neww < old Then
+
+                Dim notavail As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND `Status` != 'Available'"
+                Dim koms As New MySqlCommand(notavail, con)
+                koms.Parameters.AddWithValue("@TransactionNo", transactionNo)
+
+                Dim kownts As Integer = CInt(koms.ExecuteScalar())
+
+                If neww < kownts Then
+
+                    MessageBox.Show("WARNING: Cannot reduce quantity to " & neww & ". There are " & kownts & " copies with a status other than 'Available'.", "Cannot Update Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+                    NumericUpDown1.Value = old
+
+                    Return
+                End If
+
                 Dim recordsdelete As Integer = old - neww
                 Dim deleteAcs As String = "DELETE FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND Status = 'Available' ORDER BY AccessionID DESC LIMIT @limit"
                 Dim deleyt As New MySqlCommand(deleteAcs, con)
@@ -238,6 +253,7 @@ Public Class Acquisition
 
 
             ElseIf neww > old Then
+
 
                 Dim recordsadd As Integer = neww - old
 
@@ -276,7 +292,7 @@ Public Class Acquisition
 
 
                     Dim insertAcs As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                         "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
+                                          "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
 
                     Using insertAcession As New MySqlCommand(insertAcs, con)
                         insertAcession.Parameters.AddWithValue("@TransactionNo", transactionNo)

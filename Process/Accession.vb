@@ -86,7 +86,6 @@ Public Class Accession
         CheckBox1.Checked = False
 
 
-        'btnview.Visible = False
 
     End Sub
 
