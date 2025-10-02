@@ -212,6 +212,8 @@ Public Class Acquisition
         Dim old As Integer = CInt(selectedRow.Cells("Quantity").Value)
         Dim neww As Integer = CInt(NumericUpDown1.Value)
 
+        Dim originalTotalCost As Double = CDbl(selectedRow.Cells("TotalCost").Value)
+
         Dim con As New MySqlConnection(connectionString)
         Dim originalShelf As Object = DBNull.Value
 
@@ -241,6 +243,9 @@ Public Class Acquisition
 
                     NumericUpDown1.Value = old
 
+
+                    txttotalcost.Text = originalTotalCost.ToString("F2")
+
                     Return
                 End If
 
@@ -256,6 +261,8 @@ Public Class Acquisition
 
 
                 Dim recordsadd As Integer = neww - old
+
+
 
                 Dim rand As New Random()
                 Dim newAccessionID As String = ""
