@@ -1,39 +1,76 @@
 ﻿Imports MySql.Data.MySqlClient
+Imports System.Data
 
 Public Class Borrowing
 
+    Private isLoadingData As Boolean = False
     Private WithEvents timerSystemDate As New Timer()
 
     Private Sub Borrowing_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         refreshborrowingsu()
 
-
         timerSystemDate.Interval = 1000
         timerSystemDate.Start()
 
+        btntimein.Visible = False
+
     End Sub
 
+
+    Private Function CheckTimeInStatus(identifierValue As String, identifierField As String) As Boolean
+        If String.IsNullOrWhiteSpace(identifierValue) Then Return False
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = $"SELECT COUNT(*) FROM `oras_tbl` WHERE `{identifierField}` = @IdentifierValue AND `TimeOut` IS NULL"
+        Dim cmd As New MySqlCommand(com, con)
+
+        cmd.Parameters.AddWithValue("@IdentifierValue", identifierValue)
+
+        Try
+            con.Open()
+            Dim count As Integer = CInt(cmd.ExecuteScalar())
+            Return count > 0
+        Catch ex As Exception
+            MessageBox.Show("Error checking Time In status: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Function
 
     Public Sub refreshborrowingsu()
 
         Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT * FROM `borrowing_tbl`"
+        Dim com As String = "SELECT * FROM `borrowing_tbl` ORDER BY `BorrowedDate` DESC"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim ds As New DataSet
 
-        adap.Fill(ds, "borrowing_data")
+        Try
+            con.Open()
+            adap.Fill(ds, "borrowing_data")
 
-        DataGridView1.DataSource = ds.Tables("borrowing_data")
-        DataGridView1.Columns("ID").Visible = False
+            DataGridView1.DataSource = ds.Tables("borrowing_data")
+            DataGridView1.Columns("ID").Visible = False
 
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+        Catch ex As Exception
+            MessageBox.Show("Error loading borrowing records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
 
         clearlahat()
 
     End Sub
+
     Private Sub Borrowing_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
         DataGridView1.ClearSelection()
@@ -71,6 +108,8 @@ Public Class Borrowing
         txtshelf.Text = ""
 
 
+        btntimein.Visible = False
+
         DateTimePicker1.Value = DateTime.Now
 
     End Sub
@@ -85,6 +124,8 @@ Public Class Borrowing
 
             txtlrn.Text = ""
             txtname.Text = ""
+            btntimein.Visible = False
+
         End If
 
     End Sub
@@ -98,61 +139,120 @@ Public Class Borrowing
 
             txtemployee.Text = ""
             txtname.Text = ""
+            btntimein.Visible = False
+
         End If
 
     End Sub
 
     Private Sub txtemployee_TextChanged(sender As Object, e As EventArgs) Handles txtemployee.TextChanged
 
+        If isLoadingData Then Exit Sub
+
         Dim con As New MySqlConnection(connectionString)
+        Dim foundBorrower As Boolean = False
+        Dim borrowerName As String = ""
+
         Try
             con.Open()
-            Dim com As String = "SELECT `FirstName` FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp" ' Added to show full name
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@emp", txtemployee.Text)
                 Dim emp As Object = comsi.ExecuteScalar()
-                If emp IsNot Nothing Then
-                    txtname.Text = emp.ToString()
+                If emp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(emp.ToString()) Then
+                    borrowerName = emp.ToString()
+                    txtname.Text = borrowerName
+                    foundBorrower = True
                 Else
                     txtname.Text = ""
                 End If
             End Using
         Catch ex As Exception
-            MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+            MessageBox.Show("An error occurred while retrieving borrower information: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
                 con.Close()
             End If
         End Try
+
+        If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(txtemployee.Text) Then
+            Dim isTimedIn As Boolean = CheckTimeInStatus(txtemployee.Text, "EmployeeNo")
+
+            If Not isTimedIn Then
+
+                MessageBox.Show($"NOTICE: {borrowerName} has not yet Timed In.", "Time In Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+
+                btntimein.Visible = True
+            Else
+
+                btntimein.Visible = False
+            End If
+        Else
+
+            btntimein.Visible = False
+        End If
 
     End Sub
 
     Private Sub txtlrn_TextChanged(sender As Object, e As EventArgs) Handles txtlrn.TextChanged
 
+        If isLoadingData Then Exit Sub
+
         Dim con As New MySqlConnection(connectionString)
+        Dim foundBorrower As Boolean = False
+        Dim borrowerName As String = ""
+
         Try
             con.Open()
-            Dim com As String = "SELECT `FirstName` FROM `borrower_tbl` WHERE `LRN` = @lrn"
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`) FROM `borrower_tbl` WHERE `LRN` = @lrn" ' Added to show full name
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@lrn", txtlrn.Text)
                 Dim lrn As Object = comsi.ExecuteScalar()
-                If lrn IsNot Nothing Then
-                    txtname.Text = lrn.ToString()
+                If lrn IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(lrn.ToString()) Then
+                    borrowerName = lrn.ToString()
+                    txtname.Text = borrowerName
+                    foundBorrower = True
                 Else
                     txtname.Text = ""
                 End If
             End Using
         Catch ex As Exception
-            MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+            MessageBox.Show("An error occurred while retrieving borrower information: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
                 con.Close()
             End If
         End Try
 
+
+        If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
+            Dim isTimedIn As Boolean = CheckTimeInStatus(txtlrn.Text, "LRN")
+
+            If Not isTimedIn Then
+
+                MessageBox.Show($"NOTICE: {borrowerName} has not yet Timed In.", "Time In Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+
+                btntimein.Visible = True
+            Else
+
+                btntimein.Visible = False
+            End If
+        Else
+
+            btntimein.Visible = False
+        End If
+
     End Sub
 
     Private Sub txtaccessionid_TextChanged(sender As Object, e As EventArgs) Handles txtaccessionid.TextChanged
+
+        If isLoadingData Then
+            Exit Sub
+        End If
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) Then
 
@@ -240,6 +340,51 @@ Public Class Borrowing
         clearlahat()
     End Sub
 
+    Private Function acessionstats(accessionID As String) As Boolean
+
+        Try
+
+            Dim con As New MySqlConnection(connectionString)
+            Using con
+                Dim comm As String = "SELECT Status FROM `acession_tbl` WHERE `AccessionID` = @AccessionID"
+                Using cmd As New MySqlCommand(comm, con)
+                    cmd.Parameters.AddWithValue("@AccessionID", accessionID)
+
+                    con.Open()
+                    Dim status As Object = cmd.ExecuteScalar()
+                    If status IsNot DBNull.Value AndAlso status IsNot Nothing Then
+                        Return status.ToString().Equals("Available", StringComparison.OrdinalIgnoreCase)
+                    Else
+                        Return False
+                    End If
+                End Using
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error checking AccessionID availability: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        End Try
+    End Function
+
+    Private Sub pendingstats(accessionID As String, status As String)
+        Try
+
+            Dim con As New MySqlConnection(connectionString)
+            Using con
+                Dim comm As String = "UPDATE `acession_tbl` SET `Status` = @status WHERE `AccessionID` = @accessionID"
+
+                con.Open()
+                Dim cmd As New MySqlCommand(comm, con)
+                cmd.Parameters.AddWithValue("@status", status)
+                cmd.Parameters.AddWithValue("@accessionID", accessionID)
+                cmd.ExecuteNonQuery()
+            End Using
+
+        Catch ex As Exception
+            MessageBox.Show("Error updating accession table: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim borrower As String = ""
@@ -257,7 +402,7 @@ Public Class Borrowing
 
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse
-           String.IsNullOrWhiteSpace(txtname.Text) Then
+        String.IsNullOrWhiteSpace(txtname.Text) Then
 
             MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
@@ -271,6 +416,18 @@ Public Class Borrowing
             Exit Sub
         End If
 
+        Dim isTimedIn As Boolean = False
+        If borrower = "Student" Then
+            isTimedIn = CheckTimeInStatus(txtlrn.Text, "LRN")
+        ElseIf borrower = "Teacher" Then
+            isTimedIn = CheckTimeInStatus(txtemployee.Text, "EmployeeNo")
+        End If
+
+        If Not isTimedIn Then
+            MsgBox("The borrower must be Timed In before borrowing a book. Please click the 'Time In' button.", vbExclamation, "Time-In Required")
+            Exit Sub
+        End If
+
 
         Try
             con.Open()
@@ -281,8 +438,8 @@ Public Class Borrowing
             Using comsi As New MySqlCommand(com, con)
 
                 comsi.Parameters.AddWithValue("@Borrower", borrower)
-                comsi.Parameters.AddWithValue("@LRN", txtlrn.Text)
-                comsi.Parameters.AddWithValue("@EmpNo", txtemployee.Text)
+                comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text)) ' Gamitin ang DBNull para sa empty fields
+                comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text)) ' Gamitin ang DBNull para sa empty fields
                 comsi.Parameters.AddWithValue("@Name", txtname.Text)
                 comsi.Parameters.AddWithValue("@Title", txtbooktitle.Text)
                 comsi.Parameters.AddWithValue("@ISBN", txtisbn.Text)
@@ -290,11 +447,19 @@ Public Class Borrowing
                 comsi.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
                 comsi.Parameters.AddWithValue("@Shelf", txtshelf.Text)
 
-                comsi.Parameters.AddWithValue("@BDate", DateTimePicker1.Value.ToString("yyyy-MM-dd"))
+                comsi.Parameters.AddWithValue("@BDate", DateTimePicker1.Value.ToString("MMMM-dd-yyyy"))
 
-                comsi.Parameters.AddWithValue("@DDate", DateTime.Parse(txtduedate.Text).ToString("yyyy-MM-dd"))
+                comsi.Parameters.AddWithValue("@DDate", DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"))
+
 
                 comsi.ExecuteNonQuery()
+
+
+                Dim accessionID As String = txtaccessionid.Text.ToString
+
+
+                pendingstats(accessionID, "Pending")
+
 
                 MsgBox("Borrowing record successfully added.", vbInformation, "Success")
                 refreshborrowingsu()
@@ -322,8 +487,10 @@ Public Class Borrowing
             MsgBox("Please select a record from the table to edit.", vbExclamation, "No Record Selected")
             Exit Sub
         End If
-
         Dim ID As String = DataGridView1.CurrentRow.Cells("ID").Value.ToString()
+
+        Dim oldAccessionID As String = DataGridView1.CurrentRow.Cells("AccessionID").Value.ToString()
+
 
         If rbstudent.Checked Then
             borrower = "Student"
@@ -336,7 +503,7 @@ Public Class Borrowing
 
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse
-           String.IsNullOrWhiteSpace(txtname.Text) Then
+        String.IsNullOrWhiteSpace(txtname.Text) Then
 
             MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
@@ -364,19 +531,32 @@ Public Class Borrowing
             Using comsi As New MySqlCommand(com, con)
 
                 comsi.Parameters.AddWithValue("@Borrower", borrower)
-                comsi.Parameters.AddWithValue("@LRN", txtlrn.Text)
-                comsi.Parameters.AddWithValue("@EmpNo", txtemployee.Text)
+                comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text)) ' Gamitin ang DBNull para sa empty fields
+                comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text)) ' Gamitin ang DBNull para sa empty fields
                 comsi.Parameters.AddWithValue("@Name", txtname.Text)
                 comsi.Parameters.AddWithValue("@Title", txtbooktitle.Text)
                 comsi.Parameters.AddWithValue("@ISBN", txtisbn.Text)
                 comsi.Parameters.AddWithValue("@Barcode", txtbarcode.Text)
                 comsi.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
                 comsi.Parameters.AddWithValue("@Shelf", txtshelf.Text)
-                comsi.Parameters.AddWithValue("@BDate", DateTimePicker1.Value.ToString("yyyy-MM-dd"))
-                comsi.Parameters.AddWithValue("@DDate", DateTime.Parse(txtduedate.Text).ToString("yyyy-MM-dd"))
+                comsi.Parameters.AddWithValue("@BDate", DateTimePicker1.Value.ToString("MMMM-dd-yyyy"))
+                comsi.Parameters.AddWithValue("@DDate", DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"))
                 comsi.Parameters.AddWithValue("@ID", ID)
 
+
                 comsi.ExecuteNonQuery()
+
+
+                Dim newAccessionID As String = txtaccessionid.Text.ToString()
+
+
+                If oldAccessionID <> newAccessionID Then
+                    pendingstats(oldAccessionID, "Available")
+                End If
+
+                pendingstats(newAccessionID, "Pending")
+
+
 
                 MsgBox("Borrowing record successfully updated.", vbInformation, "Success")
                 refreshborrowingsu()
@@ -440,6 +620,8 @@ Public Class Borrowing
 
         If e.RowIndex >= 0 Then
 
+            isLoadingData = True
+
             Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
             txtemployee.Text = If(row.Cells("EmployeeNo").Value Is DBNull.Value, "", row.Cells("EmployeeNo").Value.ToString())
@@ -455,7 +637,9 @@ Public Class Borrowing
             txtbooktitle.Text = row.Cells("BookTitle").Value.ToString()
             txtisbn.Text = row.Cells("ISBN").Value.ToString()
             txtbarcode.Text = row.Cells("Barcode").Value.ToString()
+
             txtaccessionid.Text = row.Cells("AccessionID").Value.ToString()
+
             txtshelf.Text = row.Cells("Shelf").Value.ToString()
             txtduedate.Text = row.Cells("DueDate").Value.ToString()
 
@@ -464,6 +648,17 @@ Public Class Borrowing
                     DateTimePicker1.Value = CDate(row.Cells("BorrowedDate").Value)
                 End If
             End If
+
+            btntimein.Visible = False
+
+            isLoadingData = False
+
+            If rbstudent.Checked Then
+                txtlrn_TextChanged(txtlrn, EventArgs.Empty)
+            ElseIf rbteacher.Checked Then
+                txtemployee_TextChanged(txtemployee, EventArgs.Empty)
+            End If
+
 
         End If
 
@@ -520,4 +715,43 @@ Public Class Borrowing
         End If
 
     End Sub
+
+    Private Sub btntimein_Click(sender As Object, e As EventArgs) Handles btntimein.Click
+
+        Dim borrowerID As String = ""
+        Dim borrowerType As String = ""
+
+        If rbstudent.Checked AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
+            borrowerID = txtlrn.Text
+            borrowerType = "LRN"
+        ElseIf rbteacher.Checked AndAlso Not String.IsNullOrWhiteSpace(txtemployee.Text) Then
+            borrowerID = txtemployee.Text
+            borrowerType = "EmployeeNo"
+        Else
+            MessageBox.Show("Please enter the LRN or Employee Number first.", "Required Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
+
+        RegisteredBrwr.IsTimeInMode = True
+
+        RegisteredBrwr.SetTimeInFilter(borrowerID, borrowerType)
+
+        AddHandler RegisteredBrwr.ListView1.MouseDoubleClick, AddressOf RegisteredBrwr.ListView1_MouseDoubleClick
+
+        RegisteredBrwr.lbl_action.ForeColor = Color.Red
+        RegisteredBrwr.lbl_action.Text = "Selecting"
+
+        RegisteredBrwr.ListView1.Enabled = True
+
+        RegisteredBrwr.ShowDialog()
+
+        If rbstudent.Checked AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
+            txtlrn_TextChanged(txtlrn, EventArgs.Empty)
+        ElseIf rbteacher.Checked AndAlso Not String.IsNullOrWhiteSpace(txtemployee.Text) Then
+            txtemployee_TextChanged(txtemployee, EventArgs.Empty)
+        End If
+
+    End Sub
+
 End Class

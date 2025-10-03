@@ -1,13 +1,41 @@
 ﻿Imports MySql.Data.MySqlClient
-Imports Windows.Win32.System
+Imports System.Drawing
+Imports System.Windows.Forms ' Siguraduhin na imported ito para sa Color at MessageBox
+' Imports Windows.Win32.System (Ito ay hindi madalas kailangan para sa basic WinForms)
+
 Public Class RegisteredBrwr
+
     Public IsInViewMode As Boolean = False
+    Public IsTimeInMode As Boolean = False ' NEW: Para sa conditional disabling ng search box at Time In action
+
     Private con As New MySqlConnection(connectionString)
+
+    ' Tiyakin na ang 'connectionString' variable ay naka-define sa isang Module o Class na na-i-import.
 
     Private Sub RegisteredBrwr_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         ludeyngborrower()
         ludeyngtimedinborrower()
+
+    End Sub
+
+    Private Sub RegisteredBrwr_Activated(sender As Object, e As EventArgs) Handles Me.Activated
+
+        ' Kung TimeInMode, i-disable ang search box
+        txtsearch.Enabled = Not IsTimeInMode
+
+    End Sub
+
+    Private Sub RegisteredBrwr_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+
+
+        IsTimeInMode = False ' I-reset ang mode
+
+
+        txtsearch.Text = ""
+
+        txtsearch.Enabled = True ' I-re-enable para sa susunod na pag-open
+
 
     End Sub
 
@@ -45,52 +73,92 @@ Public Class RegisteredBrwr
 
     Public Sub ListView1_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles ListView1.MouseDoubleClick
 
+        Dim selectedItem As ListViewItem = ListView1.GetItemAt(e.X, e.Y)
+        If selectedItem Is Nothing Then Exit Sub
+
+        ' CHECK 1: Kung nasa Time-In mode, i-Time In ang borrower (Double Click)
+        If IsTimeInMode Then
+            TimeInBorrower(selectedItem)
+            Exit Sub
+        End If
+
+        ' CHECK 2: Lumang logic para sa View Mode
         If IsInViewMode Then
             Exit Sub
         End If
 
-        Dim selectedItem As ListViewItem = ListView1.GetItemAt(e.X, e.Y)
-        If selectedItem IsNot Nothing Then
-            Dim borrowerType As String = selectedItem.SubItems(0).Text
-            Dim firstName As String = selectedItem.SubItems(1).Text
-            Dim lastName As String = selectedItem.SubItems(2).Text
-            Dim middleName As String = selectedItem.SubItems(3).Text
-            Dim lrn As String = selectedItem.SubItems(4).Text
-            Dim employeeNo As String = selectedItem.SubItems(5).Text
-            Dim contactNumber As String = selectedItem.SubItems(6).Text
-            Dim department As String = selectedItem.SubItems(7).Text
-            Dim grade As String = selectedItem.SubItems(8).Text
-            Dim section As String = selectedItem.SubItems(9).Text
-            Dim strand As String = selectedItem.SubItems(10).Text
+        ' Lumang logic: Selection para sa oras form (kung hindi Time-In o View Mode)
+        Dim borrowerType As String = selectedItem.SubItems(0).Text
+        Dim firstName As String = selectedItem.SubItems(1).Text
+        Dim lastName As String = selectedItem.SubItems(2).Text
+        Dim middleName As String = selectedItem.SubItems(3).Text
+        Dim lrn As String = selectedItem.SubItems(4).Text
+        Dim employeeNo As String = selectedItem.SubItems(5).Text
+        Dim contactNumber As String = selectedItem.SubItems(6).Text
+        Dim department As String = selectedItem.SubItems(7).Text
+        Dim grade As String = selectedItem.SubItems(8).Text
+        Dim section As String = selectedItem.SubItems(9).Text
+        Dim strand As String = selectedItem.SubItems(10).Text
 
-            Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
-            If orasForm IsNot Nothing Then
-                orasForm.brwrinfo(borrowerType, firstName, lastName, middleName, lrn, employeeNo, contactNumber, department, grade, section, strand)
-            End If
-
-            Me.Close()
-
+        Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
+        If orasForm IsNot Nothing Then
+            orasForm.brwrinfo(borrowerType, firstName, lastName, middleName, lrn, employeeNo, contactNumber, department, grade, section, strand)
         End If
 
+        Me.Close()
+
     End Sub
+
 
     Private Sub RegisteredBrwr_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
 
         If e.KeyCode = Keys.Escape Then
             Me.Close()
-
         End If
     End Sub
+
+    ' NEW: KeyDown handler para sa ENTER key press
+    Private Sub ListView1_KeyDown(sender As Object, e As KeyEventArgs) Handles ListView1.KeyDown
+
+        ' Tiyakin na ang form ay nasa Time In mode at may pinindot na ENTER
+        If IsTimeInMode AndAlso e.KeyCode = Keys.Enter Then
+
+            If ListView1.SelectedItems.Count > 0 Then
+                ' Tawagin ang TimeInBorrower gamit ang unang selected item
+                TimeInBorrower(ListView1.SelectedItems(0))
+            End If
+
+            ' I-markahan na handled na ang key para hindi na gumawa ng default action
+            e.Handled = True
+        End If
+
+    End Sub
+
 
     Public Sub ludeyngborrower()
 
         ListView1.Items.Clear()
         Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT * FROM `borrower_tbl` ORDER BY `LastName` ASC"
+        Dim searchText As String = txtsearch.Text.Trim()
+
+        Dim com As String = "SELECT * FROM `borrower_tbl`"
+
+
+        If Not String.IsNullOrEmpty(searchText) Then
+            com &= " WHERE `LRN` = @search OR `EmployeeNo` = @search"
+        End If
+
+        com &= " ORDER BY `LastName` ASC"
 
         Try
             con.Open()
             Dim cmd As New MySqlCommand(com, con)
+
+            If Not String.IsNullOrEmpty(searchText) Then
+
+                cmd.Parameters.AddWithValue("@search", searchText)
+            End If
+
             Dim reader As MySqlDataReader = cmd.ExecuteReader()
 
             While reader.Read()
@@ -110,12 +178,23 @@ Public Class RegisteredBrwr
             End While
 
             reader.Close()
+
+
+            ludeyngtimedinborrower()
         Catch ex As Exception
             MessageBox.Show("Error loading borrower data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
-            con.Close()
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
 
+    End Sub
+
+
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        ludeyngborrower()
     End Sub
 
     Public Sub ludeyngtimedinborrower()
@@ -165,9 +244,65 @@ Public Class RegisteredBrwr
 
     End Sub
 
-    Private Sub RegisteredBrwr_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
-        oras.btnview.Visible = False
+    Public Sub SetTimeInFilter(borrowerID As String, borrowerType As String)
+
+        If borrowerType = "LRN" Or borrowerType = "EmployeeNo" Then
+
+            txtsearch.Text = borrowerID
+
+
+            ludeyngborrower()
+
+        End If
+    End Sub
+
+    ' NEW: Helper Subroutine para sa Time In logic
+    Private Sub TimeInBorrower(selectedItem As ListViewItem)
+        ' Tiyakin na ang action ay Time In muna at may selected item
+        If Not IsTimeInMode OrElse selectedItem Is Nothing Then
+            Exit Sub
+        End If
+
+        ' Kunin ang kailangang data
+        Dim lrn As String = selectedItem.SubItems(4).Text
+        Dim employeeNo As String = selectedItem.SubItems(5).Text
+        Dim currentID As String = If(selectedItem.SubItems(0).Text = "Student", lrn, employeeNo)
+
+        ' I-check kung naka-time in na (Green background)
+        If selectedItem.BackColor = Color.FromArgb(153, 255, 153) Then
+            MessageBox.Show("This borrower is currently timed in. Please Time Out first before another action.", "Already Timed In", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+        Dim conInsert As New MySqlConnection(connectionString)
+        Dim comInsert As String = "INSERT INTO `oras_tbl` (`LRN`, `EmployeeNo`, `TimeIn`) VALUES (@lrn, @emp, NOW())"
+
+        Try
+            conInsert.Open()
+            Using cmdInsert As New MySqlCommand(comInsert, conInsert)
+
+
+                cmdInsert.Parameters.AddWithValue("@lrn", If(String.IsNullOrEmpty(lrn), CType(DBNull.Value, Object), lrn))
+                cmdInsert.Parameters.AddWithValue("@emp", If(String.IsNullOrEmpty(employeeNo), CType(DBNull.Value, Object), employeeNo))
+
+                cmdInsert.ExecuteNonQuery()
+
+                MessageBox.Show($"SUCCESS: Borrower ID {currentID} has been successfully Timed In.", "Time In Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+                ludeyngborrower()
+                Me.Close()
+
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error processing Time In: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If conInsert.State = ConnectionState.Open Then
+                conInsert.Close()
+            End If
+        End Try
 
     End Sub
+
 End Class
