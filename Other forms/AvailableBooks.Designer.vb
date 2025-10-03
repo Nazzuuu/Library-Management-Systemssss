@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class ReserveCopies
+Partial Class AvailableBooks
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -31,14 +31,13 @@ Partial Class ReserveCopies
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         DataGridView1 = New DataGridView()
-        txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         PictureBox1 = New PictureBox()
-        btnpush = New Guna.UI2.WinForms.Guna2Button()
+        txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        Label2 = New Label()
+        lblavailable = New Label()
         Guna2GradientPanel1.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -51,11 +50,11 @@ Partial Class ReserveCopies
         Guna2GradientPanel1.BorderThickness = 2
         Guna2GradientPanel1.Controls.Add(DataGridView1)
         Guna2GradientPanel1.CustomizableEdges = CustomizableEdges1
-        Guna2GradientPanel1.Location = New Point(42, 81)
+        Guna2GradientPanel1.Location = New Point(38, 83)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         Guna2GradientPanel1.Size = New Size(1044, 300)
-        Guna2GradientPanel1.TabIndex = 47
+        Guna2GradientPanel1.TabIndex = 52
         ' 
         ' DataGridView1
         ' 
@@ -106,6 +105,17 @@ Partial Class ReserveCopies
         DataGridView1.Size = New Size(985, 255)
         DataGridView1.TabIndex = 24
         ' 
+        ' PictureBox1
+        ' 
+        PictureBox1.BackColor = Color.White
+        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
+        PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
+        PictureBox1.Location = New Point(895, 29)
+        PictureBox1.Name = "PictureBox1"
+        PictureBox1.Size = New Size(20, 18)
+        PictureBox1.TabIndex = 54
+        PictureBox1.TabStop = False
+        ' 
         ' txtsearch
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -120,77 +130,71 @@ Partial Class ReserveCopies
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Location = New Point(42, 22)
+        txtsearch.Location = New Point(38, 24)
         txtsearch.Margin = New Padding(4)
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Book Title"
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtsearch.Size = New Size(889, 30)
-        txtsearch.TabIndex = 49
-        ' 
-        ' PictureBox1
-        ' 
-        PictureBox1.BackColor = Color.White
-        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
-        PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        PictureBox1.Location = New Point(899, 27)
-        PictureBox1.Name = "PictureBox1"
-        PictureBox1.Size = New Size(20, 18)
-        PictureBox1.TabIndex = 50
-        PictureBox1.TabStop = False
-        ' 
-        ' btnpush
-        ' 
-        btnpush.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnpush.BorderRadius = 9
-        btnpush.BorderThickness = 1
-        btnpush.CustomizableEdges = CustomizableEdges5
-        btnpush.DisabledState.BorderColor = Color.DarkGray
-        btnpush.DisabledState.CustomBorderColor = Color.DarkGray
-        btnpush.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnpush.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnpush.FillColor = Color.Empty
-        btnpush.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btnpush.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnpush.Location = New Point(429, 401)
-        btnpush.Name = "btnpush"
-        btnpush.ShadowDecoration.CustomizableEdges = CustomizableEdges6
-        btnpush.Size = New Size(222, 27)
-        btnpush.TabIndex = 51
-        btnpush.Text = "PUSH TO ACCESSION"
+        txtsearch.TabIndex = 53
         ' 
         ' Guna2Elipse1
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
-        ' ReserveCopies
+        ' Label2
+        ' 
+        Label2.AutoSize = True
+        Label2.Font = New Font("Tahoma", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label2.ForeColor = Color.Black
+        Label2.Location = New Point(38, 410)
+        Label2.Name = "Label2"
+        Label2.Size = New Size(132, 18)
+        Label2.TabIndex = 59
+        Label2.Text = "Available Books:"
+        ' 
+        ' lblavailable
+        ' 
+        lblavailable.AutoSize = True
+        lblavailable.Font = New Font("Tahoma", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblavailable.ForeColor = Color.Red
+        lblavailable.Location = New Point(164, 408)
+        lblavailable.Name = "lblavailable"
+        lblavailable.Size = New Size(25, 25)
+        lblavailable.TabIndex = 60
+        lblavailable.Text = "0"
+        ' 
+        ' AvailableBooks
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1120, 454)
-        Controls.Add(btnpush)
+        Controls.Add(lblavailable)
+        Controls.Add(Label2)
+        Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
-        Controls.Add(Guna2GradientPanel1)
         KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False
-        Name = "ReserveCopies"
+        Name = "AvailableBooks"
         ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
-        Text = "ReserveCopies"
+        Text = "AvailableBooks"
         Guna2GradientPanel1.ResumeLayout(False)
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
+        PerformLayout()
     End Sub
 
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents DataGridView1 As DataGridView
-    Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents PictureBox1 As PictureBox
-    Friend WithEvents btnpush As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
+    Friend WithEvents Label2 As Label
+    Friend WithEvents lblavailable As Label
 End Class

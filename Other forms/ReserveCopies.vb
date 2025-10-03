@@ -9,6 +9,7 @@ Public Class ReserveCopies
     Private Sub ReserveCopies_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         reserveload()
+        counts()
 
 
         DataGridView1.EnableHeadersVisualStyles = False
@@ -49,6 +50,30 @@ Public Class ReserveCopies
 
     End Sub
 
+    Public Sub counts()
+
+        Dim con As New MySqlConnection(connectionString)
+
+        Try
+            con.Open()
+
+
+            Dim countss As String = "SELECT COUNT(*) FROM reservecopiess_tbl WHERE Status = 'Reserved'"
+            Using comms As New MySqlCommand(countss, con)
+                Dim count As Integer = CInt(comms.ExecuteScalar())
+
+                lblreserve.Text = count.ToString()
+            End Using
+
+        Catch ex As Exception
+            MessageBox.Show("Error updating reserved count: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+
+    End Sub
 
     Private Sub Accession_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         DataGridView1.ClearSelection()
@@ -97,9 +122,8 @@ Public Class ReserveCopies
                 con.Open()
                 transaction = con.BeginTransaction()
 
-
                 Dim insertAcs As String = "INSERT INTO `acession_tbl` (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                      "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
+                                          "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
 
                 Dim ins As New MySqlCommand(insertAcs, con, transaction)
                 ins.Parameters.AddWithValue("@TransactionNo", tranNo)
@@ -112,6 +136,20 @@ Public Class ReserveCopies
                 ins.Parameters.AddWithValue("@Status", defaultStatus)
                 ins.ExecuteNonQuery()
 
+                Dim insertAvailable As String = "INSERT INTO available_tbl (`ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
+                                               "VALUES (@ISBN_Avail, @Barcode_Avail, @AccessionID_Avail, @BookTitle_Avail, @Shelf_Avail, @Status_Avail)"
+
+                Using insertAvailCmd As New MySqlCommand(insertAvailable, con, transaction)
+                    insertAvailCmd.Parameters.AddWithValue("@AccessionID_Avail", accID)
+                    insertAvailCmd.Parameters.AddWithValue("@ISBN_Avail", If(IsDBNull(isbn), CType(DBNull.Value, Object), isbn))
+                    insertAvailCmd.Parameters.AddWithValue("@Barcode_Avail", If(IsDBNull(barcode), CType(DBNull.Value, Object), barcode))
+                    insertAvailCmd.Parameters.AddWithValue("@BookTitle_Avail", bookTitle)
+                    insertAvailCmd.Parameters.AddWithValue("@Shelf_Avail", shelf)
+                    insertAvailCmd.Parameters.AddWithValue("@Status_Avail", defaultStatus)
+                    insertAvailCmd.ExecuteNonQuery()
+                End Using
+
+
 
                 Dim dilit As String = "DELETE FROM `reservecopiess_tbl` WHERE ID = @ReserveID"
                 Dim com As New MySqlCommand(dilit, con, transaction)
@@ -120,15 +158,27 @@ Public Class ReserveCopies
 
                 transaction.Commit()
 
-                MessageBox.Show($"Accession ID {accID} has been successfully pushed back to the accession form.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show($"Accession ID {accID} has been successfully pushed back to the accession form and is now Available.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 reserveload()
+                counts()
 
 
-                If Accession IsNot Nothing Then
-                    Accession.RefreshAccessionData()
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AvailableBooks Then
+                        Dim avail = DirectCast(form, AvailableBooks)
+                        avail.refreshavail()
+                        avail.counts()
+                    End If
 
-                    Accession.CheckBox1.Checked = False
-                End If
+                    If TypeOf form Is Accession Then
+                        Dim accessionForm = DirectCast(form, Accession)
+                        accessionForm.RefreshAccessionData()
+
+                        accessionForm.btnview.Visible = False
+                        accessionForm.CheckBox1.Checked = False
+                    End If
+                Next
+
 
 
             Catch ex As Exception
@@ -149,6 +199,8 @@ Public Class ReserveCopies
         End If
 
     End Sub
+
+
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 

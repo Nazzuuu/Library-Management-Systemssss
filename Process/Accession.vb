@@ -218,11 +218,13 @@ Public Class Accession
 
                 SaveReserveCopies()
 
-                btnview.Visible = True
+                CheckBox1.Checked = False
+
             End If
         End If
 
     End Sub
+
 
     Public Sub SaveReserveCopies()
 
@@ -230,8 +232,6 @@ Public Class Accession
         Dim transaction As MySqlTransaction = Nothing
 
         Dim moveit As New List(Of String)
-
-
         For Each row As DataGridViewRow In DataGridView1.SelectedRows
             If Not row.IsNewRow Then
                 Dim status As String = row.Cells("Status").Value.ToString().Trim()
@@ -256,49 +256,55 @@ Public Class Accession
 
 
                 Dim comsiss As String = "SELECT * FROM `acession_tbl` WHERE AccessionID = @AccessionID AND Status = 'Available'"
-                Dim comsusx As New MySqlCommand(comsiss, con, transaction)
-                comsusx.Parameters.AddWithValue("@AccessionID", accID)
 
-                Dim reader As MySqlDataReader = comsusx.ExecuteReader()
+                Using comsusx As New MySqlCommand(comsiss, con, transaction)
+                    comsusx.Parameters.AddWithValue("@AccessionID", accID)
+                    Dim reader As MySqlDataReader = comsusx.ExecuteReader()
 
-                If reader.Read() Then
+                    If reader.Read() Then
 
-                    Dim tranNo As String = reader("TransactionNo").ToString()
-                    Dim isbn As Object = reader("ISBN")
-                    Dim barcode As Object = reader("Barcode")
-                    Dim bookTitle As String = reader("BookTitle").ToString()
-                    Dim shelf As String = reader("Shelf").ToString()
-                    Dim supplierName As String = reader("SupplierName").ToString()
+                        Dim tranNo As String = reader("TransactionNo").ToString()
+                        Dim isbn As Object = reader("ISBN")
+                        Dim barcode As Object = reader("Barcode")
+                        Dim bookTitle As String = reader("BookTitle").ToString()
+                        Dim shelf As String = reader("Shelf").ToString()
+                        Dim supplierName As String = reader("SupplierName").ToString()
 
-                    reader.Close()
-
-
-                    Dim ins As String = "INSERT INTO `reservecopiess_tbl` (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                              "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, 'Reserved')"
-
-                    Dim insx As New MySqlCommand(ins, con, transaction)
-
-                    insx.Parameters.AddWithValue("@TransactionNo", tranNo)
-                    insx.Parameters.AddWithValue("@AccessionID", accID)
-                    insx.Parameters.AddWithValue("@ISBN", If(IsDBNull(isbn), CType(DBNull.Value, Object), isbn))
-                    insx.Parameters.AddWithValue("@Barcode", If(IsDBNull(barcode), CType(DBNull.Value, Object), barcode))
-                    insx.Parameters.AddWithValue("@BookTitle", bookTitle)
-                    insx.Parameters.AddWithValue("@Shelf", shelf)
-                    insx.Parameters.AddWithValue("@SupplierName", supplierName)
-
-                    insx.ExecuteNonQuery()
+                        reader.Close()
 
 
-                    Dim deleyt As String = "DELETE FROM `acession_tbl` WHERE AccessionID = @AccessionID_Del"
-                    Dim deletesu As New MySqlCommand(deleyt, con, transaction)
-                    deletesu.Parameters.AddWithValue("@AccessionID_Del", accID)
+                        Dim ins As String = "INSERT INTO `reservecopiess_tbl` (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
+                                            "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, 'Reserved')"
+                        Using insx As New MySqlCommand(ins, con, transaction)
 
-                    deletesu.ExecuteNonQuery()
+                            insx.Parameters.AddWithValue("@TransactionNo", tranNo)
+                            insx.Parameters.AddWithValue("@AccessionID", accID)
+                            insx.Parameters.AddWithValue("@ISBN", If(IsDBNull(isbn), CType(DBNull.Value, Object), isbn))
+                            insx.Parameters.AddWithValue("@Barcode", If(IsDBNull(barcode), CType(DBNull.Value, Object), barcode))
+                            insx.Parameters.AddWithValue("@BookTitle", bookTitle)
+                            insx.Parameters.AddWithValue("@Shelf", shelf)
+                            insx.Parameters.AddWithValue("@SupplierName", supplierName)
+                            insx.ExecuteNonQuery()
+                        End Using
 
-                    reserveCount += 1
-                Else
-                    reader.Close()
-                End If
+                        Dim deleyt As String = "DELETE FROM `acession_tbl` WHERE AccessionID = @AccessionID_Del"
+                        Using deletesu As New MySqlCommand(deleyt, con, transaction)
+                            deletesu.Parameters.AddWithValue("@AccessionID_Del", accID)
+                            deletesu.ExecuteNonQuery()
+                        End Using
+
+                        Dim deleteAvailable As String = "DELETE FROM `available_tbl` WHERE AccessionID = @AccessionID_AvailDel"
+                        Using deleteAvailCmd As New MySqlCommand(deleteAvailable, con, transaction)
+                            deleteAvailCmd.Parameters.AddWithValue("@AccessionID_AvailDel", accID)
+                            deleteAvailCmd.ExecuteNonQuery()
+                        End Using
+
+
+                        reserveCount += 1
+                    Else
+                        reader.Close()
+                    End If
+                End Using
 
             Next
 
@@ -307,11 +313,13 @@ Public Class Accession
 
             MessageBox.Show("Reserve copies saved. Total reserved: " & reserveCount.ToString(), "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-
-            RefreshAccessionData("Available")
-
-
-            clearlahat()
+            For Each form In Application.OpenForms
+                If TypeOf form Is AvailableBooks Then
+                    Dim avail = DirectCast(form, AvailableBooks)
+                    avail.refreshavail()
+                    avail.counts()
+                End If
+            Next
 
         Catch ex As Exception
             If transaction IsNot Nothing Then
@@ -329,8 +337,6 @@ Public Class Accession
             End If
         End Try
     End Sub
-
-
 
     Private Sub btntransaction_Click(sender As Object, e As EventArgs) Handles btntransaction.Click
         TransactionNumber.ShowDialog()
@@ -367,7 +373,9 @@ Public Class Accession
 
 
             Dim statusValue As String = ""
-            If rbborrowable.Checked Then
+
+            Dim isAvailable As Boolean = rbborrowable.Checked
+            If isAvailable Then
                 statusValue = "Available"
             ElseIf rbforlibraryonly.Checked Then
                 statusValue = "For In-Library Use Only"
@@ -409,6 +417,31 @@ Public Class Accession
                         comsu.Parameters.AddWithValue("@Status", statusValue)
                         comsu.ExecuteNonQuery()
                     End Using
+
+                    If isAvailable Then
+                        Dim availableInsertSql As String = "INSERT INTO available_tbl (`ID`, `ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
+                                                         "VALUES (NULL, @ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
+
+                        Using availableCmd As New MySqlCommand(availableInsertSql, con)
+                            availableCmd.Parameters.AddWithValue("@AccessionID", acss)
+                            availableCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                            availableCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                            availableCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                            availableCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                            availableCmd.Parameters.AddWithValue("@Status", statusValue)
+                            availableCmd.ExecuteNonQuery()
+                        End Using
+                    End If
+
+                End If
+            Next
+
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AvailableBooks Then
+                    Dim avail = DirectCast(form, AvailableBooks)
+                    avail.refreshavail()
+                    avail.counts()
                 End If
             Next
 
@@ -442,6 +475,8 @@ Public Class Accession
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
         Dim currentStatus As String = selectedRow.Cells("Status").Value.ToString().Trim()
+        Dim oldAccessionID As String = selectedRow.Cells("AccessionID").Value.ToString().Trim()
+        Dim wasAvailable As Boolean = currentStatus.Equals("Available", StringComparison.OrdinalIgnoreCase)
 
 
         Dim statsskie As New List(Of String) From {"Pending", "Lost", "Damage"}
@@ -458,16 +493,24 @@ Public Class Accession
 
         Dim con As New MySqlConnection(connectionString)
         Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-        Dim acsss As String = selectedRow.Cells("AccessionID").Value.ToString().Trim()
-
         Dim newAccessionID As String = txtaccessionid.Text.Trim()
-        Dim statusValue As String = If(rbborrowable.Checked, "Available", "For In-Library Use Only")
+
+
+        Dim newStatusValue As String = ""
+        Dim isNowAvailable As Boolean = rbborrowable.Checked
+        If isNowAvailable Then
+            newStatusValue = "Available"
+        ElseIf rbforlibraryonly.Checked Then
+            newStatusValue = "For In-Library Use Only"
+        Else
+            MsgBox("Please select a Book Status.", vbExclamation, "Missing Information")
+            Return
+        End If
 
         Try
             con.Open()
 
-
-            If newAccessionID <> acsss Then
+            If newAccessionID <> oldAccessionID Then
                 Dim com As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE AccessionID = @AccessionID AND ID <> @ID"
                 Using comsss As New MySqlCommand(com, con)
                     comsss.Parameters.AddWithValue("@AccessionID", newAccessionID)
@@ -482,7 +525,7 @@ Public Class Accession
 
             Dim coms As String = "SELECT COUNT(*) FROM `borrowing_tbl` WHERE AccessionID = @accessionID"
             Dim comsuu As New MySqlCommand(coms, con)
-            comsuu.Parameters.AddWithValue("@accessionID", acsss)
+            comsuu.Parameters.AddWithValue("@accessionID", oldAccessionID)
             Dim isBorrowed As Integer = CInt(comsuu.ExecuteScalar())
 
             If isBorrowed > 0 Then
@@ -490,17 +533,16 @@ Public Class Accession
                 Return
             End If
 
-
             Dim updt As String = "UPDATE `acession_tbl` SET " &
-                                    "`TransactionNo` = @TransactionNo, " &
-                                    "`AccessionID` = @AccessionID, " &
-                                    "`ISBN` = @ISBN, " &
-                                    "`Barcode` = @Barcode, " &
-                                    "`BookTitle` = @BookTitle, " &
-                                    "`Shelf` = @Shelf, " &
-                                    "`SupplierName` = @SupplierName, " &
-                                    "`Status` = @Status " &
-                                    "WHERE `ID` = @ID"
+                                 "`TransactionNo` = @TransactionNo, " &
+                                 "`AccessionID` = @AccessionID, " &
+                                 "`ISBN` = @ISBN, " &
+                                 "`Barcode` = @Barcode, " &
+                                 "`BookTitle` = @BookTitle, " &
+                                 "`Shelf` = @Shelf, " &
+                                 "`SupplierName` = @SupplierName, " &
+                                 "`Status` = @Status " &
+                                 "WHERE `ID` = @ID"
 
             Using updateCmd As New MySqlCommand(updt, con)
                 updateCmd.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
@@ -510,11 +552,53 @@ Public Class Accession
                 updateCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
                 updateCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
                 updateCmd.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
-                updateCmd.Parameters.AddWithValue("@Status", statusValue)
+                updateCmd.Parameters.AddWithValue("@Status", newStatusValue)
                 updateCmd.Parameters.AddWithValue("@ID", ID)
 
                 updateCmd.ExecuteNonQuery()
             End Using
+
+            If wasAvailable AndAlso Not isNowAvailable Then
+                Dim deleteSql As String = "DELETE FROM `available_tbl` WHERE AccessionID = @AccessionID"
+                Using deleteCmd As New MySqlCommand(deleteSql, con)
+                    deleteCmd.Parameters.AddWithValue("@AccessionID", oldAccessionID)
+                    deleteCmd.ExecuteNonQuery()
+                End Using
+
+            ElseIf Not wasAvailable AndAlso isNowAvailable Then
+                Dim insertSql As String = "INSERT INTO available_tbl (`ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
+                                         "VALUES (@ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
+
+                Using insertCmd As New MySqlCommand(insertSql, con)
+                    insertCmd.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                    insertCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                    insertCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                    insertCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                    insertCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                    insertCmd.Parameters.AddWithValue("@Status", newStatusValue)
+                    insertCmd.ExecuteNonQuery()
+                End Using
+
+            ElseIf wasAvailable AndAlso isNowAvailable Then
+                Dim updateAvailSql As String = "UPDATE `available_tbl` SET AccessionID = @NewAccessionID, BookTitle = @BookTitle, ISBN = @ISBN, Barcode = @Barcode, Shelf = @Shelf WHERE AccessionID = @OldAccessionID"
+                Using updateAvailCmd As New MySqlCommand(updateAvailSql, con)
+                    updateAvailCmd.Parameters.AddWithValue("@NewAccessionID", newAccessionID)
+                    updateAvailCmd.Parameters.AddWithValue("@OldAccessionID", oldAccessionID)
+                    updateAvailCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                    updateAvailCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                    updateAvailCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                    updateAvailCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                    updateAvailCmd.ExecuteNonQuery()
+                End Using
+            End If
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AvailableBooks Then
+                    Dim avail = DirectCast(form, AvailableBooks)
+                    avail.refreshavail()
+                    avail.counts()
+                End If
+            Next
 
             MessageBox.Show("Accession record updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
@@ -528,7 +612,6 @@ Public Class Accession
                 con.Close()
             End If
         End Try
-
 
     End Sub
 
@@ -578,6 +661,10 @@ Public Class Accession
                     Dim comsuus As New MySqlCommand(coms, con)
                     comsuus.ExecuteNonQuery()
 
+                    Dim comsAvail As String = "DELETE FROM `available_tbl`"
+                    Dim comsuusAvail As New MySqlCommand(comsAvail, con)
+                    comsuusAvail.ExecuteNonQuery()
+
 
                     Dim resett As String = "ALTER TABLE `acession_tbl` AUTO_INCREMENT = 1"
                     Dim incrementsu As New MySqlCommand(resett, con)
@@ -585,6 +672,13 @@ Public Class Accession
 
                     MessageBox.Show("All accession records have been successfully deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AvailableBooks Then
+                            Dim avail = DirectCast(form, AvailableBooks)
+                            avail.refreshavail()
+                            avail.counts()
+                        End If
+                    Next
 
                     Acession_Load(sender, e)
                     clearlahat()
@@ -669,5 +763,4 @@ Public Class Accession
 
     End Sub
 
-    'kapagod besssss'
 End Class

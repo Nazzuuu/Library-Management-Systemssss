@@ -765,4 +765,16 @@ Public Class Borrowing
 
     End Sub
 
+    Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
+
+        AvailableBooks.ShowDialog()
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is AvailableBooks Then
+                Dim avail = DirectCast(form, AvailableBooks)
+                avail.refreshavail()
+                avail.counts()
+            End If
+        Next
+    End Sub
 End Class
