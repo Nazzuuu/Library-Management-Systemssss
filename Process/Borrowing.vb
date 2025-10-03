@@ -377,7 +377,12 @@ Public Class Borrowing
                 cmd.Parameters.AddWithValue("@status", status)
                 cmd.Parameters.AddWithValue("@accessionID", accessionID)
                 cmd.ExecuteNonQuery()
+
             End Using
+
+            If Accession IsNot Nothing AndAlso Not Accession.IsDisposed Then
+                Accession.RefreshAccessionData()
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Error updating accession table: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -402,7 +407,7 @@ Public Class Borrowing
 
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse
-        String.IsNullOrWhiteSpace(txtname.Text) Then
+    String.IsNullOrWhiteSpace(txtname.Text) Then
 
             MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
@@ -424,7 +429,12 @@ Public Class Borrowing
         End If
 
         If Not isTimedIn Then
-            MsgBox("The borrower must be Timed In before borrowing a book. Please click the 'Time In' button.", vbExclamation, "Time-In Required")
+            MsgBox("The borrower must be Timed In before borrowing a book.", vbExclamation, "Time-In Required")
+            Exit Sub
+        End If
+
+        If Not acessionstats(txtaccessionid.Text) Then
+            MsgBox("The selected book is not available for borrowing.", vbExclamation, "Book Not Available")
             Exit Sub
         End If
 
@@ -433,7 +443,7 @@ Public Class Borrowing
             con.Open()
 
             Dim com As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate) " &
-                                "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate)"
+                            "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate)"
 
             Using comsi As New MySqlCommand(com, con)
 
@@ -457,11 +467,11 @@ Public Class Borrowing
 
                 Dim accessionID As String = txtaccessionid.Text.ToString
 
-
                 pendingstats(accessionID, "Pending")
 
 
                 MsgBox("Borrowing record successfully added.", vbInformation, "Success")
+
                 refreshborrowingsu()
                 clearlahat()
 
@@ -560,6 +570,7 @@ Public Class Borrowing
 
                 MsgBox("Borrowing record successfully updated.", vbInformation, "Success")
                 refreshborrowingsu()
+                txtaccessionid_TextChanged(txtaccessionid, EventArgs.Empty)
                 clearlahat()
 
             End Using

@@ -175,7 +175,7 @@ Partial Class oras
         btnview.FillColor = Color.Empty
         btnview.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnview.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnview.Location = New Point(742, 274)
+        btnview.Location = New Point(607, 274)
         btnview.Name = "btnview"
         btnview.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnview.Size = New Size(156, 27)
@@ -517,7 +517,7 @@ Partial Class oras
         btnregisterview.FillColor = Color.Empty
         btnregisterview.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnregisterview.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnregisterview.Location = New Point(547, 274)
+        btnregisterview.Location = New Point(398, 274)
         btnregisterview.Name = "btnregisterview"
         btnregisterview.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         btnregisterview.Size = New Size(156, 27)
@@ -571,10 +571,10 @@ Partial Class oras
         btnclear.FillColor = Color.Empty
         btnclear.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclear.Location = New Point(287, 274)
+        btnclear.Location = New Point(215, 274)
         btnclear.Name = "btnclear"
         btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges26
-        btnclear.Size = New Size(164, 27)
+        btnclear.Size = New Size(124, 27)
         btnclear.TabIndex = 46
         btnclear.Text = "CLEAR"
         ' 
@@ -653,10 +653,10 @@ Partial Class oras
         btnedit.FillColor = Color.Empty
         btnedit.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnedit.Location = New Point(30, 274)
+        btnedit.Location = New Point(39, 274)
         btnedit.Name = "btnedit"
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges30
-        btnedit.Size = New Size(158, 27)
+        btnedit.Size = New Size(124, 27)
         btnedit.TabIndex = 43
         btnedit.Text = "EDIT"
         ' 

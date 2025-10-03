@@ -38,10 +38,10 @@ Public Class oras
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
 
-        If String.IsNullOrWhiteSpace(txtsearch.Text) Then
-            ludeyngoras()
+        'If String.IsNullOrWhiteSpace(txtsearch.Text) Then
+        '    ludeyngoras()
 
-        End If
+        'End If
     End Sub
 
     Private Sub Oras_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
@@ -93,10 +93,12 @@ Public Class oras
                 DataGridView1.Columns("ID").Visible = False
             End If
 
+            DataGridView1.ClearSelection()
 
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
 
         Catch ex As Exception
             MessageBox.Show("Error loading time records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -176,9 +178,10 @@ Public Class oras
         End If
 
         Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "UPDATE `oras_tbl` SET `TimeOut` = NOW() WHERE `ID` = @ID"
-        Dim cmd As New MySqlCommand(com, con)
 
+        Dim com As String = "UPDATE `oras_tbl` SET `TimeOut` = DATE_FORMAT(NOW(), '%Y-%m-%d %h:%i %p') WHERE `ID` = @ID"
+
+        Dim cmd As New MySqlCommand(com, con)
 
         cmd.Parameters.AddWithValue("@ID", selectedID)
 

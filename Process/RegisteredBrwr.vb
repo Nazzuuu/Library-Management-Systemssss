@@ -1,16 +1,16 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports System.Drawing
-Imports System.Windows.Forms ' Siguraduhin na imported ito para sa Color at MessageBox
-' Imports Windows.Win32.System (Ito ay hindi madalas kailangan para sa basic WinForms)
+Imports System.Windows.Forms
+
 
 Public Class RegisteredBrwr
 
     Public IsInViewMode As Boolean = False
-    Public IsTimeInMode As Boolean = False ' NEW: Para sa conditional disabling ng search box at Time In action
+    Public IsTimeInMode As Boolean = False
 
     Private con As New MySqlConnection(connectionString)
 
-    ' Tiyakin na ang 'connectionString' variable ay naka-define sa isang Module o Class na na-i-import.
+
 
     Private Sub RegisteredBrwr_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -21,7 +21,6 @@ Public Class RegisteredBrwr
 
     Private Sub RegisteredBrwr_Activated(sender As Object, e As EventArgs) Handles Me.Activated
 
-        ' Kung TimeInMode, i-disable ang search box
         txtsearch.Enabled = Not IsTimeInMode
 
     End Sub
@@ -29,12 +28,12 @@ Public Class RegisteredBrwr
     Private Sub RegisteredBrwr_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
 
-        IsTimeInMode = False ' I-reset ang mode
+        IsTimeInMode = False
 
 
         txtsearch.Text = ""
 
-        txtsearch.Enabled = True ' I-re-enable para sa susunod na pag-open
+        txtsearch.Enabled = True
 
 
     End Sub
@@ -76,18 +75,17 @@ Public Class RegisteredBrwr
         Dim selectedItem As ListViewItem = ListView1.GetItemAt(e.X, e.Y)
         If selectedItem Is Nothing Then Exit Sub
 
-        ' CHECK 1: Kung nasa Time-In mode, i-Time In ang borrower (Double Click)
         If IsTimeInMode Then
             TimeInBorrower(selectedItem)
             Exit Sub
         End If
 
-        ' CHECK 2: Lumang logic para sa View Mode
+
         If IsInViewMode Then
             Exit Sub
         End If
 
-        ' Lumang logic: Selection para sa oras form (kung hindi Time-In o View Mode)
+
         Dim borrowerType As String = selectedItem.SubItems(0).Text
         Dim firstName As String = selectedItem.SubItems(1).Text
         Dim lastName As String = selectedItem.SubItems(2).Text
@@ -117,18 +115,16 @@ Public Class RegisteredBrwr
         End If
     End Sub
 
-    ' NEW: KeyDown handler para sa ENTER key press
     Private Sub ListView1_KeyDown(sender As Object, e As KeyEventArgs) Handles ListView1.KeyDown
 
-        ' Tiyakin na ang form ay nasa Time In mode at may pinindot na ENTER
         If IsTimeInMode AndAlso e.KeyCode = Keys.Enter Then
 
             If ListView1.SelectedItems.Count > 0 Then
-                ' Tawagin ang TimeInBorrower gamit ang unang selected item
+
                 TimeInBorrower(ListView1.SelectedItems(0))
             End If
 
-            ' I-markahan na handled na ang key para hindi na gumawa ng default action
+
             e.Handled = True
         End If
 
@@ -257,26 +253,26 @@ Public Class RegisteredBrwr
         End If
     End Sub
 
-    ' NEW: Helper Subroutine para sa Time In logic
+
     Private Sub TimeInBorrower(selectedItem As ListViewItem)
-        ' Tiyakin na ang action ay Time In muna at may selected item
+
         If Not IsTimeInMode OrElse selectedItem Is Nothing Then
             Exit Sub
         End If
 
-        ' Kunin ang kailangang data
+
         Dim lrn As String = selectedItem.SubItems(4).Text
         Dim employeeNo As String = selectedItem.SubItems(5).Text
         Dim currentID As String = If(selectedItem.SubItems(0).Text = "Student", lrn, employeeNo)
 
-        ' I-check kung naka-time in na (Green background)
+
         If selectedItem.BackColor = Color.FromArgb(153, 255, 153) Then
             MessageBox.Show("This borrower is currently timed in. Please Time Out first before another action.", "Already Timed In", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
         Dim conInsert As New MySqlConnection(connectionString)
-        Dim comInsert As String = "INSERT INTO `oras_tbl` (`LRN`, `EmployeeNo`, `TimeIn`) VALUES (@lrn, @emp, NOW())"
+        Dim comInsert As String = "INSERT INTO `oras_tbl` (`LRN`, `EmployeeNo`, `TimeIn`) VALUES (@lrn, @emp, DATE_FORMAT(NOW(), '%Y-%m-%d %h:%i %p'))"
 
         Try
             conInsert.Open()
@@ -289,6 +285,12 @@ Public Class RegisteredBrwr
                 cmdInsert.ExecuteNonQuery()
 
                 MessageBox.Show($"SUCCESS: Borrower ID {currentID} has been successfully Timed In.", "Time In Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+                Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
+                If orasForm IsNot Nothing Then
+                    orasForm.ludeyngoras()
+                End If
 
 
                 ludeyngborrower()
