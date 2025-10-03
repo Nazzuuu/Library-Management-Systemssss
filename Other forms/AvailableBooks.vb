@@ -13,31 +13,46 @@ Public Class AvailableBooks
     Public Sub refreshavail()
 
         Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT * FROM `available_tbl`"
-        Dim adap As New MySqlDataAdapter(com, con)
-        Dim ds As New DataSet
 
         Try
+            con.Open()
+
+            Dim syncSql As String = "DELETE av.* FROM available_tbl av " &
+                                    "LEFT JOIN acession_tbl ac ON av.AccessionID = ac.AccessionID " &
+                                    "WHERE ac.Status <> 'Available' OR ac.Status IS NULL"
+
+            Using syncCmd As New MySqlCommand(syncSql, con)
+                syncCmd.ExecuteNonQuery()
+            End Using
+
+
+            Dim com As String = "SELECT ISBN, Barcode, AccessionID, BookTitle, Shelf, Status FROM `available_tbl` WHERE Status = 'Available'"
+            Dim adap As New MySqlDataAdapter(com, con)
+            Dim ds As New DataSet
+
+            adap.SelectCommand.Connection = con
             adap.Fill(ds, "avail_info")
+
             DataGridView1.DataSource = ds.Tables("avail_info")
+
         Catch ex As Exception
             MessageBox.Show("Error refreshing Available Books data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
 
-        DataGridView1.Columns("ID").Visible = False
+
+        If DataGridView1.Columns.Contains("ID") Then
+            DataGridView1.Columns("ID").Visible = False
+        End If
 
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         DataGridView1.ClearSelection()
         DataGridView1.AllowUserToAddRows = False
-
-
-
-    End Sub
-
-    Private Sub AvailableBooks_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-        DataGridView1.ClearSelection()
     End Sub
 
     Public Sub counts()
@@ -47,7 +62,7 @@ Public Class AvailableBooks
         Try
             con.Open()
 
-            Dim countss As String = "SELECT COUNT(*) FROM available_tbl"
+            Dim countss As String = "SELECT COUNT(*) FROM available_tbl WHERE Status = 'Available'"
             Using comms As New MySqlCommand(countss, con)
                 Dim count As Integer = CInt(comms.ExecuteScalar())
                 lblavailable.Text = count.ToString()
@@ -62,10 +77,17 @@ Public Class AvailableBooks
         End Try
 
     End Sub
+
+    Private Sub AvailableBooks_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        DataGridView1.ClearSelection()
+    End Sub
+
     Private Sub AvailableBooks_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
 
         If e.KeyCode = Keys.Escape Then
             Me.Close()
+            Accession.btnview.Visible = False
+
             Accession.btnview.Visible = False
             Accession.CheckBox1.Checked = False
 

@@ -4,7 +4,7 @@ Imports System.Windows.Forms
 
 
 Public Class RegisteredBrwr
-
+    Public Property IsSearchOverride() As Boolean = False
     Public IsInViewMode As Boolean = False
     Public IsTimeInMode As Boolean = False
 
@@ -21,7 +21,15 @@ Public Class RegisteredBrwr
 
     Private Sub RegisteredBrwr_Activated(sender As Object, e As EventArgs) Handles Me.Activated
 
-        txtsearch.Enabled = Not IsTimeInMode
+
+        If Me.IsSearchOverride Then
+            txtsearch.Enabled = True
+        Else
+
+            txtsearch.Enabled = Not IsTimeInMode
+        End If
+
+        Me.IsSearchOverride = False
 
     End Sub
 
@@ -305,6 +313,10 @@ Public Class RegisteredBrwr
             End If
         End Try
 
+    End Sub
+
+    Public Sub inibol()
+        txtsearch.Enabled = True
     End Sub
 
 End Class

@@ -145,6 +145,47 @@ Public Class Borrowing
 
     End Sub
 
+    Private Const MAX_BORROWED_BOOKS As Integer = 3
+    Public Function limitniborrower(ByVal identifier As String, ByVal identifierType As String) As Boolean
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim count As Integer = 0
+        Dim identifierColumn As String = ""
+
+        If identifierType = "LRN" Then
+            identifierColumn = "LRN"
+        ElseIf identifierType = "EmployeeNo" Then
+            identifierColumn = "EmployeeNo"
+        Else
+            Return False
+        End If
+
+
+        Dim com As String = $"SELECT COUNT(*) FROM `borrowing_tbl` WHERE `{identifierColumn}` = @Identifier"
+
+        Try
+            con.Open()
+            Using cmd As New MySqlCommand(com, con)
+                cmd.Parameters.AddWithValue("@Identifier", identifier)
+
+                count = CInt(cmd.ExecuteScalar())
+            End Using
+
+
+            Return count < MAX_BORROWED_BOOKS
+
+        Catch ex As Exception
+
+            MessageBox.Show("Error checking borrower limit: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return False
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+
+    End Function
+
     Private Sub txtemployee_TextChanged(sender As Object, e As EventArgs) Handles txtemployee.TextChanged
 
         If isLoadingData Then Exit Sub
@@ -380,6 +421,14 @@ Public Class Borrowing
 
             End Using
 
+            For Each form In Application.OpenForms
+                If TypeOf form Is AvailableBooks Then
+                    Dim avail = DirectCast(form, AvailableBooks)
+                    avail.refreshavail()
+                    avail.counts()
+                End If
+            Next
+
             If Accession IsNot Nothing AndAlso Not Accession.IsDisposed Then
                 Accession.RefreshAccessionData()
             End If
@@ -394,12 +443,18 @@ Public Class Borrowing
 
         Dim borrower As String = ""
         Dim con As New MySqlConnection(connectionString)
+        Dim borrowerIdentifier As String = ""
+        Dim identifierType As String = ""
 
 
         If rbstudent.Checked Then
             borrower = "Student"
+            identifierType = "LRN"
+            borrowerIdentifier = txtlrn.Text
         ElseIf rbteacher.Checked Then
             borrower = "Teacher"
+            identifierType = "EmployeeNo"
+            borrowerIdentifier = txtemployee.Text
         Else
             MsgBox("Please select a borrower type (Student or Teacher).", vbExclamation, "Missing Information")
             Exit Sub
@@ -407,7 +462,7 @@ Public Class Borrowing
 
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse
-    String.IsNullOrWhiteSpace(txtname.Text) Then
+        String.IsNullOrWhiteSpace(txtname.Text) Then
 
             MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
@@ -439,6 +494,12 @@ Public Class Borrowing
         End If
 
 
+        If Not limitniborrower(borrowerIdentifier, identifierType) Then
+            MsgBox($"Borrowing limit reached. This borrower has already borrowed {MAX_BORROWED_BOOKS} books.", vbExclamation, "Borrowing Limit Exceeded")
+            Exit Sub
+        End If
+
+
         Try
             con.Open()
 
@@ -448,8 +509,8 @@ Public Class Borrowing
             Using comsi As New MySqlCommand(com, con)
 
                 comsi.Parameters.AddWithValue("@Borrower", borrower)
-                comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text)) ' Gamitin ang DBNull para sa empty fields
-                comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text)) ' Gamitin ang DBNull para sa empty fields
+                comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text))
+                comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text))
                 comsi.Parameters.AddWithValue("@Name", txtname.Text)
                 comsi.Parameters.AddWithValue("@Title", txtbooktitle.Text)
                 comsi.Parameters.AddWithValue("@ISBN", txtisbn.Text)
@@ -577,47 +638,6 @@ Public Class Borrowing
 
         Catch ex As Exception
             MessageBox.Show("Error updating record: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
-
-    End Sub
-
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
-
-        Dim con As New MySqlConnection(connectionString)
-
-        If DataGridView1.SelectedRows.Count = 0 Then
-            MsgBox("Please select a record from the table to delete.", vbExclamation, "No Record Selected")
-            Exit Sub
-        End If
-
-        Dim ID As String = DataGridView1.CurrentRow.Cells("ID").Value.ToString()
-
-        If MsgBox("Are you sure you want to DELETE the selected borrowing record?", vbYesNo + vbQuestion, "Confirm Delete") = vbNo Then
-            Exit Sub
-        End If
-
-        Try
-            con.Open()
-
-            Dim com As String = "DELETE FROM borrowing_tbl WHERE ID = @ID"
-
-            Using comsi As New MySqlCommand(com, con)
-                comsi.Parameters.AddWithValue("@ID", ID)
-
-                comsi.ExecuteNonQuery()
-
-                MsgBox("Borrowing record successfully deleted.", vbInformation, "Success")
-                refreshborrowingsu()
-                clearlahat()
-
-            End Using
-
-        Catch ex As Exception
-            MessageBox.Show("Error deleting record: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
                 con.Close()

@@ -367,33 +367,59 @@ Public Class Acquisition
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
-        If DataGridView1.SelectedRows.Count > 0 Then
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this acquisition record?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-            If dialogResult = DialogResult.Yes Then
-                Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Try
-                    con.Open()
-                    Dim deleteCmd As New MySqlCommand("DELETE FROM `acquisition_tbl` WHERE `ID` = @id", con)
-                    deleteCmd.Parameters.AddWithValue("@id", ID)
-                    deleteCmd.ExecuteNonQuery()
-
-                    MessageBox.Show("Record deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-                    Acquisition_Load_1(sender, e)
-
-                Catch ex As Exception
-                    MessageBox.Show("Error deleting record: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Finally
-                    If con.State = ConnectionState.Open Then
-                        con.Close()
-                    End If
-                End Try
-            End If
-        Else
+        If DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a row to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
         End If
+
+        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+        Dim acquisitionID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+        Dim bookISBN As String = selectedRow.Cells("ISBN").Value.ToString().Trim()
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim hasAccessions As Boolean = False
+
+        Try
+            con.Open()
+
+
+            Dim checkCmd As New MySqlCommand("SELECT COUNT(*) FROM `acession_tbl` WHERE `ISBN` = @ISBN", con)
+            checkCmd.Parameters.AddWithValue("@ISBN", bookISBN)
+
+            Dim count As Integer = CInt(checkCmd.ExecuteScalar())
+
+            If count > 0 Then
+                hasAccessions = True
+            End If
+
+
+            If hasAccessions Then
+
+                MessageBox.Show($"Cannot delete this acquisition record. There are {count} corresponding book accession(s) in the Accession Form.", "Deletion Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this acquisition record?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+
+            If dialogResult = DialogResult.Yes Then
+                Dim deleteCmd As New MySqlCommand("DELETE FROM `acquisition_tbl` WHERE `ID` = @id", con)
+                deleteCmd.Parameters.AddWithValue("@id", acquisitionID)
+                deleteCmd.ExecuteNonQuery()
+
+                MessageBox.Show("Record deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+                Acquisition_Load_1(sender, e)
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error processing deletion: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
     End Sub
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click

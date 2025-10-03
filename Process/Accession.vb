@@ -476,10 +476,12 @@ Public Class Accession
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
         Dim currentStatus As String = selectedRow.Cells("Status").Value.ToString().Trim()
         Dim oldAccessionID As String = selectedRow.Cells("AccessionID").Value.ToString().Trim()
-        Dim wasAvailable As Boolean = currentStatus.Equals("Available", StringComparison.OrdinalIgnoreCase)
+        Dim abeyl As Boolean = currentStatus.Equals("Available", StringComparison.OrdinalIgnoreCase)
+        Dim libraryonleh As Boolean = currentStatus.Equals("For In-Library Use Only", StringComparison.OrdinalIgnoreCase) ' Idinagdag ito para sa clarity
 
 
         Dim statsskie As New List(Of String) From {"Pending", "Lost", "Damage"}
+
 
         If statsskie.Contains(currentStatus, StringComparer.OrdinalIgnoreCase) Then
             MessageBox.Show($"Cannot edit this accession record. The current status is '{currentStatus}'.", "Editing Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -497,18 +499,21 @@ Public Class Accession
 
 
         Dim newStatusValue As String = ""
-        Dim isNowAvailable As Boolean = rbborrowable.Checked
-        If isNowAvailable Then
+        Dim avail As Boolean = rbborrowable.Checked
+        Dim laybrarisu As Boolean = rbforlibraryonly.Checked
+
+        If avail Then
             newStatusValue = "Available"
-        ElseIf rbforlibraryonly.Checked Then
+        ElseIf laybrarisu Then
             newStatusValue = "For In-Library Use Only"
         Else
-            MsgBox("Please select a Book Status.", vbExclamation, "Missing Information")
+            MsgBox("Please select a Book Status (Borrowable or For In-Library Use Only).", vbExclamation, "Missing Information")
             Return
         End If
 
         Try
             con.Open()
+
 
             If newAccessionID <> oldAccessionID Then
                 Dim com As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE AccessionID = @AccessionID AND ID <> @ID"
@@ -534,69 +539,74 @@ Public Class Accession
             End If
 
             Dim updt As String = "UPDATE `acession_tbl` SET " &
-                                 "`TransactionNo` = @TransactionNo, " &
-                                 "`AccessionID` = @AccessionID, " &
-                                 "`ISBN` = @ISBN, " &
-                                 "`Barcode` = @Barcode, " &
-                                 "`BookTitle` = @BookTitle, " &
-                                 "`Shelf` = @Shelf, " &
-                                 "`SupplierName` = @SupplierName, " &
-                                 "`Status` = @Status " &
-                                 "WHERE `ID` = @ID"
+                             "`TransactionNo` = @TransactionNo, " &
+                             "`AccessionID` = @AccessionID, " &
+                             "`ISBN` = @ISBN, " &
+                             "`Barcode` = @Barcode, " &
+                             "`BookTitle` = @BookTitle, " &
+                             "`Shelf` = @Shelf, " &
+                             "`SupplierName` = @SupplierName, " &
+                             "`Status` = @Status " &
+                             "WHERE `ID` = @ID"
 
-            Using updateCmd As New MySqlCommand(updt, con)
-                updateCmd.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
-                updateCmd.Parameters.AddWithValue("@AccessionID", newAccessionID)
-                updateCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
-                updateCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
-                updateCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
-                updateCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
-                updateCmd.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
-                updateCmd.Parameters.AddWithValue("@Status", newStatusValue)
-                updateCmd.Parameters.AddWithValue("@ID", ID)
+            Using command As New MySqlCommand(updt, con)
+                command.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
+                command.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                command.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                command.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                command.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                command.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                command.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
+                command.Parameters.AddWithValue("@Status", newStatusValue)
+                command.Parameters.AddWithValue("@ID", ID)
 
-                updateCmd.ExecuteNonQuery()
+                command.ExecuteNonQuery()
             End Using
 
-            If wasAvailable AndAlso Not isNowAvailable Then
+            If abeyl AndAlso laybrarisu Then
                 Dim deleteSql As String = "DELETE FROM `available_tbl` WHERE AccessionID = @AccessionID"
                 Using deleteCmd As New MySqlCommand(deleteSql, con)
                     deleteCmd.Parameters.AddWithValue("@AccessionID", oldAccessionID)
                     deleteCmd.ExecuteNonQuery()
                 End Using
 
-            ElseIf Not wasAvailable AndAlso isNowAvailable Then
-                Dim insertSql As String = "INSERT INTO available_tbl (`ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
-                                         "VALUES (@ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
 
-                Using insertCmd As New MySqlCommand(insertSql, con)
-                    insertCmd.Parameters.AddWithValue("@AccessionID", newAccessionID)
-                    insertCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
-                    insertCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
-                    insertCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
-                    insertCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
-                    insertCmd.Parameters.AddWithValue("@Status", newStatusValue)
-                    insertCmd.ExecuteNonQuery()
+            ElseIf libraryonleh AndAlso avail Then
+                Dim kowms As String = "INSERT INTO available_tbl (`ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
+                                     "VALUES (@ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
+
+                Using commandsu As New MySqlCommand(kowms, con)
+                    commandsu.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                    commandsu.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                    commandsu.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                    commandsu.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                    commandsu.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                    commandsu.Parameters.AddWithValue("@Status", newStatusValue)
+                    commandsu.ExecuteNonQuery()
                 End Using
 
-            ElseIf wasAvailable AndAlso isNowAvailable Then
-                Dim updateAvailSql As String = "UPDATE `available_tbl` SET AccessionID = @NewAccessionID, BookTitle = @BookTitle, ISBN = @ISBN, Barcode = @Barcode, Shelf = @Shelf WHERE AccessionID = @OldAccessionID"
-                Using updateAvailCmd As New MySqlCommand(updateAvailSql, con)
-                    updateAvailCmd.Parameters.AddWithValue("@NewAccessionID", newAccessionID)
-                    updateAvailCmd.Parameters.AddWithValue("@OldAccessionID", oldAccessionID)
-                    updateAvailCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
-                    updateAvailCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
-                    updateAvailCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
-                    updateAvailCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
-                    updateAvailCmd.ExecuteNonQuery()
+
+            ElseIf abeyl AndAlso avail Then
+                Dim updit As String = "UPDATE `available_tbl` SET AccessionID = @NewAccessionID, BookTitle = @BookTitle, ISBN = @ISBN, Barcode = @Barcode, Shelf = @Shelf, Status = @Status WHERE AccessionID = @OldAccessionID"
+                Using comssxx As New MySqlCommand(updit, con)
+                    comssxx.Parameters.AddWithValue("@NewAccessionID", newAccessionID)
+                    comssxx.Parameters.AddWithValue("@OldAccessionID", oldAccessionID)
+                    comssxx.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                    comssxx.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                    comssxx.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                    comssxx.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                    comssxx.Parameters.AddWithValue("@Status", newStatusValue)
+                    comssxx.ExecuteNonQuery()
                 End Using
+
             End If
+
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AvailableBooks Then
-                    Dim avail = DirectCast(form, AvailableBooks)
-                    avail.refreshavail()
-                    avail.counts()
+                    Dim availsu = DirectCast(form, AvailableBooks)
+                    availsu.refreshavail()
+                    availsu.counts()
                 End If
             Next
 

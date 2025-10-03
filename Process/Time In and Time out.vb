@@ -19,7 +19,13 @@ Public Class oras
 
         RegisteredBrwr.IsTimeInMode = True
 
+
+        RegisteredBrwr.IsSearchOverride = True
+
         RegisteredBrwr.ShowDialog()
+
+        RegisteredBrwr.inibol()
+
         RegisteredBrwr.ludeyngborrower()
         RegisteredBrwr.ludeyngtimedinborrower()
 
@@ -35,14 +41,6 @@ Public Class oras
 
     End Sub
 
-
-    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-
-        'If String.IsNullOrWhiteSpace(txtsearch.Text) Then
-        '    ludeyngoras()
-
-        'End If
-    End Sub
 
     Private Sub Oras_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
