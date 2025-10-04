@@ -209,17 +209,7 @@ Public Class MainForm
         Me.Cursor = Cursors.Default
     End Sub
 
-    Private Sub logout_Click(sender As Object, e As EventArgs) Handles logout.Click
 
-        Dim dialogResult As DialogResult = MessageBox.Show("logout ka na yah?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-
-        If dialogResult = DialogResult.Yes Then
-            Me.Close()
-            login.Show()
-        End If
-
-
-    End Sub
 
     Private Sub btn_borrowed_MouseHover(sender As Object, e As EventArgs) Handles btn_borrowed.MouseHover
         Cursor = Cursors.Hand
@@ -477,4 +467,14 @@ Public Class MainForm
         Cursor = Cursors.Default
     End Sub
 
+    Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
+
+        Dim dialogResult As DialogResult = MessageBox.Show("logout ka na yah?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+        If dialogResult = DialogResult.Yes Then
+            Me.Close()
+            login.Show()
+        End If
+
+    End Sub
 End Class

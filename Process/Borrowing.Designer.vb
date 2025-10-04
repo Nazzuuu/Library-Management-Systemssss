@@ -65,6 +65,8 @@ Partial Class Borrowing
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_borrowing = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label12 = New Label()
+        Label13 = New Label()
         btnview = New Guna.UI2.WinForms.Guna2Button()
         btntimein = New Guna.UI2.WinForms.Guna2Button()
         txtshelf = New Guna.UI2.WinForms.Guna2TextBox()
@@ -122,6 +124,8 @@ Partial Class Borrowing
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label12)
+        Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(btnview)
         Guna2GroupBox1.Controls.Add(btntimein)
         Guna2GroupBox1.Controls.Add(txtshelf)
@@ -161,6 +165,28 @@ Partial Class Borrowing
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges36
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(447, 224)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(49, 16)
+        Label12.TabIndex = 102
+        Label12.Text = "Notes:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(496, 225)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(181, 16)
+        Label13.TabIndex = 101
+        Label13.Text = "Select Borrower type first."
         ' 
         ' btnview
         ' 
@@ -241,9 +267,9 @@ Partial Class Borrowing
         Panel1.Controls.Add(rbteacher)
         Panel1.Controls.Add(Label10)
         Panel1.Controls.Add(rbstudent)
-        Panel1.Location = New Point(837, 249)
+        Panel1.Location = New Point(780, 249)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(275, 37)
+        Panel1.Size = New Size(332, 37)
         Panel1.TabIndex = 96
         ' 
         ' rbteacher
@@ -251,7 +277,7 @@ Partial Class Borrowing
         rbteacher.AutoSize = True
         rbteacher.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbteacher.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbteacher.Location = New Point(84, 8)
+        rbteacher.Location = New Point(121, 8)
         rbteacher.Name = "rbteacher"
         rbteacher.Size = New Size(77, 20)
         rbteacher.TabIndex = 68
@@ -266,16 +292,16 @@ Partial Class Borrowing
         Label10.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label10.Location = New Point(5, 8)
         Label10.Name = "Label10"
-        Label10.Size = New Size(73, 16)
+        Label10.Size = New Size(108, 16)
         Label10.TabIndex = 69
-        Label10.Text = "Borrower:"
+        Label10.Text = "Borrower Type:"
         ' 
         ' rbstudent
         ' 
         rbstudent.AutoSize = True
         rbstudent.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbstudent.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbstudent.Location = New Point(195, 8)
+        rbstudent.Location = New Point(232, 8)
         rbstudent.Name = "rbstudent"
         rbstudent.Size = New Size(77, 20)
         rbstudent.TabIndex = 67
@@ -797,4 +823,6 @@ Partial Class Borrowing
     Friend WithEvents Label11 As Label
     Friend WithEvents btntimein As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents btnview As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class

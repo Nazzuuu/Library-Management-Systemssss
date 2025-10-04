@@ -97,6 +97,8 @@ Partial Class Borrower
         txtemployeeno = New Guna.UI2.WinForms.Guna2TextBox()
         panel_borrower = New Panel()
         OpenFileDialog1 = New OpenFileDialog()
+        Label12 = New Label()
+        Label13 = New Label()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -303,6 +305,8 @@ Partial Class Borrower
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label12)
+        Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(Label10)
         Guna2GroupBox1.Controls.Add(txtcontactnumber)
         Guna2GroupBox1.Controls.Add(Panel1)
@@ -380,9 +384,9 @@ Partial Class Borrower
         Panel1.Controls.Add(rbteacher)
         Panel1.Controls.Add(Label9)
         Panel1.Controls.Add(rbstudent)
-        Panel1.Location = New Point(616, 154)
+        Panel1.Location = New Point(583, 154)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(275, 37)
+        Panel1.Size = New Size(308, 37)
         Panel1.TabIndex = 70
         ' 
         ' rbteacher
@@ -390,7 +394,7 @@ Partial Class Borrower
         rbteacher.AutoSize = True
         rbteacher.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbteacher.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbteacher.Location = New Point(84, 8)
+        rbteacher.Location = New Point(126, 8)
         rbteacher.Name = "rbteacher"
         rbteacher.Size = New Size(77, 20)
         rbteacher.TabIndex = 68
@@ -405,16 +409,16 @@ Partial Class Borrower
         Label9.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label9.Location = New Point(5, 8)
         Label9.Name = "Label9"
-        Label9.Size = New Size(73, 16)
+        Label9.Size = New Size(108, 16)
         Label9.TabIndex = 69
-        Label9.Text = "Borrower:"
+        Label9.Text = "Borrower Type:"
         ' 
         ' rbstudent
         ' 
         rbstudent.AutoSize = True
         rbstudent.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbstudent.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbstudent.Location = New Point(195, 8)
+        rbstudent.Location = New Point(221, 8)
         rbstudent.Name = "rbstudent"
         rbstudent.Size = New Size(77, 20)
         rbstudent.TabIndex = 67
@@ -710,6 +714,28 @@ Partial Class Borrower
         ' 
         OpenFileDialog1.FileName = "OpenFileDialog1"
         ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(615, 235)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(49, 16)
+        Label12.TabIndex = 104
+        Label12.Text = "Notes:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(664, 236)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(181, 16)
+        Label13.TabIndex = 103
+        Label13.Text = "Select Borrower type first."
+        ' 
         ' Borrower
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -766,5 +792,7 @@ Partial Class Borrower
     Friend WithEvents OpenFileDialog1 As OpenFileDialog
     Friend WithEvents txtemployeeno As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 
 End Class

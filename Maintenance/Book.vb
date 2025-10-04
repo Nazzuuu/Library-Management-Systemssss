@@ -411,6 +411,18 @@ Public Class Book
                     End If
 
 
+
+                    Dim acx As New MySqlCommand("SELECT COUNT(*) FROM `acquisition_tbl` WHERE `ISBN` = @ISBN OR `Barcode` = @Barcode", con)
+                    acx.Parameters.AddWithValue("@ISBN", bookISBN)
+                    acx.Parameters.AddWithValue("@Barcode", bookBarcode)
+
+                    Dim countsx As Integer = CInt(acx.ExecuteScalar())
+
+                    If countsx > 0 Then
+                        MsgBox("Cannot delete this book. It has existing acquisition records.", vbCritical, "Deletion Blocked")
+                        Exit Sub
+                    End If
+
                     Dim delete As New MySqlCommand("DELETE FROM `book_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", bookID)
                     delete.ExecuteNonQuery()
