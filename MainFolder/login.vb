@@ -39,6 +39,7 @@ Public Class login
                     MainForm.lbl_currentuser.Text = "Librarian"
 
                     MainForm.lblgmail.Text = userEmail
+                    MainForm.lblform.Text = "MAIN FORM"
                     Me.Hide()
                     clear()
 
@@ -63,6 +64,7 @@ Public Class login
                     MainForm.EditInfoToolStripMenuItem.Visible = False
 
                     MainForm.lblgmail.Text = userEmail
+                    MainForm.lblform.Text = "MAIN FORM"
                     Me.Hide()
                     clear()
 
@@ -77,6 +79,7 @@ Public Class login
                     MainForm.EditInfoToolStripMenuItem.Visible = False
 
                     MainForm.lblgmail.Text = userEmail
+                    MainForm.lblform.Text = "MAIN FORM"
                     Me.Hide()
                     clear()
 

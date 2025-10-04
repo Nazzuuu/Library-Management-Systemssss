@@ -751,6 +751,9 @@ Public Class Borrowing
 
         Dim borrowerID As String = ""
         Dim borrowerType As String = ""
+        Dim borrowerName As String = ""
+        Dim borrowertayp As String = ""
+
 
         If rbstudent.Checked AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
             borrowerID = txtlrn.Text
@@ -766,7 +769,7 @@ Public Class Borrowing
 
         RegisteredBrwr.IsTimeInMode = True
 
-        RegisteredBrwr.SetTimeInFilter(borrowerID, borrowerType)
+        RegisteredBrwr.SetTimeInFilter(borrowerID, borrowerType, borrowerName, borrowertayp)
 
         AddHandler RegisteredBrwr.ListView1.MouseDoubleClick, AddressOf RegisteredBrwr.ListView1_MouseDoubleClick
 

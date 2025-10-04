@@ -148,8 +148,9 @@ Public Class RegisteredBrwr
         Dim com As String = "SELECT * FROM `borrower_tbl`"
 
 
+
         If Not String.IsNullOrEmpty(searchText) Then
-            com &= " WHERE `LRN` = @search OR `EmployeeNo` = @search"
+            com &= " WHERE `LRN` = @search OR `EmployeeNo` = @search Or `FirstName` = @search Or `LastName` = @search Or `Borrower` = @search"
         End If
 
         com &= " ORDER BY `LastName` ASC"
@@ -249,9 +250,9 @@ Public Class RegisteredBrwr
     End Sub
 
 
-    Public Sub SetTimeInFilter(borrowerID As String, borrowerType As String)
+    Public Sub SetTimeInFilter(borrowerID As String, borrowerType As String, BorrowerName As String, Borrowertayp As String)
 
-        If borrowerType = "LRN" Or borrowerType = "EmployeeNo" Then
+        If borrowerType = "LRN" Or borrowerType = "EmployeeNo" Or BorrowerName = "FirstName" Or BorrowerName = "LastName" Then
 
             txtsearch.Text = borrowerID
 

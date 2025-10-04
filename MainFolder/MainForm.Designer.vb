@@ -97,6 +97,7 @@ Partial Class MainForm
         logout = New ToolStripMenuItem()
         Panel1 = New Panel()
         Panel_Menuscrip = New Panel()
+        lblform = New Label()
         Panel_MPR = New Panel()
         Panel_Header = New Panel()
         Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
@@ -495,12 +496,25 @@ Partial Class MainForm
         ' Panel_Menuscrip
         ' 
         Panel_Menuscrip.BackColor = Color.Gainsboro
+        Panel_Menuscrip.Controls.Add(lblform)
         Panel_Menuscrip.Controls.Add(Panel_MPR)
         Panel_Menuscrip.Dock = DockStyle.Top
         Panel_Menuscrip.Location = New Point(0, 59)
         Panel_Menuscrip.Name = "Panel_Menuscrip"
         Panel_Menuscrip.Size = New Size(1015, 65)
         Panel_Menuscrip.TabIndex = 1
+        ' 
+        ' lblform
+        ' 
+        lblform.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        lblform.AutoSize = True
+        lblform.Font = New Font("Tahoma", 12F, FontStyle.Bold Or FontStyle.Underline, GraphicsUnit.Point, CByte(0))
+        lblform.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblform.Location = New Point(754, 23)
+        lblform.Name = "lblform"
+        lblform.Size = New Size(56, 19)
+        lblform.TabIndex = 5
+        lblform.Text = "FORM"
         ' 
         ' Panel_MPR
         ' 
@@ -529,7 +543,7 @@ Partial Class MainForm
         Guna2CirclePictureBox1.BackgroundImageLayout = ImageLayout.Stretch
         Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), Image)
         Guna2CirclePictureBox1.ImageRotate = 0F
-        Guna2CirclePictureBox1.Location = New Point(92, 3)
+        Guna2CirclePictureBox1.Location = New Point(92, 2)
         Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
         Guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges1
         Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
@@ -1051,6 +1065,7 @@ Partial Class MainForm
         MenuStrip3.PerformLayout()
         Panel1.ResumeLayout(False)
         Panel_Menuscrip.ResumeLayout(False)
+        Panel_Menuscrip.PerformLayout()
         Panel_MPR.ResumeLayout(False)
         Panel_Header.ResumeLayout(False)
         Panel_Header.PerformLayout()
@@ -1156,5 +1171,6 @@ Partial Class MainForm
     Friend WithEvents Guna2GroupBox2 As Guna.UI2.WinForms.Guna2GroupBox
     Friend WithEvents btn_reserve As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents lbl_reserve As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents lblform As Label
 
 End Class

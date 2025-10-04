@@ -76,6 +76,8 @@ Public Class MainForm
             lumabasna = True
         End If
 
+        lblform.Text = "MAIN FORM"
+
     End Sub
 
     Private Sub AuthorMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AuthorMaintenanceToolStripMenuItem.Click
@@ -114,6 +116,7 @@ Public Class MainForm
             lumabasna = True
         End If
 
+        lblform.Text = "MAIN FORM"
     End Sub
 
     Private Sub ToolStripMenuItem2_DropDownClosed(sender As Object, e As EventArgs) Handles SettingsStripMenuItem.DropDownClosed
@@ -176,6 +179,8 @@ Public Class MainForm
         Accession.DataGridView1.ClearSelection()
         Acquisition.DataGridView1.ClearSelection()
         oras.DataGridView1.ClearSelection()
+
+        lblform.Text = "MAIN FORM"
 
     End Sub
 
@@ -298,6 +303,8 @@ Public Class MainForm
             Book.DataGridView1.CurrentCell = Nothing
         End With
 
+        lblform.Text = "BOOK FORM"
+
     End Sub
 
     Private Sub SectionToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles SectionToolStripMenuItem1.Click
@@ -322,6 +329,7 @@ Public Class MainForm
 
         End With
 
+        lblform.Text = "BORROWER FORM"
     End Sub
 
     Private Sub UserMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles UserMaintenanceToolStripMenuItem.Click
@@ -340,6 +348,7 @@ Public Class MainForm
             Users.DataGridView1.CurrentCell = Nothing
         End With
 
+        lblform.Text = "USER FORM"
     End Sub
 
 
@@ -370,6 +379,7 @@ Public Class MainForm
 
         End With
 
+        lblform.Text = "ACQUISITION FORM"
     End Sub
 
     Private Sub AccessionToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AccessionToolStripMenuItem.Click
@@ -389,7 +399,7 @@ Public Class MainForm
 
         End With
 
-
+        lblform.Text = "ACCESSION FORM"
     End Sub
 
     Private Sub TimeInToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TimeInToolStripMenuItem.Click
@@ -410,6 +420,8 @@ Public Class MainForm
 
 
         End With
+
+        lblform.Text = "TIME-IN/OUT FORM"
     End Sub
 
     Private Sub ShelfToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ShelfToolStripMenuItem.Click
@@ -437,6 +449,8 @@ Public Class MainForm
             Borrowing.DataGridView1.CurrentCell = Nothing
 
         End With
+
+        lblform.Text = "BORROWING FORM"
     End Sub
 
     Private Sub btninfo_MouseHover(sender As Object, e As EventArgs)
