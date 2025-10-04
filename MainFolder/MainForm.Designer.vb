@@ -313,7 +313,7 @@ Partial Class MainForm
         Panel_Process.Anchor = AnchorStyles.Top
         Panel_Process.BackColor = Color.DarkGray
         Panel_Process.Controls.Add(MenuStrip2)
-        Panel_Process.Location = New Point(227, 13)
+        Panel_Process.Location = New Point(233, 13)
         Panel_Process.Name = "Panel_Process"
         Panel_Process.Size = New Size(147, 26)
         Panel_Process.TabIndex = 2
