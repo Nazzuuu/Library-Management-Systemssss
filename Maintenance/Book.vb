@@ -42,7 +42,7 @@ Public Class Book
         cblang()
         cbcategoryy()
 
-        lblrandom.Text = "0000000000000"
+        clear()
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
         DateTimePicker1.Value = DateTime.Now
@@ -613,7 +613,7 @@ Public Class Book
             txtisbn.Enabled = False
             txtisbn.Text = ""
         Else
-            lblrandom.Text = "00000000000"
+            lblrandom.Text = "0000000000000"
             picbarcode.Image = Nothing
             txtisbn.Enabled = True
         End If
@@ -637,30 +637,33 @@ Public Class Book
             Dim barcodeValue As String = row.Cells("Barcode").Value.ToString
             lblrandom.Text = barcodeValue
 
-            Dim isbnValue = row.Cells("ISBN").Value
-
-            If IsDBNull(isbnValue) OrElse String.IsNullOrEmpty(isbnValue.ToString) Then
+            Dim isbnn = row.Cells("ISBN").Value
 
 
+            Dim isbnonleh As Boolean = Not IsDBNull(isbnn) AndAlso Not String.IsNullOrEmpty(isbnn.ToString)
+
+            If Not isbnonleh Then
                 rbgenerate.Checked = True
                 txtisbn.Enabled = False
                 txtisbn.Text = ""
             Else
-
-
                 rbgenerate.Checked = False
                 txtisbn.Enabled = True
-                txtisbn.Text = isbnValue.ToString
+                txtisbn.Text = isbnn.ToString
             End If
 
-            If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "00000000000" Then
+            If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
 
                 picbarcode.Image = GenerateBarcodeImage(barcodeValue, picbarcode.Width, picbarcode.Height)
+            ElseIf isbnonleh AndAlso (String.IsNullOrEmpty(barcodeValue) OrElse barcodeValue = "0000000000000") Then
+
+                picbarcode.Image = GenerateBarcodeImage("0000000000000", picbarcode.Width, picbarcode.Height)
+
+                lblrandom.Text = "0000000000000"
             Else
 
                 picbarcode.Image = Nothing
             End If
-
 
             txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
             cbauthor.Text = row.Cells("Author").Value.ToString
@@ -671,7 +674,6 @@ Public Class Book
             DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
 
             rbgenerate.Enabled = False
-
 
             isbarcode = False
 
