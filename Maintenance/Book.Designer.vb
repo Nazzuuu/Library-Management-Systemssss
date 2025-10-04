@@ -59,6 +59,7 @@ Partial Class Book
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_book = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        picbarcode = New PictureBox()
         Label10 = New Label()
         lblrandom = New Label()
         rbgenerate = New RadioButton()
@@ -89,6 +90,7 @@ Partial Class Book
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         panel_book.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
+        CType(picbarcode, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -109,6 +111,7 @@ Partial Class Book
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(picbarcode)
         Guna2GroupBox1.Controls.Add(Label10)
         Guna2GroupBox1.Controls.Add(lblrandom)
         Guna2GroupBox1.Controls.Add(rbgenerate)
@@ -146,6 +149,15 @@ Partial Class Book
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' picbarcode
+        ' 
+        picbarcode.BackColor = Color.White
+        picbarcode.Location = New Point(97, 54)
+        picbarcode.Name = "picbarcode"
+        picbarcode.Size = New Size(188, 53)
+        picbarcode.TabIndex = 77
+        picbarcode.TabStop = False
+        ' 
         ' Label10
         ' 
         Label10.AutoSize = True
@@ -173,7 +185,7 @@ Partial Class Book
         rbgenerate.AutoSize = True
         rbgenerate.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbgenerate.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbgenerate.Location = New Point(218, 69)
+        rbgenerate.Location = New Point(293, 70)
         rbgenerate.Name = "rbgenerate"
         rbgenerate.Size = New Size(75, 20)
         rbgenerate.TabIndex = 74
@@ -623,6 +635,7 @@ Partial Class Book
         panel_book.ResumeLayout(False)
         Guna2GroupBox1.ResumeLayout(False)
         Guna2GroupBox1.PerformLayout()
+        CType(picbarcode, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         Guna2GradientPanel1.ResumeLayout(False)
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
@@ -656,7 +669,8 @@ Partial Class Book
     Friend WithEvents Label8 As Label
     Friend WithEvents DateTimePicker1 As Guna.UI2.WinForms.Guna2DateTimePicker
     Friend WithEvents Label10 As Label
-    Friend WithEvents lblrandom As Label
     Friend WithEvents rbgenerate As RadioButton
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents picbarcode As PictureBox
+    Friend WithEvents lblrandom As Label
 End Class

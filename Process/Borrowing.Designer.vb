@@ -101,6 +101,7 @@ Partial Class Borrowing
         Label6 = New Label()
         txtbarcode = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        Label14 = New Label()
         panel_borrowing.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         Panel1.SuspendLayout()
@@ -124,6 +125,7 @@ Partial Class Borrowing
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label14)
         Guna2GroupBox1.Controls.Add(Label12)
         Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(btnview)
@@ -171,7 +173,7 @@ Partial Class Borrowing
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(447, 224)
+        Label12.Location = New Point(550, 224)
         Label12.Name = "Label12"
         Label12.Size = New Size(49, 16)
         Label12.TabIndex = 102
@@ -182,11 +184,11 @@ Partial Class Borrowing
         Label13.AutoSize = True
         Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label13.ForeColor = Color.Red
-        Label13.Location = New Point(496, 225)
+        Label13.Location = New Point(599, 218)
         Label13.Name = "Label13"
-        Label13.Size = New Size(181, 16)
+        Label13.Size = New Size(197, 16)
         Label13.TabIndex = 101
-        Label13.Text = "Select Borrower type first."
+        Label13.Text = "1. Select Borrower type first."
         ' 
         ' btnview
         ' 
@@ -206,7 +208,7 @@ Partial Class Borrowing
         btnview.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnview.Size = New Size(176, 27)
         btnview.TabIndex = 100
-        btnview.Text = "VIEW AVAILABLE BOOKS"
+        btnview.Text = "AVAILABLE BOOKS"
         ' 
         ' btntimein
         ' 
@@ -767,6 +769,17 @@ Partial Class Borrowing
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
+        ' Label14
+        ' 
+        Label14.AutoSize = True
+        Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label14.ForeColor = Color.Red
+        Label14.Location = New Point(599, 235)
+        Label14.Name = "Label14"
+        Label14.Size = New Size(172, 16)
+        Label14.TabIndex = 103
+        Label14.Text = "2. Select Available books."
+        ' 
         ' Borrowing
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -825,4 +838,5 @@ Partial Class Borrowing
     Friend WithEvents btnview As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Label12 As Label
     Friend WithEvents Label13 As Label
+    Friend WithEvents Label14 As Label
 End Class

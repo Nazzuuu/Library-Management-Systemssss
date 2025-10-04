@@ -72,6 +72,8 @@ Partial Class Borrower
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Label6 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label12 = New Label()
+        Label13 = New Label()
         Label10 = New Label()
         txtcontactnumber = New Guna.UI2.WinForms.Guna2TextBox()
         Panel1 = New Panel()
@@ -97,8 +99,6 @@ Partial Class Borrower
         txtemployeeno = New Guna.UI2.WinForms.Guna2TextBox()
         panel_borrower = New Panel()
         OpenFileDialog1 = New OpenFileDialog()
-        Label12 = New Label()
-        Label13 = New Label()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -345,6 +345,28 @@ Partial Class Borrower
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(615, 235)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 104
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(664, 236)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(181, 16)
+        Label13.TabIndex = 103
+        Label13.Text = "Select Borrower type first."
         ' 
         ' Label10
         ' 
@@ -713,28 +735,6 @@ Partial Class Borrower
         ' OpenFileDialog1
         ' 
         OpenFileDialog1.FileName = "OpenFileDialog1"
-        ' 
-        ' Label12
-        ' 
-        Label12.AutoSize = True
-        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label12.ForeColor = Color.Black
-        Label12.Location = New Point(615, 235)
-        Label12.Name = "Label12"
-        Label12.Size = New Size(49, 16)
-        Label12.TabIndex = 104
-        Label12.Text = "Notes:"
-        ' 
-        ' Label13
-        ' 
-        Label13.AutoSize = True
-        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label13.ForeColor = Color.Red
-        Label13.Location = New Point(664, 236)
-        Label13.Name = "Label13"
-        Label13.Size = New Size(181, 16)
-        Label13.TabIndex = 103
-        Label13.Text = "Select Borrower type first."
         ' 
         ' Borrower
         ' 

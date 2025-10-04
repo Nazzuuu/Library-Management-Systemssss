@@ -94,4 +94,28 @@ Public Class AvailableBooks
         End If
 
     End Sub
+
+
+    Private Sub DataGridView1_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellDoubleClick
+
+        If e.RowIndex >= 0 AndAlso Not DataGridView1.Rows(e.RowIndex).IsNewRow Then
+
+            Try
+                Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+                Dim brwr As String = row.Cells("AccessionID").Value.ToString()
+
+                Borrowing.txtaccessionid.Text = brwr
+
+                Me.Close()
+
+                Accession.btnview.Visible = False
+                Accession.CheckBox1.Checked = False
+
+            Catch ex As Exception
+                MessageBox.Show("Error selecting book: " & ex.Message, "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+
+        End If
+    End Sub
+
 End Class

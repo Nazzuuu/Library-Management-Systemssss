@@ -91,6 +91,7 @@ Public Class Borrowing
         txtisbn.Enabled = False
         txtbarcode.Enabled = False
         txtshelf.Enabled = False
+        txtaccessionid.Enabled = False
         txtduedate.Enabled = False
 
 

@@ -1,4 +1,9 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.Drawing
+Imports System.IO
+Imports MySql.Data.MySqlClient
+Imports ZXing
+Imports ZXing.Rendering
+Imports ZXing.Windows.Compatibility
 
 Public Class Book
 
@@ -36,6 +41,9 @@ Public Class Book
         cbpublisherr()
         cblang()
         cbcategoryy()
+
+        lblrandom.Text = "0000000000000"
+        picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
         DateTimePicker1.Value = DateTime.Now
     End Sub
@@ -465,7 +473,8 @@ Public Class Book
 
         txtisbn.Text = ""
         txtbooktitle.Text = ""
-        lblrandom.Text = "00000000000"
+        lblrandom.Text = "0000000000000"
+
         txtisbn.Enabled = True
         rbgenerate.Enabled = True
 
@@ -483,10 +492,56 @@ Public Class Book
         cblang()
 
 
+        picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
+
         DateTimePicker1.Value = DateTime.Today
         DataGridView1.ClearSelection()
     End Sub
 
+    Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal width As Integer, ByVal height As Integer) As Image
+        Try
+
+            Dim writer As New BarcodeWriter(Of Bitmap) With {
+            .Format = BarcodeFormat.CODE_128,
+            .Options = New ZXing.Common.EncodingOptions With {
+                .Width = width,
+                .Height = height,
+                .Margin = 10
+            },
+            .Renderer = New BitmapRenderer()
+        }
+
+            Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
+
+            Dim finalImage As New Bitmap(width, height + 20)
+            Using g As Graphics = Graphics.FromImage(finalImage)
+                g.Clear(Color.White)
+                g.DrawImage(barcodeBitmap, 0, 0)
+
+                Using font As New Font("Arial", 8)
+                    Using sf As New StringFormat With {
+                        .Alignment = StringAlignment.Center
+                    }
+                        g.DrawString(barcodeText, font, Brushes.Black, New RectangleF(0, height, width, 20), sf)
+                    End Using
+                End Using
+            End Using
+
+            Return finalImage
+
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+            Dim bmp As New Bitmap(width, height)
+            Using g As Graphics = Graphics.FromImage(bmp)
+                g.Clear(Color.Red)
+                Using font As New Font("Arial", 10)
+                    g.DrawString("ERROR: " & barcodeText, font, Brushes.White, 10, 10)
+                End Using
+            End Using
+            Return bmp
+        End Try
+    End Function
 
 
     Function jinireyt() As String
@@ -546,17 +601,28 @@ Public Class Book
     End Sub
 
 
-    Private Sub rbgenerate_CheckedChanged(sender As Object, e As EventArgs) Handles rbgenerate.CheckedChanged
+    Private Sub jinreytsu()
+        If rbgenerate.Checked Then
 
+            Dim newBarcode As String = jinireyt()
+
+            lblrandom.Text = newBarcode
+
+            picbarcode.Image = GenerateBarcodeImage(newBarcode, picbarcode.Width, picbarcode.Height)
+
+            txtisbn.Enabled = False
+            txtisbn.Text = ""
+        Else
+            lblrandom.Text = "00000000000"
+            picbarcode.Image = Nothing
+            txtisbn.Enabled = True
+        End If
+    End Sub
+
+
+    Private Sub rbgenerate_CheckedChanged(sender As Object, e As EventArgs) Handles rbgenerate.CheckedChanged
         If Not isbarcode Then
-            If rbgenerate.Checked Then
-                lblrandom.Text = jinireyt()
-                txtisbn.Enabled = False
-                txtisbn.Text = ""
-            Else
-                lblrandom.Text = "00000000000"
-                txtisbn.Enabled = True
-            End If
+            jinreytsu()
         End If
     End Sub
 
@@ -568,22 +634,33 @@ Public Class Book
 
             Dim row = DataGridView1.Rows(e.RowIndex)
 
-            lblrandom.Text = row.Cells("Barcode").Value.ToString
-
+            Dim barcodeValue As String = row.Cells("Barcode").Value.ToString
+            lblrandom.Text = barcodeValue
 
             Dim isbnValue = row.Cells("ISBN").Value
 
             If IsDBNull(isbnValue) OrElse String.IsNullOrEmpty(isbnValue.ToString) Then
+
 
                 rbgenerate.Checked = True
                 txtisbn.Enabled = False
                 txtisbn.Text = ""
             Else
 
+
                 rbgenerate.Checked = False
                 txtisbn.Enabled = True
                 txtisbn.Text = isbnValue.ToString
             End If
+
+            If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "00000000000" Then
+
+                picbarcode.Image = GenerateBarcodeImage(barcodeValue, picbarcode.Width, picbarcode.Height)
+            Else
+
+                picbarcode.Image = Nothing
+            End If
+
 
             txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
             cbauthor.Text = row.Cells("Author").Value.ToString
@@ -594,6 +671,8 @@ Public Class Book
             DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
 
             rbgenerate.Enabled = False
+
+
             isbarcode = False
 
         End If

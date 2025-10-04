@@ -38,6 +38,8 @@ Partial Class AvailableBooks
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         Label2 = New Label()
         lblavailable = New Label()
+        Label12 = New Label()
+        Label13 = New Label()
         Guna2GradientPanel1.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -50,7 +52,7 @@ Partial Class AvailableBooks
         Guna2GradientPanel1.BorderThickness = 2
         Guna2GradientPanel1.Controls.Add(DataGridView1)
         Guna2GradientPanel1.CustomizableEdges = CustomizableEdges1
-        Guna2GradientPanel1.Location = New Point(38, 83)
+        Guna2GradientPanel1.Location = New Point(38, 100)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         Guna2GradientPanel1.Size = New Size(1044, 300)
@@ -166,11 +168,35 @@ Partial Class AvailableBooks
         lblavailable.TabIndex = 60
         lblavailable.Text = "0"
         ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(38, 65)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 106
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(87, 66)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(365, 16)
+        Label13.TabIndex = 105
+        Label13.Text = "Select and double-click the desired book for borrowing."
+        ' 
         ' AvailableBooks
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1120, 454)
+        Controls.Add(Label12)
+        Controls.Add(Label13)
         Controls.Add(lblavailable)
         Controls.Add(Label2)
         Controls.Add(Guna2GradientPanel1)
@@ -197,4 +223,6 @@ Partial Class AvailableBooks
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents Label2 As Label
     Friend WithEvents lblavailable As Label
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class
