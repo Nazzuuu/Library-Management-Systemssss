@@ -149,7 +149,7 @@ Public Class Accession
             rbforlibraryonly.Enabled = False
             cbshelf.Enabled = False
 
-
+            btnview.Visible = True
             clearna()
 
 
@@ -166,6 +166,7 @@ Public Class Accession
             lblnotes.Visible = False
             lblnote.Visible = False
 
+            btnview.Visible = True
 
             btntransaction.Enabled = True
 
@@ -185,6 +186,8 @@ Public Class Accession
         txtaccessionid.Text = ""
         txtsuppliername.Text = ""
         txttransactionno.Text = ""
+
+        btnview.Visible = True
 
         rbborrowable.Checked = False
         rbforlibraryonly.Checked = False
@@ -311,6 +314,7 @@ Public Class Accession
 
             transaction.Commit()
 
+            btnview.Enabled = True
 
             MessageBox.Show("Reserve copies saved. Total reserved: " & reserveCount.ToString(), "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
@@ -321,6 +325,8 @@ Public Class Accession
                     avail.counts()
                 End If
             Next
+
+
 
         Catch ex As Exception
             If transaction IsNot Nothing Then

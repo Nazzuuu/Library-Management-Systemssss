@@ -174,7 +174,7 @@ Public Class ReserveCopies
                         Dim accessionForm = DirectCast(form, Accession)
                         accessionForm.RefreshAccessionData()
 
-                        accessionForm.btnview.Visible = False
+                        accessionForm.btnview.Visible = True
                         accessionForm.CheckBox1.Checked = False
                     End If
                 Next
@@ -219,6 +219,7 @@ Public Class ReserveCopies
     Private Sub ReserveCopies_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
 
         Accession.CheckBox1.Checked = False
+        Accession.btnview.Visible = True
 
     End Sub
 
