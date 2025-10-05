@@ -376,6 +376,7 @@ Public Class Acquisition
         Dim acquisitionID As Integer = CInt(selectedRow.Cells("ID").Value)
 
         Dim bookISBN As String = selectedRow.Cells("ISBN").Value.ToString().Trim()
+        Dim bookBarcode As String = selectedRow.Cells("Barcode").Value.ToString()
 
         Dim con As New MySqlConnection(connectionString)
         Dim hasAccessions As Boolean = False
@@ -398,6 +399,19 @@ Public Class Acquisition
 
                 MessageBox.Show($"Cannot delete this acquisition record. There are {count} corresponding book accession(s) in the Accession Form.", "Deletion Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return
+            End If
+
+
+
+            Dim acs As New MySqlCommand("SELECT COUNT(*) FROM `acession_tbl` WHERE `ISBN` = @ISBN OR `Barcode` = @Barcode", con)
+            acs.Parameters.AddWithValue("@ISBN", bookISBN)
+            acs.Parameters.AddWithValue("@Barcode", bookBarcode)
+
+            Dim countss As Integer = CInt(acs.ExecuteScalar())
+
+            If countss > 0 Then
+                MsgBox("Cannot delete this book. It has existing Accession ID records.", vbExclamation, "Deletion Blocked")
+                Exit Sub
             End If
 
             Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this acquisition record?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
@@ -457,17 +471,23 @@ Public Class Acquisition
 
             If Not String.IsNullOrEmpty(selectedRow.Cells("Barcode").Value?.ToString()) Then
 
-                rbbarcode.Checked = True
+                rbbarcode.Checked = False
+                rbbarcode.Enabled = False
+                rbisbn.Enabled = False
                 rbisbn.Checked = False
 
             ElseIf Not String.IsNullOrEmpty(selectedRow.Cells("ISBN").Value?.ToString()) Then
 
-                rbisbn.Checked = True
                 rbbarcode.Checked = False
+                rbbarcode.Enabled = False
+                rbisbn.Enabled = False
+                rbisbn.Checked = False
 
             Else
 
                 rbbarcode.Checked = False
+                rbbarcode.Enabled = False
+                rbisbn.Enabled = False
                 rbisbn.Checked = False
 
             End If
@@ -552,6 +572,9 @@ Public Class Acquisition
 
         rbbarcode.Checked = False
         rbisbn.Checked = False
+
+        rbbarcode.Enabled = True
+        rbisbn.Enabled = True
 
         DateTimePicker1.Value = DateTime.Now
         Datagridview1.ClearSelection()

@@ -414,7 +414,7 @@ Public Class Book
                     Dim countss As Integer = CInt(acs.ExecuteScalar())
 
                     If countss > 0 Then
-                        MsgBox("Cannot delete this book. It has existing accession records.", vbCritical, "Deletion Blocked")
+                        MsgBox("Cannot delete this book. It has existing accession records.", vbExclamation, "Deletion Blocked")
                         Exit Sub
                     End If
 
@@ -427,7 +427,7 @@ Public Class Book
                     Dim countsx As Integer = CInt(acx.ExecuteScalar())
 
                     If countsx > 0 Then
-                        MsgBox("Cannot delete this book. It has existing acquisition records.", vbCritical, "Deletion Blocked")
+                        MsgBox("Cannot delete this book. It has existing acquisition records.", vbExclamation, "Deletion Blocked")
                         Exit Sub
                     End If
 
@@ -474,6 +474,7 @@ Public Class Book
         txtisbn.Text = ""
         txtbooktitle.Text = ""
         lblrandom.Text = "0000000000000"
+        lblrandom.Visible = False
 
         txtisbn.Enabled = True
         rbgenerate.Enabled = True
@@ -681,4 +682,74 @@ Public Class Book
 
     End Sub
 
+
+
+    Private Sub txtbooktitle_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtbooktitle.KeyPress
+
+
+        If Char.IsLetter(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+
+        If Char.IsDigit(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+
+        If Char.IsControl(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+        If Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+
+        Select Case e.KeyChar
+            Case "."c, ","c, "'"c, "-"c, ":"c, ";"c, "("c, ")"c, "?"c, "!"c, "&"c, "/"c
+                e.Handled = False
+                Return
+        End Select
+
+
+
+        If e.KeyChar = Chr(34) Then
+            e.Handled = False
+            Return
+        End If
+
+
+        e.Handled = True
+
+    End Sub
+
+    Private Sub txtbooktitle_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtbooktitle.Validating
+
+        Dim BookTitle As String = txtbooktitle.Text.Trim()
+        Dim TitlePattern As String = "^(?=.*[a-zA-Z0-9])(?!.*[.,'():;?!&/\s-]{2,})[a-zA-Z0-9\s.,'():;?!&/-]+$"
+
+        If String.IsNullOrEmpty(BookTitle) Then
+            e.Cancel = False
+            Return
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(BookTitle, TitlePattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+
+            MessageBox.Show("Invalid book title format. The title must contain words or numbers.", "Validation Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
+        End If
+    End Sub
+
+    Private Sub Print(sender As Object, e As EventArgs) Handles btnprint.Click
+
+    End Sub
 End Class

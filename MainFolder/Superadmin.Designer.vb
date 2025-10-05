@@ -77,6 +77,7 @@ Partial Class Superadmin
         Label1 = New Label()
         txtfname = New Guna.UI2.WinForms.Guna2TextBox()
         txtpassword = New Guna.UI2.WinForms.Guna2TextBox()
+        lblpassword = New Label()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Panel1.SuspendLayout()
@@ -549,11 +550,23 @@ Partial Class Superadmin
         txtpassword.Size = New Size(242, 33)
         txtpassword.TabIndex = 120
         ' 
+        ' lblpassword
+        ' 
+        lblpassword.AutoSize = True
+        lblpassword.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
+        lblpassword.ForeColor = SystemColors.WindowFrame
+        lblpassword.Location = New Point(692, 176)
+        lblpassword.Name = "lblpassword"
+        lblpassword.Size = New Size(98, 13)
+        lblpassword.TabIndex = 127
+        lblpassword.Text = "Password Strength"
+        ' 
         ' Superadmin
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(995, 568)
+        Controls.Add(lblpassword)
         Controls.Add(DataGridView1)
         Controls.Add(CheckBox1)
         Controls.Add(PictureBox1)
@@ -621,4 +634,5 @@ Partial Class Superadmin
     Friend WithEvents txtfname As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents txtpassword As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents lblpassword As Label
 End Class

@@ -434,6 +434,75 @@ Public Class Superadmin
         End If
 
     End Sub
+
+    Private Function paswurdstringth(ByVal Password As String) As Integer
+        Dim Score As Integer = 0
+
+        If Password.Length >= 8 Then
+            Score += 1
+        End If
+        If Password.Length >= 12 Then
+            Score += 1
+        End If
+
+
+        If System.Text.RegularExpressions.Regex.IsMatch(Password, "[a-z]") Then
+            Score += 1
+        End If
+
+        If System.Text.RegularExpressions.Regex.IsMatch(Password, "[A-Z]") Then
+            Score += 1
+        End If
+
+        If System.Text.RegularExpressions.Regex.IsMatch(Password, "\d") Then
+            Score += 1
+        End If
+
+        If System.Text.RegularExpressions.Regex.IsMatch(Password, "[^a-zA-Z0-9\s]") Then
+            Score += 2
+        End If
+
+
+        If String.IsNullOrWhiteSpace(Password) Then
+            Return 0
+        End If
+
+        Return Score
+    End Function
+
+
+    Private Sub txtpass(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
+        Dim Password As String = txtpassword.Text
+
+
+        If String.IsNullOrEmpty(Password) Then
+            lblpassword.Visible = False
+            Exit Sub
+        Else
+            lblpassword.Visible = True
+        End If
+
+
+        Dim StrengthScore As Integer = paswurdstringth(Password)
+
+
+        Select Case StrengthScore
+            Case 0, 1, 2
+                lblpassword.ForeColor = Color.Red
+                lblpassword.Text = "Weak: Password must be longer and more complex."
+            Case 3, 4
+                lblpassword.ForeColor = Color.Orange
+                lblpassword.Text = "Moderate: Try adding a number or symbol."
+            Case 5, 6
+                lblpassword.ForeColor = Color.Blue
+                lblpassword.Text = "Strong: Good combination of characters."
+            Case Is >= 7
+                lblpassword.ForeColor = Color.Green
+                lblpassword.Text = "Excellent: Very strong password! ✓"
+        End Select
+
+    End Sub
+
     'hatdoggggg'''
 
 End Class

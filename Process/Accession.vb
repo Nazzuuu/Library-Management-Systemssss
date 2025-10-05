@@ -115,7 +115,7 @@ Public Class Accession
         txtsuppliername.Enabled = False
 
 
-        btnview.Visible = False
+
 
     End Sub
 
@@ -141,7 +141,7 @@ Public Class Accession
 
             lblnote.Text = "Please hold the 'CTRL' key and select multiple rows. Press 'ENTER' to save."
 
-            btnview.Visible = True
+
             btntransaction.Enabled = False
 
             rbborrowable.Enabled = False
@@ -165,7 +165,7 @@ Public Class Accession
             lblnotes.Visible = False
             lblnote.Visible = False
 
-            btnview.Visible = False
+
             btntransaction.Enabled = True
 
             rbborrowable.Enabled = True

@@ -243,11 +243,33 @@ Public Class Author
 
     Private Sub txtauthor_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtauthor.KeyPress
 
-        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
-            e.Handled = True
+        If Char.IsLetter(e.KeyChar) Then
+            e.Handled = False
+            Return
         End If
 
+        If Char.IsControl(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+        If Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+
+        If e.KeyChar = "."c Then
+            e.Handled = False
+            Return
+        End If
+
+
+        e.Handled = True
+
     End Sub
+
+
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
 
@@ -308,6 +330,57 @@ Public Class Author
 
         End If
 
+    End Sub
+
+    Private Sub txtauthor_TextChanged(sender As Object, e As EventArgs) Handles txtauthor.TextChanged
+
+        Dim InputText As String = txtauthor.Text
+        Dim FilteredText As New System.Text.StringBuilder()
+
+        For Each c As Char In InputText
+            If Char.IsLetter(c) OrElse Char.IsWhiteSpace(c) OrElse c = "."c Then
+                FilteredText.Append(c)
+            End If
+        Next
+
+        If FilteredText.ToString() <> InputText Then
+
+            Dim CursorPosition As Integer = txtauthor.SelectionStart
+            txtauthor.Text = FilteredText.ToString()
+
+
+            If CursorPosition > 0 Then
+                txtauthor.SelectionStart = Math.Min(CursorPosition - 1, txtauthor.Text.Length)
+            Else
+                txtauthor.SelectionStart = 0
+            End If
+        End If
+
+    End Sub
+
+    Private Sub txtauthor_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtauthor.Validating
+
+        Dim AuthorName As String = txtauthor.Text.Trim()
+
+        Dim StrictPattern As String = "^([A-Z][a-z]*|\.?[A-Z]\.?)(\s+([A-Z][a-z]*|\.?[A-Z]\.?))*((\s(Jr|Sr|III|IV)\.?))?$"
+
+
+        If String.IsNullOrEmpty(AuthorName) Then
+
+            e.Cancel = False
+            Return
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(AuthorName, StrictPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+
+            MessageBox.Show("Invalid author name format. Periods (.) are only allowed for middle initials or suffixes (e.g., S. or Jr./Sr.).", "Input Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+
+            e.Cancel = False
+        End If
     End Sub
 
 

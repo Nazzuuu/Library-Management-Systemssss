@@ -9,6 +9,9 @@ Public Class Users
 
     Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        txtpassword.PasswordChar = "•"
+        PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `user_staff_tbl`"
         Dim adapp As New MySqlDataAdapter(com, con)
@@ -129,28 +132,6 @@ Public Class Users
             End If
         End Try
     End Sub
-
-
-
-    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
-
-        If CheckBox1.Checked = True Then
-            txtpassword.UseSystemPasswordChar = False
-        Else
-            txtpassword.UseSystemPasswordChar = True
-        End If
-    End Sub
-
-    Private Sub txtpassword_TextChanged(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
-
-        If CheckBox1.Checked = True Then
-            txtpassword.UseSystemPasswordChar = False
-        Else
-            txtpassword.UseSystemPasswordChar = True
-        End If
-    End Sub
-
-
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
@@ -429,19 +410,49 @@ Public Class Users
 
     Private Sub txtemail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtemail.KeyPress
 
-        If e.KeyChar = " "c AndAlso String.IsNullOrEmpty(txtemail.Text) Then
-            e.Handled = True
 
-
+        If Char.IsLetterOrDigit(e.KeyChar) OrElse Char.IsControl(e.KeyChar) Then
+            e.Handled = False
+            Return
         End If
 
-        If Not Char.IsLetterOrDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso e.KeyChar <> "@" AndAlso e.KeyChar <> "." Then
-            e.Handled = True
-        End If
+
+        Select Case e.KeyChar
+            Case "@"c, "."c, "-"c, "_"c
+                e.Handled = False
+                Return
+        End Select
 
 
         If Char.IsWhiteSpace(e.KeyChar) Then
             e.Handled = True
+            Return
+        End If
+
+        e.Handled = True
+
+    End Sub
+
+    Private Sub txtemail_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtemail.Validating
+
+        Dim EmailText As String = txtemail.Text.Trim()
+
+
+
+        Dim EmailPattern As String = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+
+        If String.IsNullOrEmpty(EmailText) Then
+            e.Cancel = False
+            Return
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(EmailText, EmailPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+            MessageBox.Show("Invalid email format. Please check the structure (e.g., name@domain.com).", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
         End If
 
     End Sub
@@ -483,34 +494,7 @@ Public Class Users
 
     End Sub
 
-    Private Sub txtemail_TextChanged(sender As Object, e As EventArgs) Handles txtemail.TextChanged
 
-
-        Dim email As String = txtemail.Text.Trim()
-
-        If String.IsNullOrWhiteSpace(email) Then
-
-            lblexample.ForeColor = Color.Black
-            lblexample.Text = "Example@gmail.com"
-            Exit Sub
-        End If
-
-
-        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
-
-
-        If emailRegex.IsMatch(email) Then
-
-            lblexample.ForeColor = Color.Green
-            lblexample.Text = "Example@gmail.com ✓"
-
-        Else
-
-            lblexample.ForeColor = Color.Red
-            lblexample.Text = "Example@gmail.com ✕"
-        End If
-
-    End Sub
 
     Private Sub CheckBox2_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox2.CheckedChanged
 
@@ -576,9 +560,114 @@ Public Class Users
 
     End Sub
 
+    Private Sub txtemail_TextChanged(sender As Object, e As EventArgs) Handles txtemail.TextChanged
 
 
+        Dim email As String = txtemail.Text.Trim()
 
+        If String.IsNullOrWhiteSpace(email) Then
+
+            lblexample.ForeColor = Color.Black
+            lblexample.Text = "Name@domain.com"
+            Exit Sub
+        End If
+
+
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
+
+
+        If emailRegex.IsMatch(email) Then
+
+            lblexample.ForeColor = Color.Green
+            lblexample.Text = " Name@domain.com ✓"
+
+        Else
+
+            lblexample.ForeColor = Color.Red
+            lblexample.Text = " Name@domain.com ✕"
+        End If
+
+    End Sub
+
+    Private Function paswurdstringth(ByVal Password As String) As Integer
+        Dim Score As Integer = 0
+
+        If Password.Length >= 8 Then
+            Score += 1
+        End If
+        If Password.Length >= 12 Then
+            Score += 1
+        End If
+
+
+        If System.Text.RegularExpressions.Regex.IsMatch(Password, "[a-z]") Then
+            Score += 1
+        End If
+
+        If System.Text.RegularExpressions.Regex.IsMatch(Password, "[A-Z]") Then
+            Score += 1
+        End If
+
+        If System.Text.RegularExpressions.Regex.IsMatch(Password, "\d") Then
+            Score += 1
+        End If
+
+        If System.Text.RegularExpressions.Regex.IsMatch(Password, "[^a-zA-Z0-9\s]") Then
+            Score += 2
+        End If
+
+
+        If String.IsNullOrWhiteSpace(Password) Then
+            Return 0
+        End If
+
+        Return Score
+    End Function
+
+
+    Private Sub txtpass(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
+        Dim Password As String = txtpassword.Text
+
+
+        If String.IsNullOrEmpty(Password) Then
+            lblpassword.Visible = False
+            Exit Sub
+        Else
+            lblpassword.Visible = True
+        End If
+
+
+        Dim StrengthScore As Integer = paswurdstringth(Password)
+
+
+        Select Case StrengthScore
+            Case 0, 1, 2
+                lblpassword.ForeColor = Color.Red
+                lblpassword.Text = "Weak: Password must be longer and more complex."
+            Case 3, 4
+                lblpassword.ForeColor = Color.Orange
+                lblpassword.Text = "Moderate: Try adding a number or symbol."
+            Case 5, 6
+                lblpassword.ForeColor = Color.Blue
+                lblpassword.Text = "Strong: Good combination of characters."
+            Case Is >= 7
+                lblpassword.ForeColor = Color.Green
+                lblpassword.Text = "Excellent: Very strong password! ✓"
+        End Select
+
+    End Sub
+
+    Private Sub PictureBox2_Click(sender As Object, e As EventArgs) Handles PictureBox2.Click
+
+        If txtpassword.PasswordChar = "•" Then
+            PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\dilat.png")
+            txtpassword.PasswordChar = ""
+        Else
+            PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+            txtpassword.PasswordChar = "•"
+        End If
+
+    End Sub
 
     ''pagod na ako mga bes''
 End Class

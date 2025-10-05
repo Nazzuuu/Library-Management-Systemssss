@@ -83,7 +83,7 @@ Public Class ReserveCopies
 
         If e.KeyCode = Keys.Escape Then
             Me.Close()
-            Accession.btnview.Visible = False
+
             Accession.CheckBox1.Checked = False
 
         End If
@@ -218,7 +218,6 @@ Public Class ReserveCopies
 
     Private Sub ReserveCopies_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
 
-        Accession.btnview.Visible = False
         Accession.CheckBox1.Checked = False
 
     End Sub

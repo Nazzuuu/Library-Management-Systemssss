@@ -269,8 +269,41 @@ Public Class Supplier
     Private Sub txtaddress_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtaddress.KeyPress
 
 
-        If Not Char.IsLetterOrDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) AndAlso e.KeyChar <> "#" Then
-            e.Handled = True
+        If Char.IsLetterOrDigit(e.KeyChar) OrElse Char.IsControl(e.KeyChar) OrElse Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+
+        Select Case e.KeyChar
+            Case "#"c, "."c, ","c, "-"c, "/"c, "'"c, ":"c, "("c, ")"c
+                e.Handled = False
+                Return
+        End Select
+
+
+        e.Handled = True
+
+    End Sub
+
+
+    Private Sub txtaddress_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtaddress.Validating
+
+        Dim AddressText As String = txtaddress.Text.Trim()
+        Dim AddressPattern As String = "^(?=.*[a-zA-Z0-9])(?!.*[#.,/\-:'()\s]{2,})[a-zA-Z0-9\s#.,/\-:'()]+$"
+
+        If String.IsNullOrEmpty(AddressText) Then
+            e.Cancel = False
+            Return
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(AddressText, AddressPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+            MessageBox.Show("Invalid address format.", "Validation Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
         End If
 
     End Sub

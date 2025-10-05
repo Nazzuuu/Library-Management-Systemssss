@@ -66,6 +66,8 @@ Partial Class Users
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Label6 = New Label()
         groupbox = New Guna.UI2.WinForms.Guna2GroupBox()
+        PictureBox2 = New PictureBox()
+        lblpassword = New Label()
         Panel1 = New Panel()
         rbassistant = New RadioButton()
         rbstaff = New RadioButton()
@@ -78,7 +80,6 @@ Partial Class Users
         txtlname = New Guna.UI2.WinForms.Guna2TextBox()
         txtfname = New Guna.UI2.WinForms.Guna2TextBox()
         lblexample = New Label()
-        CheckBox1 = New CheckBox()
         rbmale = New RadioButton()
         rbfemale = New RadioButton()
         Label4 = New Label()
@@ -95,6 +96,7 @@ Partial Class Users
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
         groupbox.SuspendLayout()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         Panel1.SuspendLayout()
         panel_book.SuspendLayout()
         SuspendLayout()
@@ -296,6 +298,8 @@ Partial Class Users
         groupbox.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         groupbox.BorderRadius = 9
         groupbox.BorderThickness = 2
+        groupbox.Controls.Add(PictureBox2)
+        groupbox.Controls.Add(lblpassword)
         groupbox.Controls.Add(Panel1)
         groupbox.Controls.Add(CheckBox2)
         groupbox.Controls.Add(Label8)
@@ -305,7 +309,6 @@ Partial Class Users
         groupbox.Controls.Add(txtlname)
         groupbox.Controls.Add(txtfname)
         groupbox.Controls.Add(lblexample)
-        groupbox.Controls.Add(CheckBox1)
         groupbox.Controls.Add(rbmale)
         groupbox.Controls.Add(rbfemale)
         groupbox.Controls.Add(Label4)
@@ -334,6 +337,28 @@ Partial Class Users
         groupbox.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         groupbox.Size = New Size(1333, 626)
         groupbox.TabIndex = 0
+        ' 
+        ' PictureBox2
+        ' 
+        PictureBox2.BackColor = Color.White
+        PictureBox2.BackgroundImageLayout = ImageLayout.Zoom
+        PictureBox2.Location = New Point(1169, 171)
+        PictureBox2.Name = "PictureBox2"
+        PictureBox2.Size = New Size(28, 18)
+        PictureBox2.SizeMode = PictureBoxSizeMode.Zoom
+        PictureBox2.TabIndex = 125
+        PictureBox2.TabStop = False
+        ' 
+        ' lblpassword
+        ' 
+        lblpassword.AutoSize = True
+        lblpassword.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
+        lblpassword.ForeColor = SystemColors.WindowFrame
+        lblpassword.Location = New Point(975, 200)
+        lblpassword.Name = "lblpassword"
+        lblpassword.Size = New Size(97, 13)
+        lblpassword.TabIndex = 81
+        lblpassword.Text = "Password strength"
         ' 
         ' Panel1
         ' 
@@ -503,18 +528,6 @@ Partial Class Users
         lblexample.Size = New Size(104, 13)
         lblexample.TabIndex = 72
         lblexample.Text = "Example@gmail.com"
-        ' 
-        ' CheckBox1
-        ' 
-        CheckBox1.AutoSize = True
-        CheckBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        CheckBox1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CheckBox1.Location = New Point(1212, 172)
-        CheckBox1.Name = "CheckBox1"
-        CheckBox1.Size = New Size(61, 20)
-        CheckBox1.TabIndex = 71
-        CheckBox1.Text = "Show"
-        CheckBox1.UseVisualStyleBackColor = True
         ' 
         ' rbmale
         ' 
@@ -701,6 +714,7 @@ Partial Class Users
         Guna2GradientPanel1.ResumeLayout(False)
         groupbox.ResumeLayout(False)
         groupbox.PerformLayout()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         panel_book.ResumeLayout(False)
@@ -729,7 +743,6 @@ Partial Class Users
     Friend WithEvents rbmale As RadioButton
     Friend WithEvents rbfemale As RadioButton
     Friend WithEvents OpenFileDialog1 As OpenFileDialog
-    Friend WithEvents CheckBox1 As CheckBox
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents lblexample As Label
     Friend WithEvents txtlname As Guna.UI2.WinForms.Guna2TextBox
@@ -743,4 +756,6 @@ Partial Class Users
     Friend WithEvents rbassistant As RadioButton
     Friend WithEvents rbstaff As RadioButton
     Friend WithEvents Label9 As Label
+    Friend WithEvents lblpassword As Label
+    Friend WithEvents PictureBox2 As PictureBox
 End Class
