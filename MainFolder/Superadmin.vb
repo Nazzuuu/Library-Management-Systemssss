@@ -233,22 +233,55 @@ Public Class Superadmin
 
     End Sub
 
-    Private Sub txtemail_TextChanged_1(sender As Object, e As EventArgs) Handles txtemail.TextChanged
+    Private Sub txtemail_TextChanged(sender As Object, e As EventArgs) Handles txtemail.TextChanged
 
-        Dim email = txtemail.Text.Trim
+
+        Dim email As String = txtemail.Text.Trim()
+
         If String.IsNullOrWhiteSpace(email) Then
+
             lblexample.ForeColor = Color.Black
-            lblexample.Text = "Example@gmail.com"
+            lblexample.Text = "Name@domain.com"
             Exit Sub
         End If
 
-        Dim emailRegex As New Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
+
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
+
+
         If emailRegex.IsMatch(email) Then
+
             lblexample.ForeColor = Color.Green
-            lblexample.Text = "Example@gmail.com ✓"
+            lblexample.Text = " Name@domain.com ✓"
+
         Else
+
             lblexample.ForeColor = Color.Red
-            lblexample.Text = "Example@gmail.com ✕"
+            lblexample.Text = " Name@domain.com ✕"
+        End If
+
+    End Sub
+
+    Private Sub txtemail_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtemail.Validating
+
+        Dim EmailText As String = txtemail.Text.Trim()
+
+
+
+        Dim EmailPattern As String = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+
+        If String.IsNullOrEmpty(EmailText) Then
+            e.Cancel = False
+            Return
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(EmailText, EmailPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+            MessageBox.Show("Invalid email format. Please check the structure (e.g., name@domain.com).", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
         End If
 
     End Sub
@@ -312,13 +345,6 @@ Public Class Superadmin
 
     End Sub
 
-    Private Sub txtaddress_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtaddress.KeyPress
-
-        If Not Char.IsLetterOrDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) AndAlso e.KeyChar <> "#" Then
-            e.Handled = True
-        End If
-
-    End Sub
 
     Private Sub txtcontact_TextChanged(sender As Object, e As EventArgs) Handles txtcontact.TextChanged
 
@@ -503,6 +529,71 @@ Public Class Superadmin
 
     End Sub
 
+    Private Sub txtemail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtemail.KeyPress
+
+
+        If Char.IsLetterOrDigit(e.KeyChar) OrElse Char.IsControl(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+
+        Select Case e.KeyChar
+            Case "@"c, "."c, "-"c, "_"c
+                e.Handled = False
+                Return
+        End Select
+
+
+        If Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = True
+            Return
+        End If
+
+        e.Handled = True
+
+    End Sub
+
+    Private Sub txtaddress_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtaddress.KeyPress
+
+
+        If Char.IsLetterOrDigit(e.KeyChar) OrElse Char.IsControl(e.KeyChar) OrElse Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+
+        Select Case e.KeyChar
+            Case "#"c, "."c, ","c, "-"c, "/"c, "'"c, ":"c, "("c, ")"c
+                e.Handled = False
+                Return
+        End Select
+
+
+        e.Handled = True
+
+    End Sub
+
+    Private Sub txtaddress_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtaddress.Validating
+
+        Dim AddressText As String = txtaddress.Text.Trim()
+        Dim AddressPattern As String = "^(?=.*[a-zA-Z0-9])(?!.*[#.,/\-:'()\s]{2,})[a-zA-Z0-9\s#.,/\-:'()]+$"
+
+        If String.IsNullOrEmpty(AddressText) Then
+            e.Cancel = False
+            Return
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(AddressText, AddressPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+            MessageBox.Show("Invalid address format.", "Validation Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
+        End If
+
+    End Sub
     'hatdoggggg'''
     'palalala'
 End Class

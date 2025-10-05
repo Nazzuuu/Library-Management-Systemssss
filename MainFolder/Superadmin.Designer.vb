@@ -227,9 +227,9 @@ Partial Class Superadmin
         lblexample.ForeColor = SystemColors.WindowFrame
         lblexample.Location = New Point(493, 117)
         lblexample.Name = "lblexample"
-        lblexample.Size = New Size(104, 13)
+        lblexample.Size = New Size(101, 13)
         lblexample.TabIndex = 123
-        lblexample.Text = "Example@gmail.com"
+        lblexample.Text = "Name@domain.com"
         ' 
         ' Panel1
         ' 

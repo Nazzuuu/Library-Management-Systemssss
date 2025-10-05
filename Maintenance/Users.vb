@@ -433,29 +433,6 @@ Public Class Users
 
     End Sub
 
-    Private Sub txtemail_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtemail.Validating
-
-        Dim EmailText As String = txtemail.Text.Trim()
-
-
-
-        Dim EmailPattern As String = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-
-        If String.IsNullOrEmpty(EmailText) Then
-            e.Cancel = False
-            Return
-        End If
-
-        If Not System.Text.RegularExpressions.Regex.IsMatch(EmailText, EmailPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
-
-            MessageBox.Show("Invalid email format. Please check the structure (e.g., name@domain.com).", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
-            e.Cancel = True
-        Else
-            e.Cancel = False
-        End If
-
-    End Sub
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
 
@@ -585,6 +562,30 @@ Public Class Users
 
             lblexample.ForeColor = Color.Red
             lblexample.Text = " Name@domain.com ✕"
+        End If
+
+    End Sub
+
+    Private Sub txtemail_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtemail.Validating
+
+        Dim EmailText As String = txtemail.Text.Trim()
+
+
+
+        Dim EmailPattern As String = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+
+        If String.IsNullOrEmpty(EmailText) Then
+            e.Cancel = False
+            Return
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(EmailText, EmailPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+            MessageBox.Show("Invalid email format. Please check the structure (e.g., name@domain.com).", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
         End If
 
     End Sub
