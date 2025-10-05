@@ -236,4 +236,28 @@ Public Class Shelf
         DataGridView1.ClearSelection()
 
     End Sub
+
+    Private Sub txtshelf_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtshelf.Validating
+
+        Dim ShelfNumber As Integer
+
+        If String.IsNullOrWhiteSpace(txtshelf.Text) Then
+            e.Cancel = False
+            Return
+        End If
+
+        If Integer.TryParse(txtshelf.Text.Trim(), ShelfNumber) Then
+
+            If ShelfNumber < 1 Then
+                MessageBox.Show("Shelf number must be 1 or higher. Zero.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                e.Cancel = True
+            Else
+                e.Cancel = False
+            End If
+        Else
+
+            MessageBox.Show("Invalid shelf number.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            e.Cancel = True
+        End If
+    End Sub
 End Class

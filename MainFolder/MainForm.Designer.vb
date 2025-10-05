@@ -79,7 +79,6 @@ Partial Class MainForm
         ProcessStripMenuItem = New ToolStripMenuItem()
         AcquisitionToolStripMenuItem = New ToolStripMenuItem()
         AccessionToolStripMenuItem = New ToolStripMenuItem()
-        CatalogToolStripMenuItem = New ToolStripMenuItem()
         StudentLogsToolStripMenuItem = New ToolStripMenuItem()
         TimeInToolStripMenuItem = New ToolStripMenuItem()
         CirculationToolStripMenuItem = New ToolStripMenuItem()
@@ -91,9 +90,6 @@ Partial Class MainForm
         MenuStrip3 = New MenuStrip()
         SettingsStripMenuItem = New ToolStripMenuItem()
         PenaltyToolStripMenuItem = New ToolStripMenuItem()
-        ReportsToolStripMenuItem1 = New ToolStripMenuItem()
-        BorrowerReportsToolStripMenuItem1 = New ToolStripMenuItem()
-        BookReportsToolStripMenuItem1 = New ToolStripMenuItem()
         Audit_Trail = New ToolStripMenuItem()
         EditInfoToolStripMenuItem = New ToolStripMenuItem()
         Panel1 = New Panel()
@@ -333,7 +329,7 @@ Partial Class MainForm
         ' 
         ' ProcessStripMenuItem
         ' 
-        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, CatalogToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem})
+        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem})
         ProcessStripMenuItem.ForeColor = Color.White
         ProcessStripMenuItem.Name = "ProcessStripMenuItem"
         ProcessStripMenuItem.Size = New Size(102, 22)
@@ -352,13 +348,6 @@ Partial Class MainForm
         AccessionToolStripMenuItem.Name = "AccessionToolStripMenuItem"
         AccessionToolStripMenuItem.Size = New Size(183, 22)
         AccessionToolStripMenuItem.Text = "🔢 Accession"
-        ' 
-        ' CatalogToolStripMenuItem
-        ' 
-        CatalogToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CatalogToolStripMenuItem.Name = "CatalogToolStripMenuItem"
-        CatalogToolStripMenuItem.Size = New Size(183, 22)
-        CatalogToolStripMenuItem.Text = "📑 Catalog"
         ' 
         ' StudentLogsToolStripMenuItem
         ' 
@@ -387,14 +376,14 @@ Partial Class MainForm
         ' 
         BorrowToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowToolStripMenuItem.Name = "BorrowToolStripMenuItem"
-        BorrowToolStripMenuItem.Size = New Size(177, 22)
+        BorrowToolStripMenuItem.Size = New Size(180, 22)
         BorrowToolStripMenuItem.Text = "📥 Borrowing"
         ' 
         ' ReturnToolStripMenuItem
         ' 
         ReturnToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReturnToolStripMenuItem.Name = "ReturnToolStripMenuItem"
-        ReturnToolStripMenuItem.Size = New Size(177, 22)
+        ReturnToolStripMenuItem.Size = New Size(180, 22)
         ReturnToolStripMenuItem.Text = "📤 Returning"
         ' 
         ' Guna2Elipse3
@@ -429,7 +418,7 @@ Partial Class MainForm
         ' 
         ' SettingsStripMenuItem
         ' 
-        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, ReportsToolStripMenuItem1, Audit_Trail, EditInfoToolStripMenuItem})
+        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, Audit_Trail, EditInfoToolStripMenuItem})
         SettingsStripMenuItem.ForeColor = Color.White
         SettingsStripMenuItem.Name = "SettingsStripMenuItem"
         SettingsStripMenuItem.Size = New Size(105, 22)
@@ -439,43 +428,21 @@ Partial Class MainForm
         ' 
         PenaltyToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         PenaltyToolStripMenuItem.Name = "PenaltyToolStripMenuItem"
-        PenaltyToolStripMenuItem.Size = New Size(177, 22)
+        PenaltyToolStripMenuItem.Size = New Size(180, 22)
         PenaltyToolStripMenuItem.Text = "⚠️ Penalty"
-        ' 
-        ' ReportsToolStripMenuItem1
-        ' 
-        ReportsToolStripMenuItem1.DropDownItems.AddRange(New ToolStripItem() {BorrowerReportsToolStripMenuItem1, BookReportsToolStripMenuItem1})
-        ReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        ReportsToolStripMenuItem1.Name = "ReportsToolStripMenuItem1"
-        ReportsToolStripMenuItem1.Size = New Size(177, 22)
-        ReportsToolStripMenuItem1.Text = "📑 Reports"
-        ' 
-        ' BorrowerReportsToolStripMenuItem1
-        ' 
-        BorrowerReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        BorrowerReportsToolStripMenuItem1.Name = "BorrowerReportsToolStripMenuItem1"
-        BorrowerReportsToolStripMenuItem1.Size = New Size(233, 22)
-        BorrowerReportsToolStripMenuItem1.Text = "🙋 Borrower Reports"
-        ' 
-        ' BookReportsToolStripMenuItem1
-        ' 
-        BookReportsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        BookReportsToolStripMenuItem1.Name = "BookReportsToolStripMenuItem1"
-        BookReportsToolStripMenuItem1.Size = New Size(233, 22)
-        BookReportsToolStripMenuItem1.Text = "📋 Book Reports"
         ' 
         ' Audit_Trail
         ' 
         Audit_Trail.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Audit_Trail.Name = "Audit_Trail"
-        Audit_Trail.Size = New Size(177, 22)
+        Audit_Trail.Size = New Size(180, 22)
         Audit_Trail.Text = "📜 Audit Trail"
         ' 
         ' EditInfoToolStripMenuItem
         ' 
         EditInfoToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         EditInfoToolStripMenuItem.Name = "EditInfoToolStripMenuItem"
-        EditInfoToolStripMenuItem.Size = New Size(177, 22)
+        EditInfoToolStripMenuItem.Size = New Size(180, 22)
         EditInfoToolStripMenuItem.Text = "✎ Edit Info"
         ' 
         ' Panel1
@@ -1153,10 +1120,6 @@ Partial Class MainForm
     Friend WithEvents CirculationToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents BorrowToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ReturnToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents CatalogToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ReportsToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents BorrowerReportsToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents BookReportsToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents DepartmentToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents SectionToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents LanguageToolStripMenuItem As ToolStripMenuItem

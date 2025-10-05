@@ -241,14 +241,6 @@ Public Class Publisher
 
     End Sub
 
-    Private Sub txtpublisher_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtpublisher.KeyPress
-
-        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
-            e.Handled = True
-        End If
-
-    End Sub
-
     Private Sub txtcontact_KeyDown(sender As Object, e As KeyEventArgs) Handles txtcontact.KeyDown
 
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
@@ -378,4 +370,67 @@ Public Class Publisher
 
 
     End Sub
+
+
+    Private Sub txtpublisher_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtpublisher.KeyPress
+
+        If Char.IsLetter(e.KeyChar) Then
+            e.Handled = False
+        ElseIf Char.IsControl(e.KeyChar) Then
+            e.Handled = False
+        ElseIf Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = False
+        Else
+            e.Handled = True
+        End If
+    End Sub
+
+
+    Private Sub txtpublisher_TextChanged(sender As Object, e As EventArgs) Handles txtpublisher.TextChanged
+
+        Dim InputText As String = txtpublisher.Text
+        Dim FilteredText As New System.Text.StringBuilder()
+
+        For Each c As Char In InputText
+            If Char.IsLetter(c) OrElse Char.IsWhiteSpace(c) Then
+                FilteredText.Append(c)
+            End If
+        Next
+
+
+        If FilteredText.ToString() <> InputText Then
+
+            Dim CursorPosition As Integer = txtpublisher.SelectionStart
+            txtpublisher.Text = FilteredText.ToString()
+
+            If CursorPosition > 0 Then
+
+                txtpublisher.SelectionStart = Math.Min(CursorPosition - 1, txtpublisher.Text.Length)
+            Else
+                txtpublisher.SelectionStart = 0
+            End If
+        End If
+    End Sub
+
+
+    Private Sub txtpublisher_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtpublisher.Validating
+
+        Dim PublisherName As String = txtpublisher.Text.Trim()
+
+        If String.IsNullOrEmpty(PublisherName) Then
+            e.Cancel = False
+            Return
+        End If
+
+        Dim Pattern As String = "^[A-Za-z]+(\s[A-Za-z]+)*$"
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(PublisherName, Pattern) Then
+            MessageBox.Show("Invalid publisher name format.", "Input Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
+        End If
+    End Sub
+
 End Class

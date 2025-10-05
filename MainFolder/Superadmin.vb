@@ -524,7 +524,7 @@ Public Class Superadmin
                 lblpassword.Text = "Strong: Good combination of characters."
             Case Is >= 7
                 lblpassword.ForeColor = Color.Green
-                lblpassword.Text = "Excellent: Very strong password! ✓"
+                lblpassword.Text = "Excellent: Very strong password!"
         End Select
 
     End Sub
@@ -594,6 +594,8 @@ Public Class Superadmin
         End If
 
     End Sub
+
+
     'hatdoggggg'''
     'palalala'
 End Class

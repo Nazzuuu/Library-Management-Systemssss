@@ -250,14 +250,6 @@ Public Class Supplier
 
     End Sub
 
-    Private Sub txtsupplier_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtsupplier.KeyPress
-
-        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
-            e.Handled = True
-        End If
-
-    End Sub
-
     Private Sub txtaddress_KeyDown(sender As Object, e As KeyEventArgs) Handles txtaddress.KeyDown
 
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
@@ -383,4 +375,65 @@ Public Class Supplier
         End If
 
     End Sub
+
+
+    Private Sub txtsupplier_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtsupplier.KeyPress
+
+        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
+
+
+    Private Sub txtsupplier_TextChanged(sender As Object, e As EventArgs) Handles txtsupplier.TextChanged
+        Dim InputText As String = txtsupplier.Text
+        Dim FilteredText As New System.Text.StringBuilder()
+
+
+        For Each c As Char In InputText
+            If Char.IsLetter(c) OrElse Char.IsWhiteSpace(c) Then
+                FilteredText.Append(c)
+            End If
+        Next
+
+
+        If FilteredText.ToString() <> InputText Then
+            Dim CursorPosition As Integer = txtsupplier.SelectionStart
+            txtsupplier.Text = FilteredText.ToString()
+
+
+            If CursorPosition > 0 Then
+
+                txtsupplier.SelectionStart = Math.Min(CursorPosition - 1, txtsupplier.Text.Length)
+            Else
+                txtsupplier.SelectionStart = 0
+            End If
+        End If
+    End Sub
+
+
+
+    Private Sub txtsupplier_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtsupplier.Validating
+
+        Dim SupplierName As String = txtsupplier.Text.Trim()
+
+
+        If String.IsNullOrEmpty(SupplierName) Then
+            e.Cancel = False
+            Return
+        End If
+
+
+        Dim Pattern As String = "^[A-Za-z]+(\s[A-Za-z]+)*$"
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(SupplierName, Pattern) Then
+            MessageBox.Show("Invalid supplier name format.", "Input Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
+        End If
+    End Sub
+
 End Class

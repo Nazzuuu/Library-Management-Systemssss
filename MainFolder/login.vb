@@ -58,7 +58,6 @@ Public Class login
                     MainForm.CategoryToolStripMenuItem.Visible = False
                     MainForm.AcquisitionToolStripMenuItem.Visible = False
                     MainForm.AccessionToolStripMenuItem.Visible = False
-                    MainForm.ReportsToolStripMenuItem1.Visible = False
                     MainForm.UserMaintenanceToolStripMenuItem.Visible = False
                     MainForm.Audit_Trail.Visible = False
                     MainForm.EditInfoToolStripMenuItem.Visible = False

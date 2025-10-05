@@ -45,6 +45,7 @@ Public Class Accession
             MessageBox.Show("Error refreshing data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
+        btnview.Enabled = True
         shelfsu()
         DataGridView1.ClearSelection()
     End Sub

@@ -21,6 +21,7 @@ Public Class Users
         DataGridView1.DataSource = dt.Tables("INFO")
 
         DataGridView1.Columns("ID").Visible = False
+        DataGridView1.Columns("Password").Visible = False
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
@@ -653,7 +654,7 @@ Public Class Users
                 lblpassword.Text = "Strong: Good combination of characters."
             Case Is >= 7
                 lblpassword.ForeColor = Color.Green
-                lblpassword.Text = "Excellent: Very strong password! ✓"
+                lblpassword.Text = "Excellent: Very strong password!"
         End Select
 
     End Sub
