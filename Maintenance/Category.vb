@@ -32,8 +32,8 @@ Public Class Category
 
     Private Sub Category_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
-        MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
-        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+
+        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtcategory.Text = ""
 
     End Sub

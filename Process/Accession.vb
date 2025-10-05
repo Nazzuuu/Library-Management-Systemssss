@@ -780,4 +780,7 @@ Public Class Accession
 
     End Sub
 
+    Private Sub btnshelf_Click(sender As Object, e As EventArgs) Handles btnshelf.Click
+        Shelf.ShowDialog()
+    End Sub
 End Class

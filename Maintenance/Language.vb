@@ -32,8 +32,8 @@ Public Class Language
 
     Private Sub Language_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
-        MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
-        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+
+        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtlanguage.Text = ""
 
 

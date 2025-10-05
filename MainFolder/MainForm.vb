@@ -80,14 +80,7 @@ Public Class MainForm
 
     End Sub
 
-    Private Sub AuthorMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AuthorMaintenanceToolStripMenuItem.Click
-        Author.DataGridView1.CurrentCell = Nothing
-        Author.DataGridView1.ClearSelection()
-        MaintenanceToolStripMenuItem.ForeColor = Color.White
-        Author.ShowDialog()
-        Author.DataGridView1.CurrentCell = Nothing
-        Author.DataGridView1.ClearSelection()
-    End Sub
+
 
     Private Sub MaintenanceToolStripMenuItem_DropDownClosed(sender As Object, e As EventArgs) Handles MaintenanceToolStripMenuItem.DropDownClosed
         MaintenanceToolStripMenuItem.ForeColor = Color.White
@@ -253,29 +246,12 @@ Public Class MainForm
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub GenreMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles GenreMaintenanceToolStripMenuItem.Click
-        Genre.ShowDialog()
-    End Sub
+
 
     Private Sub SectionToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles SectionToolStripMenuItem2.Click
         Section.ShowDialog()
     End Sub
 
-    Private Sub SupplierMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SupplierMaintenanceToolStripMenuItem.Click
-        Supplier.ShowDialog()
-    End Sub
-
-    Private Sub PublisherMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PublisherMaintenanceToolStripMenuItem.Click
-        Publisher.ShowDialog()
-    End Sub
-
-    Private Sub LanguageMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LanguageToolStripMenuItem.Click
-        Language.ShowDialog()
-    End Sub
-
-    Private Sub CategoryToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CategoryToolStripMenuItem.Click
-        Category.ShowDialog()
-    End Sub
 
     Private Sub BookMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BookMaintenanceToolStripMenuItem.Click
         Panel_dash.Controls.Clear()
@@ -414,7 +390,7 @@ Public Class MainForm
         lblform.Text = "TIME-IN/OUT FORM"
     End Sub
 
-    Private Sub ShelfToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ShelfToolStripMenuItem.Click
+    Private Sub ShelfToolStripMenuItem_Click(sender As Object, e As EventArgs)
         Shelf.ShowDialog()
     End Sub
 

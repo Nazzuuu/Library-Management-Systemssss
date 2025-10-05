@@ -665,4 +665,8 @@ Public Class Acquisition
         End If
 
     End Sub
+
+    Private Sub btnsupplieradd_Click(sender As Object, e As EventArgs) Handles btnsupplieradd.Click
+        Supplier.ShowDialog()
+    End Sub
 End Class

@@ -29,8 +29,8 @@ Public Class Publisher
 
     Private Sub Publisher_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
-        MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
-        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+
+        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
 
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)

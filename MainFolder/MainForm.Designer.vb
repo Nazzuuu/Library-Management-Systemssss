@@ -57,13 +57,6 @@ Partial Class MainForm
         Panel_maintenance = New Panel()
         MenuStrip1 = New MenuStrip()
         MaintenanceToolStripMenuItem = New ToolStripMenuItem()
-        AuthorMaintenanceToolStripMenuItem = New ToolStripMenuItem()
-        GenreMaintenanceToolStripMenuItem = New ToolStripMenuItem()
-        SupplierMaintenanceToolStripMenuItem = New ToolStripMenuItem()
-        PublisherMaintenanceToolStripMenuItem = New ToolStripMenuItem()
-        LanguageToolStripMenuItem = New ToolStripMenuItem()
-        CategoryToolStripMenuItem = New ToolStripMenuItem()
-        ShelfToolStripMenuItem = New ToolStripMenuItem()
         BookMaintenanceToolStripMenuItem = New ToolStripMenuItem()
         PenaltyManagementToolStripMenuItem = New ToolStripMenuItem()
         DepartmentToolStripMenuItem = New ToolStripMenuItem()
@@ -182,60 +175,11 @@ Partial Class MainForm
         ' 
         ' MaintenanceToolStripMenuItem
         ' 
-        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AuthorMaintenanceToolStripMenuItem, GenreMaintenanceToolStripMenuItem, SupplierMaintenanceToolStripMenuItem, PublisherMaintenanceToolStripMenuItem, LanguageToolStripMenuItem, CategoryToolStripMenuItem, ShelfToolStripMenuItem, BookMaintenanceToolStripMenuItem, PenaltyManagementToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem})
+        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BookMaintenanceToolStripMenuItem, PenaltyManagementToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem})
         MaintenanceToolStripMenuItem.ForeColor = Color.White
         MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
         MaintenanceToolStripMenuItem.Size = New Size(138, 22)
         MaintenanceToolStripMenuItem.Text = "🔨 Maintenance"
-        ' 
-        ' AuthorMaintenanceToolStripMenuItem
-        ' 
-        AuthorMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        AuthorMaintenanceToolStripMenuItem.Name = "AuthorMaintenanceToolStripMenuItem"
-        AuthorMaintenanceToolStripMenuItem.Size = New Size(255, 22)
-        AuthorMaintenanceToolStripMenuItem.Text = "✍🏼 Author"
-        ' 
-        ' GenreMaintenanceToolStripMenuItem
-        ' 
-        GenreMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        GenreMaintenanceToolStripMenuItem.Name = "GenreMaintenanceToolStripMenuItem"
-        GenreMaintenanceToolStripMenuItem.Size = New Size(255, 22)
-        GenreMaintenanceToolStripMenuItem.Text = "🔖 Genre"
-        ' 
-        ' SupplierMaintenanceToolStripMenuItem
-        ' 
-        SupplierMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        SupplierMaintenanceToolStripMenuItem.Name = "SupplierMaintenanceToolStripMenuItem"
-        SupplierMaintenanceToolStripMenuItem.Size = New Size(255, 22)
-        SupplierMaintenanceToolStripMenuItem.Text = "📦 Supplier"
-        ' 
-        ' PublisherMaintenanceToolStripMenuItem
-        ' 
-        PublisherMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        PublisherMaintenanceToolStripMenuItem.Name = "PublisherMaintenanceToolStripMenuItem"
-        PublisherMaintenanceToolStripMenuItem.Size = New Size(255, 22)
-        PublisherMaintenanceToolStripMenuItem.Text = "👨‍🏫 Publisher"
-        ' 
-        ' LanguageToolStripMenuItem
-        ' 
-        LanguageToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        LanguageToolStripMenuItem.Name = "LanguageToolStripMenuItem"
-        LanguageToolStripMenuItem.Size = New Size(255, 22)
-        LanguageToolStripMenuItem.Text = "🌐 Language"
-        ' 
-        ' CategoryToolStripMenuItem
-        ' 
-        CategoryToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CategoryToolStripMenuItem.Name = "CategoryToolStripMenuItem"
-        CategoryToolStripMenuItem.Size = New Size(255, 22)
-        CategoryToolStripMenuItem.Text = "🗂️ Category"
-        ' 
-        ' ShelfToolStripMenuItem
-        ' 
-        ShelfToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        ShelfToolStripMenuItem.Name = "ShelfToolStripMenuItem"
-        ShelfToolStripMenuItem.Size = New Size(255, 22)
-        ShelfToolStripMenuItem.Text = "🚪 Shelf"
         ' 
         ' BookMaintenanceToolStripMenuItem
         ' 
@@ -376,14 +320,14 @@ Partial Class MainForm
         ' 
         BorrowToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowToolStripMenuItem.Name = "BorrowToolStripMenuItem"
-        BorrowToolStripMenuItem.Size = New Size(180, 22)
+        BorrowToolStripMenuItem.Size = New Size(177, 22)
         BorrowToolStripMenuItem.Text = "📥 Borrowing"
         ' 
         ' ReturnToolStripMenuItem
         ' 
         ReturnToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReturnToolStripMenuItem.Name = "ReturnToolStripMenuItem"
-        ReturnToolStripMenuItem.Size = New Size(180, 22)
+        ReturnToolStripMenuItem.Size = New Size(177, 22)
         ReturnToolStripMenuItem.Text = "📤 Returning"
         ' 
         ' Guna2Elipse3
@@ -428,21 +372,21 @@ Partial Class MainForm
         ' 
         PenaltyToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         PenaltyToolStripMenuItem.Name = "PenaltyToolStripMenuItem"
-        PenaltyToolStripMenuItem.Size = New Size(180, 22)
+        PenaltyToolStripMenuItem.Size = New Size(177, 22)
         PenaltyToolStripMenuItem.Text = "⚠️ Penalty"
         ' 
         ' Audit_Trail
         ' 
         Audit_Trail.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Audit_Trail.Name = "Audit_Trail"
-        Audit_Trail.Size = New Size(180, 22)
+        Audit_Trail.Size = New Size(177, 22)
         Audit_Trail.Text = "📜 Audit Trail"
         ' 
         ' EditInfoToolStripMenuItem
         ' 
         EditInfoToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         EditInfoToolStripMenuItem.Name = "EditInfoToolStripMenuItem"
-        EditInfoToolStripMenuItem.Size = New Size(180, 22)
+        EditInfoToolStripMenuItem.Size = New Size(177, 22)
         EditInfoToolStripMenuItem.Text = "✎ Edit Info"
         ' 
         ' Panel1
@@ -1092,9 +1036,6 @@ Partial Class MainForm
     Friend WithEvents SettingsStripMenuItem As ToolStripMenuItem
     Friend WithEvents Panel_Process As Panel
     Friend WithEvents MenuStrip2 As MenuStrip
-    Friend WithEvents AuthorMaintenanceToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents GenreMaintenanceToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents SupplierMaintenanceToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents BookMaintenanceToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents Audit_Trail As ToolStripMenuItem
     Friend WithEvents UserMaintenanceToolStripMenuItem As ToolStripMenuItem
@@ -1112,7 +1053,6 @@ Partial Class MainForm
     Friend WithEvents lbl_overdue As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents dsh_return As Guna.UI2.WinForms.Guna2GroupBox
     Friend WithEvents lbl_return As Guna.UI2.WinForms.Guna2HtmlLabel
-    Friend WithEvents PublisherMaintenanceToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents RegisterToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ProcessStripMenuItem As ToolStripMenuItem
     Friend WithEvents AcquisitionToolStripMenuItem As ToolStripMenuItem
@@ -1122,7 +1062,6 @@ Partial Class MainForm
     Friend WithEvents ReturnToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents DepartmentToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents SectionToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents LanguageToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents SectionToolStripMenuItem2 As ToolStripMenuItem
     Friend WithEvents GradeToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents StrandToolStripMenuItem1 As ToolStripMenuItem
@@ -1136,8 +1075,6 @@ Partial Class MainForm
     Friend WithEvents btn_dmg As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents StudentLogsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TimeInToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents CategoryToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ShelfToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PenaltyManagementToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PenaltyToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox

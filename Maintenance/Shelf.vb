@@ -225,8 +225,8 @@ Public Class Shelf
     End Sub
 
     Private Sub Shelf_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
-        MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
-        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+
+        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtshelf.Text = ""
 
     End Sub

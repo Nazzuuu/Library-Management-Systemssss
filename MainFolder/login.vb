@@ -50,12 +50,6 @@ Public Class login
                     MainForm.lbl_currentuser.Text = "Staff"
 
 
-                    MainForm.AuthorMaintenanceToolStripMenuItem.Visible = False
-                    MainForm.GenreMaintenanceToolStripMenuItem.Visible = False
-                    MainForm.SupplierMaintenanceToolStripMenuItem.Visible = False
-                    MainForm.PublisherMaintenanceToolStripMenuItem.Visible = False
-                    MainForm.LanguageToolStripMenuItem.Visible = False
-                    MainForm.CategoryToolStripMenuItem.Visible = False
                     MainForm.AcquisitionToolStripMenuItem.Visible = False
                     MainForm.AccessionToolStripMenuItem.Visible = False
                     MainForm.UserMaintenanceToolStripMenuItem.Visible = False

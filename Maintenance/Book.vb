@@ -836,4 +836,23 @@ Public Class Book
         e.HasMorePages = False
     End Sub
 
+    Private Sub btnaddauthor_Click(sender As Object, e As EventArgs) Handles btnaddauthor.Click
+        Author.ShowDialog()
+    End Sub
+
+    Private Sub btnaddgenre_Click(sender As Object, e As EventArgs) Handles btnaddgenre.Click
+        Genre.ShowDialog()
+    End Sub
+
+    Private Sub btnaddcategory_Click(sender As Object, e As EventArgs) Handles btnaddcategory.Click
+        Category.ShowDialog()
+    End Sub
+
+    Private Sub btnaddpublisher_Click(sender As Object, e As EventArgs) Handles btnaddpublisher.Click
+        Publisher.ShowDialog()
+    End Sub
+
+    Private Sub btnaddlangauge_Click(sender As Object, e As EventArgs) Handles btnaddlangauge.Click
+        Language.ShowDialog()
+    End Sub
 End Class
