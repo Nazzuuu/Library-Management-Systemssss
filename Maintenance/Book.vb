@@ -8,7 +8,13 @@ Imports ZXing.Windows.Compatibility
 Public Class Book
 
     Private isbarcode As Boolean = False
-
+    Private BarcodeList As New List(Of String)
+    Private BarcodeIndex As Integer = 0
+    Private Const BarcodeWidth As Integer = 200
+    Private Const BarcodeHeight As Integer = 80
+    Private Const MarginX As Integer = 50
+    Private Const MarginY As Integer = 50
+    Private Const BarcodeSpacing As Integer = 20
     Private Sub Book_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         If MainForm.WindowState = FormWindowState.Normal Then
@@ -731,7 +737,7 @@ Public Class Book
     Private Sub txtbooktitle_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtbooktitle.Validating
 
         Dim BookTitle As String = txtbooktitle.Text.Trim()
-        Dim TitlePattern As String = "^(?=.*[a-zA-Z0-9])(?!.*[.,'():;?!&/\s-]{2,})[a-zA-Z0-9\s.,'():;?!&/-]+$"
+        Dim TitlePattern As String = "^(?=.*[a-zA-Z])(?!.*[.,'():;?!&/-]{2,})[a-zA-Z0-9\s.,'():;?!&/-]+$"
 
         If String.IsNullOrEmpty(BookTitle) Then
             e.Cancel = False
@@ -741,7 +747,7 @@ Public Class Book
         If Not System.Text.RegularExpressions.Regex.IsMatch(BookTitle, TitlePattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
 
 
-            MessageBox.Show("Invalid book title format. The title must contain words or numbers.", "Validation Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Invalid book title format.", "Validation Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
             e.Cancel = True
         Else
@@ -749,7 +755,85 @@ Public Class Book
         End If
     End Sub
 
-    Private Sub Print(sender As Object, e As EventArgs) Handles btnprint.Click
+    Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
+
+        BarcodeList.Clear()
+        BarcodeIndex = 0
+
+        For Each row As DataGridViewRow In DataGridView1.Rows
+            If Not row.IsNewRow Then
+
+                Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
+
+
+                If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
+                    BarcodeList.Add(barcodeValue)
+                End If
+            End If
+        Next
+
+        If BarcodeList.Count = 0 Then
+            MessageBox.Show("Walang Barcode na makikita para i-print. Tiyakin na may Barcode value ang mga aklat.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+        Dim pd As New Printing.PrintDocument()
+        AddHandler pd.PrintPage, AddressOf Me.PrintDocument_PrintPage
+
+        Dim ppd As New PrintPreviewDialog()
+        ppd.Document = pd
+
+        ppd.ShowDialog()
 
     End Sub
+
+
+    Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs)
+        Dim g As Graphics = e.Graphics
+
+
+        Dim currentX As Integer = MarginX
+        Dim currentY As Integer = MarginY
+
+
+        Dim BarcodesPerRow As Integer = CInt(Math.Floor((e.PageBounds.Width - (2 * MarginX)) / (BarcodeWidth + BarcodeSpacing)))
+        If BarcodesPerRow = 0 Then BarcodesPerRow = 1
+
+
+        While BarcodeIndex < BarcodeList.Count
+
+            Dim barcodeText As String = BarcodeList(BarcodeIndex)
+
+
+            Dim barcodeImage As Image = GenerateBarcodeImage(barcodeText, BarcodeWidth, BarcodeHeight)
+
+            If currentX + BarcodeWidth > e.PageBounds.Width - MarginX Then
+                currentX = MarginX
+                currentY += BarcodeHeight + BarcodeSpacing
+            End If
+
+
+            If currentY + BarcodeHeight > e.PageBounds.Height - MarginY Then
+                e.HasMorePages = True
+                BarcodeIndex -= 1
+                Exit Sub
+            End If
+
+
+            g.DrawImage(barcodeImage, currentX, currentY, BarcodeWidth, BarcodeHeight)
+
+
+            barcodeImage.Dispose()
+
+
+            currentX += BarcodeWidth + BarcodeSpacing
+
+
+            BarcodeIndex += 1
+        End While
+
+
+        e.HasMorePages = False
+    End Sub
+
 End Class
