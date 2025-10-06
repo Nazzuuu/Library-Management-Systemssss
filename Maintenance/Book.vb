@@ -4,34 +4,37 @@ Imports MySql.Data.MySqlClient
 Imports ZXing
 Imports ZXing.Rendering
 Imports ZXing.Windows.Compatibility
+Imports System.Drawing.Printing
+Imports System.Collections.Generic
+Imports System.Data
 
 Public Class Book
+
+
+    Private Const connectionString As String = "Server=localhost;Database=laybsis_dbs;Uid=root;Pwd=;"
+
 
     Private isbarcode As Boolean = False
     Private BarcodeList As New List(Of String)
     Private BarcodeIndex As Integer = 0
-    Private Const BarcodeWidth As Integer = 200
-    Private Const BarcodeHeight As Integer = 80
-    Private Const MarginX As Integer = 50
-    Private Const MarginY As Integer = 50
-    Private Const BarcodeSpacing As Integer = 20
+
+    Private Const BarcodeWidth As Integer = 300
+    Private Const BarcodeHeight As Integer = 100
+    Private Const MarginX As Integer = 5
+    Private Const MarginY As Integer = 5
+    Private Const BarcodeSpacing As Integer = 10
+
+    Private WithEvents printDoc As New System.Drawing.Printing.PrintDocument
+
+
     Private Sub Book_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        If MainForm.WindowState = FormWindowState.Normal Then
-            panel_book.Size = New Size(930, 310)
+        If String.IsNullOrEmpty(connectionString) Then
+            MessageBox.Show("Connection string is not set.", "Configuration Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
         End If
 
-        Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT * FROM `book_tbl`"
-        Dim adp As New MySqlDataAdapter(com, con)
-        Dim dt As New DataSet
-
-        adp.Fill(dt, "INFO")
-
-        DataGridView1.DataSource = dt.Tables("INFO")
-
-
-
+        LoadBookData()
 
         DataGridView1.Columns("ID").Visible = False
         DataGridView1.EnableHeadersVisualStyles = False
@@ -49,9 +52,25 @@ Public Class Book
         cbcategoryy()
 
         clear()
+
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
         DateTimePicker1.Value = DateTime.Now
+    End Sub
+
+
+    Private Sub LoadBookData()
+        Dim con As New MySqlConnection(connectionString)
+        Try
+            Dim com As String = "SELECT * FROM `book_tbl`"
+            Dim adp As New MySqlDataAdapter(com, con)
+            Dim dt As New DataSet
+
+            adp.Fill(dt, "INFO")
+            DataGridView1.DataSource = dt.Tables("INFO")
+        Catch ex As Exception
+            MessageBox.Show("Error loading book data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Public Sub cbauthorr()
@@ -133,10 +152,10 @@ Public Class Book
     End Sub
 
     Private Sub Book_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-
         DataGridView1.ClearSelection()
-
     End Sub
+
+
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(connectionString)
@@ -227,7 +246,7 @@ Public Class Book
 
             MsgBox("Book added successfully", vbInformation)
             clear()
-            Book_Load(sender, e)
+            LoadBookData()
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         Finally
@@ -353,6 +372,7 @@ Public Class Book
                 comReserve.Parameters.AddWithValue("oldBookTitle", oldBookTitle)
                 comReserve.ExecuteNonQuery()
 
+
                 For Each form In Application.OpenForms
 
                     If TypeOf form Is Acquisition Then
@@ -370,14 +390,11 @@ Public Class Book
                     If TypeOf form Is Borrowing Then
                         DirectCast(form, Borrowing).refreshborrowingsu()
                     End If
-
-
-
                 Next
 
                 MsgBox("Book updated successfully", vbInformation)
                 clear()
-                Book_Load(sender, e)
+                LoadBookData()
 
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
@@ -389,9 +406,7 @@ Public Class Book
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
         End If
-
     End Sub
-
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
@@ -444,7 +459,7 @@ Public Class Book
                     MsgBox("Book deleted successfully.", vbInformation)
 
 
-                    Book_Load(sender, e)
+                    LoadBookData()
                     clear()
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl`", con)
@@ -466,13 +481,10 @@ Public Class Book
         Else
             MsgBox("Please select a row to delete.", vbExclamation)
         End If
-
     End Sub
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-
         clear()
-
     End Sub
 
     Public Sub clear()
@@ -508,33 +520,58 @@ Public Class Book
     Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal width As Integer, ByVal height As Integer) As Image
         Try
 
+            Dim renderWidth As Integer = 300
+            Dim renderHeight As Integer = 80
+            Dim totalLabelHeight As Integer = 100
+
+            Dim options As New ZXing.Common.EncodingOptions With {
+            .Width = renderWidth,
+            .Height = renderHeight,
+            .Margin = 10,
+            .PureBarcode = True
+        }
+
             Dim writer As New BarcodeWriter(Of Bitmap) With {
             .Format = BarcodeFormat.CODE_128,
-            .Options = New ZXing.Common.EncodingOptions With {
-                .Width = width,
-                .Height = height,
-                .Margin = 10
-            },
+            .Options = options,
             .Renderer = New BitmapRenderer()
         }
 
             Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
 
-            Dim finalImage As New Bitmap(width, height + 20)
-            Using g As Graphics = Graphics.FromImage(finalImage)
+
+            Dim printImage As New Bitmap(renderWidth, totalLabelHeight)
+            Using g As Graphics = Graphics.FromImage(printImage)
                 g.Clear(Color.White)
-                g.DrawImage(barcodeBitmap, 0, 0)
+
+
+                g.DrawImage(barcodeBitmap, 0, 0, renderWidth, renderHeight)
+
 
                 Using font As New Font("Arial", 8)
                     Using sf As New StringFormat With {
-                        .Alignment = StringAlignment.Center
-                    }
-                        g.DrawString(barcodeText, font, Brushes.Black, New RectangleF(0, height, width, 20), sf)
+                    .Alignment = StringAlignment.Center
+                }
+                        g.DrawString(barcodeText, font, Brushes.Black, New RectangleF(0, renderHeight, renderWidth, totalLabelHeight - renderHeight), sf)
                     End Using
                 End Using
+
+
+                Using borderPen As New Pen(Color.Black, 1)
+
+                    g.DrawRectangle(borderPen, 0, 0, renderWidth - 1, totalLabelHeight - 1)
+                End Using
+
+
             End Using
 
-            Return finalImage
+            barcodeBitmap.Dispose()
+
+
+            Dim finalDisplayImage As New Bitmap(printImage, New Size(width, height))
+            printImage.Dispose()
+
+            Return finalDisplayImage
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -550,7 +587,6 @@ Public Class Book
         End Try
     End Function
 
-
     Function jinireyt() As String
         Dim random As New Random()
         Dim barcode As String = ""
@@ -560,8 +596,8 @@ Public Class Book
         Return barcode
     End Function
 
-    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
@@ -572,51 +608,38 @@ Public Class Book
                 dt.DefaultView.RowFilter = ""
             End If
         End If
-
     End Sub
 
-    Private Sub txtisbn_KeyDown(sender As Object, e As KeyEventArgs) Handles txtisbn.KeyDown
 
+    Private Sub txtisbn_KeyDown(sender As Object, e As KeyEventArgs) Handles txtisbn.KeyDown
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
         End If
-
     End Sub
 
     Private Sub txtisbn_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtisbn.KeyPress
-
         If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
             e.Handled = True
         End If
-
     End Sub
 
     Private Sub txtbooktitle_KeyDown(sender As Object, e As KeyEventArgs) Handles txtbooktitle.KeyDown
-
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
         End If
-
     End Sub
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
-
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
         End If
-
     End Sub
-
 
     Private Sub jinreytsu()
         If rbgenerate.Checked Then
-
             Dim newBarcode As String = jinireyt()
-
             lblrandom.Text = newBarcode
-
             picbarcode.Image = GenerateBarcodeImage(newBarcode, picbarcode.Width, picbarcode.Height)
-
             txtisbn.Enabled = False
             txtisbn.Text = ""
         Else
@@ -625,7 +648,6 @@ Public Class Book
             txtisbn.Enabled = True
         End If
     End Sub
-
 
     Private Sub rbgenerate_CheckedChanged(sender As Object, e As EventArgs) Handles rbgenerate.CheckedChanged
         If Not isbarcode Then
@@ -685,25 +707,19 @@ Public Class Book
             isbarcode = False
 
         End If
-
     End Sub
 
-
-
     Private Sub txtbooktitle_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtbooktitle.KeyPress
-
 
         If Char.IsLetter(e.KeyChar) Then
             e.Handled = False
             Return
         End If
 
-
         If Char.IsDigit(e.KeyChar) Then
             e.Handled = False
             Return
         End If
-
 
         If Char.IsControl(e.KeyChar) Then
             e.Handled = False
@@ -715,23 +731,18 @@ Public Class Book
             Return
         End If
 
-
         Select Case e.KeyChar
             Case "."c, ","c, "'"c, "-"c, ":"c, ";"c, "("c, ")"c, "?"c, "!"c, "&"c, "/"c
                 e.Handled = False
                 Return
         End Select
 
-
-
         If e.KeyChar = Chr(34) Then
             e.Handled = False
             Return
         End If
 
-
         e.Handled = True
-
     End Sub
 
     Private Sub txtbooktitle_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtbooktitle.Validating
@@ -745,15 +756,14 @@ Public Class Book
         End If
 
         If Not System.Text.RegularExpressions.Regex.IsMatch(BookTitle, TitlePattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
-
-
             MessageBox.Show("Invalid book title format.", "Validation Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
             e.Cancel = True
         Else
             e.Cancel = False
         End If
     End Sub
+
+
 
     Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
 
@@ -762,9 +772,7 @@ Public Class Book
 
         For Each row As DataGridViewRow In DataGridView1.Rows
             If Not row.IsNewRow Then
-
                 Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
-
 
                 If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
                     BarcodeList.Add(barcodeValue)
@@ -777,56 +785,54 @@ Public Class Book
             Exit Sub
         End If
 
-        Dim pd As New Printing.PrintDocument()
-        AddHandler pd.PrintPage, AddressOf Me.PrintDocument_PrintPage
+        Try
 
-        Dim ppd As New PrintPreviewDialog()
-        ppd.Document = pd
+            Dim pdlg As New PrintDialog With {.Document = printDoc}
 
-        ppd.ShowDialog()
+            If pdlg.ShowDialog() = DialogResult.OK Then
+                printDoc.PrinterSettings = pdlg.PrinterSettings
+                printDoc.Print()
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error starting print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            BarcodeIndex = 0
+        End Try
 
     End Sub
 
 
-    Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs)
+    Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
         Dim g As Graphics = e.Graphics
 
-
-        Dim currentX As Integer = MarginX
         Dim currentY As Integer = MarginY
-
-
-        Dim BarcodesPerRow As Integer = CInt(Math.Floor((e.PageBounds.Width - (2 * MarginX)) / (BarcodeWidth + BarcodeSpacing)))
-        If BarcodesPerRow = 0 Then BarcodesPerRow = 1
 
 
         While BarcodeIndex < BarcodeList.Count
 
             Dim barcodeText As String = BarcodeList(BarcodeIndex)
-
-
             Dim barcodeImage As Image = GenerateBarcodeImage(barcodeText, BarcodeWidth, BarcodeHeight)
 
-            If currentX + BarcodeWidth > e.PageBounds.Width - MarginX Then
-                currentX = MarginX
-                currentY += BarcodeHeight + BarcodeSpacing
+            If barcodeImage Is Nothing Then
+                BarcodeIndex += 1
+                Continue While
             End If
 
 
             If currentY + BarcodeHeight > e.PageBounds.Height - MarginY Then
+
+                barcodeImage.Dispose()
                 e.HasMorePages = True
-                BarcodeIndex -= 1
                 Exit Sub
             End If
 
-
-            g.DrawImage(barcodeImage, currentX, currentY, BarcodeWidth, BarcodeHeight)
-
+            g.DrawImage(barcodeImage, MarginX, currentY, BarcodeWidth, BarcodeHeight)
 
             barcodeImage.Dispose()
 
 
-            currentX += BarcodeWidth + BarcodeSpacing
+            currentY += BarcodeHeight + BarcodeSpacing
 
 
             BarcodeIndex += 1
@@ -834,7 +840,9 @@ Public Class Book
 
 
         e.HasMorePages = False
+        BarcodeIndex = 0
     End Sub
+
 
     Private Sub btnaddauthor_Click(sender As Object, e As EventArgs) Handles btnaddauthor.Click
         Author.ShowDialog()
@@ -887,6 +895,8 @@ Public Class Book
     Private Sub btnaddpublisher_MouseLeave(sender As Object, e As EventArgs) Handles btnaddpublisher.MouseLeave
         Cursor = Cursors.Default
     End Sub
+
+
 
     Private Sub btnaddlangauge_MouseHover(sender As Object, e As EventArgs) Handles btnaddlangauge.MouseHover
         Cursor = Cursors.Hand
