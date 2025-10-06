@@ -26,8 +26,6 @@ Partial Class Acquisition
         Dim CustomizableEdges33 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Acquisition))
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -62,6 +60,8 @@ Partial Class Acquisition
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges32 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_acquisition = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         btnsupplieradd = New Guna.UI2.WinForms.Guna2Button()
@@ -72,7 +72,6 @@ Partial Class Acquisition
         txttotalcost = New Guna.UI2.WinForms.Guna2TextBox()
         txtbookprice = New Guna.UI2.WinForms.Guna2TextBox()
         NumericUpDown1 = New Guna.UI2.WinForms.Guna2NumericUpDown()
-        DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Label8 = New Label()
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
@@ -93,6 +92,7 @@ Partial Class Acquisition
         Label1 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         suppliernametooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
+        DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
         panel_acquisition.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(NumericUpDown1, ComponentModel.ISupportInitialize).BeginInit()
@@ -116,6 +116,7 @@ Partial Class Acquisition
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(DateTimePicker1)
         Guna2GroupBox1.Controls.Add(btnsupplieradd)
         Guna2GroupBox1.Controls.Add(rbbarcode)
         Guna2GroupBox1.Controls.Add(rbisbn)
@@ -124,7 +125,6 @@ Partial Class Acquisition
         Guna2GroupBox1.Controls.Add(txttotalcost)
         Guna2GroupBox1.Controls.Add(txtbookprice)
         Guna2GroupBox1.Controls.Add(NumericUpDown1)
-        Guna2GroupBox1.Controls.Add(DateTimePicker1)
         Guna2GroupBox1.Controls.Add(Label8)
         Guna2GroupBox1.Controls.Add(PictureBox1)
         Guna2GroupBox1.Controls.Add(txtsearch)
@@ -158,7 +158,7 @@ Partial Class Acquisition
         btnsupplieradd.BackgroundImage = CType(resources.GetObject("btnsupplieradd.BackgroundImage"), Image)
         btnsupplieradd.BackgroundImageLayout = ImageLayout.Zoom
         btnsupplieradd.BorderRadius = 5
-        btnsupplieradd.CustomizableEdges = CustomizableEdges1
+        btnsupplieradd.CustomizableEdges = CustomizableEdges3
         btnsupplieradd.DisabledState.BorderColor = Color.DarkGray
         btnsupplieradd.DisabledState.CustomBorderColor = Color.DarkGray
         btnsupplieradd.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -168,7 +168,7 @@ Partial Class Acquisition
         btnsupplieradd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnsupplieradd.Location = New Point(548, 171)
         btnsupplieradd.Name = "btnsupplieradd"
-        btnsupplieradd.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        btnsupplieradd.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnsupplieradd.Size = New Size(36, 32)
         btnsupplieradd.TabIndex = 94
         suppliernametooltip.SetToolTip(btnsupplieradd, "ADD SUPPLIER NAME")
@@ -203,7 +203,7 @@ Partial Class Acquisition
         ' 
         txtbarcodes.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtbarcodes.BorderRadius = 12
-        txtbarcodes.CustomizableEdges = CustomizableEdges3
+        txtbarcodes.CustomizableEdges = CustomizableEdges5
         txtbarcodes.DefaultText = ""
         txtbarcodes.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtbarcodes.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -217,7 +217,7 @@ Partial Class Acquisition
         txtbarcodes.Name = "txtbarcodes"
         txtbarcodes.PlaceholderText = ""
         txtbarcodes.SelectedText = ""
-        txtbarcodes.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        txtbarcodes.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtbarcodes.Size = New Size(232, 33)
         txtbarcodes.TabIndex = 76
         ' 
@@ -225,7 +225,7 @@ Partial Class Acquisition
         ' 
         txttransactionno.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txttransactionno.BorderRadius = 12
-        txttransactionno.CustomizableEdges = CustomizableEdges5
+        txttransactionno.CustomizableEdges = CustomizableEdges7
         txttransactionno.DefaultText = ""
         txttransactionno.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txttransactionno.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -235,11 +235,11 @@ Partial Class Acquisition
         txttransactionno.Font = New Font("Segoe UI", 9F)
         txttransactionno.ForeColor = Color.Black
         txttransactionno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txttransactionno.Location = New Point(888, 92)
+        txttransactionno.Location = New Point(870, 92)
         txttransactionno.Name = "txttransactionno"
         txttransactionno.PlaceholderText = ""
         txttransactionno.SelectedText = ""
-        txttransactionno.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        txttransactionno.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         txttransactionno.Size = New Size(232, 36)
         txttransactionno.TabIndex = 75
         ' 
@@ -247,7 +247,7 @@ Partial Class Acquisition
         ' 
         txttotalcost.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txttotalcost.BorderRadius = 12
-        txttotalcost.CustomizableEdges = CustomizableEdges7
+        txttotalcost.CustomizableEdges = CustomizableEdges9
         txttotalcost.DefaultText = ""
         txttotalcost.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txttotalcost.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -257,11 +257,11 @@ Partial Class Acquisition
         txttotalcost.Font = New Font("Segoe UI", 9F)
         txttotalcost.ForeColor = Color.Black
         txttotalcost.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txttotalcost.Location = New Point(888, 169)
+        txttotalcost.Location = New Point(870, 169)
         txttotalcost.Name = "txttotalcost"
         txttotalcost.PlaceholderText = ""
         txttotalcost.SelectedText = ""
-        txttotalcost.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        txttotalcost.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         txttotalcost.Size = New Size(232, 36)
         txttotalcost.TabIndex = 74
         ' 
@@ -269,7 +269,7 @@ Partial Class Acquisition
         ' 
         txtbookprice.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtbookprice.BorderRadius = 12
-        txtbookprice.CustomizableEdges = CustomizableEdges9
+        txtbookprice.CustomizableEdges = CustomizableEdges11
         txtbookprice.DefaultText = ""
         txtbookprice.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtbookprice.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -283,7 +283,7 @@ Partial Class Acquisition
         txtbookprice.Name = "txtbookprice"
         txtbookprice.PlaceholderText = ""
         txtbookprice.SelectedText = ""
-        txtbookprice.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        txtbookprice.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         txtbookprice.Size = New Size(232, 36)
         txtbookprice.TabIndex = 73
         ' 
@@ -292,42 +292,21 @@ Partial Class Acquisition
         NumericUpDown1.BackColor = Color.Transparent
         NumericUpDown1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         NumericUpDown1.BorderRadius = 12
-        NumericUpDown1.CustomizableEdges = CustomizableEdges11
+        NumericUpDown1.CustomizableEdges = CustomizableEdges13
         NumericUpDown1.Font = New Font("Segoe UI", 9F)
         NumericUpDown1.Location = New Point(602, 92)
         NumericUpDown1.Name = "NumericUpDown1"
-        NumericUpDown1.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        NumericUpDown1.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         NumericUpDown1.Size = New Size(232, 36)
         NumericUpDown1.TabIndex = 72
         NumericUpDown1.UpDownButtonFillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        ' 
-        ' DateTimePicker1
-        ' 
-        DateTimePicker1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DateTimePicker1.BorderRadius = 8
-        DateTimePicker1.BorderThickness = 1
-        DateTimePicker1.Checked = True
-        DateTimePicker1.CustomFormat = "yyyy"
-        DateTimePicker1.CustomizableEdges = CustomizableEdges13
-        DateTimePicker1.FillColor = Color.White
-        DateTimePicker1.Font = New Font("Segoe UI", 9F)
-        DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DateTimePicker1.Format = DateTimePickerFormat.Custom
-        DateTimePicker1.Location = New Point(1176, 92)
-        DateTimePicker1.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
-        DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
-        DateTimePicker1.Name = "DateTimePicker1"
-        DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges14
-        DateTimePicker1.Size = New Size(108, 36)
-        DateTimePicker1.TabIndex = 71
-        DateTimePicker1.Value = New Date(2025, 8, 25, 19, 46, 49, 668)
         ' 
         ' Label8
         ' 
         Label8.AutoSize = True
         Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label8.Location = New Point(1176, 73)
+        Label8.Location = New Point(1151, 71)
         Label8.Name = "Label8"
         Label8.Size = New Size(105, 16)
         Label8.TabIndex = 70
@@ -588,7 +567,7 @@ Partial Class Acquisition
         Label5.AutoSize = True
         Label5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(888, 150)
+        Label5.Location = New Point(870, 150)
         Label5.Name = "Label5"
         Label5.Size = New Size(77, 16)
         Label5.TabIndex = 32
@@ -599,7 +578,7 @@ Partial Class Acquisition
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(889, 73)
+        Label4.Location = New Point(871, 73)
         Label4.Name = "Label4"
         Label4.Size = New Size(116, 16)
         Label4.TabIndex = 31
@@ -651,6 +630,28 @@ Partial Class Acquisition
         suppliernametooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         suppliernametooltip.MaximumSize = New Size(0, 0)
         ' 
+        ' DateTimePicker1
+        ' 
+        DateTimePicker1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DateTimePicker1.BorderRadius = 8
+        DateTimePicker1.BorderThickness = 1
+        DateTimePicker1.Checked = True
+        DateTimePicker1.CustomFormat = "MMMM-dd-yyyy"
+        DateTimePicker1.CustomizableEdges = CustomizableEdges1
+        DateTimePicker1.Enabled = False
+        DateTimePicker1.FillColor = Color.White
+        DateTimePicker1.Font = New Font("Segoe UI", 9F)
+        DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DateTimePicker1.Format = DateTimePickerFormat.Custom
+        DateTimePicker1.Location = New Point(1151, 92)
+        DateTimePicker1.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
+        DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
+        DateTimePicker1.Name = "DateTimePicker1"
+        DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        DateTimePicker1.Size = New Size(157, 36)
+        DateTimePicker1.TabIndex = 95
+        DateTimePicker1.Value = New Date(2025, 10, 2, 0, 0, 0, 0)
+        ' 
         ' Acquisition
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -672,7 +673,6 @@ Partial Class Acquisition
 
     Friend WithEvents panel_acquisition As Panel
     Friend WithEvents Guna2GroupBox1 As Guna.UI2.WinForms.Guna2GroupBox
-    Friend WithEvents DateTimePicker1 As Guna.UI2.WinForms.Guna2DateTimePicker
     Friend WithEvents Label8 As Label
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
@@ -701,4 +701,5 @@ Partial Class Acquisition
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents btnsupplieradd As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents suppliernametooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
+    Friend WithEvents DateTimePicker1 As Guna.UI2.WinForms.Guna2DateTimePicker
 End Class

@@ -372,21 +372,21 @@ Partial Class MainForm
         ' 
         PenaltyToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         PenaltyToolStripMenuItem.Name = "PenaltyToolStripMenuItem"
-        PenaltyToolStripMenuItem.Size = New Size(180, 22)
+        PenaltyToolStripMenuItem.Size = New Size(177, 22)
         PenaltyToolStripMenuItem.Text = "⚠️ Penalty"
         ' 
         ' Audit_Trail
         ' 
         Audit_Trail.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Audit_Trail.Name = "Audit_Trail"
-        Audit_Trail.Size = New Size(180, 22)
+        Audit_Trail.Size = New Size(177, 22)
         Audit_Trail.Text = "📜 Audit Trail"
         ' 
         ' EditInfoToolStripMenuItem
         ' 
         EditInfoToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         EditInfoToolStripMenuItem.Name = "EditInfoToolStripMenuItem"
-        EditInfoToolStripMenuItem.Size = New Size(180, 22)
+        EditInfoToolStripMenuItem.Size = New Size(177, 22)
         EditInfoToolStripMenuItem.Text = "✎ Edit Info"
         ' 
         ' Panel1

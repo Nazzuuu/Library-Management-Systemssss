@@ -65,6 +65,7 @@ Partial Class Borrowing
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_borrowing = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label14 = New Label()
         Label12 = New Label()
         Label13 = New Label()
         btnview = New Guna.UI2.WinForms.Guna2Button()
@@ -101,7 +102,6 @@ Partial Class Borrowing
         Label6 = New Label()
         txtbarcode = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Label14 = New Label()
         panel_borrowing.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         Panel1.SuspendLayout()
@@ -167,6 +167,17 @@ Partial Class Borrowing
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges36
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' Label14
+        ' 
+        Label14.AutoSize = True
+        Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label14.ForeColor = Color.Red
+        Label14.Location = New Point(599, 235)
+        Label14.Name = "Label14"
+        Label14.Size = New Size(172, 16)
+        Label14.TabIndex = 103
+        Label14.Text = "2. Select Available books."
         ' 
         ' Label12
         ' 
@@ -768,17 +779,6 @@ Partial Class Borrowing
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
-        ' 
-        ' Label14
-        ' 
-        Label14.AutoSize = True
-        Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label14.ForeColor = Color.Red
-        Label14.Location = New Point(599, 235)
-        Label14.Name = "Label14"
-        Label14.Size = New Size(172, 16)
-        Label14.TabIndex = 103
-        Label14.Text = "2. Select Available books."
         ' 
         ' Borrowing
         ' 

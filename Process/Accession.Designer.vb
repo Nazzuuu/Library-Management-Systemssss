@@ -98,6 +98,8 @@ Partial Class Accession
         txtaccessionid = New Guna.UI2.WinForms.Guna2TextBox()
         panel_accession = New Panel()
         shelftooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
+        Label12 = New Label()
+        Label13 = New Label()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -372,6 +374,8 @@ Partial Class Accession
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label12)
+        Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(btnshelf)
         Guna2GroupBox1.Controls.Add(lblnote)
         Guna2GroupBox1.Controls.Add(lblnotes)
@@ -720,6 +724,28 @@ Partial Class Accession
         shelftooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         shelftooltip.MaximumSize = New Size(0, 0)
         ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(32, 226)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 106
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(81, 227)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(215, 16)
+        Label13.TabIndex = 105
+        Label13.Text = "Select Transaction Number first."
+        ' 
         ' Accession
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -776,4 +802,6 @@ Partial Class Accession
     Friend WithEvents lblnotes As Label
     Friend WithEvents btnshelf As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents shelftooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class

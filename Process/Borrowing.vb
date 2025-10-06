@@ -827,5 +827,19 @@ Public Class Borrowing
         Cursor = Cursors.Default
     End Sub
 
+    Private Sub btntimein_MouseHover(sender As Object, e As EventArgs) Handles btntimein.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
 
+    Private Sub btntimein_MouseLeave(sender As Object, e As EventArgs) Handles btntimein.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnview_MouseHover(sender As Object, e As EventArgs) Handles btnview.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnview_MouseLeave(sender As Object, e As EventArgs) Handles btnview.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class

@@ -620,6 +620,22 @@ Public Class Superadmin
         Cursor = Cursors.Default
     End Sub
 
+    Private Sub CheckBox1_MouseHover(sender As Object, e As EventArgs) Handles CheckBox1.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub CheckBox1_MouseLeave(sender As Object, e As EventArgs) Handles CheckBox1.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub PictureBox1_MouseHover(sender As Object, e As EventArgs) Handles PictureBox1.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub PictureBox1_MouseLeave(sender As Object, e As EventArgs) Handles PictureBox1.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
     'hatdoggggg'''
     'palalala'
 End Class

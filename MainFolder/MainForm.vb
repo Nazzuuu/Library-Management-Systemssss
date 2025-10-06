@@ -609,4 +609,12 @@ Public Class MainForm
     Private Sub EditInfoToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles EditInfoToolStripMenuItem.MouseLeave
         Cursor = Cursors.Default
     End Sub
+
+    Private Sub btnlogoutt_MouseHover(sender As Object, e As EventArgs) Handles btnlogoutt.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnlogoutt_MouseLeave(sender As Object, e As EventArgs) Handles btnlogoutt.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class

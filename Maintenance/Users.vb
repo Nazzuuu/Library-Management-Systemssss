@@ -704,5 +704,21 @@ Public Class Users
         Cursor = Cursors.Default
     End Sub
 
+    Private Sub CheckBox2_MouseHover(sender As Object, e As EventArgs) Handles CheckBox2.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub CheckBox2_MouseLeave(sender As Object, e As EventArgs) Handles CheckBox2.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub PictureBox2_MouseHover(sender As Object, e As EventArgs) Handles PictureBox2.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub PictureBox2_MouseLeave(sender As Object, e As EventArgs) Handles PictureBox2.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
     ''pagod na ako mga bes''
 End Class

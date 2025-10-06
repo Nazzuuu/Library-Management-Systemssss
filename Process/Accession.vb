@@ -823,4 +823,28 @@ Public Class Accession
     Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
         Cursor = Cursors.Default
     End Sub
+
+    Private Sub btntransaction_MouseHover(sender As Object, e As EventArgs) Handles btntransaction.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btntransaction_MouseLeave(sender As Object, e As EventArgs) Handles btntransaction.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnview_MouseHover(sender As Object, e As EventArgs) Handles btnview.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnview_MouseLeave(sender As Object, e As EventArgs) Handles btnview.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub CheckBox1_MouseHover(sender As Object, e As EventArgs) Handles CheckBox1.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub CheckBox1_MouseLeave(sender As Object, e As EventArgs) Handles CheckBox1.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class

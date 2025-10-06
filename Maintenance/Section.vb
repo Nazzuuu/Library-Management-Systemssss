@@ -697,4 +697,13 @@ Public Class Section
     Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
         Cursor = Cursors.Default
     End Sub
+
+    Private Sub btnclear_MouseHover(sender As Object, e As EventArgs) Handles btnclear.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
 End Class
