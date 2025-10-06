@@ -855,4 +855,84 @@ Public Class Book
     Private Sub btnaddlangauge_Click(sender As Object, e As EventArgs) Handles btnaddlangauge.Click
         Language.ShowDialog()
     End Sub
+
+    Private Sub btnaddauthor_MouseHover(sender As Object, e As EventArgs) Handles btnaddauthor.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnaddauthor_MouseLeave(sender As Object, e As EventArgs) Handles btnaddauthor.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnaddgenre_MouseHover(sender As Object, e As EventArgs) Handles btnaddgenre.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnaddgenre_MouseLeave(sender As Object, e As EventArgs) Handles btnaddgenre.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnaddcategory_MouseHover(sender As Object, e As EventArgs) Handles btnaddcategory.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnaddcategory_MouseLeave(sender As Object, e As EventArgs) Handles btnaddcategory.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnaddpublisher_MouseHover(sender As Object, e As EventArgs) Handles btnaddpublisher.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnaddpublisher_MouseLeave(sender As Object, e As EventArgs) Handles btnaddpublisher.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnaddlangauge_MouseHover(sender As Object, e As EventArgs) Handles btnaddlangauge.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnaddlangauge_MouseLeave(sender As Object, e As EventArgs) Handles btnaddlangauge.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnadd_MouseLeave(sender As Object, e As EventArgs) Handles btnadd.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnclear_MouseHover(sender As Object, e As EventArgs) Handles btnclear.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnprint_MouseHover(sender As Object, e As EventArgs) Handles btnprint.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnprint_MouseLeave(sender As Object, e As EventArgs) Handles btnprint.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class

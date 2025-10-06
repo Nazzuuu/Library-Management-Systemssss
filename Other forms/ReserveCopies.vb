@@ -223,5 +223,11 @@ Public Class ReserveCopies
 
     End Sub
 
+    Private Sub btnpush_MouseHover(sender As Object, e As EventArgs) Handles btnpush.MouseHover
+        Me.Cursor = Cursors.Hand
+    End Sub
 
+    Private Sub btnpush_MouseLeave(sender As Object, e As EventArgs) Handles btnpush.MouseLeave
+        Me.Cursor = Cursors.Default
+    End Sub
 End Class

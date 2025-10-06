@@ -303,4 +303,28 @@ Public Class Strand
         End If
 
     End Sub
+
+    Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnadd_MouseLeave(sender As Object, e As EventArgs) Handles btnadd.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class

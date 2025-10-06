@@ -275,4 +275,23 @@ Public Class oras
         End If
 
     End Sub
+
+
+
+    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+
+    Private Sub btnclear_MouseHover(sender As Object, e As EventArgs) Handles btnclear.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class

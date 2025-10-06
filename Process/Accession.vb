@@ -783,4 +783,44 @@ Public Class Accession
     Private Sub btnshelf_Click(sender As Object, e As EventArgs) Handles btnshelf.Click
         Shelf.ShowDialog()
     End Sub
+
+    Private Sub btnshelf_MouseHover(sender As Object, e As EventArgs) Handles btnshelf.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnshelf_MouseLeave(sender As Object, e As EventArgs) Handles btnshelf.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnadd_MouseLeave(sender As Object, e As EventArgs) Handles btnadd.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndeleteall.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndeleteall.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnclear_MouseHover(sender As Object, e As EventArgs) Handles btnclear.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class
