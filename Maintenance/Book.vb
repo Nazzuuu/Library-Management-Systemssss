@@ -18,11 +18,14 @@ Public Class Book
     Private BarcodeList As New List(Of String)
     Private BarcodeIndex As Integer = 0
 
-    Private Const BarcodeWidth As Integer = 300
-    Private Const BarcodeHeight As Integer = 100
-    Private Const MarginX As Integer = 5
-    Private Const MarginY As Integer = 5
-    Private Const BarcodeSpacing As Integer = 10
+    Private Const BARCODE_PIXEL_WIDTH As Integer = 300
+    Private Const BARCODE_PIXEL_HEIGHT As Integer = 100
+
+    Private Const BARCODE_WIDTH_HM As Integer = 350
+    Private Const BARCODE_HEIGHT_HM As Integer = 120
+    Private Const HORIZONTAL_SPACING_HM As Integer = 20
+    Private Const VERTICAL_SPACING_HM As Integer = 10
+    Private Const MAX_ROWS_PER_COLUMN As Integer = 7
 
     Private WithEvents printDoc As New System.Drawing.Printing.PrintDocument
 
@@ -520,9 +523,10 @@ Public Class Book
     Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal width As Integer, ByVal height As Integer) As Image
         Try
 
-            Dim renderWidth As Integer = 300
+
+            Dim renderWidth As Integer = BARCODE_PIXEL_WIDTH
             Dim renderHeight As Integer = 80
-            Dim totalLabelHeight As Integer = 100
+            Dim totalLabelHeight As Integer = BARCODE_PIXEL_HEIGHT
 
             Dim options As New ZXing.Common.EncodingOptions With {
             .Width = renderWidth,
@@ -552,6 +556,7 @@ Public Class Book
                     Using sf As New StringFormat With {
                     .Alignment = StringAlignment.Center
                 }
+
                         g.DrawString(barcodeText, font, Brushes.Black, New RectangleF(0, renderHeight, renderWidth, totalLabelHeight - renderHeight), sf)
                     End Using
                 End Using
@@ -568,10 +573,15 @@ Public Class Book
             barcodeBitmap.Dispose()
 
 
-            Dim finalDisplayImage As New Bitmap(printImage, New Size(width, height))
-            printImage.Dispose()
+            If width = renderWidth AndAlso height = totalLabelHeight Then
 
-            Return finalDisplayImage
+                Return printImage
+            Else
+
+                Dim finalDisplayImage As New Bitmap(printImage, New Size(width, height))
+                printImage.Dispose()
+                Return finalDisplayImage
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -764,7 +774,6 @@ Public Class Book
     End Sub
 
 
-
     Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
 
         BarcodeList.Clear()
@@ -781,13 +790,16 @@ Public Class Book
         Next
 
         If BarcodeList.Count = 0 Then
-            MessageBox.Show("Walang Barcode na makikita para i-print. Tiyakin na may Barcode value ang mga aklat.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("No barcode's found.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
         Try
 
             Dim pdlg As New PrintDialog With {.Document = printDoc}
+
+
+            printDoc.DefaultPageSettings.Landscape = False
 
             If pdlg.ShowDialog() = DialogResult.OK Then
                 printDoc.PrinterSettings = pdlg.PrinterSettings
@@ -804,43 +816,83 @@ Public Class Book
 
 
     Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
+
         Dim g As Graphics = e.Graphics
 
-        Dim currentY As Integer = MarginY
+
+        Dim x_start As Integer = e.MarginBounds.Left
+        Dim y_start As Integer = e.MarginBounds.Top
+
+        Dim x_pos As Integer = x_start
+        Dim y_pos As Integer = y_start
+
+        Dim barcodesPrintedOnPage As Integer = 0
 
 
         While BarcodeIndex < BarcodeList.Count
 
             Dim barcodeText As String = BarcodeList(BarcodeIndex)
-            Dim barcodeImage As Image = GenerateBarcodeImage(barcodeText, BarcodeWidth, BarcodeHeight)
 
-            If barcodeImage Is Nothing Then
-                BarcodeIndex += 1
-                Continue While
+
+            If y_pos + BARCODE_HEIGHT_HM > e.MarginBounds.Bottom Then
+                '
+
+                If x_pos = x_start Then
+
+                    x_pos = x_start + BARCODE_WIDTH_HM + HORIZONTAL_SPACING_HM
+                    y_pos = y_start
+
+
+                    If y_pos + BARCODE_HEIGHT_HM > e.MarginBounds.Bottom Then
+
+                        e.HasMorePages = True
+                        Exit Sub
+                    End If
+
+                Else
+
+                    e.HasMorePages = True
+                    Exit Sub
+                End If
             End If
 
+            Using barcodeImage As Image = GenerateBarcodeImage(barcodeText, BARCODE_PIXEL_WIDTH, BARCODE_PIXEL_HEIGHT)
 
-            If currentY + BarcodeHeight > e.PageBounds.Height - MarginY Then
-
-                barcodeImage.Dispose()
-                e.HasMorePages = True
-                Exit Sub
-            End If
-
-            g.DrawImage(barcodeImage, MarginX, currentY, BarcodeWidth, BarcodeHeight)
-
-            barcodeImage.Dispose()
+                If barcodeImage Is Nothing Then
+                    BarcodeIndex += 1
+                    Continue While
+                End If
 
 
-            currentY += BarcodeHeight + BarcodeSpacing
+                g.DrawImage(barcodeImage, x_pos, y_pos, BARCODE_WIDTH_HM, BARCODE_HEIGHT_HM)
+
+            End Using
 
 
             BarcodeIndex += 1
+            barcodesPrintedOnPage += 1
+
+
+            y_pos += BARCODE_HEIGHT_HM + VERTICAL_SPACING_HM
+
+
+            If barcodesPrintedOnPage Mod MAX_ROWS_PER_COLUMN = 0 AndAlso x_pos = x_start Then
+
+                x_pos = x_start + BARCODE_WIDTH_HM + HORIZONTAL_SPACING_HM
+                y_pos = y_start
+            End If
+
+
         End While
 
 
-        e.HasMorePages = False
-        BarcodeIndex = 0
+        If BarcodeIndex < BarcodeList.Count Then
+            e.HasMorePages = True
+        Else
+            e.HasMorePages = False
+            BarcodeIndex = 0
+        End If
+
     End Sub
 
 
