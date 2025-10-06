@@ -246,7 +246,7 @@ Public Class Superadmin
         End If
 
 
-        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$")
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
 
 
         If emailRegex.IsMatch(email) Then
@@ -266,7 +266,9 @@ Public Class Superadmin
 
         Dim EmailText As String = txtemail.Text.Trim()
 
-        Dim EmailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$"
+
+
+        Dim EmailPattern As String = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
         If String.IsNullOrEmpty(EmailText) Then
             e.Cancel = False
