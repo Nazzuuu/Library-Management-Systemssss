@@ -453,4 +453,160 @@ Public Class MainForm
         End If
 
     End Sub
+
+    Private Sub BookMaintenanceToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles BookMaintenanceToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub BookMaintenanceToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles BookMaintenanceToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+
+    End Sub
+
+    Private Sub PenaltyManagementToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles PenaltyManagementToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub PenaltyManagementToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles PenaltyManagementToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub DepartmentToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles DepartmentToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub DepartmentToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles DepartmentToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub SectionToolStripMenuItem1_MouseHover(sender As Object, e As EventArgs) Handles SectionToolStripMenuItem1.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub SectionToolStripMenuItem1_MouseLeave(sender As Object, e As EventArgs) Handles SectionToolStripMenuItem1.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub SectionToolStripMenuItem2_MouseHover(sender As Object, e As EventArgs) Handles SectionToolStripMenuItem2.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub SectionToolStripMenuItem2_MouseLeave(sender As Object, e As EventArgs) Handles SectionToolStripMenuItem2.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub GradeToolStripMenuItem1_MouseHover(sender As Object, e As EventArgs) Handles GradeToolStripMenuItem1.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub GradeToolStripMenuItem1_MouseLeave(sender As Object, e As EventArgs) Handles GradeToolStripMenuItem1.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub StrandToolStripMenuItem1_MouseHover(sender As Object, e As EventArgs) Handles StrandToolStripMenuItem1.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub StrandToolStripMenuItem1_MouseLeave(sender As Object, e As EventArgs) Handles StrandToolStripMenuItem1.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub RegisterToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles RegisterToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub RegisterToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles RegisterToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub UserMaintenanceToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles UserMaintenanceToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub UserMaintenanceToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles UserMaintenanceToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub AcquisitionToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles AcquisitionToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub AcquisitionToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles AcquisitionToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub AccessionToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles AccessionToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub AccessionToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles AccessionToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub StudentLogsToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles StudentLogsToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub StudentLogsToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles StudentLogsToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub TimeInToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles TimeInToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub TimeInToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles TimeInToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub BorrowToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles BorrowToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub CirculationToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles CirculationToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub CirculationToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles CirculationToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub BorrowToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles BorrowToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub ReturnToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles ReturnToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub ReturnToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles ReturnToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub PenaltyToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles PenaltyToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub PenaltyToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles PenaltyToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub Audit_Trail_MouseHover(sender As Object, e As EventArgs) Handles Audit_Trail.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub Audit_Trail_MouseLeave(sender As Object, e As EventArgs) Handles Audit_Trail.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub EditInfoToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles EditInfoToolStripMenuItem.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub EditInfoToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles EditInfoToolStripMenuItem.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class
