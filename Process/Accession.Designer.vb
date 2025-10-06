@@ -97,6 +97,7 @@ Partial Class Accession
         txtbooktitle = New Guna.UI2.WinForms.Guna2TextBox()
         txtaccessionid = New Guna.UI2.WinForms.Guna2TextBox()
         panel_accession = New Panel()
+        shelftooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -428,6 +429,7 @@ Partial Class Accession
         btnshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         btnshelf.Size = New Size(36, 32)
         btnshelf.TabIndex = 80
+        shelftooltip.SetToolTip(btnshelf, "ADD BOOK SHELF NUMBER")
         ' 
         ' lblnote
         ' 
@@ -710,6 +712,14 @@ Partial Class Accession
         panel_accession.Size = New Size(1370, 700)
         panel_accession.TabIndex = 2
         ' 
+        ' shelftooltip
+        ' 
+        shelftooltip.AllowLinksHandling = True
+        shelftooltip.AutomaticDelay = 100
+        shelftooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
+        shelftooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        shelftooltip.MaximumSize = New Size(0, 0)
+        ' 
         ' Accession
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -765,4 +775,5 @@ Partial Class Accession
     Friend WithEvents lblnote As Label
     Friend WithEvents lblnotes As Label
     Friend WithEvents btnshelf As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents shelftooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
 End Class

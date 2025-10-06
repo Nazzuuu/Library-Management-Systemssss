@@ -107,6 +107,11 @@ Partial Class Book
         Label2 = New Label()
         Label1 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        authortooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
+        genretooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
+        categorytooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
+        publishertooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
+        languagetooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
         panel_book.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(picbarcode, ComponentModel.ISupportInitialize).BeginInit()
@@ -121,7 +126,7 @@ Partial Class Book
         panel_book.Dock = DockStyle.Fill
         panel_book.Location = New Point(0, 0)
         panel_book.Name = "panel_book"
-        panel_book.Size = New Size(1370, 700)
+        panel_book.Size = New Size(1370, 607)
         panel_book.TabIndex = 0
         ' 
         ' Guna2GroupBox1
@@ -166,7 +171,7 @@ Partial Class Book
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
         Guna2GroupBox1.CustomizableEdges = CustomizableEdges41
         Guna2GroupBox1.FillColor = Color.Transparent
-        Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
+        Guna2GroupBox1.Font = New Font("Segoe UI", 9.0F)
         Guna2GroupBox1.ForeColor = SystemColors.Control
         Guna2GroupBox1.Location = New Point(12, 13)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
@@ -192,6 +197,7 @@ Partial Class Book
         btnaddlangauge.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnaddlangauge.Size = New Size(36, 32)
         btnaddlangauge.TabIndex = 83
+        languagetooltip.SetToolTip(btnaddlangauge, "ADD LANGUAGE")
         ' 
         ' btnaddpublisher
         ' 
@@ -211,6 +217,7 @@ Partial Class Book
         btnaddpublisher.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnaddpublisher.Size = New Size(36, 32)
         btnaddpublisher.TabIndex = 82
+        publishertooltip.SetToolTip(btnaddpublisher, "ADD PUBLISHER")
         ' 
         ' btnaddcategory
         ' 
@@ -230,6 +237,7 @@ Partial Class Book
         btnaddcategory.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btnaddcategory.Size = New Size(36, 32)
         btnaddcategory.TabIndex = 81
+        categorytooltip.SetToolTip(btnaddcategory, "ADD CATEGORY")
         ' 
         ' btnaddgenre
         ' 
@@ -249,6 +257,7 @@ Partial Class Book
         btnaddgenre.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         btnaddgenre.Size = New Size(36, 32)
         btnaddgenre.TabIndex = 80
+        genretooltip.SetToolTip(btnaddgenre, "ADD GENRE")
         ' 
         ' btnaddauthor
         ' 
@@ -268,6 +277,7 @@ Partial Class Book
         btnaddauthor.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         btnaddauthor.Size = New Size(36, 32)
         btnaddauthor.TabIndex = 79
+        authortooltip.SetToolTip(btnaddauthor, "ADD AUTHOR")
         ' 
         ' btnprint
         ' 
@@ -342,7 +352,7 @@ Partial Class Book
         DateTimePicker1.CustomFormat = "yyyy"
         DateTimePicker1.CustomizableEdges = CustomizableEdges13
         DateTimePicker1.FillColor = Color.White
-        DateTimePicker1.Font = New Font("Segoe UI", 9F)
+        DateTimePicker1.Font = New Font("Segoe UI", 9.0F)
         DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DateTimePicker1.Format = DateTimePickerFormat.Custom
         DateTimePicker1.Location = New Point(1014, 189)
@@ -387,7 +397,7 @@ Partial Class Book
         txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
@@ -452,7 +462,7 @@ Partial Class Book
         DataGridView1.Cursor = Cursors.Hand
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
-        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9.0F)
         DataGridViewCellStyle2.ForeColor = SystemColors.Control
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
@@ -464,7 +474,7 @@ Partial Class Book
         DataGridView1.ReadOnly = True
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle3.BackColor = SystemColors.Control
-        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9.0F)
         DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
         DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
@@ -473,7 +483,7 @@ Partial Class Book
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
         DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
-        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle4.Font = New Font("Tahoma", 9.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
@@ -562,7 +572,7 @@ Partial Class Book
         txtbooktitle.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbooktitle.Font = New Font("Segoe UI", 9F)
+        txtbooktitle.Font = New Font("Segoe UI", 9.0F)
         txtbooktitle.ForeColor = Color.Black
         txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Location = New Point(30, 185)
@@ -595,7 +605,7 @@ Partial Class Book
         txtisbn.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtisbn.Font = New Font("Segoe UI", 9F)
+        txtisbn.Font = New Font("Segoe UI", 9.0F)
         txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Location = New Point(30, 116)
@@ -761,14 +771,55 @@ Partial Class Book
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
+        ' authortooltip
+        ' 
+        authortooltip.AllowLinksHandling = True
+        authortooltip.AutomaticDelay = 100
+        authortooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
+        authortooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        authortooltip.MaximumSize = New Size(0, 0)
+        ' 
+        ' genretooltip
+        ' 
+        genretooltip.AllowLinksHandling = True
+        genretooltip.AutomaticDelay = 100
+        genretooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
+        genretooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        genretooltip.MaximumSize = New Size(0, 0)
+        ' 
+        ' categorytooltip
+        ' 
+        categorytooltip.AllowLinksHandling = True
+        categorytooltip.AutomaticDelay = 100
+        categorytooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
+        categorytooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        categorytooltip.MaximumSize = New Size(0, 0)
+        ' 
+        ' publishertooltip
+        ' 
+        publishertooltip.AllowLinksHandling = True
+        publishertooltip.AutomaticDelay = 100
+        publishertooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
+        publishertooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        publishertooltip.MaximumSize = New Size(0, 0)
+        ' 
+        ' languagetooltip
+        ' 
+        languagetooltip.AllowLinksHandling = True
+        languagetooltip.AutomaticDelay = 100
+        languagetooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
+        languagetooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        languagetooltip.MaximumSize = New Size(0, 0)
+        ' 
         ' Book
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(7.0F, 13.0F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = SystemColors.Control
-        ClientSize = New Size(1370, 700)
+        ClientSize = New Size(1370, 607)
         ControlBox = False
         Controls.Add(panel_book)
+        Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
         FormBorderStyle = FormBorderStyle.None
         Name = "Book"
         Text = "Book"
@@ -819,4 +870,9 @@ Partial Class Book
     Friend WithEvents btnaddpublisher As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents btnaddcategory As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents btnaddgenre As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents authortooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
+    Friend WithEvents genretooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
+    Friend WithEvents categorytooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
+    Friend WithEvents publishertooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
+    Friend WithEvents languagetooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
 End Class

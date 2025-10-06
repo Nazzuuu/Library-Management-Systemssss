@@ -25,6 +25,9 @@ Partial Class Acquisition
         components = New ComponentModel.Container()
         Dim CustomizableEdges33 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Acquisition))
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -59,11 +62,9 @@ Partial Class Acquisition
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges32 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Acquisition))
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_acquisition = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        btnsupplieradd = New Guna.UI2.WinForms.Guna2Button()
         rbbarcode = New RadioButton()
         rbisbn = New RadioButton()
         txtbarcodes = New Guna.UI2.WinForms.Guna2TextBox()
@@ -91,7 +92,7 @@ Partial Class Acquisition
         Label2 = New Label()
         Label1 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        btnsupplieradd = New Guna.UI2.WinForms.Guna2Button()
+        suppliernametooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
         panel_acquisition.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(NumericUpDown1, ComponentModel.ISupportInitialize).BeginInit()
@@ -151,6 +152,26 @@ Partial Class Acquisition
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' btnsupplieradd
+        ' 
+        btnsupplieradd.BackgroundImage = CType(resources.GetObject("btnsupplieradd.BackgroundImage"), Image)
+        btnsupplieradd.BackgroundImageLayout = ImageLayout.Zoom
+        btnsupplieradd.BorderRadius = 5
+        btnsupplieradd.CustomizableEdges = CustomizableEdges1
+        btnsupplieradd.DisabledState.BorderColor = Color.DarkGray
+        btnsupplieradd.DisabledState.CustomBorderColor = Color.DarkGray
+        btnsupplieradd.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btnsupplieradd.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btnsupplieradd.FillColor = Color.Empty
+        btnsupplieradd.Font = New Font("Tahoma", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnsupplieradd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnsupplieradd.Location = New Point(548, 171)
+        btnsupplieradd.Name = "btnsupplieradd"
+        btnsupplieradd.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        btnsupplieradd.Size = New Size(36, 32)
+        btnsupplieradd.TabIndex = 94
+        suppliernametooltip.SetToolTip(btnsupplieradd, "ADD SUPPLIER NAME")
         ' 
         ' rbbarcode
         ' 
@@ -622,24 +643,13 @@ Partial Class Acquisition
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
-        ' btnsupplieradd
+        ' suppliernametooltip
         ' 
-        btnsupplieradd.BackgroundImage = CType(resources.GetObject("btnsupplieradd.BackgroundImage"), Image)
-        btnsupplieradd.BackgroundImageLayout = ImageLayout.Zoom
-        btnsupplieradd.BorderRadius = 5
-        btnsupplieradd.CustomizableEdges = CustomizableEdges1
-        btnsupplieradd.DisabledState.BorderColor = Color.DarkGray
-        btnsupplieradd.DisabledState.CustomBorderColor = Color.DarkGray
-        btnsupplieradd.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnsupplieradd.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnsupplieradd.FillColor = Color.Empty
-        btnsupplieradd.Font = New Font("Tahoma", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnsupplieradd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnsupplieradd.Location = New Point(548, 171)
-        btnsupplieradd.Name = "btnsupplieradd"
-        btnsupplieradd.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        btnsupplieradd.Size = New Size(36, 32)
-        btnsupplieradd.TabIndex = 94
+        suppliernametooltip.AllowLinksHandling = True
+        suppliernametooltip.AutomaticDelay = 100
+        suppliernametooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
+        suppliernametooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        suppliernametooltip.MaximumSize = New Size(0, 0)
         ' 
         ' Acquisition
         ' 
@@ -690,4 +700,5 @@ Partial Class Acquisition
     Friend WithEvents rbisbn As RadioButton
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents btnsupplieradd As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents suppliernametooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
 End Class

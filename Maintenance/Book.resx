@@ -361,6 +361,9 @@
         Me+rszP37UzgY8Cft/8PVk3RUnfPcaMAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="languagetooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>672, 26</value>
+  </metadata>
   <data name="btnaddpublisher.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABGdBTUEAALGPC/xhBQAAN6JJREFUeF7t
@@ -604,6 +607,9 @@
         Me+rszP37UzgY8Cft/8PVk3RUnfPcaMAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="publishertooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>533, 24</value>
+  </metadata>
   <data name="btnaddcategory.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABGdBTUEAALGPC/xhBQAAN6JJREFUeF7t
@@ -847,6 +853,9 @@
         Me+rszP37UzgY8Cft/8PVk3RUnfPcaMAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="categorytooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>397, 22</value>
+  </metadata>
   <data name="btnaddgenre.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABGdBTUEAALGPC/xhBQAAN6JJREFUeF7t
@@ -1090,6 +1099,9 @@
         Me+rszP37UzgY8Cft/8PVk3RUnfPcaMAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="genretooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>273, 20</value>
+  </metadata>
   <data name="btnaddauthor.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABGdBTUEAALGPC/xhBQAAN6JJREFUeF7t
@@ -1333,7 +1345,13 @@
         Me+rszP37UzgY8Cft/8PVk3RUnfPcaMAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="authortooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>141, 17</value>
+  </metadata>
   <metadata name="Guna2Elipse1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>72</value>
   </metadata>
 </root>
