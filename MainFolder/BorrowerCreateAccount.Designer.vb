@@ -84,7 +84,7 @@ Partial Class BorrowerCreateAccount
         ' 
         LinkLabel1.AutoSize = True
         LinkLabel1.Font = New Font("Tahoma", 11.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
-        LinkLabel1.Location = New Point(338, 393)
+        LinkLabel1.Location = New Point(476, 337)
         LinkLabel1.Name = "LinkLabel1"
         LinkLabel1.Size = New Size(41, 18)
         LinkLabel1.TabIndex = 86
@@ -96,7 +96,7 @@ Partial Class BorrowerCreateAccount
         lblexample.AutoSize = True
         lblexample.Font = New Font("Tahoma", 11.25F, FontStyle.Bold Or FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         lblexample.ForeColor = SystemColors.WindowFrame
-        lblexample.Location = New Point(4, 438)
+        lblexample.Location = New Point(2, 366)
         lblexample.Name = "lblexample"
         lblexample.Size = New Size(126, 18)
         lblexample.TabIndex = 84
@@ -106,7 +106,7 @@ Partial Class BorrowerCreateAccount
         ' 
         PictureBox1.BackColor = Color.White
         PictureBox1.BackgroundImageLayout = ImageLayout.Zoom
-        PictureBox1.Location = New Point(511, 216)
+        PictureBox1.Location = New Point(804, 155)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(28, 18)
         PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
@@ -120,7 +120,7 @@ Partial Class BorrowerCreateAccount
         ' Panel_btnlogin
         ' 
         Panel_btnlogin.Controls.Add(btnsignup)
-        Panel_btnlogin.Location = New Point(186, 333)
+        Panel_btnlogin.Location = New Point(324, 277)
         Panel_btnlogin.Name = "Panel_btnlogin"
         Panel_btnlogin.Size = New Size(191, 57)
         Panel_btnlogin.TabIndex = 81
@@ -134,7 +134,7 @@ Partial Class BorrowerCreateAccount
         btnsignup.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
         btnsignup.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
         btnsignup.FillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnsignup.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold Or FontStyle.Italic, GraphicsUnit.Point, CByte(0))
+        btnsignup.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold Or FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         btnsignup.ForeColor = Color.White
         btnsignup.Location = New Point(21, 12)
         btnsignup.Name = "btnsignup"
@@ -163,7 +163,7 @@ Partial Class BorrowerCreateAccount
         Guna2ControlBox1.CustomizableEdges = CustomizableEdges10
         Guna2ControlBox1.FillColor = Color.Transparent
         Guna2ControlBox1.IconColor = Color.White
-        Guna2ControlBox1.Location = New Point(1090, 2)
+        Guna2ControlBox1.Location = New Point(1380, 2)
         Guna2ControlBox1.Name = "Guna2ControlBox1"
         Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges11
         Guna2ControlBox1.Size = New Size(36, 30)
@@ -175,7 +175,7 @@ Partial Class BorrowerCreateAccount
         Label3.AutoSize = True
         Label3.Font = New Font("Baskerville Old Face", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.White
-        Label3.Location = New Point(199, 9)
+        Label3.Location = New Point(344, 9)
         Label3.Name = "Label3"
         Label3.Size = New Size(212, 56)
         Label3.TabIndex = 1
@@ -190,7 +190,7 @@ Partial Class BorrowerCreateAccount
         Panel1.Dock = DockStyle.Top
         Panel1.Location = New Point(0, 0)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(581, 62)
+        Panel1.Size = New Size(871, 62)
         Panel1.TabIndex = 80
         ' 
         ' Label4
@@ -198,7 +198,7 @@ Partial Class BorrowerCreateAccount
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 11.25F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = SystemColors.WindowFrame
-        Label4.Location = New Point(159, 393)
+        Label4.Location = New Point(297, 337)
         Label4.Name = "Label4"
         Label4.Size = New Size(178, 18)
         Label4.TabIndex = 85
@@ -207,9 +207,9 @@ Partial Class BorrowerCreateAccount
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        Label2.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(310, 188)
+        Label2.Location = New Point(603, 127)
         Label2.Name = "Label2"
         Label2.Size = New Size(81, 18)
         Label2.TabIndex = 79
@@ -218,9 +218,9 @@ Partial Class BorrowerCreateAccount
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(310, 127)
+        Label1.Location = New Point(321, 190)
         Label1.Name = "Label1"
         Label1.Size = New Size(87, 18)
         Label1.TabIndex = 78
@@ -240,7 +240,7 @@ Partial Class BorrowerCreateAccount
         txtpass.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtpass.ForeColor = Color.Black
         txtpass.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtpass.Location = New Point(310, 211)
+        txtpass.Location = New Point(603, 150)
         txtpass.Margin = New Padding(5)
         txtpass.Name = "txtpass"
         txtpass.PlaceholderText = ""
@@ -263,7 +263,7 @@ Partial Class BorrowerCreateAccount
         txtuser.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtuser.ForeColor = Color.Black
         txtuser.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtuser.Location = New Point(310, 149)
+        txtuser.Location = New Point(321, 212)
         txtuser.Margin = New Padding(5)
         txtuser.Name = "txtuser"
         txtuser.PlaceholderText = ""
@@ -277,7 +277,7 @@ Partial Class BorrowerCreateAccount
         Panel2.Controls.Add(rbteacher)
         Panel2.Controls.Add(Label9)
         Panel2.Controls.Add(rbstudent)
-        Panel2.Location = New Point(17, 85)
+        Panel2.Location = New Point(34, 86)
         Panel2.Name = "Panel2"
         Panel2.Size = New Size(308, 37)
         Panel2.TabIndex = 88
@@ -324,7 +324,7 @@ Partial Class BorrowerCreateAccount
         Label5.AutoSize = True
         Label5.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(22, 127)
+        Label5.Location = New Point(39, 128)
         Label5.Name = "Label5"
         Label5.Size = New Size(48, 18)
         Label5.TabIndex = 90
@@ -344,7 +344,7 @@ Partial Class BorrowerCreateAccount
         txtlrn.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlrn.Location = New Point(22, 149)
+        txtlrn.Location = New Point(39, 150)
         txtlrn.Margin = New Padding(5)
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
@@ -358,7 +358,7 @@ Partial Class BorrowerCreateAccount
         Label6.AutoSize = True
         Label6.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(22, 189)
+        Label6.Location = New Point(39, 190)
         Label6.Name = "Label6"
         Label6.Size = New Size(112, 18)
         Label6.TabIndex = 92
@@ -378,7 +378,7 @@ Partial Class BorrowerCreateAccount
         txtemployeeno.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtemployeeno.ForeColor = Color.Black
         txtemployeeno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemployeeno.Location = New Point(22, 211)
+        txtemployeeno.Location = New Point(39, 212)
         txtemployeeno.Margin = New Padding(5)
         txtemployeeno.Name = "txtemployeeno"
         txtemployeeno.PlaceholderText = ""
@@ -392,7 +392,7 @@ Partial Class BorrowerCreateAccount
         lblfullname.AutoSize = True
         lblfullname.Font = New Font("Tahoma", 9.75F, FontStyle.Bold Or FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         lblfullname.ForeColor = SystemColors.WindowFrame
-        lblfullname.Location = New Point(350, 91)
+        lblfullname.Location = New Point(603, 86)
         lblfullname.Name = "lblfullname"
         lblfullname.Size = New Size(136, 16)
         lblfullname.TabIndex = 94
@@ -403,7 +403,7 @@ Partial Class BorrowerCreateAccount
         lblpassword.AutoSize = True
         lblpassword.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         lblpassword.ForeColor = SystemColors.WindowFrame
-        lblpassword.Location = New Point(310, 244)
+        lblpassword.Location = New Point(603, 183)
         lblpassword.Name = "lblpassword"
         lblpassword.Size = New Size(97, 13)
         lblpassword.TabIndex = 95
@@ -414,7 +414,7 @@ Partial Class BorrowerCreateAccount
         Label7.AutoSize = True
         Label7.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(22, 253)
+        Label7.Location = New Point(321, 128)
         Label7.Name = "Label7"
         Label7.Size = New Size(56, 18)
         Label7.TabIndex = 97
@@ -434,7 +434,7 @@ Partial Class BorrowerCreateAccount
         txtemail.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtemail.ForeColor = Color.Black
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemail.Location = New Point(22, 275)
+        txtemail.Location = New Point(321, 150)
         txtemail.Margin = New Padding(5)
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
@@ -448,7 +448,7 @@ Partial Class BorrowerCreateAccount
         lbldomain.AutoSize = True
         lbldomain.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         lbldomain.ForeColor = SystemColors.WindowFrame
-        lbldomain.Location = New Point(159, 258)
+        lbldomain.Location = New Point(458, 133)
         lbldomain.Name = "lbldomain"
         lbldomain.Size = New Size(101, 13)
         lbldomain.TabIndex = 124
@@ -456,9 +456,9 @@ Partial Class BorrowerCreateAccount
         ' 
         ' BorrowerCreateAccount
         ' 
-        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
+        AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(581, 470)
+        ClientSize = New Size(871, 388)
         Controls.Add(lbldomain)
         Controls.Add(Label7)
         Controls.Add(txtemail)
