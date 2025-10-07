@@ -185,15 +185,44 @@ Public Class Borrowing
 
         If isLoadingData Then Exit Sub
 
+        If String.IsNullOrWhiteSpace(txtemployee.Text) Then
+
+        End If
+
+
+        Dim enteredEmployeeID As String = txtemployee.Text.Trim()
+
+
+        Dim currentUserID_Trimmed As String = GlobalVarsModule.CurrentBorrowerID.Trim()
+        Dim currentUserID_Cleaned As String = ""
+        Dim tempID As Long
+
+
+        If Long.TryParse(currentUserID_Trimmed, tempID) Then
+            currentUserID_Cleaned = tempID.ToString()
+        Else
+            currentUserID_Cleaned = currentUserID_Trimmed
+        End If
+
+
+        Dim enteredEmployeeID_Cleaned As String = ""
+        If Long.TryParse(enteredEmployeeID, tempID) Then
+            enteredEmployeeID_Cleaned = tempID.ToString()
+        Else
+            enteredEmployeeID_Cleaned = enteredEmployeeID
+        End If
+
+
         Dim con As New MySqlConnection(connectionString)
         Dim foundBorrower As Boolean = False
         Dim borrowerName As String = ""
 
         Try
             con.Open()
-            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp" ' Added to show full name
+
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
             Using comsi As New MySqlCommand(com, con)
-                comsi.Parameters.AddWithValue("@emp", txtemployee.Text)
+                comsi.Parameters.AddWithValue("@emp", enteredEmployeeID)
                 Dim emp As Object = comsi.ExecuteScalar()
                 If emp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(emp.ToString()) Then
                     borrowerName = emp.ToString()
@@ -204,7 +233,6 @@ Public Class Borrowing
                 End If
             End Using
         Catch ex As Exception
-
             MessageBox.Show("An error occurred while retrieving borrower information: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
@@ -212,29 +240,64 @@ Public Class Borrowing
             End If
         End Try
 
-        If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(txtemployee.Text) Then
-            Dim isTimedIn As Boolean = CheckTimeInStatus(txtemployee.Text, "EmployeeNo")
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso GlobalVarsModule.CurrentBorrowerType = "Teacher" Then
+
+            If foundBorrower AndAlso Not String.Equals(enteredEmployeeID_Cleaned, currentUserID_Cleaned, StringComparison.Ordinal) Then
+
+                txtname.Text = ""
+                btntimein.Visible = False
+
+
+                MessageBox.Show($"The Employee No. '{enteredEmployeeID}' belongs to {borrowerName}. You are only allowed to search your own Employee No.", "Security Restriction", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+                Exit Sub
+            End If
+        End If
+
+        If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(enteredEmployeeID) Then
+            Dim isTimedIn As Boolean = CheckTimeInStatus(enteredEmployeeID, "LRN")
 
             If Not isTimedIn Then
-
                 MessageBox.Show($"NOTICE: {borrowerName} has not yet Timed In.", "Time In Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
-
                 btntimein.Visible = True
             Else
-
                 btntimein.Visible = False
             End If
         Else
-
             btntimein.Visible = False
         End If
 
     End Sub
 
+
     Private Sub txtlrn_TextChanged(sender As Object, e As EventArgs) Handles txtlrn.TextChanged
 
+
         If isLoadingData Then Exit Sub
+
+        Dim enteredLRN As String = txtlrn.Text.Trim()
+
+
+        Dim currentUserID_Trimmed As String = GlobalVarsModule.CurrentBorrowerID.Trim()
+        Dim currentUserID_Cleaned As String = ""
+        Dim tempID As Long
+
+
+        If Long.TryParse(currentUserID_Trimmed, tempID) Then
+            currentUserID_Cleaned = tempID.ToString()
+        Else
+            currentUserID_Cleaned = currentUserID_Trimmed
+        End If
+
+
+        Dim enteredLRN_Cleaned As String = ""
+        If Long.TryParse(enteredLRN, tempID) Then
+            enteredLRN_Cleaned = tempID.ToString()
+        Else
+            enteredLRN_Cleaned = enteredLRN
+        End If
+
 
         Dim con As New MySqlConnection(connectionString)
         Dim foundBorrower As Boolean = False
@@ -242,9 +305,10 @@ Public Class Borrowing
 
         Try
             con.Open()
-            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`) FROM `borrower_tbl` WHERE `LRN` = @lrn" ' Added to show full name
+
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`) FROM `borrower_tbl` WHERE `LRN` = @lrn"
             Using comsi As New MySqlCommand(com, con)
-                comsi.Parameters.AddWithValue("@lrn", txtlrn.Text)
+                comsi.Parameters.AddWithValue("@lrn", enteredLRN)
                 Dim lrn As Object = comsi.ExecuteScalar()
                 If lrn IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(lrn.ToString()) Then
                     borrowerName = lrn.ToString()
@@ -255,7 +319,6 @@ Public Class Borrowing
                 End If
             End Using
         Catch ex As Exception
-
             MessageBox.Show("An error occurred while retrieving borrower information: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
@@ -264,26 +327,37 @@ Public Class Borrowing
         End Try
 
 
-        If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
-            Dim isTimedIn As Boolean = CheckTimeInStatus(txtlrn.Text, "LRN")
+        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso GlobalVarsModule.CurrentBorrowerType = "Student" Then
+
+            If foundBorrower AndAlso Not String.Equals(enteredLRN_Cleaned, currentUserID_Cleaned, StringComparison.Ordinal) Then
+
+                txtname.Text = ""
+                btntimein.Visible = False
+
+
+                MessageBox.Show($"The LRN '{enteredLRN}' belongs to {borrowerName}. You are only allowed to search your own LRN.", "Security Restriction", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+
+                Exit Sub
+            End If
+        End If
+
+
+
+        If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(enteredLRN) Then
+            Dim isTimedIn As Boolean = CheckTimeInStatus(enteredLRN, "LRN")
 
             If Not isTimedIn Then
-
                 MessageBox.Show($"NOTICE: {borrowerName} has not yet Timed In.", "Time In Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
-
                 btntimein.Visible = True
             Else
-
                 btntimein.Visible = False
             End If
         Else
-
             btntimein.Visible = False
         End If
 
     End Sub
-
     Private Sub txtaccessionid_TextChanged(sender As Object, e As EventArgs) Handles txtaccessionid.TextChanged
 
         If isLoadingData Then

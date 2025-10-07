@@ -62,8 +62,12 @@ Public Class BorrowerLoginForm
 
 
                 GlobalVarsModule.CurrentUserRole = "Borrower"
-                GlobalVarsModule.CurrentUserID = borrowerID
                 GlobalVarsModule.CurrentBorrowerType = borrowerType
+                GlobalVarsModule.CurrentBorrowerID = borrowerID
+
+
+                GlobalVarsModule.CurrentUserID = borrowerID
+                MainForm.SetupBorrowerUI(borrowerType)
 
                 If borrowerType = "Unknown" Then
                     MessageBox.Show("Login successful, but borrower type (LRN or Employee No) is missing in the record. Please check your account details.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -71,16 +75,16 @@ Public Class BorrowerLoginForm
 
                 MessageBox.Show("Borrower successfully logged in. Welcome, " & Username & "!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-
+                MainForm.SetupBorrowerUI(borrowerType)
                 Me.Hide()
                 MainForm.Show()
 
-
                 GlobalVarsModule.CurrentUserRole = "Borrower"
-                GlobalVarsModule.CurrentUserID = borrowerID
-
                 GlobalVarsModule.CurrentBorrowerType = borrowerType
-                MainForm.SetupBorrowerUI(borrowerType)
+                GlobalVarsModule.CurrentBorrowerID = borrowerID
+
+
+                GlobalVarsModule.CurrentUserID = borrowerID
 
 
                 MainForm.lbl_currentuser.Text = borrowerType
