@@ -371,7 +371,8 @@ Public Class Borrowereditsinfo
 
     Private Sub Borrowereditsinfo_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
 
-        MainForm.ProcessStripMenuItem.ForeColor = Color.Gray
+
         MainForm.ProcessStripMenuItem.ShowDropDown()
+        MainForm.ProcessStripMenuItem.ForeColor = Color.Gray
     End Sub
 End Class

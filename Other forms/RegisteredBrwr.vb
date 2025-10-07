@@ -21,9 +21,9 @@ Public Class RegisteredBrwr
 
     Private Sub RegisteredBrwr_Activated(sender As Object, e As EventArgs) Handles Me.Activated
 
+        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrEmpty(GlobalVarsModule.CurrentUserID) Then
 
-        If Me.IsSearchOverride Then
-            txtsearch.Enabled = True
+            txtsearch.Enabled = False
         Else
 
             txtsearch.Enabled = Not IsTimeInMode
@@ -37,13 +37,8 @@ Public Class RegisteredBrwr
 
 
         IsTimeInMode = False
-
-
         txtsearch.Text = ""
-
         txtsearch.Enabled = True
-
-
     End Sub
 
     Private Sub ListView1_DrawColumnHeader(sender As Object, e As DrawListViewColumnHeaderEventArgs) Handles ListView1.DrawColumnHeader
@@ -295,6 +290,7 @@ Public Class RegisteredBrwr
 
                 MessageBox.Show($"SUCCESS: Borrower ID {currentID} has been successfully Timed In.", "Time In Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
+                oras.btnview.Visible = True
 
                 Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
                 If orasForm IsNot Nothing Then
@@ -315,6 +311,15 @@ Public Class RegisteredBrwr
         End Try
 
     End Sub
+
+
+    Public Sub SetSearchID(borrowerID As String)
+
+        txtsearch.Text = borrowerID
+        ludeyngborrower()
+
+    End Sub
+
 
     Public Sub inibol()
         txtsearch.Enabled = True

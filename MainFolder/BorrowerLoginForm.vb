@@ -54,12 +54,16 @@ Public Class BorrowerLoginForm
         Try
             con.Open()
             Dim reader As MySqlDataReader = cmd.ExecuteReader()
-
             If reader.Read() Then
 
                 Dim userEmail As String = reader("Email").ToString()
                 Dim borrowerID As String = reader("BorrowerID").ToString()
                 Dim borrowerType As String = reader("BorrowerType").ToString()
+
+
+                GlobalVarsModule.CurrentUserRole = "Borrower"
+                GlobalVarsModule.CurrentUserID = borrowerID
+                GlobalVarsModule.CurrentBorrowerType = borrowerType
 
                 If borrowerType = "Unknown" Then
                     MessageBox.Show("Login successful, but borrower type (LRN or Employee No) is missing in the record. Please check your account details.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -75,7 +79,7 @@ Public Class BorrowerLoginForm
                 GlobalVarsModule.CurrentUserRole = "Borrower"
                 GlobalVarsModule.CurrentUserID = borrowerID
 
-
+                GlobalVarsModule.CurrentBorrowerType = borrowerType
                 MainForm.SetupBorrowerUI(borrowerType)
 
 

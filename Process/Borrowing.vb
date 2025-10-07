@@ -84,8 +84,7 @@ Public Class Borrowing
         DataGridView1.ClearSelection()
         DataGridView1.CurrentCell = Nothing
 
-        txtemployee.Enabled = False
-        txtlrn.Enabled = False
+
         txtname.Enabled = False
         txtbooktitle.Enabled = False
         txtisbn.Enabled = False
@@ -93,11 +92,6 @@ Public Class Borrowing
         txtshelf.Enabled = False
         txtaccessionid.Enabled = False
         txtduedate.Enabled = False
-
-
-        rbstudent.Checked = False
-        rbteacher.Checked = False
-
 
         txtlrn.Text = ""
         txtemployee.Text = ""
@@ -534,7 +528,7 @@ Public Class Borrowing
                 For Each form In Application.OpenForms
                     If TypeOf form Is MainForm Then
                         Dim mform = DirectCast(form, MainForm)
-                        mform.lblborrowcount()
+                        mform.lblborrowcount
                     End If
                 Next
                 MsgBox("Borrowing record successfully added.", vbInformation, "Success")
@@ -633,12 +627,7 @@ Public Class Borrowing
 
                 pendingstats(newAccessionID, "Pending")
 
-                For Each form In Application.OpenForms
-                    If TypeOf form Is MainForm Then
-                        Dim mform = DirectCast(form, MainForm)
-                        mform.lblborrowcount()
-                    End If
-                Next
+
 
                 MsgBox("Borrowing record successfully updated.", vbInformation, "Success")
                 refreshborrowingsu()
@@ -810,6 +799,75 @@ Public Class Borrowing
                 avail.counts()
             End If
         Next
+    End Sub
+
+    Public Sub SetupBorrowerFields()
+
+        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
+
+        rbstudent.Enabled = True
+        rbteacher.Enabled = True
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrEmpty(borrowerType) Then
+
+
+
+            If borrowerType = "Student" Then
+
+                lblemployee.Visible = False
+                txtemployee.Visible = False
+                rbteacher.Visible = False
+
+
+                lbllrn.Visible = True
+                txtlrn.Visible = True
+                rbstudent.Visible = True
+
+                lbllrn.Location = New Point(30, 78)
+                txtlrn.Location = New Point(30, 97)
+                rbstudent.Location = New Point(121, 8)
+
+
+                rbstudent.Checked = True
+                rbstudent.Enabled = False
+
+            ElseIf borrowerType = "Teacher" Then
+
+                lbllrn.Visible = False
+                txtlrn.Visible = False
+                rbstudent.Visible = False
+
+
+                lblemployee.Visible = True
+                txtemployee.Visible = True
+                rbteacher.Visible = True
+
+
+                lblemployee.Location = New Point(30, 78)
+                txtemployee.Location = New Point(30, 97)
+                rbteacher.Location = New Point(121, 8)
+
+
+                rbteacher.Checked = True
+                rbteacher.Enabled = False
+
+            End If
+
+        Else
+
+
+            lblemployee.Visible = True
+            txtemployee.Visible = True
+            rbteacher.Visible = True
+            lbllrn.Visible = True
+            txtlrn.Visible = True
+            rbstudent.Visible = True
+
+            rbstudent.Checked = True
+
+        End If
+
+
     End Sub
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover

@@ -8,19 +8,22 @@ Public Class oras
     Dim selectedID As Integer
     Private WithEvents Timer1 As New Timer()
 
-    Private Sub btnregisterview_Click(sender As Object, e As EventArgs) Handles btnregisterview.Click
 
+    Private Sub btnregisterview_Click(sender As Object, e As EventArgs) Handles btnregisterview.Click
 
         RegisteredBrwr.lbl_action.ForeColor = Color.Red
         RegisteredBrwr.lbl_action.Text = "Selecting"
 
-
         RegisteredBrwr.ListView1.Enabled = True
 
         RegisteredBrwr.IsTimeInMode = True
-
-
         RegisteredBrwr.IsSearchOverride = True
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+
+            RegisteredBrwr.SetSearchID(GlobalVarsModule.CurrentUserID)
+        End If
+
 
         RegisteredBrwr.ShowDialog()
 
@@ -31,8 +34,36 @@ Public Class oras
 
     End Sub
 
-    Private Sub oras_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
 
+        RegisteredBrwr.IsInViewMode = True
+
+        RegisteredBrwr.lbl_action.ForeColor = Color.Green
+        RegisteredBrwr.lbl_action.Text = "Viewing"
+
+        RegisteredBrwr.ListView1.FullRowSelect = True
+        RegisteredBrwr.ListView1.MultiSelect = False
+        RegisteredBrwr.ListView1.HideSelection = False
+        RegisteredBrwr.ListView1.LabelEdit = False
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+
+            RegisteredBrwr.SetSearchID(GlobalVarsModule.CurrentUserID)
+        End If
+
+
+        RegisteredBrwr.ShowDialog()
+        RegisteredBrwr.ludeyngborrower()
+        RegisteredBrwr.ludeyngtimedinborrower()
+
+
+        RegisteredBrwr.IsInViewMode = False
+
+    End Sub
+
+
+
+    Private Sub oras_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ludeyngoras()
         clearlahat()
 
@@ -40,7 +71,6 @@ Public Class oras
         Timer1.Start()
 
     End Sub
-
 
     Private Sub Oras_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
@@ -201,7 +231,9 @@ Public Class oras
         Catch ex As Exception
             MessageBox.Show("Error recording time-out: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
-            con.Close()
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
 
     End Sub
@@ -240,26 +272,7 @@ Public Class oras
 
     End Sub
 
-    Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
 
-        RegisteredBrwr.IsInViewMode = True
-
-        RegisteredBrwr.lbl_action.ForeColor = Color.Green
-        RegisteredBrwr.lbl_action.Text = "Viewing"
-
-        RegisteredBrwr.ListView1.FullRowSelect = True
-        RegisteredBrwr.ListView1.MultiSelect = False
-        RegisteredBrwr.ListView1.HideSelection = False
-        RegisteredBrwr.ListView1.LabelEdit = False
-
-        RegisteredBrwr.ShowDialog()
-        RegisteredBrwr.ludeyngborrower()
-        RegisteredBrwr.ludeyngtimedinborrower()
-
-
-        RegisteredBrwr.IsInViewMode = False
-
-    End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
