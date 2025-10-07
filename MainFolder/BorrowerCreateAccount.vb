@@ -70,6 +70,7 @@ Public Class BorrowerCreateAccount
         txtlrn.Text = ""
         txtuser.Text = ""
         txtpass.Text = ""
+        txtemail.Text = ""
         lblfullname.Text = "Borrower Full Name:"
     End Sub
 
@@ -297,7 +298,9 @@ Public Class BorrowerCreateAccount
 
                     clear()
 
-                    Borrowereditsinfo.Show()
+                    BorrowerLoginForm.Show()
+
+                    Me.Hide()
                 Else
                     MessageBox.Show("Account creation failed. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End If
