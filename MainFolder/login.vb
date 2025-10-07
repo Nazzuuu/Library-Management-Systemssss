@@ -41,6 +41,8 @@ Public Class login
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
                     MainForm.EditsToolStripMenuItem1.Visible = False
+                    MainForm.BorrowToolStripMenuItem.Visible = False
+                    MainForm.StudentLogsToolStripMenuItem.Visible = False
                     Me.Hide()
                     clear()
 
@@ -57,6 +59,8 @@ Public Class login
                     MainForm.Audit_Trail.Visible = False
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
+                    MainForm.BorrowToolStripMenuItem.Visible = False
+                    MainForm.StudentLogsToolStripMenuItem.Visible = False
 
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
@@ -73,6 +77,8 @@ Public Class login
                     MainForm.Audit_Trail.Visible = False
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
+                    MainForm.BorrowToolStripMenuItem.Visible = False
+                    MainForm.StudentLogsToolStripMenuItem.Visible = False
 
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"

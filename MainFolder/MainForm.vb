@@ -1,6 +1,6 @@
 ﻿Imports Microsoft.VisualBasic.ApplicationServices
 Imports System.Drawing
-
+Imports MySql.Data.MySqlClient
 Public Class MainForm
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -11,6 +11,7 @@ Public Class MainForm
 
         GlobalVarsModule.CurrentUserRole = "Guest"
 
+        lblborrowcount()
     End Sub
 
     Private Sub Form1_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
@@ -66,13 +67,13 @@ Public Class MainForm
 
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
 
-        Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        Dim dialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
         If dialogResult = DialogResult.Yes Then
 
-            Me.Hide()
+            Hide()
 
-            If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+            If CurrentUserRole = "Borrower" Then
 
                 BorrowerLoginForm.Show()
             Else
@@ -81,7 +82,7 @@ Public Class MainForm
             End If
 
 
-            GlobalVarsModule.CurrentUserRole = "Guest"
+            CurrentUserRole = "Guest"
 
         Else
 
@@ -646,4 +647,33 @@ Public Class MainForm
     Private Sub EditsToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles EditsToolStripMenuItem1.Click
         Borrowereditsinfo.ShowDialog()
     End Sub
+
+    Public Sub lblborrowcount()
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim count As Integer = 0
+
+        Try
+            con.Open()
+
+
+            Dim query As String = "SELECT COUNT(*) FROM borrowing_tbl"
+
+            Using cmd As New MySqlCommand(query, con)
+                count = Convert.ToInt32(cmd.ExecuteScalar())
+            End Using
+
+
+            lbl_borrow.Text = count.ToString()
+
+
+        Catch ex As Exception
+
+            MessageBox.Show("Error counting borrowed books: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
+
 End Class

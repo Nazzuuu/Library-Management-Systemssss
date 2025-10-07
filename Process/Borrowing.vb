@@ -531,7 +531,12 @@ Public Class Borrowing
 
                 pendingstats(accessionID, "Pending")
 
-
+                For Each form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+                        Dim mform = DirectCast(form, MainForm)
+                        mform.lblborrowcount()
+                    End If
+                Next
                 MsgBox("Borrowing record successfully added.", vbInformation, "Success")
 
                 refreshborrowingsu()
@@ -628,7 +633,12 @@ Public Class Borrowing
 
                 pendingstats(newAccessionID, "Pending")
 
-
+                For Each form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+                        Dim mform = DirectCast(form, MainForm)
+                        mform.lblborrowcount()
+                    End If
+                Next
 
                 MsgBox("Borrowing record successfully updated.", vbInformation, "Success")
                 refreshborrowingsu()
