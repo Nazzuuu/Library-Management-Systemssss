@@ -12,33 +12,86 @@ Public Class Borrowereditsinfo
         refresheditt()
     End Sub
 
+    Private Sub borroweredit_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
 
     Public Sub refresheditt()
+
         txtpass.PasswordChar = "•"
         PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
 
-        Dim con As New MySqlConnection(connectionString)
 
-        Dim com As String = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl`"
-        Dim adap As New MySqlDataAdapter(com, con)
+        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
+        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
+        Dim userRole As String = GlobalVarsModule.CurrentUserRole
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = ""
+        Dim showAllRecords As Boolean = True
+
+
+        If userRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(borrowerID) Then
+            showAllRecords = False
+
+            If borrowerType = "Student" Then
+
+                com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl` WHERE `LRN` = @BorrowerID"
+            ElseIf borrowerType = "Teacher" Then
+
+                com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl` WHERE `EmployeeNo` = @BorrowerID"
+            End If
+        End If
+
+
+        If showAllRecords OrElse String.IsNullOrWhiteSpace(com) Then
+
+            com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl`"
+        End If
+
+        Dim adap As New MySqlDataAdapter()
         Dim ds As New DataSet
 
         Try
-            adap.Fill(ds, "info")
+            con.Open()
 
-            DataGridView1.DataSource = ds.Tables("info")
+            Using cmd As New MySqlCommand(com, con)
+
+                If Not showAllRecords Then
+                    cmd.Parameters.AddWithValue("@BorrowerID", borrowerID)
+                End If
+
+                adap.SelectCommand = cmd
+                adap.Fill(ds, "info")
+
+                DataGridView1.DataSource = ds.Tables("info")
+
+                If DataGridView1.Columns.Contains("ID") Then
+                    DataGridView1.Columns("ID").Visible = False
+                End If
 
 
-            If DataGridView1.Columns.Contains("ID") Then
-                DataGridView1.Columns("ID").Visible = False
-            End If
+                If userRole = "Borrower" Then
+                    If DataGridView1.Columns.Contains("LRN") AndAlso borrowerType = "Teacher" Then
+                        DataGridView1.Columns("LRN").Visible = False
+                    End If
+                    If DataGridView1.Columns.Contains("EmployeeNo") AndAlso borrowerType = "Student" Then
+                        DataGridView1.Columns("EmployeeNo").Visible = False
+                    End If
+                End If
 
-            DataGridView1.EnableHeadersVisualStyles = False
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
+                DataGridView1.EnableHeadersVisualStyles = False
+                DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+                DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            End Using
         Catch ex As Exception
             MessageBox.Show("Error loading data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
 
         clearlahat()

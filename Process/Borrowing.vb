@@ -21,7 +21,8 @@ Public Class Borrowing
     Private Function CheckTimeInStatus(identifierValue As String, identifierField As String) As Boolean
         If String.IsNullOrWhiteSpace(identifierValue) Then Return False
 
-        Dim con As New MySqlConnection(connectionString)
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = $"SELECT COUNT(*) FROM `oras_tbl` WHERE `{identifierField}` = @IdentifierValue AND `TimeOut` IS NULL"
         Dim cmd As New MySqlCommand(com, con)
 
@@ -41,24 +42,81 @@ Public Class Borrowing
         End Try
     End Function
 
+    Private Sub Borrowing_Activated(sender As Object, e As EventArgs) Handles Me.Activated
+
+        refreshborrowingsu()
+    End Sub
+
     Public Sub refreshborrowingsu()
 
-        Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT * FROM `borrowing_tbl` ORDER BY `BorrowedDate` DESC"
-        Dim adap As New MySqlDataAdapter(com, con)
+
+        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
+        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim com As String = ""
+        Dim identifierColumn As String = ""
+
+        Dim showAllRecords As Boolean = True
+
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(borrowerID) Then
+            showAllRecords = False
+
+            If borrowerType = "Student" Then
+                identifierColumn = "LRN"
+
+                com = $"SELECT * FROM `borrowing_tbl` WHERE `{identifierColumn}` = @BorrowerID ORDER BY `BorrowedDate` DESC"
+            ElseIf borrowerType = "Teacher" Then
+                identifierColumn = "EmployeeNo"
+
+                com = $"SELECT * FROM `borrowing_tbl` WHERE `{identifierColumn}` = @BorrowerID ORDER BY `BorrowedDate` DESC"
+            End If
+        End If
+
+        If showAllRecords OrElse String.IsNullOrWhiteSpace(com) Then
+            com = "SELECT * FROM `borrowing_tbl` ORDER BY `BorrowedDate` DESC"
+        End If
+
+
+        Dim adap As New MySqlDataAdapter()
         Dim ds As New DataSet
 
         Try
             con.Open()
-            adap.Fill(ds, "borrowing_data")
 
-            DataGridView1.DataSource = ds.Tables("borrowing_data")
-            DataGridView1.Columns("ID").Visible = False
+            Using cmd As New MySqlCommand(com, con)
 
-            DataGridView1.EnableHeadersVisualStyles = False
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                If Not showAllRecords Then
 
+                    cmd.Parameters.AddWithValue("@BorrowerID", borrowerID)
+                End If
+
+                adap.SelectCommand = cmd
+                adap.Fill(ds, "borrowing_data")
+
+                DataGridView1.DataSource = ds.Tables("borrowing_data")
+
+
+                If DataGridView1.Columns.Contains("ID") Then
+                    DataGridView1.Columns("ID").Visible = False
+                End If
+
+
+                If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+                    If DataGridView1.Columns.Contains("LRN") AndAlso borrowerType = "Teacher" Then
+                        DataGridView1.Columns("LRN").Visible = False
+                    End If
+                    If DataGridView1.Columns.Contains("EmployeeNo") AndAlso borrowerType = "Student" Then
+                        DataGridView1.Columns("EmployeeNo").Visible = False
+                    End If
+                End If
+
+
+                DataGridView1.EnableHeadersVisualStyles = False
+                DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+                DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            End Using
         Catch ex As Exception
             MessageBox.Show("Error loading borrowing records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
@@ -186,34 +244,20 @@ Public Class Borrowing
         If isLoadingData Then Exit Sub
 
         If String.IsNullOrWhiteSpace(txtemployee.Text) Then
-
+            ' Linisin ang fields at itago ang Time In button kapag walang laman
+            txtname.Text = ""
+            btntimein.Visible = False
+            Exit Sub
         End If
 
 
         Dim enteredEmployeeID As String = txtemployee.Text.Trim()
 
+        ' Walang kailangan ng 'Cleaned' ID dito, gamitin lang ang enteredEmployeeID para sa database lookup
+        Dim currentUserID_Cleaned As String = GlobalVarsModule.GetCleanCurrentBorrowerID()
+        Dim enteredEmployeeID_Cleaned As String = enteredEmployeeID ' Gamitin ang enteredEmployeeID direkta
 
-        Dim currentUserID_Trimmed As String = GlobalVarsModule.CurrentBorrowerID.Trim()
-        Dim currentUserID_Cleaned As String = ""
-        Dim tempID As Long
-
-
-        If Long.TryParse(currentUserID_Trimmed, tempID) Then
-            currentUserID_Cleaned = tempID.ToString()
-        Else
-            currentUserID_Cleaned = currentUserID_Trimmed
-        End If
-
-
-        Dim enteredEmployeeID_Cleaned As String = ""
-        If Long.TryParse(enteredEmployeeID, tempID) Then
-            enteredEmployeeID_Cleaned = tempID.ToString()
-        Else
-            enteredEmployeeID_Cleaned = enteredEmployeeID
-        End If
-
-
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString) ' Dapat gamitin ang GlobalVarsModule.connectionString
         Dim foundBorrower As Boolean = False
         Dim borrowerName As String = ""
 
@@ -248,7 +292,6 @@ Public Class Borrowing
                 txtname.Text = ""
                 btntimein.Visible = False
 
-
                 MessageBox.Show($"The Employee No. '{enteredEmployeeID}' belongs to {borrowerName}. You are only allowed to search your own Employee No.", "Security Restriction", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
                 Exit Sub
@@ -256,7 +299,9 @@ Public Class Borrowing
         End If
 
         If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(enteredEmployeeID) Then
-            Dim isTimedIn As Boolean = CheckTimeInStatus(enteredEmployeeID, "LRN")
+
+
+            Dim isTimedIn As Boolean = CheckTimeInStatus(enteredEmployeeID, "EmployeeNo")
 
             If Not isTimedIn Then
                 MessageBox.Show($"NOTICE: {borrowerName} has not yet Timed In.", "Time In Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)

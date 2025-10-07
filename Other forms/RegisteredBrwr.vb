@@ -7,7 +7,7 @@ Public Class RegisteredBrwr
     Public Property IsSearchOverride() As Boolean = False
     Public IsInViewMode As Boolean = False
     Public IsTimeInMode As Boolean = False
-
+    Private IsTimeInSuccessfulAndClosing As Boolean = False
     Private con As New MySqlConnection(connectionString)
 
 
@@ -39,6 +39,8 @@ Public Class RegisteredBrwr
         IsTimeInMode = False
         txtsearch.Text = ""
         txtsearch.Enabled = True
+
+
     End Sub
 
     Private Sub ListView1_DrawColumnHeader(sender As Object, e As DrawListViewColumnHeaderEventArgs) Handles ListView1.DrawColumnHeader
@@ -297,7 +299,7 @@ Public Class RegisteredBrwr
                     orasForm.ludeyngoras()
                 End If
 
-
+                Me.IsTimeInSuccessfulAndClosing = True
                 ludeyngborrower()
                 Me.Close()
 

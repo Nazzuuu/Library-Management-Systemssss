@@ -65,26 +65,36 @@ Public Class MainForm
 
     End Sub
 
+
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
 
         Dim dialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
         If dialogResult = DialogResult.Yes Then
 
-            Hide()
 
-            If CurrentUserRole = "Borrower" Then
+            Dim previousRole As String = GlobalVarsModule.CurrentUserRole
 
-                BorrowerLoginForm.Show()
-            Else
 
-                login.Show()
+            GlobalVarsModule.CurrentUserRole = "Guest"
+            GlobalVarsModule.CurrentBorrowerType = ""
+            GlobalVarsModule.CurrentBorrowerID = ""
+            GlobalVarsModule.CurrentUserID = ""
+
+            If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then
+                Borrowing.Close()
             End If
 
+            Me.Hide()
 
-            CurrentUserRole = "Guest"
 
-        Else
+            If previousRole <> "Borrower" AndAlso Not String.IsNullOrWhiteSpace(previousRole) Then
+
+                login.Show()
+            Else
+
+                BorrowerLoginForm.Show()
+            End If
 
         End If
 
