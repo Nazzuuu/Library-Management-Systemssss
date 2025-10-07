@@ -117,11 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="Guna2Elipse1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>25</value>
+  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="Guna2CirclePictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAACAAAAAgACAIAAAA9xURnAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wAAADsABataJCQAA/7JJREFUeF7s/Yd3FFfa9guff+T71vnWec/7vPOMA6DY3WpForPH40hUanVUFmCM
+        vAAADrwBlbxySQAA/7JJREFUeF7s/Yd3FFfa9guff+T71vnWec/7vPOMA6DY3WpForPH40hUanVUFmCM
         4zjO2B6PPc4Rm4wAoZwllHPOiBwVO1YO+1u7dqtUdIOMeMDGzP1b99ISrVZ31a7dBVzXHf4vGQAAAAAA
         AAAAAAAAAAAAAACA+47/K/ABAAAAAAAAAAAAAAAAAAAAAAD++IABAAAAAAAAAAAAAAAAAAAAAAD3IWAA
         AAAAAAAAAAAAAAAAAAAAAMB9CBgAAAAAAAAAAAAAAAAAAAAAAHAfAgYAAAAAAAAAAAAAAAAAAAAAANyH
@@ -30147,7 +30153,7 @@
         AAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="Guna2Elipse1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="Guna2Elipse2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
 </root>

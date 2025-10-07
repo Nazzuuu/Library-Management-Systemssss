@@ -1,7 +1,7 @@
 ﻿Imports Microsoft.VisualBasic.ApplicationServices
+Imports System.Drawing
 
 Public Class MainForm
-
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -9,20 +9,17 @@ Public Class MainForm
         sizelocation()
 
 
+        GlobalVarsModule.CurrentUserRole = "Guest"
 
     End Sub
 
     Private Sub Form1_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
-
         sizelocation()
-
     End Sub
 
     Public Sub sizelocation()
 
         If Me.WindowState = FormWindowState.Maximized Then
-
-
             lbl_borrow.Location = New Point(150, 90)
             lbl_return.Location = New Point(150, 90)
             lbl_overdue.Location = New Point(150, 90)
@@ -30,12 +27,8 @@ Public Class MainForm
             lbl_lost.Location = New Point(150, 90)
             lbl_reserve.Location = New Point(150, 90)
 
-
-
-
         ElseIf Me.WindowState = FormWindowState.Normal Then
 
-            Book.Size = New Size(1015, 391)
             Panel_dash.Size = New Size(1015, 391)
 
             lbl_borrow.Location = New Point(95, 39)
@@ -45,10 +38,55 @@ Public Class MainForm
             lbl_lost.Location = New Point(95, 39)
             lbl_reserve.Location = New Point(95, 39)
 
+        End If
+    End Sub
 
 
+    Public Sub SetupBorrowerUI(ByVal userType As String)
+
+        Dim newProcessLocation As New Point(25, 13)
+
+        If Panel_Process IsNot Nothing Then
+            Panel_Process.Location = newProcessLocation
+        End If
+
+
+        If Panel_maintenance IsNot Nothing Then
+            Panel_maintenance.Visible = False
+        End If
+
+
+        If Panel_Studentlogs IsNot Nothing Then
+            Panel_Studentlogs.Visible = False
+        End If
+
+
+
+    End Sub
+
+    Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
+
+        Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+        If dialogResult = DialogResult.Yes Then
+
+            Me.Hide()
+
+            If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+
+                BorrowerLoginForm.Show()
+            Else
+
+                login.Show()
+            End If
+
+
+            GlobalVarsModule.CurrentUserRole = "Guest"
+
+        Else
 
         End If
+
     End Sub
 
 
@@ -79,8 +117,6 @@ Public Class MainForm
         lblform.Text = "MAIN FORM"
 
     End Sub
-
-
 
     Private Sub MaintenanceToolStripMenuItem_DropDownClosed(sender As Object, e As EventArgs) Handles MaintenanceToolStripMenuItem.DropDownClosed
         MaintenanceToolStripMenuItem.ForeColor = Color.White
@@ -443,17 +479,6 @@ Public Class MainForm
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
-
-        Dim dialogResult As DialogResult = MessageBox.Show("logout ka na yah?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-
-        If dialogResult = DialogResult.Yes Then
-            Me.Close()
-            login.Show()
-        End If
-
-    End Sub
-
     Private Sub BookMaintenanceToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles BookMaintenanceToolStripMenuItem.MouseHover
         Cursor = Cursors.Hand
 
@@ -616,5 +641,9 @@ Public Class MainForm
 
     Private Sub btnlogoutt_MouseLeave(sender As Object, e As EventArgs) Handles btnlogoutt.MouseLeave
         Cursor = Cursors.Default
+    End Sub
+
+    Private Sub EditsToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles EditsToolStripMenuItem1.Click
+        Borrowereditsinfo.ShowDialog()
     End Sub
 End Class

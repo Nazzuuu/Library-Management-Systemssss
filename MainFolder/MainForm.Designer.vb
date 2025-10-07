@@ -77,6 +77,7 @@ Partial Class MainForm
         CirculationToolStripMenuItem = New ToolStripMenuItem()
         BorrowToolStripMenuItem = New ToolStripMenuItem()
         ReturnToolStripMenuItem = New ToolStripMenuItem()
+        EditsToolStripMenuItem1 = New ToolStripMenuItem()
         Guna2Elipse3 = New Guna.UI2.WinForms.Guna2Elipse(components)
         pnl_report = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_Studentlogs = New Panel()
@@ -273,7 +274,7 @@ Partial Class MainForm
         ' 
         ' ProcessStripMenuItem
         ' 
-        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem})
+        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem, EditsToolStripMenuItem1})
         ProcessStripMenuItem.ForeColor = Color.White
         ProcessStripMenuItem.Name = "ProcessStripMenuItem"
         ProcessStripMenuItem.Size = New Size(102, 22)
@@ -320,15 +321,22 @@ Partial Class MainForm
         ' 
         BorrowToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowToolStripMenuItem.Name = "BorrowToolStripMenuItem"
-        BorrowToolStripMenuItem.Size = New Size(177, 22)
+        BorrowToolStripMenuItem.Size = New Size(180, 22)
         BorrowToolStripMenuItem.Text = "📥 Borrowing"
         ' 
         ' ReturnToolStripMenuItem
         ' 
         ReturnToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReturnToolStripMenuItem.Name = "ReturnToolStripMenuItem"
-        ReturnToolStripMenuItem.Size = New Size(177, 22)
+        ReturnToolStripMenuItem.Size = New Size(180, 22)
         ReturnToolStripMenuItem.Text = "📤 Returning"
+        ' 
+        ' EditsToolStripMenuItem1
+        ' 
+        EditsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        EditsToolStripMenuItem1.Name = "EditsToolStripMenuItem1"
+        EditsToolStripMenuItem1.Size = New Size(183, 22)
+        EditsToolStripMenuItem1.Text = "✎ Edit Info"
         ' 
         ' Guna2Elipse3
         ' 
@@ -1089,5 +1097,6 @@ Partial Class MainForm
     Friend WithEvents lbl_reserve As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents lblform As Label
     Friend WithEvents btnlogoutt As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents EditsToolStripMenuItem1 As ToolStripMenuItem
 
 End Class
