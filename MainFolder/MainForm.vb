@@ -66,11 +66,19 @@ Public Class MainForm
     End Sub
 
 
+
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
 
         Dim dialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
         If dialogResult = DialogResult.Yes Then
+
+
+            If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso GlobalVarsModule.IsBorrowerTimedIn() Then
+                MessageBox.Show("You are currently Timed In. Please Time Out first before logging out.", "Time Out Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+                Exit Sub
+            End If
 
 
             Dim previousRole As String = GlobalVarsModule.CurrentUserRole

@@ -72,6 +72,10 @@ Partial Class Borrower
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Label6 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label4 = New Label()
+        Label3 = New Label()
+        Panel3 = New Panel()
+        Panel2 = New Panel()
         Label12 = New Label()
         Label13 = New Label()
         Label10 = New Label()
@@ -305,6 +309,10 @@ Partial Class Borrower
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label4)
+        Guna2GroupBox1.Controls.Add(Label3)
+        Guna2GroupBox1.Controls.Add(Panel3)
+        Guna2GroupBox1.Controls.Add(Panel2)
         Guna2GroupBox1.Controls.Add(Label12)
         Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(Label10)
@@ -346,12 +354,50 @@ Partial Class Borrower
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label4.ForeColor = Color.Green
+        Label4.Location = New Point(632, 260)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(229, 16)
+        Label4.TabIndex = 108
+        Label4.Text = "Borrower has an existing account."
+        ' 
+        ' Label3
+        ' 
+        Label3.AutoSize = True
+        Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label3.ForeColor = Color.Maroon
+        Label3.Location = New Point(632, 236)
+        Label3.Name = "Label3"
+        Label3.Size = New Size(299, 16)
+        Label3.TabIndex = 107
+        Label3.Text = "Borrower does not have an existing account."
+        ' 
+        ' Panel3
+        ' 
+        Panel3.BackColor = Color.DarkGreen
+        Panel3.Location = New Point(583, 259)
+        Panel3.Name = "Panel3"
+        Panel3.Size = New Size(40, 17)
+        Panel3.TabIndex = 106
+        ' 
+        ' Panel2
+        ' 
+        Panel2.BackColor = Color.Maroon
+        Panel2.Location = New Point(583, 235)
+        Panel2.Name = "Panel2"
+        Panel2.Size = New Size(40, 17)
+        Panel2.TabIndex = 105
+        ' 
         ' Label12
         ' 
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(615, 235)
+        Label12.Location = New Point(584, 213)
         Label12.Name = "Label12"
         Label12.Size = New Size(42, 16)
         Label12.TabIndex = 104
@@ -362,7 +408,7 @@ Partial Class Borrower
         Label13.AutoSize = True
         Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label13.ForeColor = Color.Red
-        Label13.Location = New Point(664, 236)
+        Label13.Location = New Point(632, 214)
         Label13.Name = "Label13"
         Label13.Size = New Size(181, 16)
         Label13.TabIndex = 103
@@ -794,5 +840,9 @@ Partial Class Borrower
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Label12 As Label
     Friend WithEvents Label13 As Label
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents Panel3 As Panel
+    Friend WithEvents Label4 As Label
+    Friend WithEvents Label3 As Label
 
 End Class

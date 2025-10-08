@@ -11,6 +11,11 @@ Public Class PrintReceiptForm
     Private DataToPrintList As New List(Of DataGridViewRow)
     Private PrintIndex As Integer = 0
 
+    Private Sub PrintReceipt_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
 
     Private Sub GenerateBarcode(ByVal codeText As String)
         If String.IsNullOrWhiteSpace(codeText) Then

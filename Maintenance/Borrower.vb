@@ -11,18 +11,39 @@ Public Class Borrower
     Public Sub refreshData()
 
         Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT * FROM `borrower_tbl`"
+
+
+        Dim com As String = "SELECT b.*, " &
+                        "CASE WHEN e.ID IS NOT NULL THEN 1 ELSE 0 END AS HasAccount " &
+                        "FROM `borrower_tbl` b " &
+                        "LEFT JOIN `borroweredit_tbl` e ON b.LRN = e.LRN OR b.EmployeeNo = e.EmployeeNo"
+
         Dim adap As New MySqlDataAdapter(com, con)
-        Dim dt As New DataSet
+        Dim dt As New DataTable
 
         Try
             con.Open()
-            adap.Fill(dt, "INFO")
-            DataGridView1.DataSource = dt.Tables("INFO")
-            DataGridView1.Columns("ID").Visible = False
+            adap.Fill(dt)
+
+            DataGridView1.DataSource = dt
+
+
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
+            If DataGridView1.Columns.Contains("HasAccount") Then
+                DataGridView1.Columns("HasAccount").Visible = False
+            End If
+
+
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+
+            ColorRows()
+
         Catch ex As Exception
             MessageBox.Show("Error loading data: " & ex.Message)
         Finally
@@ -41,7 +62,58 @@ Public Class Borrower
 
         ClearFields()
         strandlocation()
+    End Sub
 
+    Public Sub ColorRows()
+
+        If DataGridView1.DataSource Is Nothing Then Return
+
+        For Each row As DataGridViewRow In DataGridView1.Rows
+
+
+            If Not row.IsNewRow Then
+
+
+                If row.DataBoundItem IsNot Nothing Then
+
+
+                    Dim dataRowView As DataRowView = TryCast(row.DataBoundItem, DataRowView)
+
+                    If dataRowView IsNot Nothing AndAlso dataRowView.Row.Table.Columns.Contains("HasAccount") Then
+
+
+                        Dim hasAccountValue As Object = dataRowView.Row("HasAccount")
+                        Dim hasAccount As Integer = 0
+
+
+                        If hasAccountValue IsNot DBNull.Value AndAlso hasAccountValue IsNot Nothing Then
+
+                            hasAccount = CInt(hasAccountValue)
+                        End If
+
+
+                        If hasAccount = 1 Then
+
+                            row.DefaultCellStyle.BackColor = Color.DarkSeaGreen
+                            row.DefaultCellStyle.ForeColor = Color.Black
+                            row.DefaultCellStyle.SelectionBackColor = Color.Green
+                            row.DefaultCellStyle.SelectionForeColor = Color.White
+                        Else
+
+                            row.DefaultCellStyle.BackColor = Color.Maroon
+                            row.DefaultCellStyle.ForeColor = Color.White
+                            row.DefaultCellStyle.SelectionBackColor = Color.IndianRed
+                            row.DefaultCellStyle.SelectionForeColor = Color.White
+                        End If
+
+                    End If
+                End If
+            End If
+        Next
+    End Sub
+
+    Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
+        ColorRows()
     End Sub
 
     Public Sub strandlocation()
@@ -364,56 +436,85 @@ Public Class Borrower
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
 
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this borrower?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-
-            If dialogResult = DialogResult.Yes Then
-
-                Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-
-                Try
-                    con.Open()
-                    Dim delete As New MySqlCommand("DELETE FROM `borrower_tbl` WHERE `ID` = @id", con)
-                    delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery()
-
-
-                    MsgBox("Borrower deleted successfully.", vbInformation)
-                    Borrower_Load(sender, e)
-                    ClearFields()
-
-                    Dim registeredForm As RegisteredBrwr = Application.OpenForms.OfType(Of RegisteredBrwr)().FirstOrDefault()
-                    If registeredForm IsNot Nothing Then
-                        registeredForm.ludeyngborrower()
-                    End If
-
-                    cbstrand.Visible = True
-                    cbstrand.Location = New Point(942, 285)
-
-
-                    lblstrand.Visible = True
-                    lblstrand.Location = New Point(942, 266)
-
-                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
-
-                    If rowCount = 0 Then
-
-                        Dim reset As New MySqlCommand("ALTER TABLE `borrower_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery()
-
-                    End If
-
-                Catch ex As Exception
-                    MsgBox(ex.Message, vbCritical)
-                End Try
-            End If
-
+        If DataGridView1.SelectedRows.Count = 0 Then
+            MessageBox.Show("Please select a borrower to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
         End If
 
+        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+        Dim hasAccount As Integer = 0
+
+
+        Try
+
+            Dim cellValue As Object = selectedRow.Cells.Item("HasAccount").Value
+
+            If cellValue IsNot DBNull.Value AndAlso cellValue IsNot Nothing Then
+
+                hasAccount = Convert.ToInt32(cellValue)
+            End If
+
+        Catch ex As Exception
+
+            hasAccount = 0
+        End Try
+
+        If hasAccount = 1 Then
+            MessageBox.Show("This borrower has an existing account.", "Deletion Blocked", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+
+        Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this borrower?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+
+        If dialogResult = DialogResult.Yes Then
+
+            Dim con As New MySqlConnection(connectionString)
+
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+            Try
+                con.Open()
+
+
+                Dim delete As New MySqlCommand("DELETE FROM `borrower_tbl` WHERE `ID` = @id", con)
+                delete.Parameters.AddWithValue("@id", ID)
+                delete.ExecuteNonQuery()
+
+                MessageBox.Show("Borrower deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+                Borrower_Load(sender, e)
+                ClearFields()
+
+
+                Dim registeredForm As RegisteredBrwr = Application.OpenForms.OfType(Of RegisteredBrwr)().FirstOrDefault()
+                If registeredForm IsNot Nothing Then
+                    registeredForm.ludeyngborrower()
+                End If
+
+
+                cbstrand.Visible = True
+                cbstrand.Location = New Point(942, 285)
+                lblstrand.Visible = True
+                lblstrand.Location = New Point(942, 266)
+
+                Dim count As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl`", con)
+                Dim rowCount As Long = CLng(count.ExecuteScalar())
+
+                If rowCount = 0 Then
+                    Dim reset As New MySqlCommand("ALTER TABLE `borrower_tbl` AUTO_INCREMENT = 1", con)
+                    reset.ExecuteNonQuery()
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show("Error deleting borrower: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Finally
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
+            End Try
+        End If
     End Sub
 
 

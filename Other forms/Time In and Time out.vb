@@ -8,6 +8,9 @@ Public Class oras
     Dim selectedID As Integer
     Private WithEvents Timer1 As New Timer()
 
+    ' COMMENT: Gumamit ng GlobalVarsModule.connectionString para sa consistency at security.
+    Private ReadOnly connectionString As String = GlobalVarsModule.connectionString
+
 
     Private Sub btnregisterview_Click(sender As Object, e As EventArgs) Handles btnregisterview.Click
 
@@ -88,7 +91,11 @@ Public Class oras
         DataGridView1.DataSource = Nothing
         DataGridView1.Columns.Clear()
 
-        Dim con As New MySqlConnection(connectionString)
+        ' COMMENT: Kumuha ng ID at Type ng naka-login na user
+        Dim currentUserRole As String = GlobalVarsModule.CurrentUserRole
+        Dim currentBorrowerID As String = GlobalVarsModule.CurrentBorrowerID
+
+        ' Base Query
         Dim com As String = "SELECT " &
                             "o.`ID`, " &
                             "b.`Borrower`, " &
@@ -107,32 +114,48 @@ Public Class oras
                             "FROM `oras_tbl` o " &
                             "LEFT JOIN `borrower_tbl` b " &
                             "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
-                            "ORDER BY o.`TimeIn` DESC"
+                            "WHERE o.`TimeOut` IS NULL " ' I-filter lamang ang mga records na walang TimeOut
 
-        Try
-            con.Open()
-            Dim adap As New MySqlDataAdapter(com, con)
-            Dim ds As New DataSet
-            adap.Fill(ds, "oras_data")
+        ' NEW LOGIC: I-filter ang records base sa naka-login na user
+        If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
+            ' I-filter para lang sa kasalukuyang borrower.
+            ' Gumamit ng LIKE dito para ma-handle ang LRN (Student) at EmployeeNo (Teacher) sa single query.
+            com &= " AND (o.`LRN` = @ID OR o.`EmployeeNo` = @ID)"
+        End If
 
-            DataGridView1.DataSource = ds.Tables("oras_data")
+        com &= " ORDER BY o.`TimeIn` DESC"
 
-            If DataGridView1.Columns.Contains("ID") Then
-                DataGridView1.Columns("ID").Visible = False
-            End If
+        Using con As New MySqlConnection(connectionString) ' Using block
+            Try
+                con.Open()
+                Using cmd As New MySqlCommand(com, con)
 
-            DataGridView1.ClearSelection()
+                    ' NEW LOGIC: Idagdag ang Parameter kung naka-login bilang Borrower
+                    If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
+                        cmd.Parameters.AddWithValue("@ID", currentBorrowerID)
+                    End If
 
-            DataGridView1.EnableHeadersVisualStyles = False
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                    Dim adap As New MySqlDataAdapter(cmd) ' Gamitin ang MySqlCommand
+                    Dim ds As New DataSet
+                    adap.Fill(ds, "oras_data")
 
+                    DataGridView1.DataSource = ds.Tables("oras_data")
 
-        Catch ex As Exception
-            MessageBox.Show("Error loading time records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            con.Close()
-        End Try
+                    If DataGridView1.Columns.Contains("ID") Then
+                        DataGridView1.Columns("ID").Visible = False
+                    End If
+
+                    DataGridView1.ClearSelection()
+
+                    DataGridView1.EnableHeadersVisualStyles = False
+                    DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+                    DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error loading time records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using ' Awtomatikong ico-close ang connection dito.
 
     End Sub
 
@@ -205,38 +228,78 @@ Public Class oras
             Return
         End If
 
-        Dim con As New MySqlConnection(connectionString)
 
-        Dim com As String = "UPDATE `oras_tbl` SET `TimeOut` = DATE_FORMAT(NOW(), '%Y-%m-%d %h:%i %p') WHERE `ID` = @ID"
+        If GlobalVarsModule.CurrentUserRole = "Borrower" Then
 
-        Dim cmd As New MySqlCommand(com, con)
-
-        cmd.Parameters.AddWithValue("@ID", selectedID)
-
-        Try
-            con.Open()
-            cmd.ExecuteNonQuery()
-            MessageBox.Show("Time-out recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-            btnview.Visible = True
-
-            ludeyngoras()
-            clearlahat()
-
-
-            Dim registeredForm As RegisteredBrwr = Application.OpenForms.OfType(Of RegisteredBrwr)().FirstOrDefault()
-            If registeredForm IsNot Nothing Then
-                registeredForm.ludeyngtimedinborrower()
+            If Not IsRecordOwnedByCurrentUser(selectedID) Then
+                MessageBox.Show("Security Alert: You can only Time Out your own record.", "Unauthorized Action", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                Return
             End If
-        Catch ex As Exception
-            MessageBox.Show("Error recording time-out: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
+        End If
+
+        Using con As New MySqlConnection(connectionString)
+
+            Dim com As String = "UPDATE `oras_tbl` SET `TimeOut` = NOW() WHERE `ID` = @ID"
+
+            Using cmd As New MySqlCommand(com, con)
+                cmd.Parameters.AddWithValue("@ID", selectedID)
+
+                Try
+                    con.Open()
+                    cmd.ExecuteNonQuery()
+
+                    MessageBox.Show("Time-out recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                    btnview.Visible = True
+
+
+                    ludeyngoras()
+                    clearlahat()
+
+
+                    Dim registeredForm As RegisteredBrwr = Application.OpenForms.OfType(Of RegisteredBrwr)().FirstOrDefault()
+                    If registeredForm IsNot Nothing Then
+                        registeredForm.ludeyngtimedinborrower()
+                    End If
+
+                Catch ex As Exception
+                    MessageBox.Show("Error recording time-out: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+            End Using
+        End Using
 
     End Sub
+
+
+    Private Function IsRecordOwnedByCurrentUser(recordID As Integer) As Boolean
+        Dim isOwner As Boolean = False
+        Dim currentID As String = GlobalVarsModule.CurrentBorrowerID
+
+        If String.IsNullOrWhiteSpace(currentID) OrElse GlobalVarsModule.CurrentUserRole <> "Borrower" Then
+
+            Return True
+        End If
+
+        Dim query As String = "SELECT 1 FROM `oras_tbl` WHERE `ID` = @RecID AND (`LRN` = @BorrowerID OR `EmployeeNo` = @BorrowerID) LIMIT 1"
+
+        Using con As New MySqlConnection(connectionString)
+            Try
+                con.Open()
+                Using cmd As New MySqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@RecID", recordID)
+                    cmd.Parameters.AddWithValue("@BorrowerID", currentID)
+
+                    If cmd.ExecuteScalar() IsNot Nothing Then
+                        isOwner = True
+                    End If
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Database error during security check: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
+
+        Return isOwner
+    End Function
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
@@ -281,6 +344,7 @@ Public Class oras
             If txtsearch.Text.Trim() <> "" Then
 
                 Dim filter As String = String.Format("Borrower LIKE '%{0}%' OR FirstName LIKE '%{0}%' OR LastName LIKE '%{0}%' OR LRN LIKE '%{0}%' OR EmployeeNo LIKE '%{0}%'", txtsearch.Text.Trim())
+
                 dt.DefaultView.RowFilter = filter
             Else
                 dt.DefaultView.RowFilter = ""
@@ -291,20 +355,5 @@ Public Class oras
 
 
 
-    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
 
-    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
-
-
-    Private Sub btnclear_MouseHover(sender As Object, e As EventArgs) Handles btnclear.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
-
-    Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
 End Class
