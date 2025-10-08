@@ -8,7 +8,7 @@ Public Class oras
     Dim selectedID As Integer
     Private WithEvents Timer1 As New Timer()
 
-    ' COMMENT: Gumamit ng GlobalVarsModule.connectionString para sa consistency at security.
+
     Private ReadOnly connectionString As String = GlobalVarsModule.connectionString
 
 
@@ -91,11 +91,11 @@ Public Class oras
         DataGridView1.DataSource = Nothing
         DataGridView1.Columns.Clear()
 
-        ' COMMENT: Kumuha ng ID at Type ng naka-login na user
+
         Dim currentUserRole As String = GlobalVarsModule.CurrentUserRole
         Dim currentBorrowerID As String = GlobalVarsModule.CurrentBorrowerID
 
-        ' Base Query
+
         Dim com As String = "SELECT " &
                             "o.`ID`, " &
                             "b.`Borrower`, " &
@@ -114,28 +114,26 @@ Public Class oras
                             "FROM `oras_tbl` o " &
                             "LEFT JOIN `borrower_tbl` b " &
                             "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
-                            "WHERE o.`TimeOut` IS NULL " ' I-filter lamang ang mga records na walang TimeOut
+                            "WHERE o.`TimeOut` IS NULL "
 
-        ' NEW LOGIC: I-filter ang records base sa naka-login na user
         If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
-            ' I-filter para lang sa kasalukuyang borrower.
-            ' Gumamit ng LIKE dito para ma-handle ang LRN (Student) at EmployeeNo (Teacher) sa single query.
+
             com &= " AND (o.`LRN` = @ID OR o.`EmployeeNo` = @ID)"
         End If
 
         com &= " ORDER BY o.`TimeIn` DESC"
 
-        Using con As New MySqlConnection(connectionString) ' Using block
+        Using con As New MySqlConnection(connectionString)
             Try
                 con.Open()
                 Using cmd As New MySqlCommand(com, con)
 
-                    ' NEW LOGIC: Idagdag ang Parameter kung naka-login bilang Borrower
+
                     If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
                         cmd.Parameters.AddWithValue("@ID", currentBorrowerID)
                     End If
 
-                    Dim adap As New MySqlDataAdapter(cmd) ' Gamitin ang MySqlCommand
+                    Dim adap As New MySqlDataAdapter(cmd)
                     Dim ds As New DataSet
                     adap.Fill(ds, "oras_data")
 
@@ -155,7 +153,7 @@ Public Class oras
             Catch ex As Exception
                 MessageBox.Show("Error loading time records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
-        End Using ' Awtomatikong ico-close ang connection dito.
+        End Using
 
     End Sub
 
@@ -352,8 +350,5 @@ Public Class oras
         End If
 
     End Sub
-
-
-
 
 End Class

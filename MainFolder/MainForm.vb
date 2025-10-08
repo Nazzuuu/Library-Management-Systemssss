@@ -130,7 +130,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-
+            Panel_dash.Controls.Add(Guna2Button1)
             lumabasna = True
         End If
 
@@ -162,7 +162,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-
+            Panel_dash.Controls.Add(Guna2Button1)
             lumabasna = True
         End If
 
@@ -193,7 +193,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-
+            Panel_dash.Controls.Add(Guna2Button1)
             lumabasna = True
         End If
 
@@ -226,7 +226,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-
+            Panel_dash.Controls.Add(Guna2Button1)
             lumabasna = True
         End If
 
@@ -716,5 +716,10 @@ Public Class MainForm
 
         lblform.Text = "PRINT RECEIPT FORM"
 
+    End Sub
+
+    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+        BorrowerLoginForm.Show()
+        Me.Hide()
     End Sub
 End Class

@@ -618,7 +618,7 @@ Public Class Borrowing
 
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse
-        String.IsNullOrWhiteSpace(txtname.Text) Then
+    String.IsNullOrWhiteSpace(txtname.Text) Then
 
             MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
@@ -656,10 +656,46 @@ Public Class Borrowing
         End If
 
 
-        Dim transactionReceiptID As String = lbltransac.Text
+        Dim booktitleee As String = txtbooktitle.Text.Trim
+        Dim identifierValue As String = If(borrower = "Student", txtlrn.Text, txtemployee.Text)
+        Dim identifierColumn As String = If(borrower = "Student", "LRN", "EmployeeNo")
 
         Try
             con.Open()
+
+
+            Dim checkDuplicateQuery As String = $"SELECT COUNT(*) FROM borrowing_tbl WHERE {identifierColumn} = @IdentifierValue AND AccessionID = @AccessionID"
+
+            Using cmdCheck As New MySqlCommand(checkDuplicateQuery, con)
+                cmdCheck.Parameters.AddWithValue("@IdentifierValue", identifierValue)
+                cmdCheck.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
+
+                Dim count As Integer = Convert.ToInt32(cmdCheck.ExecuteScalar())
+
+                If count > 0 Then
+                    MsgBox("You cannot borrow same book with the same accessionID.", vbExclamation, "Duplication is not allowed.")
+                    con.Close()
+                    Exit Sub
+                End If
+            End Using
+
+
+            Dim checkTitleQuery As String = $"SELECT COUNT(*) FROM borrowing_tbl WHERE {identifierColumn} = @IdentifierValue AND BookTitle = @BookTitle"
+            Using cmdCheckTitle As New MySqlCommand(checkTitleQuery, con)
+                cmdCheckTitle.Parameters.AddWithValue("@IdentifierValue", identifierValue)
+                cmdCheckTitle.Parameters.AddWithValue("@BookTitle", booktitleee)
+
+                Dim titleCount As Integer = Convert.ToInt32(cmdCheckTitle.ExecuteScalar())
+
+                If titleCount > 0 Then
+                    MsgBox("You cannot borrow same book.", vbExclamation, "Book Title Duplication.")
+                    con.Close()
+                    Exit Sub
+                End If
+            End Using
+
+
+            Dim transactionReceiptID As String = lbltransac.Text
 
             Dim com As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt) " &
                             "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt)"
@@ -677,8 +713,6 @@ Public Class Borrowing
                 comsi.Parameters.AddWithValue("@Shelf", txtshelf.Text)
                 comsi.Parameters.AddWithValue("@BDate", DateTimePicker1.Value.ToString("MMMM-dd-yyyy"))
                 comsi.Parameters.AddWithValue("@DDate", DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"))
-
-
                 comsi.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
 
                 comsi.ExecuteNonQuery()
@@ -691,17 +725,17 @@ Public Class Borrowing
                 For Each form In Application.OpenForms
                     If TypeOf form Is MainForm Then
                         Dim mform = DirectCast(form, MainForm)
-                        mform.lblborrowcount
+                        mform.lblborrowcount()
                     End If
                 Next
+
+
                 MsgBox("Borrowing record successfully added.", vbInformation, "Success")
 
 
                 InsertPrintReceipt(borrower, txtlrn.Text, txtemployee.Text, txtname.Text, txtbooktitle.Text, txtisbn.Text, txtbarcode.Text, txtaccessionid.Text, txtshelf.Text, DateTimePicker1.Value.ToString("MMMM-dd-yyyy"), DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"), transactionReceiptID)
 
                 Dim printForm As New PrintReceiptForm()
-
-
 
                 printForm.LoadPrintReceiptDataByTransaction(transactionReceiptID)
                 UpdateTransactionBarcode()
@@ -720,7 +754,6 @@ Public Class Borrowing
         End Try
 
     End Sub
-
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         Dim borrower As String = ""

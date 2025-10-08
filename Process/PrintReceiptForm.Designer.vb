@@ -38,8 +38,6 @@ Partial Class PrintReceiptForm
         OpenFileDialog1 = New OpenFileDialog()
         panel_book = New Panel()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
-        Label14 = New Label()
-        Label12 = New Label()
         lbltransacno = New Label()
         Label9 = New Label()
         picbarcode = New PictureBox()
@@ -49,6 +47,8 @@ Partial Class PrintReceiptForm
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        Label14 = New Label()
+        Label12 = New Label()
         panel_book.SuspendLayout()
         Guna2GradientPanel1.SuspendLayout()
         CType(picbarcode, ComponentModel.ISupportInitialize).BeginInit()
@@ -91,33 +91,11 @@ Partial Class PrintReceiptForm
         Guna2GradientPanel1.Size = New Size(1333, 626)
         Guna2GradientPanel1.TabIndex = 46
         ' 
-        ' Label14
-        ' 
-        Label14.AutoSize = True
-        Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label14.ForeColor = Color.Red
-        Label14.Location = New Point(79, 72)
-        Label14.Name = "Label14"
-        Label14.Size = New Size(192, 16)
-        Label14.TabIndex = 109
-        Label14.Text = "Search and select borrower."
-        ' 
-        ' Label12
-        ' 
-        Label12.AutoSize = True
-        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label12.ForeColor = Color.Black
-        Label12.Location = New Point(30, 71)
-        Label12.Name = "Label12"
-        Label12.Size = New Size(49, 16)
-        Label12.TabIndex = 108
-        Label12.Text = "Notes:"
-        ' 
         ' lbltransacno
         ' 
         lbltransacno.AutoSize = True
         lbltransacno.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lbltransacno.ForeColor = Color.WhiteSmoke
+        lbltransacno.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         lbltransacno.Location = New Point(768, 83)
         lbltransacno.Name = "lbltransacno"
         lbltransacno.Size = New Size(165, 16)
@@ -264,6 +242,28 @@ Partial Class PrintReceiptForm
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
+        ' 
+        ' Label14
+        ' 
+        Label14.AutoSize = True
+        Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label14.ForeColor = Color.Red
+        Label14.Location = New Point(79, 72)
+        Label14.Name = "Label14"
+        Label14.Size = New Size(192, 16)
+        Label14.TabIndex = 109
+        Label14.Text = "Search and select borrower."
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(30, 71)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(49, 16)
+        Label12.TabIndex = 108
+        Label12.Text = "Notes:"
         ' 
         ' PrintReceiptForm
         ' 
