@@ -78,6 +78,7 @@ Partial Class MainForm
         BorrowToolStripMenuItem = New ToolStripMenuItem()
         ReturnToolStripMenuItem = New ToolStripMenuItem()
         EditsToolStripMenuItem1 = New ToolStripMenuItem()
+        PrintReceiptToolStripMenuItem = New ToolStripMenuItem()
         Guna2Elipse3 = New Guna.UI2.WinForms.Guna2Elipse(components)
         pnl_report = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_Studentlogs = New Panel()
@@ -274,7 +275,7 @@ Partial Class MainForm
         ' 
         ' ProcessStripMenuItem
         ' 
-        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem, EditsToolStripMenuItem1})
+        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem, EditsToolStripMenuItem1, PrintReceiptToolStripMenuItem})
         ProcessStripMenuItem.ForeColor = Color.White
         ProcessStripMenuItem.Name = "ProcessStripMenuItem"
         ProcessStripMenuItem.Size = New Size(102, 22)
@@ -284,14 +285,14 @@ Partial Class MainForm
         ' 
         AcquisitionToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AcquisitionToolStripMenuItem.Name = "AcquisitionToolStripMenuItem"
-        AcquisitionToolStripMenuItem.Size = New Size(183, 22)
+        AcquisitionToolStripMenuItem.Size = New Size(197, 22)
         AcquisitionToolStripMenuItem.Text = "🛍️ Acquisition"
         ' 
         ' AccessionToolStripMenuItem
         ' 
         AccessionToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         AccessionToolStripMenuItem.Name = "AccessionToolStripMenuItem"
-        AccessionToolStripMenuItem.Size = New Size(183, 22)
+        AccessionToolStripMenuItem.Size = New Size(197, 22)
         AccessionToolStripMenuItem.Text = "🔢 Accession"
         ' 
         ' StudentLogsToolStripMenuItem
@@ -299,7 +300,7 @@ Partial Class MainForm
         StudentLogsToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {TimeInToolStripMenuItem})
         StudentLogsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         StudentLogsToolStripMenuItem.Name = "StudentLogsToolStripMenuItem"
-        StudentLogsToolStripMenuItem.Size = New Size(183, 22)
+        StudentLogsToolStripMenuItem.Size = New Size(197, 22)
         StudentLogsToolStripMenuItem.Text = "📝 Attendance"
         ' 
         ' TimeInToolStripMenuItem
@@ -314,7 +315,7 @@ Partial Class MainForm
         CirculationToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BorrowToolStripMenuItem, ReturnToolStripMenuItem})
         CirculationToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         CirculationToolStripMenuItem.Name = "CirculationToolStripMenuItem"
-        CirculationToolStripMenuItem.Size = New Size(183, 22)
+        CirculationToolStripMenuItem.Size = New Size(197, 22)
         CirculationToolStripMenuItem.Text = "🔄 Circulation"
         ' 
         ' BorrowToolStripMenuItem
@@ -335,8 +336,15 @@ Partial Class MainForm
         ' 
         EditsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         EditsToolStripMenuItem1.Name = "EditsToolStripMenuItem1"
-        EditsToolStripMenuItem1.Size = New Size(183, 22)
+        EditsToolStripMenuItem1.Size = New Size(197, 22)
         EditsToolStripMenuItem1.Text = "✎ Edit Info"
+        ' 
+        ' PrintReceiptToolStripMenuItem
+        ' 
+        PrintReceiptToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        PrintReceiptToolStripMenuItem.Name = "PrintReceiptToolStripMenuItem"
+        PrintReceiptToolStripMenuItem.Size = New Size(197, 22)
+        PrintReceiptToolStripMenuItem.Text = "🖨️ Print Receipt"
         ' 
         ' Guna2Elipse3
         ' 
@@ -1098,5 +1106,6 @@ Partial Class MainForm
     Friend WithEvents lblform As Label
     Friend WithEvents btnlogoutt As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents EditsToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents PrintReceiptToolStripMenuItem As ToolStripMenuItem
 
 End Class

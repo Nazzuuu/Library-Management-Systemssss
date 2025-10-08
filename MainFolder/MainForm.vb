@@ -115,6 +115,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
         Panel_dash.Controls.Remove(Borrowing)
+        Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -147,6 +148,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
         Panel_dash.Controls.Remove(Borrowing)
+        Panel_dash.Controls.Remove(PrintReceiptForm)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -177,6 +179,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
         Panel_dash.Controls.Remove(Borrowing)
+        Panel_dash.Controls.Remove(PrintReceiptForm)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -208,6 +211,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
         Panel_dash.Controls.Remove(Borrowing)
+        Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -463,77 +467,7 @@ Public Class MainForm
 
         Borrowing.SetupBorrowerFields()
 
-        'Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
 
-
-        'Borrowing.rbstudent.Enabled = True
-        'Borrowing.rbteacher.Enabled = True
-
-
-        'If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrEmpty(borrowerType) Then
-
-
-        '    If borrowerType = "Student" Then
-
-
-        '        Borrowing.lblemployee.Visible = False
-        '        Borrowing.txtemployee.Visible = False
-        '        Borrowing.rbteacher.Visible = False
-
-
-        '        Borrowing.lbllrn.Visible = True
-        '        Borrowing.txtlrn.Visible = True
-        '        Borrowing.rbstudent.Visible = True
-
-
-        '        Borrowing.lbllrn.Location = New Point(30, 78)
-        '        Borrowing.txtlrn.Location = New Point(30, 97)
-        '        Borrowing.rbstudent.Location = New Point(121, 8)
-
-        '        Borrowing.rbstudent.Checked = True
-        '        Borrowing.rbstudent.Enabled = False
-
-        '    ElseIf borrowerType = "Teacher" Then
-
-
-
-
-        '        Borrowing.lbllrn.Visible = False
-        '        Borrowing.txtlrn.Visible = False
-        '        Borrowing.rbstudent.Visible = False
-
-
-        '        Borrowing.lblemployee.Visible = True
-        '        Borrowing.txtemployee.Visible = True
-        '        Borrowing.rbteacher.Visible = True
-
-
-        '        Borrowing.lblemployee.Location = New Point(30, 78)
-        '        Borrowing.txtemployee.Location = New Point(30, 97)
-        '        Borrowing.rbteacher.Location = New Point(121, 8)
-
-
-        '        Borrowing.rbteacher.Checked = True
-
-
-        '        Borrowing.rbteacher.Enabled = False
-
-        '    End If
-
-        'Else
-
-
-        '    Borrowing.lblemployee.Visible = True
-        '    Borrowing.txtemployee.Visible = True
-        '    Borrowing.rbteacher.Visible = True
-        '    Borrowing.lbllrn.Visible = True
-        '    Borrowing.txtlrn.Visible = True
-        '    Borrowing.rbstudent.Visible = True
-
-
-        '    Borrowing.rbstudent.Checked = True
-
-        'End If
     End Sub
 
     Private Sub btninfo_MouseHover(sender As Object, e As EventArgs)
@@ -756,4 +690,23 @@ Public Class MainForm
         End Try
     End Sub
 
+    Private Sub PrintReceiptToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PrintReceiptToolStripMenuItem.Click
+
+        Panel_dash.Controls.Clear()
+
+        With PrintReceiptForm
+
+            .TopMost = True
+            .TopLevel = False
+            .BringToFront()
+            Panel_dash.Controls.Add(PrintReceiptForm)
+
+            .Show()
+
+
+        End With
+
+        lblform.Text = "PRINT RECEIPT FORM"
+
+    End Sub
 End Class

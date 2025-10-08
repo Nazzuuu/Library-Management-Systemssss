@@ -1,6 +1,9 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports System.Data
-
+Imports System.Drawing
+Imports ZXing
+Imports ZXing.Rendering
+Imports ZXing.Windows.Compatibility
 Public Class Borrowing
 
     Private isLoadingData As Boolean = False
@@ -14,9 +17,48 @@ Public Class Borrowing
         timerSystemDate.Start()
 
         btntimein.Visible = False
+        UpdateTransactionBarcode()
 
     End Sub
 
+    Private Function GenerateUniqueTransactionID() As String
+
+        Return DateTime.Now.ToString("yyMMddHHmmss")
+    End Function
+
+    Public Sub UpdateTransactionBarcode()
+        Dim newID As String = GenerateUniqueTransactionID()
+
+        Try
+
+            Dim writer As New BarcodeWriter With {
+            .Format = BarcodeFormat.CODE_128,
+            .Renderer = New BitmapRenderer()
+        }
+
+
+            writer.Options = New ZXing.Common.EncodingOptions With {
+            .Height = picbarcode.Height,
+            .Width = picbarcode.Width,
+            .PureBarcode = False,
+            .Margin = 10
+        }
+
+            Dim barcodeBitmap As Bitmap = writer.Write(newID)
+
+
+            If picbarcode.Image IsNot Nothing Then
+                picbarcode.Image.Dispose()
+            End If
+            picbarcode.Image = barcodeBitmap
+
+
+            lbltransac.Text = newID
+
+        Catch ex As Exception
+            MessageBox.Show("Error generating barcode with ZXing.Net: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
 
     Private Function CheckTimeInStatus(identifierValue As String, identifierField As String) As Boolean
         If String.IsNullOrWhiteSpace(identifierValue) Then Return False
@@ -244,7 +286,7 @@ Public Class Borrowing
         If isLoadingData Then Exit Sub
 
         If String.IsNullOrWhiteSpace(txtemployee.Text) Then
-            ' Linisin ang fields at itago ang Time In button kapag walang laman
+
             txtname.Text = ""
             btntimein.Visible = False
             Exit Sub
@@ -253,11 +295,11 @@ Public Class Borrowing
 
         Dim enteredEmployeeID As String = txtemployee.Text.Trim()
 
-        ' Walang kailangan ng 'Cleaned' ID dito, gamitin lang ang enteredEmployeeID para sa database lookup
-        Dim currentUserID_Cleaned As String = GlobalVarsModule.GetCleanCurrentBorrowerID()
-        Dim enteredEmployeeID_Cleaned As String = enteredEmployeeID ' Gamitin ang enteredEmployeeID direkta
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString) ' Dapat gamitin ang GlobalVarsModule.connectionString
+        Dim currentUserID_Cleaned As String = GlobalVarsModule.GetCleanCurrentBorrowerID()
+        Dim enteredEmployeeID_Cleaned As String = enteredEmployeeID
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim foundBorrower As Boolean = False
         Dim borrowerName As String = ""
 
@@ -614,11 +656,13 @@ Public Class Borrowing
         End If
 
 
+        Dim transactionReceiptID As String = lbltransac.Text
+
         Try
             con.Open()
 
-            Dim com As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate) " &
-                            "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate)"
+            Dim com As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt) " &
+                            "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt)"
 
             Using comsi As New MySqlCommand(com, con)
 
@@ -631,11 +675,11 @@ Public Class Borrowing
                 comsi.Parameters.AddWithValue("@Barcode", txtbarcode.Text)
                 comsi.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
                 comsi.Parameters.AddWithValue("@Shelf", txtshelf.Text)
-
                 comsi.Parameters.AddWithValue("@BDate", DateTimePicker1.Value.ToString("MMMM-dd-yyyy"))
-
                 comsi.Parameters.AddWithValue("@DDate", DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"))
 
+
+                comsi.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
 
                 comsi.ExecuteNonQuery()
 
@@ -651,6 +695,16 @@ Public Class Borrowing
                     End If
                 Next
                 MsgBox("Borrowing record successfully added.", vbInformation, "Success")
+
+
+                InsertPrintReceipt(borrower, txtlrn.Text, txtemployee.Text, txtname.Text, txtbooktitle.Text, txtisbn.Text, txtbarcode.Text, txtaccessionid.Text, txtshelf.Text, DateTimePicker1.Value.ToString("MMMM-dd-yyyy"), DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"), transactionReceiptID)
+
+                Dim printForm As New PrintReceiptForm()
+
+
+
+                printForm.LoadPrintReceiptDataByTransaction(transactionReceiptID)
+                UpdateTransactionBarcode()
 
                 refreshborrowingsu()
                 clearlahat()
@@ -989,6 +1043,38 @@ Public Class Borrowing
 
     End Sub
 
+
+
+    Private Sub InsertPrintReceipt(borrower As String, lrn As String, empNo As String, name As String, bookTitle As String, isbn As String, barcode As String, accessionID As String, shelf As String, borrowedDate As String, dueDate As String, transactionReceipt As String)
+        Try
+            Dim con As New MySqlConnection(connectionString)
+            con.Open()
+
+            Dim com As String = "INSERT INTO printreceipt_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt) " &
+                            "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt)"
+
+            Using comsi As New MySqlCommand(com, con)
+                comsi.Parameters.AddWithValue("@Borrower", borrower)
+                comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(lrn), DBNull.Value, lrn))
+                comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(empNo), DBNull.Value, empNo))
+                comsi.Parameters.AddWithValue("@Name", name)
+                comsi.Parameters.AddWithValue("@Title", bookTitle)
+                comsi.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(isbn), DBNull.Value, isbn))
+                comsi.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(barcode), DBNull.Value, barcode))
+                comsi.Parameters.AddWithValue("@AccessionID", accessionID)
+                comsi.Parameters.AddWithValue("@Shelf", shelf)
+                comsi.Parameters.AddWithValue("@BDate", borrowedDate)
+                comsi.Parameters.AddWithValue("@DDate", dueDate)
+                comsi.Parameters.AddWithValue("@TransactionReceipt", transactionReceipt)
+
+                comsi.ExecuteNonQuery()
+
+            End Using
+
+        Catch ex As Exception
+            MessageBox.Show("Error inserting into printreceipt_tbl: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
         Cursor = Cursors.Hand
     End Sub

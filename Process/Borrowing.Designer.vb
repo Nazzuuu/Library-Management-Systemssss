@@ -65,9 +65,11 @@ Partial Class Borrowing
         Dim CustomizableEdges70 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_borrowing = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        lbltransac = New Label()
+        Label1 = New Label()
+        picbarcode = New PictureBox()
         Label14 = New Label()
         Label12 = New Label()
-        Label13 = New Label()
         btnview = New Guna.UI2.WinForms.Guna2Button()
         btntimein = New Guna.UI2.WinForms.Guna2Button()
         txtshelf = New Guna.UI2.WinForms.Guna2TextBox()
@@ -104,6 +106,7 @@ Partial Class Borrowing
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         panel_borrowing.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
+        CType(picbarcode, ComponentModel.ISupportInitialize).BeginInit()
         Panel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -125,9 +128,11 @@ Partial Class Borrowing
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(lbltransac)
+        Guna2GroupBox1.Controls.Add(Label1)
+        Guna2GroupBox1.Controls.Add(picbarcode)
         Guna2GroupBox1.Controls.Add(Label14)
         Guna2GroupBox1.Controls.Add(Label12)
-        Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(btnview)
         Guna2GroupBox1.Controls.Add(btntimein)
         Guna2GroupBox1.Controls.Add(txtshelf)
@@ -168,38 +173,58 @@ Partial Class Borrowing
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' lbltransac
+        ' 
+        lbltransac.AutoSize = True
+        lbltransac.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lbltransac.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lbltransac.Location = New Point(1116, 214)
+        lbltransac.Name = "lbltransac"
+        lbltransac.Size = New Size(137, 16)
+        lbltransac.TabIndex = 106
+        lbltransac.Text = "TransactionReceipt:"
+        ' 
+        ' Label1
+        ' 
+        Label1.AutoSize = True
+        Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label1.ForeColor = Color.Red
+        Label1.Location = New Point(820, 228)
+        Label1.Name = "Label1"
+        Label1.Size = New Size(156, 16)
+        Label1.TabIndex = 105
+        Label1.Text = "Select Available books."
+        ' 
+        ' picbarcode
+        ' 
+        picbarcode.BackColor = Color.White
+        picbarcode.Location = New Point(1118, 233)
+        picbarcode.Name = "picbarcode"
+        picbarcode.Size = New Size(188, 53)
+        picbarcode.TabIndex = 104
+        picbarcode.TabStop = False
+        ' 
         ' Label14
         ' 
         Label14.AutoSize = True
         Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label14.ForeColor = Color.Red
-        Label14.Location = New Point(599, 235)
+        Label14.Location = New Point(820, 211)
         Label14.Name = "Label14"
-        Label14.Size = New Size(172, 16)
+        Label14.Size = New Size(182, 16)
         Label14.TabIndex = 103
-        Label14.Text = "2. Select Available books."
+        Label14.Text = "Input your Lrn/Employe No"
         ' 
         ' Label12
         ' 
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(550, 224)
+        Label12.Location = New Point(771, 210)
         Label12.Name = "Label12"
         Label12.Size = New Size(49, 16)
         Label12.TabIndex = 102
         Label12.Text = "Notes:"
-        ' 
-        ' Label13
-        ' 
-        Label13.AutoSize = True
-        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label13.ForeColor = Color.Red
-        Label13.Location = New Point(599, 218)
-        Label13.Name = "Label13"
-        Label13.Size = New Size(197, 16)
-        Label13.TabIndex = 101
-        Label13.Text = "1. Select Borrower type first."
         ' 
         ' btnview
         ' 
@@ -280,7 +305,7 @@ Partial Class Borrowing
         Panel1.Controls.Add(rbteacher)
         Panel1.Controls.Add(Label10)
         Panel1.Controls.Add(rbstudent)
-        Panel1.Location = New Point(780, 249)
+        Panel1.Location = New Point(588, 246)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(332, 37)
         Panel1.TabIndex = 96
@@ -792,6 +817,7 @@ Partial Class Borrowing
         panel_borrowing.ResumeLayout(False)
         Guna2GroupBox1.ResumeLayout(False)
         Guna2GroupBox1.PerformLayout()
+        CType(picbarcode, ComponentModel.ISupportInitialize).EndInit()
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
@@ -837,6 +863,8 @@ Partial Class Borrowing
     Friend WithEvents btntimein As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents btnview As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Label12 As Label
-    Friend WithEvents Label13 As Label
     Friend WithEvents Label14 As Label
+    Friend WithEvents lbltransac As Label
+    Friend WithEvents Label1 As Label
+    Friend WithEvents picbarcode As PictureBox
 End Class

@@ -74,7 +74,7 @@ Public Class BorrowerLoginForm
                 End If
 
                 MessageBox.Show("Borrower successfully logged in. Welcome, " & Username & "!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
+                MainForm.PrintReceiptToolStripMenuItem.Visible = False
                 MainForm.SetupBorrowerUI(borrowerType)
                 Me.Hide()
                 MainForm.Show()
