@@ -167,7 +167,7 @@ Public Class Borrowing
             End If
         End Try
 
-        clearlahat()
+        ClearBookFields()
 
     End Sub
 
@@ -204,12 +204,31 @@ Public Class Borrowing
 
 
         btntimein.Visible = False
-
+        UpdateTransactionBarcode()
         DateTimePicker1.Value = DateTime.Now
 
     End Sub
 
+    Public Sub ClearBookFields()
 
+
+
+
+        txtbooktitle.Text = ""
+        txtisbn.Text = ""
+        txtbarcode.Text = ""
+        txtaccessionid.Text = ""
+        txtshelf.Text = ""
+
+        txtname.Enabled = False
+        txtbooktitle.Enabled = False
+        txtisbn.Enabled = False
+        txtbarcode.Enabled = False
+        txtshelf.Enabled = False
+        txtaccessionid.Enabled = False
+        txtduedate.Enabled = False
+
+    End Sub
     Private Sub rbteacher_CheckedChanged(sender As Object, e As EventArgs) Handles rbteacher.CheckedChanged
 
         If rbteacher.Checked Then
@@ -534,7 +553,7 @@ Public Class Borrowing
     End Sub
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-        clearlahat()
+        ClearBookFields()
     End Sub
 
     Private Function acessionstats(accessionID As String) As Boolean
@@ -733,15 +752,15 @@ Public Class Borrowing
                 MsgBox("Borrowing record successfully added.", vbInformation, "Success")
 
 
-                InsertPrintReceipt(borrower, txtlrn.Text, txtemployee.Text, txtname.Text, txtbooktitle.Text, txtisbn.Text, txtbarcode.Text, txtaccessionid.Text, txtshelf.Text, DateTimePicker1.Value.ToString("MMMM-dd-yyyy"), DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"), transactionReceiptID)
+                InsertPrintReceipt(borrower, txtname.Text, DateTimePicker1.Value.ToString("MMMM-dd-yyyy"), DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"), transactionReceiptID)
 
                 Dim printForm As New PrintReceiptForm()
 
                 printForm.LoadPrintReceiptDataByTransaction(transactionReceiptID)
-                UpdateTransactionBarcode()
+
 
                 refreshborrowingsu()
-                clearlahat()
+                ClearBookFields()
 
             End Using
 
@@ -996,7 +1015,7 @@ Public Class Borrowing
 
     Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
 
-        AvailableBooks.ShowDialog()
+
 
         For Each form In Application.OpenForms
             If TypeOf form Is AvailableBooks Then
@@ -1005,6 +1024,8 @@ Public Class Borrowing
                 avail.counts()
             End If
         Next
+
+        AvailableBooks.ShowDialog()
     End Sub
 
     Public Sub SetupBorrowerFields()
@@ -1078,36 +1099,73 @@ Public Class Borrowing
 
 
 
-    Private Sub InsertPrintReceipt(borrower As String, lrn As String, empNo As String, name As String, bookTitle As String, isbn As String, barcode As String, accessionID As String, shelf As String, borrowedDate As String, dueDate As String, transactionReceipt As String)
+    Private Sub InsertPrintReceipt(borrower As String, name As String, borrowedDate As String, dueDate As String, transactionReceipt As String)
         Try
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             con.Open()
 
-            Dim com As String = "INSERT INTO printreceipt_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt) " &
-                            "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt)"
 
-            Using comsi As New MySqlCommand(com, con)
-                comsi.Parameters.AddWithValue("@Borrower", borrower)
-                comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(lrn), DBNull.Value, lrn))
-                comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(empNo), DBNull.Value, empNo))
-                comsi.Parameters.AddWithValue("@Name", name)
-                comsi.Parameters.AddWithValue("@Title", bookTitle)
-                comsi.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(isbn), DBNull.Value, isbn))
-                comsi.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(barcode), DBNull.Value, barcode))
-                comsi.Parameters.AddWithValue("@AccessionID", accessionID)
-                comsi.Parameters.AddWithValue("@Shelf", shelf)
-                comsi.Parameters.AddWithValue("@BDate", borrowedDate)
-                comsi.Parameters.AddWithValue("@DDate", dueDate)
-                comsi.Parameters.AddWithValue("@TransactionReceipt", transactionReceipt)
-
-                comsi.ExecuteNonQuery()
-
+            Dim countCom As String = "SELECT COUNT(*) FROM `borrowing_tbl` WHERE `TransactionReceipt` = @TID"
+            Dim bookCount As Integer = 0
+            Using countCmd As New MySqlCommand(countCom, con)
+                countCmd.Parameters.AddWithValue("@TID", transactionReceipt)
+                bookCount = CInt(countCmd.ExecuteScalar())
             End Using
 
+
+            Dim checkCom As String = "SELECT COUNT(*) FROM `printreceipt_tbl` WHERE `TransactionReceipt` = @TID"
+            Dim existingCount As Integer = 0
+            Using checkCmd As New MySqlCommand(checkCom, con)
+                checkCmd.Parameters.AddWithValue("@TID", transactionReceipt)
+                existingCount = CInt(checkCmd.ExecuteScalar())
+            End Using
+
+            If existingCount = 0 Then
+
+                Dim insertCom As String = "INSERT INTO printreceipt_tbl (Borrower, Name, BorrowedDate, DueDate, BorrowedBookCount, TransactionReceipt, IsPrinted) " &
+                                     "VALUES (@Borrower, @Name, @BDate, @DDate, @BookCount, @TransactionReceipt, 0)"
+
+                Using comsi As New MySqlCommand(insertCom, con)
+                    comsi.Parameters.AddWithValue("@Borrower", borrower)
+                    comsi.Parameters.AddWithValue("@Name", name)
+                    comsi.Parameters.AddWithValue("@BDate", borrowedDate)
+                    comsi.Parameters.AddWithValue("@DDate", dueDate)
+                    comsi.Parameters.AddWithValue("@BookCount", bookCount.ToString())
+                    comsi.Parameters.AddWithValue("@TransactionReceipt", transactionReceipt)
+                    comsi.ExecuteNonQuery()
+                End Using
+            Else
+
+                Dim updateCom As String = "UPDATE `printreceipt_tbl` SET `BorrowedBookCount` = @BookCount, `Name` = @Name, `Borrower` = @Borrower WHERE `TransactionReceipt` = @TID"
+
+                Using comsi As New MySqlCommand(updateCom, con)
+                    comsi.Parameters.AddWithValue("@BookCount", bookCount.ToString())
+                    comsi.Parameters.AddWithValue("@Name", name)
+                    comsi.Parameters.AddWithValue("@Borrower", borrower)
+                    comsi.Parameters.AddWithValue("@TID", transactionReceipt)
+                    comsi.ExecuteNonQuery()
+                End Using
+            End If
+
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is PrintReceiptForm Then
+                    Dim load = DirectCast(form, PrintReceiptForm)
+                    load.refreshreceipt()
+                    Exit For
+                End If
+            Next
+
         Catch ex As Exception
-            MessageBox.Show("Error inserting into printreceipt_tbl: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error processing print receipt data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
         End Try
     End Sub
+
+
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
         Cursor = Cursors.Hand
     End Sub

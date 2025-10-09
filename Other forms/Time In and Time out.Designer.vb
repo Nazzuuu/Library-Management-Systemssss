@@ -658,7 +658,7 @@ Partial Class oras
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         btnedit.Size = New Size(124, 27)
         btnedit.TabIndex = 43
-        btnedit.Text = "EDIT"
+        btnedit.Text = "TIME-OUT"
         ' 
         ' Label7
         ' 

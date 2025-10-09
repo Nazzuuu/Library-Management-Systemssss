@@ -10,6 +10,9 @@ Module GlobalVarsModule
     Public CurrentBorrowerID As String = ""
     Public CurrentBorrowerType As String = ""
 
+    Public GlobalUsername As String = ""
+    Public GlobalRole As String = ""
+
     Public Function GetCleanCurrentBorrowerID() As String
         Dim idTrimmed As String = CurrentBorrowerID.Trim()
         Dim tempID As Long

@@ -328,7 +328,7 @@ Public Class oras
             End If
 
             selectedID = CInt(row.Cells("ID").Value)
-
+            rbtimeout.Checked = True
         End If
 
     End Sub

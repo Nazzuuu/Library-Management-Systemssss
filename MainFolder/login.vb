@@ -1,4 +1,5 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
+Imports MySql.Data.MySqlClient
 Public Class login
 
     Public Sub clear()
@@ -15,11 +16,10 @@ Public Class login
 
         Dim con As New MySqlConnection(connectionString)
 
-
-
+        ' Ang comsus ay tama na, dahil kinukuha na nito ang Username, Password, at Email.
         Dim comsus As String = "SELECT Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
-              "UNION " &
-              "SELECT Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
+            "UNION " &
+            "SELECT Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
 
         Dim com As New MySqlCommand(comsus, con)
         com.Parameters.AddWithValue("@username", User)
@@ -33,11 +33,15 @@ Public Class login
                 Dim role As String = lahatngrole("Role").ToString()
                 Dim userEmail As String = lahatngrole("Email").ToString()
 
+
+                GlobalRole = role
+                GlobalUsername = userEmail
+
+
                 If role = "Librarian" Then
                     MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
                     MainForm.lbl_currentuser.Text = "Librarian"
-
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
                     MainForm.EditsToolStripMenuItem1.Visible = False
@@ -89,6 +93,9 @@ Public Class login
                     MessageBox.Show("Invalid role.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End If
             Else
+
+                GlobalRole = ""
+                GlobalUsername = ""
                 MessageBox.Show("Invalid Credentials.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
 
@@ -100,7 +107,6 @@ Public Class login
             End If
         End Try
     End Sub
-
 
 
     Private Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load

@@ -17,16 +17,33 @@ Public Class AvailableBooks
         Try
             con.Open()
 
-            Dim syncSql As String = "DELETE av.* FROM available_tbl av " &
-                                    "LEFT JOIN acession_tbl ac ON av.AccessionID = ac.AccessionID " &
-                                    "WHERE ac.Status <> 'Available' OR ac.Status IS NULL"
+            Dim syncDeleteSql As String = "DELETE av.* FROM available_tbl av " &
+                                          "LEFT JOIN acession_tbl ac ON av.AccessionID = ac.AccessionID " &
+                                          "WHERE ac.Status <> 'Available' OR ac.Status IS NULL"
 
-            Using syncCmd As New MySqlCommand(syncSql, con)
-                syncCmd.ExecuteNonQuery()
+            Using syncDeleteCmd As New MySqlCommand(syncDeleteSql, con)
+                syncDeleteCmd.ExecuteNonQuery()
             End Using
 
 
-            Dim com As String = "SELECT ISBN, Barcode, AccessionID, BookTitle, Shelf, Status FROM `available_tbl` WHERE Status = 'Available'"
+            Dim syncInsertSql As String = "INSERT IGNORE INTO available_tbl (AccessionID, ISBN, Barcode, BookTitle, Shelf, Status) " &
+                                          "SELECT ac.AccessionID, ac.ISBN, ac.Barcode, ac.BookTitle, ac.Shelf, ac.Status " &
+                                          "FROM acession_tbl ac " &
+                                          "LEFT JOIN available_tbl av ON ac.AccessionID = av.AccessionID " &
+                                          "WHERE ac.Status = 'Available' AND av.AccessionID IS NULL"
+
+            Using syncInsertCmd As New MySqlCommand(syncInsertSql, con)
+                syncInsertCmd.ExecuteNonQuery()
+            End Using
+
+
+
+            Dim com As String = "SELECT t1.ISBN, t1.Barcode, t1.AccessionID, t1.BookTitle, t1.Shelf, t1.Status " &
+                                "FROM `available_tbl` t1 " &
+                                "JOIN `acession_tbl` t2 ON t1.AccessionID = t2.AccessionID " &
+                                "WHERE t1.Status = 'Available' " &
+                                "ORDER BY t2.TransactionNo, t1.AccessionID"
+
             Dim adap As New MySqlDataAdapter(com, con)
             Dim ds As New DataSet
 

@@ -38,6 +38,8 @@ Partial Class PrintReceiptForm
         OpenFileDialog1 = New OpenFileDialog()
         panel_book = New Panel()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
+        Label14 = New Label()
+        Label12 = New Label()
         lbltransacno = New Label()
         Label9 = New Label()
         picbarcode = New PictureBox()
@@ -47,8 +49,6 @@ Partial Class PrintReceiptForm
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Label14 = New Label()
-        Label12 = New Label()
         panel_book.SuspendLayout()
         Guna2GradientPanel1.SuspendLayout()
         CType(picbarcode, ComponentModel.ISupportInitialize).BeginInit()
@@ -90,6 +90,28 @@ Partial Class PrintReceiptForm
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         Guna2GradientPanel1.Size = New Size(1333, 626)
         Guna2GradientPanel1.TabIndex = 46
+        ' 
+        ' Label14
+        ' 
+        Label14.AutoSize = True
+        Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label14.ForeColor = Color.Red
+        Label14.Location = New Point(79, 72)
+        Label14.Name = "Label14"
+        Label14.Size = New Size(192, 16)
+        Label14.TabIndex = 109
+        Label14.Text = "Search and select borrower."
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(30, 71)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(49, 16)
+        Label12.TabIndex = 108
+        Label12.Text = "Notes:"
         ' 
         ' lbltransacno
         ' 
@@ -162,7 +184,7 @@ Partial Class PrintReceiptForm
         DataGridView1.AllowUserToDeleteRows = False
         DataGridView1.AllowUserToResizeColumns = False
         DataGridView1.AllowUserToResizeRows = False
-        DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+        DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         DataGridView1.BackgroundColor = SystemColors.Control
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -196,7 +218,7 @@ Partial Class PrintReceiptForm
         DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
+        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
@@ -242,28 +264,6 @@ Partial Class PrintReceiptForm
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
-        ' 
-        ' Label14
-        ' 
-        Label14.AutoSize = True
-        Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label14.ForeColor = Color.Red
-        Label14.Location = New Point(79, 72)
-        Label14.Name = "Label14"
-        Label14.Size = New Size(192, 16)
-        Label14.TabIndex = 109
-        Label14.Text = "Search and select borrower."
-        ' 
-        ' Label12
-        ' 
-        Label12.AutoSize = True
-        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label12.ForeColor = Color.Black
-        Label12.Location = New Point(30, 71)
-        Label12.Name = "Label12"
-        Label12.Size = New Size(49, 16)
-        Label12.TabIndex = 108
-        Label12.Text = "Notes:"
         ' 
         ' PrintReceiptForm
         ' 

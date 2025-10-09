@@ -231,6 +231,7 @@ Public Class Acquisition
 
             If neww < old Then
 
+
                 Dim notavail As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND `Status` != 'Available'"
                 Dim koms As New MySqlCommand(notavail, con)
                 koms.Parameters.AddWithValue("@TransactionNo", transactionNo)
@@ -242,14 +243,13 @@ Public Class Acquisition
                     MessageBox.Show("WARNING: Cannot reduce quantity to " & neww & ". There are " & kownts & " copies with a status other than 'Available'.", "Cannot Update Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
                     NumericUpDown1.Value = old
-
-
                     txttotalcost.Text = originalTotalCost.ToString("F2")
-
                     Return
                 End If
 
                 Dim recordsdelete As Integer = old - neww
+
+
                 Dim deleteAcs As String = "DELETE FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND Status = 'Available' ORDER BY AccessionID DESC LIMIT @limit"
                 Dim deleyt As New MySqlCommand(deleteAcs, con)
                 deleyt.Parameters.AddWithValue("@TransactionNo", transactionNo)
@@ -262,18 +262,15 @@ Public Class Acquisition
 
                 Dim recordsadd As Integer = neww - old
 
-
-
                 Dim rand As New Random()
                 Dim newAccessionID As String = ""
                 Dim isUnique As Boolean = False
                 Dim shelf As String = ""
 
+
                 Dim getShelfQuery As String = "SELECT Shelf FROM `acession_tbl` WHERE TransactionNo = @TransactionNo LIMIT 1"
                 Dim getShelfCommand As New MySqlCommand(getShelfQuery, con)
-
                 getShelfCommand.Parameters.AddWithValue("@TransactionNo", transactionNo)
-
                 Dim shelfResult As Object = getShelfCommand.ExecuteScalar()
                 If shelfResult IsNot Nothing AndAlso shelfResult IsNot DBNull.Value Then
                     shelf = shelfResult.ToString()
@@ -283,9 +280,7 @@ Public Class Acquisition
                 For i As Integer = 1 To recordsadd
                     isUnique = False
                     While Not isUnique
-
                         newAccessionID = rand.Next(10000, 99999).ToString()
-
 
                         Dim checksu As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE AccessionID = @AccessionID"
                         Dim chiks As New MySqlCommand(checksu, con)
@@ -297,9 +292,8 @@ Public Class Acquisition
                         End If
                     End While
 
-
                     Dim insertAcs As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                          "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
+                                         "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
 
                     Using insertAcession As New MySqlCommand(insertAcs, con)
                         insertAcession.Parameters.AddWithValue("@TransactionNo", transactionNo)
@@ -313,19 +307,32 @@ Public Class Acquisition
                         insertAcession.ExecuteNonQuery()
                     End Using
                 Next
+
+
+                Dim syncInsertSql As String = "INSERT IGNORE INTO available_tbl (AccessionID, ISBN, Barcode, BookTitle, Shelf, Status) " &
+                                         "SELECT ac.AccessionID, ac.ISBN, ac.Barcode, ac.BookTitle, ac.Shelf, ac.Status " &
+                                         "FROM acession_tbl ac " &
+                                         "LEFT JOIN available_tbl av ON ac.AccessionID = av.AccessionID " &
+                                         "WHERE ac.TransactionNo = @TransactionNo AND ac.Status = 'Available' AND av.AccessionID IS NULL"
+
+                Using syncInsertCmd As New MySqlCommand(syncInsertSql, con)
+                    syncInsertCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+                    syncInsertCmd.ExecuteNonQuery()
+                End Using
+
             End If
 
 
             Dim updates As String = "UPDATE `acquisition_tbl` SET " &
-                                "`ISBN` = @ISBN, " &
-                                "`Barcode` = @Barcode, " &
-                                "`BookTitle` = @BookTitle, " &
-                                "`SupplierName` = @SupplierName, " &
-                                "`Quantity` = @Quantity, " &
-                                "`BookPrice` = @BookPrice, " &
-                                "`TotalCost` = @TotalCost, " &
-                                "`DateAcquired` = @DateAcquired " &
-                                "WHERE `ID` = @ID"
+                               "`ISBN` = @ISBN, " &
+                               "`Barcode` = @Barcode, " &
+                               "`BookTitle` = @BookTitle, " &
+                               "`SupplierName` = @SupplierName, " &
+                               "`Quantity` = @Quantity, " &
+                               "`BookPrice` = @BookPrice, " &
+                               "`TotalCost` = @TotalCost, " &
+                               "`DateAcquired` = @DateAcquired " &
+                               "WHERE `ID` = @ID"
 
             Using Updateacqt As New MySqlCommand(updates, con)
                 Updateacqt.Parameters.AddWithValue("@ISBN", txtisbn.Text)
@@ -340,11 +347,21 @@ Public Class Acquisition
                 Updateacqt.ExecuteNonQuery()
             End Using
 
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AvailableBooks Then
+                    Dim avail = DirectCast(form, AvailableBooks)
+                    avail.refreshavail()
+                    avail.counts()
+                End If
+            Next
+
             MessageBox.Show("Record updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
 
             Acquisition_Load_1(sender, e)
             clear()
+
 
             For Each form As Form In Application.OpenForms
                 If TypeOf form Is Accession Then
@@ -353,6 +370,7 @@ Public Class Acquisition
                     Exit For
                 End If
             Next
+
 
         Catch ex As Exception
             MessageBox.Show("Error updating record: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)

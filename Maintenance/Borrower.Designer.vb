@@ -134,7 +134,7 @@ Partial Class Borrower
         DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridView1.Cursor = Cursors.Hand
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle2.BackColor = SystemColors.Window
         DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
         DataGridViewCellStyle2.ForeColor = Color.FromArgb(CByte(125), CByte(137), CByte(149))
@@ -142,7 +142,7 @@ Partial Class Borrower
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(24, 16)
+        DataGridView1.Location = New Point(23, 17)
         DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
@@ -156,14 +156,13 @@ Partial Class Borrower
         DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
+        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         DataGridView1.Size = New Size(1234, 231)
-        DataGridView1.TabIndex = 24
-        DataGridView1.TabStop = False
+        DataGridView1.TabIndex = 29
         ' 
         ' PictureBox1
         ' 
@@ -192,6 +191,7 @@ Partial Class Borrower
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
         txtsearch.Margin = New Padding(4)
+        txtsearch.MaxLength = 15
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrower"
         txtsearch.SelectedText = ""
@@ -359,7 +359,7 @@ Partial Class Borrower
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.Green
-        Label4.Location = New Point(632, 260)
+        Label4.Location = New Point(81, 251)
         Label4.Name = "Label4"
         Label4.Size = New Size(229, 16)
         Label4.TabIndex = 108
@@ -370,7 +370,7 @@ Partial Class Borrower
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.Maroon
-        Label3.Location = New Point(632, 236)
+        Label3.Location = New Point(81, 227)
         Label3.Name = "Label3"
         Label3.Size = New Size(299, 16)
         Label3.TabIndex = 107
@@ -379,7 +379,7 @@ Partial Class Borrower
         ' Panel3
         ' 
         Panel3.BackColor = Color.DarkGreen
-        Panel3.Location = New Point(583, 259)
+        Panel3.Location = New Point(32, 250)
         Panel3.Name = "Panel3"
         Panel3.Size = New Size(40, 17)
         Panel3.TabIndex = 106
@@ -387,7 +387,7 @@ Partial Class Borrower
         ' Panel2
         ' 
         Panel2.BackColor = Color.Maroon
-        Panel2.Location = New Point(583, 235)
+        Panel2.Location = New Point(32, 226)
         Panel2.Name = "Panel2"
         Panel2.Size = New Size(40, 17)
         Panel2.TabIndex = 105
@@ -397,7 +397,7 @@ Partial Class Borrower
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(584, 213)
+        Label12.Location = New Point(31, 204)
         Label12.Name = "Label12"
         Label12.Size = New Size(42, 16)
         Label12.TabIndex = 104
@@ -408,7 +408,7 @@ Partial Class Borrower
         Label13.AutoSize = True
         Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label13.ForeColor = Color.Red
-        Label13.Location = New Point(632, 214)
+        Label13.Location = New Point(79, 205)
         Label13.Name = "Label13"
         Label13.Size = New Size(181, 16)
         Label13.TabIndex = 103
@@ -837,12 +837,12 @@ Partial Class Borrower
     Friend WithEvents txtcontactnumber As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents OpenFileDialog1 As OpenFileDialog
     Friend WithEvents txtemployeeno As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Label12 As Label
     Friend WithEvents Label13 As Label
     Friend WithEvents Panel2 As Panel
     Friend WithEvents Panel3 As Panel
     Friend WithEvents Label4 As Label
     Friend WithEvents Label3 As Label
+    Friend WithEvents DataGridView1 As DataGridView
 
 End Class

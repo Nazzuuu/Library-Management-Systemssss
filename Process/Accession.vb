@@ -18,6 +18,9 @@ Public Class Accession
             com &= " WHERE Status = @Status"
         End If
 
+
+        com &= " ORDER BY TransactionNo, AccessionID"
+
         Dim comsu As New MySqlCommand(com, con)
 
         If Not String.IsNullOrEmpty(filterStatus) Then
