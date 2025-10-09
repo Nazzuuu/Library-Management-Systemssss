@@ -1206,4 +1206,6 @@ Public Class Borrowing
     Private Sub btnview_MouseLeave(sender As Object, e As EventArgs) Handles btnview.MouseLeave
         Cursor = Cursors.Default
     End Sub
+
+    'fuck sakit na sa braincellsuu'''
 End Class

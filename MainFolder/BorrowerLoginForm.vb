@@ -69,6 +69,7 @@ Public Class BorrowerLoginForm
                 GlobalVarsModule.CurrentUserID = borrowerID
                 MainForm.SetupBorrowerUI(borrowerType)
 
+
                 If borrowerType = "Unknown" Then
                     MessageBox.Show("Login successful, but borrower type (LRN or Employee No) is missing in the record. Please check your account details.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 End If
@@ -87,6 +88,13 @@ Public Class BorrowerLoginForm
 
                 GlobalVarsModule.CurrentUserID = borrowerID
 
+
+                If MainForm.BorrowerEditsInfoForm Is Nothing Then
+                    MainForm.BorrowerEditsInfoForm = New Borrowereditsinfo()
+                End If
+
+
+                MainForm.BorrowerEditsInfoForm.visibilitysus(borrowerType)
 
                 MainForm.lbl_currentuser.Text = borrowerType
                 MainForm.lblgmail.Text = userEmail

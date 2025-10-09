@@ -23,24 +23,24 @@ Partial Class Borrowereditsinfo
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle7 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle8 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges23 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges24 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2Elipse4 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
         btnclear = New Guna.UI2.WinForms.Guna2Button()
@@ -49,9 +49,9 @@ Partial Class Borrowereditsinfo
         Label7 = New Label()
         txtemail = New Guna.UI2.WinForms.Guna2TextBox()
         lblpassword = New Label()
-        Label6 = New Label()
+        lblemp = New Label()
         txtemployeeno = New Guna.UI2.WinForms.Guna2TextBox()
-        Label5 = New Label()
+        lbllrn = New Label()
         txtlrn = New Guna.UI2.WinForms.Guna2TextBox()
         PictureBox1 = New PictureBox()
         Label2 = New Label()
@@ -76,42 +76,42 @@ Partial Class Borrowereditsinfo
         DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         DataGridView1.BackgroundColor = SystemColors.Control
         DataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal
-        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = Color.White
-        DataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DataGridViewCellStyle1.SelectionForeColor = Color.White
-        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
-        DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle5.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        DataGridViewCellStyle5.ForeColor = Color.White
+        DataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle5.SelectionForeColor = Color.White
+        DataGridViewCellStyle5.WrapMode = DataGridViewTriState.True
+        DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridView1.Cursor = Cursors.Hand
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = SystemColors.Window
-        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle2.ForeColor = SystemColors.Control
-        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
-        DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle6.BackColor = SystemColors.Window
+        DataGridViewCellStyle6.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle6.ForeColor = SystemColors.Control
+        DataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle6.WrapMode = DataGridViewTriState.False
+        DataGridView1.DefaultCellStyle = DataGridViewCellStyle6
         DataGridView1.Location = New Point(29, 254)
         DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
-        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle3.BackColor = SystemColors.Control
-        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
-        DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
-        DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle7.BackColor = SystemColors.Control
+        DataGridViewCellStyle7.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle7.ForeColor = SystemColors.WindowText
+        DataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle7.WrapMode = DataGridViewTriState.True
+        DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle7
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        DataGridViewCellStyle4.ForeColor = Color.Black
-        DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle8.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle8.ForeColor = Color.Black
+        DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle8
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         DataGridView1.Size = New Size(764, 182)
         DataGridView1.TabIndex = 143
@@ -121,7 +121,7 @@ Partial Class Borrowereditsinfo
         btnclear.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnclear.BorderRadius = 9
         btnclear.BorderThickness = 1
-        btnclear.CustomizableEdges = CustomizableEdges1
+        btnclear.CustomizableEdges = CustomizableEdges15
         btnclear.DisabledState.BorderColor = Color.DarkGray
         btnclear.DisabledState.CustomBorderColor = Color.DarkGray
         btnclear.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -131,7 +131,7 @@ Partial Class Borrowereditsinfo
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnclear.Location = New Point(161, 193)
         btnclear.Name = "btnclear"
-        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         btnclear.Size = New Size(90, 27)
         btnclear.TabIndex = 148
         btnclear.Text = "CLEAR"
@@ -141,7 +141,7 @@ Partial Class Borrowereditsinfo
         btnedit.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnedit.BorderRadius = 9
         btnedit.BorderThickness = 1
-        btnedit.CustomizableEdges = CustomizableEdges3
+        btnedit.CustomizableEdges = CustomizableEdges17
         btnedit.DisabledState.BorderColor = Color.DarkGray
         btnedit.DisabledState.CustomBorderColor = Color.DarkGray
         btnedit.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -151,7 +151,7 @@ Partial Class Borrowereditsinfo
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnedit.Location = New Point(29, 193)
         btnedit.Name = "btnedit"
-        btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         btnedit.Size = New Size(90, 27)
         btnedit.TabIndex = 147
         btnedit.Text = "EDIT"
@@ -182,7 +182,7 @@ Partial Class Borrowereditsinfo
         ' 
         txtemail.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtemail.BorderRadius = 14
-        txtemail.CustomizableEdges = CustomizableEdges5
+        txtemail.CustomizableEdges = CustomizableEdges19
         txtemail.DefaultText = ""
         txtemail.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtemail.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -197,7 +197,7 @@ Partial Class Borrowereditsinfo
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""
-        txtemail.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        txtemail.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         txtemail.Size = New Size(238, 28)
         txtemail.TabIndex = 144
         ' 
@@ -212,22 +212,22 @@ Partial Class Borrowereditsinfo
         lblpassword.TabIndex = 142
         lblpassword.Text = "Password strength"
         ' 
-        ' Label6
+        ' lblemp
         ' 
-        Label6.AutoSize = True
-        Label6.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
-        Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(29, 114)
-        Label6.Name = "Label6"
-        Label6.Size = New Size(112, 18)
-        Label6.TabIndex = 141
-        Label6.Text = "Employee No:"
+        lblemp.AutoSize = True
+        lblemp.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        lblemp.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblemp.Location = New Point(29, 114)
+        lblemp.Name = "lblemp"
+        lblemp.Size = New Size(112, 18)
+        lblemp.TabIndex = 141
+        lblemp.Text = "Employee No:"
         ' 
         ' txtemployeeno
         ' 
         txtemployeeno.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtemployeeno.BorderRadius = 14
-        txtemployeeno.CustomizableEdges = CustomizableEdges7
+        txtemployeeno.CustomizableEdges = CustomizableEdges21
         txtemployeeno.DefaultText = ""
         txtemployeeno.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtemployeeno.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -242,26 +242,26 @@ Partial Class Borrowereditsinfo
         txtemployeeno.Name = "txtemployeeno"
         txtemployeeno.PlaceholderText = ""
         txtemployeeno.SelectedText = ""
-        txtemployeeno.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        txtemployeeno.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         txtemployeeno.Size = New Size(238, 28)
         txtemployeeno.TabIndex = 140
         ' 
-        ' Label5
+        ' lbllrn
         ' 
-        Label5.AutoSize = True
-        Label5.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
-        Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(29, 52)
-        Label5.Name = "Label5"
-        Label5.Size = New Size(48, 18)
-        Label5.TabIndex = 139
-        Label5.Text = "LRN:"
+        lbllrn.AutoSize = True
+        lbllrn.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        lbllrn.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lbllrn.Location = New Point(29, 52)
+        lbllrn.Name = "lbllrn"
+        lbllrn.Size = New Size(48, 18)
+        lbllrn.TabIndex = 139
+        lbllrn.Text = "LRN:"
         ' 
         ' txtlrn
         ' 
         txtlrn.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtlrn.BorderRadius = 14
-        txtlrn.CustomizableEdges = CustomizableEdges9
+        txtlrn.CustomizableEdges = CustomizableEdges23
         txtlrn.DefaultText = ""
         txtlrn.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtlrn.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -276,7 +276,7 @@ Partial Class Borrowereditsinfo
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
         txtlrn.SelectedText = ""
-        txtlrn.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        txtlrn.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         txtlrn.Size = New Size(238, 28)
         txtlrn.TabIndex = 138
         ' 
@@ -317,7 +317,7 @@ Partial Class Borrowereditsinfo
         ' 
         txtpass.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtpass.BorderRadius = 14
-        txtpass.CustomizableEdges = CustomizableEdges11
+        txtpass.CustomizableEdges = CustomizableEdges25
         txtpass.DefaultText = ""
         txtpass.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtpass.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -332,7 +332,7 @@ Partial Class Borrowereditsinfo
         txtpass.Name = "txtpass"
         txtpass.PlaceholderText = ""
         txtpass.SelectedText = ""
-        txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         txtpass.Size = New Size(238, 28)
         txtpass.TabIndex = 134
         ' 
@@ -340,7 +340,7 @@ Partial Class Borrowereditsinfo
         ' 
         txtuser.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtuser.BorderRadius = 14
-        txtuser.CustomizableEdges = CustomizableEdges13
+        txtuser.CustomizableEdges = CustomizableEdges27
         txtuser.DefaultText = ""
         txtuser.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtuser.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -355,7 +355,7 @@ Partial Class Borrowereditsinfo
         txtuser.Name = "txtuser"
         txtuser.PlaceholderText = ""
         txtuser.SelectedText = ""
-        txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         txtuser.Size = New Size(238, 28)
         txtuser.TabIndex = 133
         ' 
@@ -371,9 +371,9 @@ Partial Class Borrowereditsinfo
         Controls.Add(txtemail)
         Controls.Add(DataGridView1)
         Controls.Add(lblpassword)
-        Controls.Add(Label6)
+        Controls.Add(lblemp)
         Controls.Add(txtemployeeno)
-        Controls.Add(Label5)
+        Controls.Add(lbllrn)
         Controls.Add(txtlrn)
         Controls.Add(PictureBox1)
         Controls.Add(Label2)
@@ -401,9 +401,9 @@ Partial Class Borrowereditsinfo
     Friend WithEvents Label7 As Label
     Friend WithEvents txtemail As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents lblpassword As Label
-    Friend WithEvents Label6 As Label
+    Friend WithEvents lblemp As Label
     Friend WithEvents txtemployeeno As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents Label5 As Label
+    Friend WithEvents lbllrn As Label
     Friend WithEvents txtlrn As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents Label2 As Label

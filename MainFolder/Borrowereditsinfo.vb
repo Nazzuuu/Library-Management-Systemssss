@@ -28,6 +28,8 @@ Public Class Borrowereditsinfo
         Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
         Dim userRole As String = GlobalVarsModule.CurrentUserRole
 
+        visibilitysus(borrowerType)
+
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = ""
         Dim showAllRecords As Boolean = True
@@ -119,6 +121,8 @@ Public Class Borrowereditsinfo
             lblpassword.Text = ""
             lblpassword.Visible = False
         End If
+
+        DataGridView1.ClearSelection()
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
@@ -141,14 +145,14 @@ Public Class Borrowereditsinfo
         If Not String.IsNullOrWhiteSpace(lrnValue) Then
 
             txtlrn.Text = lrnValue
-            txtlrn.Enabled = True
+            txtlrn.Enabled = False
             txtemployeeno.Text = ""
             txtemployeeno.Enabled = False
             originalIDValue = lrnValue
         ElseIf Not String.IsNullOrWhiteSpace(empNoValue) Then
 
             txtemployeeno.Text = empNoValue
-            txtemployeeno.Enabled = True
+            txtemployeeno.Enabled = False
             txtlrn.Text = ""
             txtlrn.Enabled = False
             originalIDValue = empNoValue
@@ -163,6 +167,8 @@ Public Class Borrowereditsinfo
 
 
         txtemail_TextChanged(txtemail, New EventArgs())
+
+
     End Sub
 
     Private Function GetOriginalEmail(ByVal ID As Integer) As String
@@ -192,29 +198,16 @@ Public Class Borrowereditsinfo
             Return
         End If
 
-
         Dim newUsername As String = txtuser.Text.Trim()
         Dim newPassword As String = txtpass.Text
         Dim newEmail As String = txtemail.Text.Trim()
-        Dim newIDValue As String
-        Dim IDColumn As String
 
-        If txtlrn.Enabled AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
-            newIDValue = txtlrn.Text.Trim()
-            IDColumn = "LRN"
-        ElseIf txtemployeeno.Enabled AndAlso Not String.IsNullOrWhiteSpace(txtemployeeno.Text) Then
-            newIDValue = txtemployeeno.Text.Trim()
-            IDColumn = "EmployeeNo"
-        Else
-            MessageBox.Show("The ID field (LRN or Employee No.) cannot be empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return
-        End If
+
 
         If String.IsNullOrWhiteSpace(newUsername) OrElse String.IsNullOrWhiteSpace(newPassword) Then
             MessageBox.Show("Username and Password are required.", "Required Fields", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
-
 
         If userexistsu(newUsername, selectedBorrowerID) Then
             MessageBox.Show("The username '" & newUsername & "' is already taken by another account.", "Duplicate Username", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -222,13 +215,7 @@ Public Class Borrowereditsinfo
         End If
 
 
-        If newIDValue <> originalIDValue And idexistsu(newIDValue, IDColumn, selectedBorrowerID) Then
-            MessageBox.Show("The entered " & IDColumn & " is already associated with another account.", "Duplicate ID", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Return
-        End If
-
-
-        Dim coms As String = $"UPDATE `borroweredit_tbl` SET `Username` = @User, `Password` = @Pass, `Email` = @Email, `LRN` = CASE WHEN @IDColumn = 'LRN' THEN @NewID ELSE NULL END, `EmployeeNo` = CASE WHEN @IDColumn = 'EmployeeNo' THEN @NewID ELSE NULL END WHERE `ID` = @SelectedID"
+        Dim coms As String = "UPDATE `borroweredit_tbl` SET `Username` = @User, `Password` = @Pass, `Email` = @Email WHERE `ID` = @SelectedID"
 
         Dim originalEmail As String = GetOriginalEmail(selectedBorrowerID)
 
@@ -236,12 +223,12 @@ Public Class Borrowereditsinfo
             Try
                 con.Open()
                 Using commandsu As New MySqlCommand(coms, con)
-                    commandsu.Parameters.AddWithValue("@NewID", newIDValue)
+
                     commandsu.Parameters.AddWithValue("@User", newUsername)
                     commandsu.Parameters.AddWithValue("@Pass", newPassword)
                     commandsu.Parameters.AddWithValue("@Email", newEmail)
                     commandsu.Parameters.AddWithValue("@SelectedID", selectedBorrowerID)
-                    commandsu.Parameters.AddWithValue("@IDColumn", IDColumn)
+
 
                     Dim rowsAffected As Integer = commandsu.ExecuteNonQuery()
 
@@ -249,9 +236,7 @@ Public Class Borrowereditsinfo
 
 
                         If originalEmail.Equals(MainForm.lblgmail.Text.Trim(), StringComparison.OrdinalIgnoreCase) Then
-
                             MainForm.lblgmail.Text = newEmail
-
                         End If
 
                         MessageBox.Show("Borrower account updated successfully.", "Update Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -427,5 +412,48 @@ Public Class Borrowereditsinfo
 
         MainForm.ProcessStripMenuItem.ShowDropDown()
         MainForm.ProcessStripMenuItem.ForeColor = Color.Gray
+    End Sub
+
+    Public Sub visibilitysus(borrowerType As String)
+
+        Select Case borrowerType.ToUpper()
+
+            Case "STUDENT"
+
+                lbllrn.Visible = True
+                txtlrn.Visible = True
+
+
+                lblemp.Visible = False
+                txtemployeeno.Visible = False
+
+                lbllrn.Location = New Point(29, 52)
+                txtlrn.Location = New Point(29, 74)
+
+
+            Case "TEACHER"
+
+
+
+                lbllrn.Visible = False
+                txtlrn.Visible = False
+
+
+                lblemp.Visible = True
+                txtemployeeno.Visible = True
+
+
+                lblemp.Location = New Point(29, 52)
+                txtemployeeno.Location = New Point(29, 74)
+
+            Case Else
+
+                lbllrn.Visible = True
+                txtlrn.Visible = True
+                lblemp.Visible = False
+                txtemployeeno.Visible = False
+
+        End Select
+
     End Sub
 End Class

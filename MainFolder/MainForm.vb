@@ -2,7 +2,7 @@
 Imports System.Drawing
 Imports MySql.Data.MySqlClient
 Public Class MainForm
-
+    Public Shared BorrowerEditsInfoForm As Borrowereditsinfo
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         Me.WindowState = FormWindowState.Maximized
