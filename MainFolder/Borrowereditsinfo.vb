@@ -10,6 +10,8 @@ Public Class Borrowereditsinfo
 
     Private Sub Borrowereditinfo_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refresheditt()
+        DataGridView1.Columns("LRN").Visible = False
+        DataGridView1.Columns("EmployeeNo").Visible = False
     End Sub
 
     Private Sub borroweredit_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
@@ -429,7 +431,7 @@ Public Class Borrowereditsinfo
 
                 lbllrn.Location = New Point(29, 52)
                 txtlrn.Location = New Point(29, 74)
-
+                Borrowing.lblnotesu.Text = "Input your LRN."
 
             Case "TEACHER"
 
@@ -445,7 +447,7 @@ Public Class Borrowereditsinfo
 
                 lblemp.Location = New Point(29, 52)
                 txtemployeeno.Location = New Point(29, 74)
-
+                Borrowing.lblnotesu.Text = "Input your Employee No."
             Case Else
 
                 lbllrn.Visible = True
