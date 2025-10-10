@@ -12,6 +12,7 @@ Public Class MainForm
         GlobalVarsModule.CurrentUserRole = "Guest"
 
         lblborrowcount()
+        btnexit.Visible = False
     End Sub
 
     Private Sub Form1_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
@@ -47,6 +48,7 @@ Public Class MainForm
 
         Dim newProcessLocation As New Point(25, 13)
 
+
         If Panel_Process IsNot Nothing Then
             Panel_Process.Location = newProcessLocation
         End If
@@ -61,7 +63,9 @@ Public Class MainForm
             Panel_Studentlogs.Visible = False
         End If
 
-
+        If btnexit IsNot Nothing Then
+            btnexit.Visible = True
+        End If
 
     End Sub
 
@@ -72,14 +76,6 @@ Public Class MainForm
         Dim dialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
         If dialogResult = DialogResult.Yes Then
-
-
-            If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso GlobalVarsModule.IsBorrowerTimedIn() Then
-                MessageBox.Show("You are currently Timed In. Please Time Out first before logging out.", "Time Out Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
-                Exit Sub
-            End If
-
 
             Dim previousRole As String = GlobalVarsModule.CurrentUserRole
 
@@ -743,4 +739,53 @@ Public Class MainForm
 
         lblform.Text = "TIME-IN/OUT RECORD FORM"
     End Sub
+
+
+
+    Private Sub btnexit_Click(sender As Object, e As EventArgs) Handles btnexit.Click
+
+        Dim isBorrowerTimedIn As Boolean = False
+        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+
+            isBorrowerTimedIn = GlobalVarsModule.IsBorrowerStillTimedIn(borrowerID)
+        End If
+
+        Using exitForm As New StayLogoutFormm()
+
+            exitForm.IsTimedIn = isBorrowerTimedIn
+
+            Dim dialogResult = exitForm.ShowDialog()
+
+            If dialogResult = DialogResult.Yes Then
+
+                If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+
+                    Me.Hide()
+                    BorrowerLoginForm.Show()
+                Else
+                    Return
+                End If
+
+            ElseIf dialogResult = DialogResult.Retry Then
+
+                If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+
+                    TimeInToolStripMenuItem_Click(sender, e)
+                End If
+                Exit Sub
+
+            ElseIf dialogResult = DialogResult.No Then
+
+                btnlogoutt_Click(sender, e)
+
+            ElseIf dialogResult = DialogResult.Cancel Then
+
+                Return
+            End If
+        End Using
+
+    End Sub
+
 End Class

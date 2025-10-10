@@ -24,41 +24,34 @@ Module GlobalVarsModule
         End If
     End Function
 
-    Public Function IsBorrowerTimedIn() As Boolean
 
-        If CurrentBorrowerID = "" Or CurrentUserRole <> "Borrower" Then
-            Return False
-        End If
 
+    Public Function IsBorrowerStillTimedIn(ByVal borrowerID As String) As Boolean
         Dim isTimedIn As Boolean = False
-        Dim query As String
-
-
-        If CurrentBorrowerType = "Student" Then
-            query = "SELECT 1 FROM `oras_tbl` WHERE `LRN` = @ID AND `TimeOut` IS NULL LIMIT 1"
-        ElseIf CurrentBorrowerType = "Teacher" Then
-            query = "SELECT 1 FROM `oras_tbl` WHERE `EmployeeNo` = @ID AND `TimeOut` IS NULL LIMIT 1"
-        Else
-            Return False
-        End If
 
         Using con As New MySqlConnection(connectionString)
             Try
                 con.Open()
-                Using cmd As New MySqlCommand(query, con)
-                    cmd.Parameters.AddWithValue("@ID", CurrentBorrowerID)
 
-                    If cmd.ExecuteScalar() IsNot Nothing Then
+                Dim checkCom As String = "SELECT COUNT(*) FROM `oras_tbl` " &
+                                     "WHERE (LRN = @ID OR EmployeeNo = @ID) " &
+                                     "AND DATE(TimeIn) = DATE(NOW()) " &
+                                     "AND TimeOut IS NULL"
+
+                Using checkCmd As New MySqlCommand(checkCom, con)
+                    checkCmd.Parameters.AddWithValue("@ID", borrowerID)
+                    Dim count As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
+
+                    If count > 0 Then
                         isTimedIn = True
                     End If
                 End Using
-            Catch ex As Exception
 
-                Return False
+            Catch ex As Exception
+                MessageBox.Show("Database error during Time-In check: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         End Using
 
         Return isTimedIn
     End Function
-
 End Module

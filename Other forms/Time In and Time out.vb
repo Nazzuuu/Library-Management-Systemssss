@@ -214,6 +214,7 @@ Public Class oras
     End Sub
 
 
+
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If selectedID = 0 Then
@@ -246,14 +247,26 @@ Public Class oras
                     con.Open()
                     cmd.ExecuteNonQuery()
 
+
+                    Dim stayLogoutFormInstance As StayLogoutFormm = Application.OpenForms.OfType(Of StayLogoutFormm)().FirstOrDefault()
+
+                    If stayLogoutFormInstance IsNot Nothing Then
+
+                        stayLogoutFormInstance.IsTimedIn = False
+
+                        stayLogoutFormInstance.btnstay.Visible = False
+                        stayLogoutFormInstance.lblmessage.Text = "Attendance must before borrowing."
+
+                    End If
+
+
+
                     MessageBox.Show("Time-out recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
                     btnview.Visible = True
 
-
                     ludeyngoras()
                     clearlahat()
-
 
                     Dim registeredForm As RegisteredBrwr = Application.OpenForms.OfType(Of RegisteredBrwr)().FirstOrDefault()
                     If registeredForm IsNot Nothing Then

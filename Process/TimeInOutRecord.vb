@@ -23,7 +23,7 @@ Public Class TimeInOutRecord
                         "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
                         "b.`Borrower`, " &
                         "CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
-                        "IF(b.`MiddleName` IS NULL OR b.`MiddleName` = '' OR UPPER(b.`MiddleName`) = 'N/A', '', CONCAT(' ', b.`MiddleName`))" & ' <--- INAYOS DITO: Tinanggal ang sobrang closing parenthesis sa dulo ng IF
+                        "IF(b.`MiddleName` IS NULL OR b.`MiddleName` = '' OR UPPER(b.`MiddleName`) = 'N/A', '', CONCAT(' ', b.`MiddleName`))" &
                         ") AS `FullName`, " &
                         "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
                         "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
@@ -50,7 +50,7 @@ Public Class TimeInOutRecord
                     If DataGridView1.Columns.Contains("Date") Then DataGridView1.Columns("Date").HeaderText = "DATE"
                     If DataGridView1.Columns.Contains("Borrower") Then DataGridView1.Columns("Borrower").HeaderText = "BORROWER TYPE"
                     If DataGridView1.Columns.Contains("FullName") Then DataGridView1.Columns("FullName").HeaderText = "FULL NAME"
-                    If DataGridView1.Columns.Contains("TimeIn") Then DataGridView1.Columns("TimeIn").HeaderText = "TIME IN"
+                    If DataGridView1.Columns.Contains("TimeIn") Then DataGridView1.Columns("TimeIn").HeaderText = "TIME IN" ' Headers are set here
                     If DataGridView1.Columns.Contains("TimeOut") Then
                         DataGridView1.Columns("TimeOut").HeaderText = "TIME OUT"
                         DataGridView1.Columns("TimeOut").Visible = True
@@ -67,7 +67,37 @@ Public Class TimeInOutRecord
             End Try
         End Using
 
-        DataGridView1.Enabled = False
+        DataGridView1.ReadOnly = True
+        DataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect
+    End Sub
+
+
+    Private Sub DataGridView1_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DataGridView1.CellFormatting
+
+        If e.RowIndex >= 0 AndAlso e.Value IsNot DBNull.Value Then
+
+            Dim colName As String = DataGridView1.Columns(e.ColumnIndex).Name
+
+
+            If colName = "TimeIn" OrElse colName = "TimeOut" Then
+
+                Try
+
+                    If TypeOf e.Value Is DateTime Then
+
+                        Dim dt As DateTime = CDate(e.Value)
+
+                        e.Value = dt.ToLocalTime().ToString("hh:mm tt")
+                        e.FormattingApplied = True
+                    End If
+
+                Catch
+
+                End Try
+
+            End If
+        End If
+
     End Sub
 
     Private Sub recrod_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
@@ -87,7 +117,8 @@ Public Class TimeInOutRecord
             DataGridView1.ClearSelection()
             DataGridView1.CurrentCell = Nothing
             DataGridView1.Enabled = True
-
+            DataGridView1.ReadOnly = True
+            DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
 
             lblnote.Visible = True
             lblmessage.Visible = True
@@ -112,7 +143,8 @@ Public Class TimeInOutRecord
             lblnote.Visible = False
             lblmessage.Visible = False
             lblmessage.Text = ""
-            DataGridView1.Enabled = False
+            DataGridView1.ReadOnly = True
+            DataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect
 
             Dim chkSelectAll As Control = Me.Controls.Find("chkSelectAll", True).FirstOrDefault()
             If chkSelectAll IsNot Nothing AndAlso TypeOf chkSelectAll Is CheckBox Then
@@ -134,6 +166,7 @@ Public Class TimeInOutRecord
             DataGridView1.CurrentCell = Nothing
             DataGridView1.Enabled = False
 
+
             lblnote.Visible = True
             lblmessage.Visible = True
             lblmessage.Text = "All records are selected for deletion. Click the Delete button to proceed."
@@ -154,8 +187,8 @@ Public Class TimeInOutRecord
             lblnote.Visible = False
             lblmessage.Visible = False
             lblmessage.Text = ""
-            DataGridView1.Enabled = False
-
+            DataGridView1.ReadOnly = True
+            DataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect
             Dim chkSelectRecord As Control = Me.Controls.Find("chkSelectRecord", True).FirstOrDefault()
             If chkSelectRecord IsNot Nothing AndAlso TypeOf chkSelectRecord Is CheckBox Then
                 DirectCast(chkSelectRecord, CheckBox).Enabled = True

@@ -278,7 +278,9 @@ Public Class RegisteredBrwr
         End If
 
         Dim conInsert As New MySqlConnection(connectionString)
-        Dim comInsert As String = "INSERT INTO `oras_tbl` (`LRN`, `EmployeeNo`, `TimeIn`) VALUES (@lrn, @emp, DATE_FORMAT(NOW(), '%Y-%m-%d %h:%i %p'))"
+
+
+        Dim comInsert As String = "INSERT INTO `oras_tbl` (`LRN`, `EmployeeNo`, `TimeIn`) VALUES (@lrn, @emp, NOW())"
 
         Try
             conInsert.Open()

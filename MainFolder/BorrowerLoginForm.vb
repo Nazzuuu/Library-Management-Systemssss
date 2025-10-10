@@ -70,6 +70,7 @@ Public Class BorrowerLoginForm
                 MainForm.SetupBorrowerUI(borrowerType)
 
 
+
                 If borrowerType = "Unknown" Then
                     MessageBox.Show("Login successful, but borrower type (LRN or Employee No) is missing in the record. Please check your account details.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 End If
@@ -103,14 +104,17 @@ Public Class BorrowerLoginForm
 
                 If MainForm.MaintenanceToolStripMenuItem IsNot Nothing Then
                     MainForm.MaintenanceToolStripMenuItem.Visible = False
+                    MainForm.btnlogoutt.Visible = False
                 End If
                 If MainForm.SettingsStripMenuItem IsNot Nothing Then
                     MainForm.SettingsStripMenuItem.Visible = False
+
                 End If
 
 
                 If MainForm.ProcessStripMenuItem IsNot Nothing Then
                     MainForm.ProcessStripMenuItem.Visible = True
+
 
                     For Each item As ToolStripItem In MainForm.ProcessStripMenuItem.DropDownItems
                         item.Visible = False
@@ -137,10 +141,6 @@ Public Class BorrowerLoginForm
                             End If
                         Next
                     End If
-                End If
-
-                If MainForm.btnlogoutt IsNot Nothing Then
-                    MainForm.btnlogoutt.Visible = True
                 End If
 
 

@@ -422,6 +422,7 @@ Public Class Borrowereditsinfo
 
             Case "STUDENT"
 
+
                 lbllrn.Visible = True
                 txtlrn.Visible = True
 
@@ -448,6 +449,7 @@ Public Class Borrowereditsinfo
                 lblemp.Location = New Point(29, 52)
                 txtemployeeno.Location = New Point(29, 74)
                 Borrowing.lblnotesu.Text = "Input your Employee No."
+
             Case Else
 
                 lbllrn.Visible = True
