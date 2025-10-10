@@ -188,7 +188,9 @@ Public Class TimeInOutRecord
             lblmessage.Visible = False
             lblmessage.Text = ""
             DataGridView1.ReadOnly = True
+            DataGridView1.Enabled = True
             DataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect
+
             Dim chkSelectRecord As Control = Me.Controls.Find("chkSelectRecord", True).FirstOrDefault()
             If chkSelectRecord IsNot Nothing AndAlso TypeOf chkSelectRecord Is CheckBox Then
                 DirectCast(chkSelectRecord, CheckBox).Enabled = True
