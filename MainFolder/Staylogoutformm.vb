@@ -16,7 +16,7 @@
 
             If IsTimedIn Then
 
-                lblmessage.Text = "Do you want to stay or logout?."
+                lblmessage.Text = "Proceed to Log Out, or Stay Inside?"
             Else
 
             End If
@@ -25,7 +25,7 @@
 
             btnstay.Visible = True
 
-            lblmessage.Text = "Do you want to stay or logout?."
+            lblmessage.Text = "Proceed to Log Out, or Stay Inside?"
 
         End If
 
@@ -70,7 +70,40 @@
 
     Private Sub btnlogout_Click(sender As Object, e As EventArgs) Handles btnlogout.Click
 
-        Me.Hide()
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso IsTimedIn Then
+
+            Dim recordIDToUpdate As Integer = GlobalVarsModule.GetLastTimeInRecordID(GlobalVarsModule.CurrentUserID)
+
+            If recordIDToUpdate > 0 Then
+
+                Dim isAutoTimedOut As Boolean = GlobalVarsModule.AutomaticTimeOut(recordIDToUpdate)
+
+                If isAutoTimedOut Then
+
+                    MessageBox.Show(
+                    "You have successfully logged out. Your Time-In session was automatically Timed Out by the system.",
+                    "Auto Time-Out Complete",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                )
+                Else
+
+                    MessageBox.Show(
+                    "Warning: Automatic Time-Out failed. Please notify the librarian about your active Time-In session.",
+                    "Auto Time-Out Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                )
+                End If
+            End If
+
+        End If
+
+
+
+        Me.DialogResult = DialogResult.OK
+        Me.Close()
         MainForm.Hide()
         BorrowerLoginForm.Show()
     End Sub

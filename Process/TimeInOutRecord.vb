@@ -68,7 +68,7 @@ Public Class TimeInOutRecord
         End Using
 
         DataGridView1.ReadOnly = True
-        DataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect
+
     End Sub
 
 
@@ -101,58 +101,13 @@ Public Class TimeInOutRecord
     End Sub
 
     Private Sub recrod_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
         DataGridView1.ClearSelection()
 
-        lblnote.Visible = False
-        lblmessage.Visible = False
     End Sub
 
 
-    Private Sub chkSelectRecord_CheckedChanged(sender As Object, e As EventArgs) Handles chkSelectRecord.CheckedChanged
 
-        If chkSelectRecord.Checked Then
-
-
-            DataGridView1.MultiSelect = True
-            DataGridView1.ClearSelection()
-            DataGridView1.CurrentCell = Nothing
-            DataGridView1.Enabled = True
-            DataGridView1.ReadOnly = True
-            DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-
-            lblnote.Visible = True
-            lblmessage.Visible = True
-            lblmessage.Text = "Select record and delete."
-
-
-            Dim chkSelectAll As Control = Me.Controls.Find("chkSelectAll", True).FirstOrDefault()
-            If chkSelectAll IsNot Nothing AndAlso TypeOf chkSelectAll Is CheckBox Then
-                DirectCast(chkSelectAll, CheckBox).Enabled = False
-                DirectCast(chkSelectAll, CheckBox).Checked = False
-            End If
-
-        Else
-
-
-
-            DataGridView1.MultiSelect = False
-            DataGridView1.ClearSelection()
-            DataGridView1.CurrentCell = Nothing
-            DataGridView1.Enabled = True
-
-            lblnote.Visible = False
-            lblmessage.Visible = False
-            lblmessage.Text = ""
-            DataGridView1.ReadOnly = True
-            DataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect
-
-            Dim chkSelectAll As Control = Me.Controls.Find("chkSelectAll", True).FirstOrDefault()
-            If chkSelectAll IsNot Nothing AndAlso TypeOf chkSelectAll Is CheckBox Then
-                DirectCast(chkSelectAll, CheckBox).Enabled = True
-            End If
-
-        End If
-    End Sub
 
 
     Private Sub chkSelectAll_CheckedChanged(sender As Object, e As EventArgs) Handles chkSelectAll.CheckedChanged
@@ -160,10 +115,9 @@ Public Class TimeInOutRecord
         If chkSelectAll.Checked Then
 
 
-
             DataGridView1.MultiSelect = True
             DataGridView1.SelectAll()
-            DataGridView1.CurrentCell = Nothing
+
             DataGridView1.Enabled = False
 
 
@@ -171,30 +125,19 @@ Public Class TimeInOutRecord
             lblmessage.Visible = True
             lblmessage.Text = "All records are selected for deletion. Click the Delete button to proceed."
 
-            Dim chkSelectRecord As Control = Me.Controls.Find("chkSelectRecord", True).FirstOrDefault()
-            If chkSelectRecord IsNot Nothing AndAlso TypeOf chkSelectRecord Is CheckBox Then
-                DirectCast(chkSelectRecord, CheckBox).Enabled = False
-                DirectCast(chkSelectRecord, CheckBox).Checked = False
-            End If
-
         Else
+
 
             DataGridView1.ClearSelection()
             DataGridView1.MultiSelect = False
             DataGridView1.CurrentCell = Nothing
 
 
-            lblnote.Visible = False
-            lblmessage.Visible = False
-            lblmessage.Text = ""
+            lblnote.Visible = True
+            lblmessage.Visible = True
+            lblmessage.Text = "Select and delete record."
             DataGridView1.ReadOnly = True
             DataGridView1.Enabled = True
-            DataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect
-
-            Dim chkSelectRecord As Control = Me.Controls.Find("chkSelectRecord", True).FirstOrDefault()
-            If chkSelectRecord IsNot Nothing AndAlso TypeOf chkSelectRecord Is CheckBox Then
-                DirectCast(chkSelectRecord, CheckBox).Enabled = True
-            End If
 
         End If
     End Sub
@@ -206,54 +149,105 @@ Public Class TimeInOutRecord
             Return
         End If
 
+
         Dim chkSelectRecordControl As Control = Me.Controls.Find("chkSelectRecord", True).FirstOrDefault()
         Dim chkSelectAllControl As Control = Me.Controls.Find("chkSelectAll", True).FirstOrDefault()
 
         Dim isSelectRecordChecked As Boolean = If(chkSelectRecordControl IsNot Nothing AndAlso TypeOf chkSelectRecordControl Is CheckBox, DirectCast(chkSelectRecordControl, CheckBox).Checked, False)
         Dim isSelectAllChecked As Boolean = If(chkSelectAllControl IsNot Nothing AndAlso TypeOf chkSelectAllControl Is CheckBox, DirectCast(chkSelectAllControl, CheckBox).Checked, False)
 
+        Dim recordsToValidate As New List(Of DataGridViewRow)
         Dim recordIDsToDelete As New List(Of Integer)
         Dim selectionMode As String = ""
 
+
         If isSelectAllChecked Then
             selectionMode = "All"
-            If MessageBox.Show("Are you sure you want to permanently delete ALL Time-In/Out records? This action cannot be undone.", "Confirm Delete All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.No Then
-                Return
-            End If
-
-            For Each row As DataGridViewRow In DataGridView1.Rows
-                Dim idValue As Object = row.Cells("ID").Value
-                Dim idInt As Integer
-                If idValue IsNot DBNull.Value AndAlso Integer.TryParse(idValue.ToString(), idInt) Then
-                    recordIDsToDelete.Add(idInt)
-                End If
-            Next
-
+            recordsToValidate.AddRange(DataGridView1.Rows.Cast(Of DataGridViewRow)())
         ElseIf isSelectRecordChecked OrElse DataGridView1.SelectedRows.Count > 0 Then
-
-            For Each row As DataGridViewRow In DataGridView1.SelectedRows
-                Dim idValue As Object = row.Cells("ID").Value
-                Dim idInt As Integer
-                If idValue IsNot DBNull.Value AndAlso Integer.TryParse(idValue.ToString(), idInt) Then
-                    recordIDsToDelete.Add(idInt)
-                End If
-            Next
-
             selectionMode = If(isSelectRecordChecked, "Selected", "Single")
-
+            For Each row As DataGridViewRow In DataGridView1.SelectedRows
+                recordsToValidate.Add(row)
+            Next
         End If
 
-        If recordIDsToDelete.Count = 0 Then
+        If recordsToValidate.Count = 0 Then
             MessageBox.Show("No records were selected for deletion. Please select a row.", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
-        If selectionMode <> "All" Then
+        Dim incompleteRecords As New List(Of String)
+
+
+        For Each row As DataGridViewRow In recordsToValidate
+
+            Dim timeOutValue As Object = row.Cells("TimeOut").Value
+
+            If timeOutValue Is DBNull.Value OrElse (TypeOf timeOutValue Is String AndAlso String.IsNullOrWhiteSpace(timeOutValue.ToString())) Then
+
+
+                Dim fullName As String = row.Cells("FullName").Value.ToString()
+                incompleteRecords.Add(fullName)
+
+            Else
+
+                Dim idValue As Object = row.Cells("ID").Value
+                Dim idInt As Integer
+                If idValue IsNot DBNull.Value AndAlso Integer.TryParse(idValue.ToString(), idInt) Then
+                    recordIDsToDelete.Add(idInt)
+                End If
+            End If
+        Next
+
+
+        If incompleteRecords.Count > 0 Then
+            Dim warningMsg As String
+
+            If recordsToValidate.Count = 1 And incompleteRecords.Count = 1 Then
+
+                Dim borrowerName As String = incompleteRecords.First()
+                warningMsg = $"The record for borrower: {borrowerName} cannot be deleted because they have not yet Timed Out."
+
+                MessageBox.Show(warningMsg, "Deletion Warning: Incomplete Record", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+
+            Else
+
+                Dim namesList As String = String.Join(Environment.NewLine, incompleteRecords.ToArray())
+                warningMsg = $"The following borrower(s) cannot be deleted because they have not yet Timed Out:{Environment.NewLine}{Environment.NewLine}{namesList}{Environment.NewLine}{Environment.NewLine}Records that have Timed Out will proceed to deletion."
+
+                MessageBox.Show(warningMsg, "Deletion Warning: Incomplete Record", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            End If
+        End If
+
+
+        If recordIDsToDelete.Count = 0 Then
+
+            If incompleteRecords.Count = 0 Then
+                MessageBox.Show("No valid records were selected for deletion.", "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            End If
+            Return
+        End If
+
+
+        If selectionMode = "All" And recordIDsToDelete.Count < recordsToValidate.Count Then
+
+            If MessageBox.Show($"Are you sure you want to permanently delete the {recordIDsToDelete.Count} valid Time-In/Out records? Some records were skipped due to incomplete Time Out data. This action cannot be undone.", "Confirm Partial Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.No Then
+                Return
+            End If
+        ElseIf selectionMode = "All" Then
+
+            If MessageBox.Show("Are you sure you want to permanently delete ALL Time-In/Out records? This action cannot be undone.", "Confirm Delete All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.No Then
+                Return
+            End If
+        Else
+
             Dim deleteMsg As String = If(recordIDsToDelete.Count = 1, "Are you sure you want to delete the selected record?", $"Are you sure you want to delete these {recordIDsToDelete.Count} selected records?")
             If MessageBox.Show(deleteMsg, "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.No Then
                 Return
             End If
         End If
+
 
         Dim successCount As Integer = 0
         Dim idList As String = String.Join(",", recordIDsToDelete)
@@ -272,13 +266,13 @@ Public Class TimeInOutRecord
             End Using
         End Using
 
+
         If successCount > 0 Then
             MessageBox.Show($"{successCount} record(s) deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             chkSelectAll.Checked = False
-            chkSelectRecord.Checked = False
             refreshtimeoutrecrod()
         Else
-            MessageBox.Show("Deletion failed or no records were found.", "Deletion Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Deletion failed or no valid records were deleted.", "Deletion Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
 
     End Sub

@@ -41,7 +41,6 @@ Partial Class TimeInOutRecord
         lblnote = New Label()
         lblmessage = New Label()
         chkSelectAll = New CheckBox()
-        chkSelectRecord = New CheckBox()
         Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         Label13 = New Label()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
@@ -73,7 +72,6 @@ Partial Class TimeInOutRecord
         Guna2GroupBox1.Controls.Add(lblnote)
         Guna2GroupBox1.Controls.Add(lblmessage)
         Guna2GroupBox1.Controls.Add(chkSelectAll)
-        Guna2GroupBox1.Controls.Add(chkSelectRecord)
         Guna2GroupBox1.Controls.Add(Guna2Panel1)
         Guna2GroupBox1.Controls.Add(Guna2GradientPanel1)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
@@ -117,7 +115,6 @@ Partial Class TimeInOutRecord
         lblnote.Size = New Size(42, 16)
         lblnote.TabIndex = 106
         lblnote.Text = "Note:"
-        lblnote.Visible = False
         ' 
         ' lblmessage
         ' 
@@ -126,10 +123,9 @@ Partial Class TimeInOutRecord
         lblmessage.ForeColor = Color.Red
         lblmessage.Location = New Point(355, 28)
         lblmessage.Name = "lblmessage"
-        lblmessage.Size = New Size(15, 16)
+        lblmessage.Size = New Size(171, 16)
         lblmessage.TabIndex = 105
-        lblmessage.Text = ".."
-        lblmessage.Visible = False
+        lblmessage.Text = "Select and delete record."
         ' 
         ' chkSelectAll
         ' 
@@ -142,18 +138,6 @@ Partial Class TimeInOutRecord
         chkSelectAll.TabIndex = 95
         chkSelectAll.Text = "Select all and delete"
         chkSelectAll.UseVisualStyleBackColor = True
-        ' 
-        ' chkSelectRecord
-        ' 
-        chkSelectRecord.AutoSize = True
-        chkSelectRecord.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        chkSelectRecord.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        chkSelectRecord.Location = New Point(837, 27)
-        chkSelectRecord.Name = "chkSelectRecord"
-        chkSelectRecord.Size = New Size(176, 20)
-        chkSelectRecord.TabIndex = 94
-        chkSelectRecord.Text = "Select record to delete"
-        chkSelectRecord.UseVisualStyleBackColor = True
         ' 
         ' Guna2Panel1
         ' 
@@ -275,7 +259,6 @@ Partial Class TimeInOutRecord
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents chkSelectAll As CheckBox
-    Friend WithEvents chkSelectRecord As CheckBox
     Friend WithEvents lblnote As Label
     Friend WithEvents lblmessage As Label
     Friend WithEvents btndelete As Guna.UI2.WinForms.Guna2Button

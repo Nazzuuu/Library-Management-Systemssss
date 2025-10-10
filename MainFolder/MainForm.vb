@@ -734,7 +734,9 @@ Public Class MainForm
 
             .Show()
 
-
+            TimeInOutRecord.DataGridView1.ClearSelection()
+            TimeInOutRecord.DataGridView1.CurrentCell = Nothing
+            TimeInOutRecord.chkSelectAll.Checked = False
         End With
 
         lblform.Text = "TIME-IN/OUT RECORD FORM"
