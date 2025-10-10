@@ -273,10 +273,10 @@ Public Class PrintReceiptForm
 
         Dim printingUser As String = $"{GlobalRole} ({GlobalUsername})"
 
-        ' Binago ang code para mag-adjust ang vertical spacing sa header.
+
         Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
             g.DrawString("Monlimar Development Academy", fontHeader, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
-            ' Dinagdagan ang yPos increment (e.g., mula lineHeight to lineHeight + 5)
+
             yPos += lineHeight + 5
             g.DrawString("Library Management System - Borrowing Receipt", fontBody, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
             yPos += lineHeight + 10
@@ -299,15 +299,15 @@ Public Class PrintReceiptForm
         g.DrawString("Book Details (Total: " & bookDetailsList.Rows.Count.ToString() & "):", fontHeader, Brushes.Black, margin, yPos)
         yPos += lineHeight + 5
 
-        ' I-adjust ang col2XPos para mas kumaliwa ang ISBN/Barcode.
+
         Dim col1Width As Integer = 160
         Dim col2XPos As Integer = margin + col1Width + 20
 
         g.DrawString("Title", fontBodyBold, Brushes.Black, margin, yPos)
         g.DrawString("ISBN/Barcode", fontBodyBold, Brushes.Black, col2XPos, yPos)
 
-        ' DINAGDAGAN ITO: Inadjust ang yPos para dumami ang espasyo pagkatapos ng "Title" at "ISBN/Barcode" headers.
-        yPos += 15 ' In-increase mula 10 naging 15 para hindi dikit sa details sa baba. 
+
+        yPos += 15
 
         For Each bookRow As DataRow In bookDetailsList.Rows
             Dim bookTitle As String = bookRow("BookTitle").ToString()
@@ -325,9 +325,7 @@ Public Class PrintReceiptForm
 
             g.DrawString(codeToPrint, fontBody, Brushes.Black, col2XPos, yPos)
 
-
-            ' Inayos ang yPos calculation para hindi masyadong dikit.
-            yPos += Math.Max(lineHeight, titleHeight) + 5 ' May +5 pixels na dagdag spacing
+            yPos += Math.Max(lineHeight, titleHeight) + 5
 
         Next
 
