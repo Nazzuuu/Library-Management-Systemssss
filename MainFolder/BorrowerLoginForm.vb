@@ -76,6 +76,12 @@ Public Class BorrowerLoginForm
                 End If
 
                 MessageBox.Show("Borrower successfully logged in. Welcome, " & Username & "!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
+                If orasForm IsNot Nothing Then
+                    orasForm.ludeyngoras()
+                End If
+
                 MainForm.PrintReceiptToolStripMenuItem.Visible = False
                 MainForm.SetupBorrowerUI(borrowerType)
                 MainForm.Show()

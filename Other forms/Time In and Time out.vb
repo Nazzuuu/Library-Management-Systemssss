@@ -86,40 +86,41 @@ Public Class oras
         Timer1.Stop()
     End Sub
 
+
     Public Sub ludeyngoras()
 
         DataGridView1.DataSource = Nothing
         DataGridView1.Columns.Clear()
 
-
         Dim currentUserRole As String = GlobalVarsModule.CurrentUserRole
         Dim currentBorrowerID As String = GlobalVarsModule.CurrentBorrowerID
 
-
         Dim com As String = "SELECT " &
-                            "o.`ID`, " &
-                            "b.`Borrower`, " &
-                            "o.`LRN`, " &
-                            "o.`EmployeeNo`, " &
-                            "b.`FirstName`, " &
-                            "b.`LastName`, " &
-                            "b.`MiddleName`, " &
-                            "b.`ContactNumber`, " &
-                            "b.`Department`, " &
-                            "b.`Grade`, " &
-                            "b.`Section`, " &
-                            "b.`Strand`, " &
-                            "o.`TimeIn`, " &
-                            "o.`TimeOut` " &
-                            "FROM `oras_tbl` o " &
-                            "LEFT JOIN `borrower_tbl` b " &
-                            "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
-                            "WHERE o.`TimeOut` IS NULL "
+                        "o.`ID`, " &
+                        "b.`Borrower`, " &
+                        "o.`LRN`, " &
+                        "o.`EmployeeNo`, " &
+                        "b.`FirstName`, " &
+                        "b.`LastName`, " &
+                        "b.`MiddleName`, " &
+                        "b.`ContactNumber`, " &
+                        "b.`Department`, " &
+                        "b.`Grade`, " &
+                        "b.`Section`, " &
+                        "b.`Strand`, " &
+                        "o.`TimeIn`, " &
+                        "o.`TimeOut` " &
+                        "FROM `oras_tbl` o " &
+                        "LEFT JOIN `borrower_tbl` b " &
+                        "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
+                        "WHERE o.`TimeOut` IS NULL "
+
 
         If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
 
             com &= " AND (o.`LRN` = @ID OR o.`EmployeeNo` = @ID)"
         End If
+
 
         com &= " ORDER BY o.`TimeIn` DESC"
 
@@ -128,10 +129,11 @@ Public Class oras
                 con.Open()
                 Using cmd As New MySqlCommand(com, con)
 
-
                     If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
+
                         cmd.Parameters.AddWithValue("@ID", currentBorrowerID)
                     End If
+
 
                     Dim adap As New MySqlDataAdapter(cmd)
                     Dim ds As New DataSet
