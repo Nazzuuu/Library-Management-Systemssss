@@ -11,11 +11,16 @@ Imports System.Data
 Public Class Book
 
 
+    Private Structure BarcodeInfo
+        Public Barcode As String
+        Public Title As String
+    End Structure
+
     Private Const connectionString As String = "Server=localhost;Database=laybsis_dbs;Uid=root;Pwd=;"
 
-
     Private isbarcode As Boolean = False
-    Private BarcodeList As New List(Of String)
+
+    Private BarcodeList As New List(Of BarcodeInfo)
     Private BarcodeIndex As Integer = 0
 
     Private Const BARCODE_PIXEL_WIDTH As Integer = 300
@@ -159,6 +164,251 @@ Public Class Book
     End Sub
 
 
+    Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
+
+        BarcodeList.Clear()
+        BarcodeIndex = 0
+
+        For Each row As DataGridViewRow In DataGridView1.Rows
+            If Not row.IsNewRow Then
+                Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
+
+                Dim bookTitleValue As String = If(IsDBNull(row.Cells("BookTitle").Value), "(No Title)", CStr(row.Cells("BookTitle").Value))
+
+                If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
+
+                    BarcodeList.Add(New BarcodeInfo With {.Barcode = barcodeValue, .Title = bookTitleValue})
+                End If
+            End If
+        Next
+
+        If BarcodeList.Count = 0 Then
+            MessageBox.Show("No barcode's found.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+
+        Dim defaultPrinterName As String = printDoc.PrinterSettings.PrinterName
+
+
+        If String.IsNullOrEmpty(defaultPrinterName) OrElse defaultPrinterName.ToLower().Contains("pdf") OrElse defaultPrinterName.ToLower().Contains("xps") OrElse defaultPrinterName.ToLower().Contains("onenote") Then
+
+            MessageBox.Show("No valid physical printer found. Please select your A4/Label printer.", "Printer Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            Try
+                Using pdlg As New PrintDialog With {.Document = printDoc}
+                    printDoc.DefaultPageSettings.Landscape = False
+                    If pdlg.ShowDialog() = DialogResult.OK Then
+                        printDoc.PrinterSettings = pdlg.PrinterSettings
+                        printDoc.Print()
+                        MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    End If
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error selecting or starting print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Finally
+                BarcodeIndex = 0
+            End Try
+
+            Exit Sub
+        End If
+
+
+        Try
+
+            printDoc.DefaultPageSettings.Landscape = False
+            printDoc.Print()
+
+            MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{defaultPrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        Catch ex As System.Drawing.Printing.InvalidPrinterException
+
+            MessageBox.Show($"Warning: The default printer ('{defaultPrinterName}') is not connected or ready. Please check the printer connection.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        Catch ex As Exception
+            MessageBox.Show("An unexpected error occurred during the print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            BarcodeIndex = 0
+        End Try
+
+    End Sub
+
+
+    Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
+
+        Dim g As Graphics = e.Graphics
+
+        Dim TitleFont As New Font("Arial", 8, FontStyle.Bold)
+        Dim TitleBrush As New SolidBrush(Color.Black)
+        Dim TitleLineHeight As Integer = CInt(TitleFont.GetHeight(g)) + 2
+
+
+        Dim TOTAL_ITEM_HEIGHT As Integer = BARCODE_HEIGHT_HM + TitleLineHeight
+        Dim TOTAL_ROW_WIDTH As Integer = (BARCODE_WIDTH_HM * 2) + HORIZONTAL_SPACING_HM
+        Dim CENTER_PADDING_X As Integer = CInt((e.MarginBounds.Width - TOTAL_ROW_WIDTH) / 2)
+
+
+        Dim x_start As Integer = e.MarginBounds.Left + CENTER_PADDING_X
+        Dim y_start As Integer = e.MarginBounds.Top
+
+        Dim x_pos As Integer = x_start
+        Dim y_pos As Integer = y_start
+
+        Dim barcodesPrintedOnPage As Integer = 0
+
+
+        While BarcodeIndex < BarcodeList.Count
+
+
+            Dim currentBarcodeInfo As BarcodeInfo = BarcodeList(BarcodeIndex)
+            Dim barcodeText As String = currentBarcodeInfo.Barcode
+            Dim bookTitle As String = currentBarcodeInfo.Title
+
+
+            If y_pos + TOTAL_ITEM_HEIGHT > e.MarginBounds.Bottom Then
+
+
+
+                If x_pos = x_start Then
+
+
+                    x_pos = x_start + BARCODE_WIDTH_HM + HORIZONTAL_SPACING_HM
+                    y_pos = y_start
+
+                    If y_pos + TOTAL_ITEM_HEIGHT > e.MarginBounds.Bottom Then
+
+                        e.HasMorePages = True
+                        Exit Sub
+                    End If
+
+                Else
+
+                    e.HasMorePages = True
+                    Exit Sub
+                End If
+            End If
+
+            Using barcodeImage As Image = GenerateBarcodeImage(barcodeText, BARCODE_PIXEL_WIDTH, BARCODE_PIXEL_HEIGHT)
+
+                If barcodeImage Is Nothing Then
+                    BarcodeIndex += 1
+                    Continue While
+                End If
+
+
+                g.DrawString(bookTitle, TitleFont, TitleBrush, x_pos, y_pos)
+                g.DrawImage(barcodeImage, x_pos, y_pos + TitleLineHeight, BARCODE_WIDTH_HM, BARCODE_HEIGHT_HM)
+
+            End Using
+
+
+            BarcodeIndex += 1
+            barcodesPrintedOnPage += 1
+
+
+            y_pos += TOTAL_ITEM_HEIGHT + VERTICAL_SPACING_HM
+
+
+
+            If barcodesPrintedOnPage Mod MAX_ROWS_PER_COLUMN = 0 AndAlso x_pos = x_start Then
+
+                x_pos = x_start + BARCODE_WIDTH_HM + HORIZONTAL_SPACING_HM
+                y_pos = y_start
+
+            End If
+
+
+        End While
+
+
+        TitleFont.Dispose()
+        TitleBrush.Dispose()
+
+
+        If BarcodeIndex < BarcodeList.Count Then
+            e.HasMorePages = True
+        Else
+            e.HasMorePages = False
+            BarcodeIndex = 0
+        End If
+
+    End Sub
+
+    Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal width As Integer, ByVal height As Integer) As Image
+        Try
+
+
+            Dim renderWidth As Integer = BARCODE_PIXEL_WIDTH
+            Dim renderHeight As Integer = 80
+            Dim totalLabelHeight As Integer = BARCODE_PIXEL_HEIGHT
+
+            Dim options As New ZXing.Common.EncodingOptions With {
+            .Width = renderWidth,
+            .Height = renderHeight,
+            .Margin = 10,
+            .PureBarcode = True
+        }
+
+            Dim writer As New BarcodeWriter(Of Bitmap) With {
+            .Format = BarcodeFormat.CODE_128,
+            .Options = options,
+            .Renderer = New BitmapRenderer()
+        }
+
+            Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
+
+
+            Dim printImage As New Bitmap(renderWidth, totalLabelHeight)
+            Using g As Graphics = Graphics.FromImage(printImage)
+                g.Clear(Color.White)
+
+
+                g.DrawImage(barcodeBitmap, 0, 0, renderWidth, renderHeight)
+
+
+                Using font As New Font("Arial", 8)
+                    Using sf As New StringFormat With {
+                     .Alignment = StringAlignment.Center
+                 }
+
+                        g.DrawString(barcodeText, font, Brushes.Black, New RectangleF(0, renderHeight, renderWidth, totalLabelHeight - renderHeight), sf)
+                    End Using
+                End Using
+
+
+                Using borderPen As New Pen(Color.Black, 1)
+
+                    g.DrawRectangle(borderPen, 0, 0, renderWidth - 1, totalLabelHeight - 1)
+                End Using
+
+
+            End Using
+
+            barcodeBitmap.Dispose()
+
+
+            If width = renderWidth AndAlso height = totalLabelHeight Then
+
+                Return printImage
+            Else
+
+                Dim finalDisplayImage As New Bitmap(printImage, New Size(width, height))
+                printImage.Dispose()
+                Return finalDisplayImage
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+            Dim bmp As New Bitmap(width, height)
+            Using g As Graphics = Graphics.FromImage(bmp)
+                g.Clear(Color.Red)
+                Using font As New Font("Arial", 10)
+                    g.DrawString("ERROR: " & barcodeText, font, Brushes.White, 10, 10)
+                End Using
+            End Using
+            Return bmp
+        End Try
+    End Function
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(connectionString)
@@ -520,82 +770,8 @@ Public Class Book
         DataGridView1.ClearSelection()
     End Sub
 
-    Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal width As Integer, ByVal height As Integer) As Image
-        Try
 
 
-            Dim renderWidth As Integer = BARCODE_PIXEL_WIDTH
-            Dim renderHeight As Integer = 80
-            Dim totalLabelHeight As Integer = BARCODE_PIXEL_HEIGHT
-
-            Dim options As New ZXing.Common.EncodingOptions With {
-            .Width = renderWidth,
-            .Height = renderHeight,
-            .Margin = 10,
-            .PureBarcode = True
-        }
-
-            Dim writer As New BarcodeWriter(Of Bitmap) With {
-            .Format = BarcodeFormat.CODE_128,
-            .Options = options,
-            .Renderer = New BitmapRenderer()
-        }
-
-            Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
-
-
-            Dim printImage As New Bitmap(renderWidth, totalLabelHeight)
-            Using g As Graphics = Graphics.FromImage(printImage)
-                g.Clear(Color.White)
-
-
-                g.DrawImage(barcodeBitmap, 0, 0, renderWidth, renderHeight)
-
-
-                Using font As New Font("Arial", 8)
-                    Using sf As New StringFormat With {
-                    .Alignment = StringAlignment.Center
-                }
-
-                        g.DrawString(barcodeText, font, Brushes.Black, New RectangleF(0, renderHeight, renderWidth, totalLabelHeight - renderHeight), sf)
-                    End Using
-                End Using
-
-
-                Using borderPen As New Pen(Color.Black, 1)
-
-                    g.DrawRectangle(borderPen, 0, 0, renderWidth - 1, totalLabelHeight - 1)
-                End Using
-
-
-            End Using
-
-            barcodeBitmap.Dispose()
-
-
-            If width = renderWidth AndAlso height = totalLabelHeight Then
-
-                Return printImage
-            Else
-
-                Dim finalDisplayImage As New Bitmap(printImage, New Size(width, height))
-                printImage.Dispose()
-                Return finalDisplayImage
-            End If
-
-        Catch ex As Exception
-            MessageBox.Show("Error: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-
-            Dim bmp As New Bitmap(width, height)
-            Using g As Graphics = Graphics.FromImage(bmp)
-                g.Clear(Color.Red)
-                Using font As New Font("Arial", 10)
-                    g.DrawString("ERROR: " & barcodeText, font, Brushes.White, 10, 10)
-                End Using
-            End Using
-            Return bmp
-        End Try
-    End Function
 
     Function jinireyt() As String
         Dim random As New Random()
@@ -771,128 +947,6 @@ Public Class Book
         Else
             e.Cancel = False
         End If
-    End Sub
-
-
-    Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
-
-        BarcodeList.Clear()
-        BarcodeIndex = 0
-
-        For Each row As DataGridViewRow In DataGridView1.Rows
-            If Not row.IsNewRow Then
-                Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
-
-                If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
-                    BarcodeList.Add(barcodeValue)
-                End If
-            End If
-        Next
-
-        If BarcodeList.Count = 0 Then
-            MessageBox.Show("No barcode's found.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Exit Sub
-        End If
-
-        Try
-
-            Dim pdlg As New PrintDialog With {.Document = printDoc}
-
-
-            printDoc.DefaultPageSettings.Landscape = False
-
-            If pdlg.ShowDialog() = DialogResult.OK Then
-                printDoc.PrinterSettings = pdlg.PrinterSettings
-                printDoc.Print()
-            End If
-
-        Catch ex As Exception
-            MessageBox.Show("Error starting print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            BarcodeIndex = 0
-        End Try
-
-    End Sub
-
-
-    Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
-
-        Dim g As Graphics = e.Graphics
-
-
-        Dim x_start As Integer = e.MarginBounds.Left
-        Dim y_start As Integer = e.MarginBounds.Top
-
-        Dim x_pos As Integer = x_start
-        Dim y_pos As Integer = y_start
-
-        Dim barcodesPrintedOnPage As Integer = 0
-
-
-        While BarcodeIndex < BarcodeList.Count
-
-            Dim barcodeText As String = BarcodeList(BarcodeIndex)
-
-
-            If y_pos + BARCODE_HEIGHT_HM > e.MarginBounds.Bottom Then
-                '
-
-                If x_pos = x_start Then
-
-                    x_pos = x_start + BARCODE_WIDTH_HM + HORIZONTAL_SPACING_HM
-                    y_pos = y_start
-
-
-                    If y_pos + BARCODE_HEIGHT_HM > e.MarginBounds.Bottom Then
-
-                        e.HasMorePages = True
-                        Exit Sub
-                    End If
-
-                Else
-
-                    e.HasMorePages = True
-                    Exit Sub
-                End If
-            End If
-
-            Using barcodeImage As Image = GenerateBarcodeImage(barcodeText, BARCODE_PIXEL_WIDTH, BARCODE_PIXEL_HEIGHT)
-
-                If barcodeImage Is Nothing Then
-                    BarcodeIndex += 1
-                    Continue While
-                End If
-
-
-                g.DrawImage(barcodeImage, x_pos, y_pos, BARCODE_WIDTH_HM, BARCODE_HEIGHT_HM)
-
-            End Using
-
-
-            BarcodeIndex += 1
-            barcodesPrintedOnPage += 1
-
-
-            y_pos += BARCODE_HEIGHT_HM + VERTICAL_SPACING_HM
-
-
-            If barcodesPrintedOnPage Mod MAX_ROWS_PER_COLUMN = 0 AndAlso x_pos = x_start Then
-
-                x_pos = x_start + BARCODE_WIDTH_HM + HORIZONTAL_SPACING_HM
-                y_pos = y_start
-            End If
-
-
-        End While
-
-
-        If BarcodeIndex < BarcodeList.Count Then
-            e.HasMorePages = True
-        Else
-            e.HasMorePages = False
-            BarcodeIndex = 0
-        End If
-
     End Sub
 
 

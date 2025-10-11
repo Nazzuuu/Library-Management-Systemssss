@@ -591,6 +591,7 @@ Partial Class Superadmin
         Controls.Add(btnclear)
         Controls.Add(btnedit)
         Controls.Add(btnadd)
+        FormBorderStyle = FormBorderStyle.FixedDialog
         KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False

@@ -29,6 +29,10 @@ Partial Class Staylogoutformm
         btnlogout = New Guna.UI2.WinForms.Guna2Button()
         btnstay = New Guna.UI2.WinForms.Guna2Button()
         lblmessage = New Label()
+        Panel1 = New Panel()
+        Panel2 = New Panel()
+        Panel1.SuspendLayout()
+        Panel2.SuspendLayout()
         SuspendLayout()
         ' 
         ' btnlogout
@@ -45,7 +49,7 @@ Partial Class Staylogoutformm
         btnlogout.FillColor = Color.Empty
         btnlogout.Font = New Font("Segoe UI", 11.25F)
         btnlogout.ForeColor = Color.Red
-        btnlogout.Location = New Point(271, 98)
+        btnlogout.Location = New Point(283, 6)
         btnlogout.Name = "btnlogout"
         btnlogout.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnlogout.Size = New Size(98, 27)
@@ -66,7 +70,7 @@ Partial Class Staylogoutformm
         btnstay.FillColor = Color.Empty
         btnstay.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         btnstay.ForeColor = Color.Green
-        btnstay.Location = New Point(158, 98)
+        btnstay.Location = New Point(169, 6)
         btnstay.Name = "btnstay"
         btnstay.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnstay.Size = New Size(90, 27)
@@ -76,31 +80,55 @@ Partial Class Staylogoutformm
         ' lblmessage
         ' 
         lblmessage.AutoSize = True
-        lblmessage.Location = New Point(33, 49)
+        lblmessage.Location = New Point(41, 40)
         lblmessage.Name = "lblmessage"
         lblmessage.Size = New Size(41, 15)
         lblmessage.TabIndex = 49
         lblmessage.Text = "Label1"
+        ' 
+        ' Panel1
+        ' 
+        Panel1.Controls.Add(Panel2)
+        Panel1.Controls.Add(lblmessage)
+        Panel1.Dock = DockStyle.Fill
+        Panel1.Location = New Point(0, 0)
+        Panel1.Name = "Panel1"
+        Panel1.Size = New Size(403, 146)
+        Panel1.TabIndex = 52
+        ' 
+        ' Panel2
+        ' 
+        Panel2.Controls.Add(btnstay)
+        Panel2.Controls.Add(btnlogout)
+        Panel2.Dock = DockStyle.Bottom
+        Panel2.Location = New Point(0, 105)
+        Panel2.Name = "Panel2"
+        Panel2.Size = New Size(403, 41)
+        Panel2.TabIndex = 52
         ' 
         ' StayLogoutFormm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(403, 146)
-        Controls.Add(btnlogout)
-        Controls.Add(btnstay)
-        Controls.Add(lblmessage)
+        Controls.Add(Panel1)
+        FormBorderStyle = FormBorderStyle.FixedDialog
         MaximizeBox = False
         MinimizeBox = False
         Name = "StayLogoutFormm"
         ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
         Text = "Stay or Logout Form"
+        TopMost = True
+        Panel1.ResumeLayout(False)
+        Panel1.PerformLayout()
+        Panel2.ResumeLayout(False)
         ResumeLayout(False)
-        PerformLayout()
     End Sub
 
     Friend WithEvents btnlogout As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents btnstay As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents lblmessage As Label
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents Panel2 As Panel
 End Class

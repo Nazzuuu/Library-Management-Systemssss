@@ -200,6 +200,7 @@ Partial Class ReserveCopies
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
         Controls.Add(Guna2GradientPanel1)
+        FormBorderStyle = FormBorderStyle.FixedDialog
         KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False

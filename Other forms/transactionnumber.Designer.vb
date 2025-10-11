@@ -142,6 +142,7 @@ Partial Class TransactionNumber
         Controls.Add(PictureBox1)
         Controls.Add(Guna2GroupBox1)
         Controls.Add(txtsearch)
+        FormBorderStyle = FormBorderStyle.FixedDialog
         KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False

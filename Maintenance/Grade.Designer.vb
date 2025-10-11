@@ -262,6 +262,7 @@ Partial Class Grade
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
+        FormBorderStyle = FormBorderStyle.FixedDialog
         KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False

@@ -331,18 +331,29 @@ Public Class Borrower
         If DataGridView1.SelectedRows.Count > 0 Then
 
             If DataGridView1.SelectedRows.Count = 0 Then
-                MessageBox.Show("Please select a record to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                MsgBox("Please select a record to edit.")
                 Return
             End If
-
 
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = Convert.ToInt32(selectedRow.Cells("ID").Value)
 
             Dim con As New MySqlConnection(connectionString)
 
-
             Dim originalBorrowerType As String = selectedRow.Cells("Borrower").Value.ToString().Trim()
+
+            Dim oldFirstName As String = selectedRow.Cells("FirstName").Value.ToString().Trim()
+            Dim oldLastName As String = selectedRow.Cells("LastName").Value.ToString().Trim()
+            Dim oldMiddleNameValue As Object = selectedRow.Cells("MiddleName").Value
+            Dim oldMiddleName As String = If(oldMiddleNameValue Is DBNull.Value OrElse oldMiddleNameValue Is Nothing, "", oldMiddleNameValue.ToString().Trim())
+
+            Dim oldFullNameInGrid As String = $"{oldLastName}, {oldFirstName}"
+            If oldMiddleName.ToUpper() <> "N/A" AndAlso Not String.IsNullOrWhiteSpace(oldMiddleName) Then
+
+                oldFullNameInGrid = $"{oldLastName}, {oldFirstName} {oldMiddleName}"
+            End If
+
+
 
             Dim borrowerType As String = ""
             Dim middleName As String = txtmname.Text.Trim()
@@ -352,20 +363,18 @@ Public Class Borrower
             Dim firstName As String = txtfname.Text.Trim()
             Dim lastName As String = txtlname.Text.Trim()
 
-
-            Dim oldlrn As String = ""
-            If selectedRow.Cells("LRN").Value IsNot DBNull.Value AndAlso selectedRow.Cells("LRN").Value IsNot Nothing Then
-                oldlrn = selectedRow.Cells("LRN").Value.ToString().Trim()
-            End If
-
-            Dim oldemployeeno As String = ""
-            If selectedRow.Cells("EmployeeNo").Value IsNot DBNull.Value AndAlso selectedRow.Cells("EmployeeNo").Value IsNot Nothing Then
-                oldemployeeno = selectedRow.Cells("EmployeeNo").Value.ToString().Trim()
-            End If
-
-
             Dim newlrn As String = txtlrn.Text.Trim()
             Dim newemployeeno As String = txtemployeeno.Text.Trim()
+
+
+
+            Dim newFullName As String = $"{lastName}, {firstName}"
+            If Not rbnone.Checked AndAlso Not String.IsNullOrWhiteSpace(middleName) Then
+
+                newFullName = $"{lastName}, {firstName} {middleName}"
+            End If
+
+
 
             If rbstudent.Checked Then
                 borrowerType = "Student"
@@ -402,25 +411,24 @@ Public Class Borrower
             Try
                 con.Open()
 
+
                 If originalBorrowerType <> borrowerType Then
                     Dim checkKey As String = ""
                     Dim keyColumn As String = ""
 
                     If originalBorrowerType = "Student" Then
-
+                        Dim oldlrn As String = selectedRow.Cells("LRN").Value.ToString().Trim()
                         checkKey = oldlrn
                         keyColumn = "LRN"
                     ElseIf originalBorrowerType = "Teacher" Then
-
+                        Dim oldemployeeno As String = selectedRow.Cells("EmployeeNo").Value.ToString().Trim()
                         checkKey = oldemployeeno
                         keyColumn = "EmployeeNo"
                     End If
 
-
                     If Not String.IsNullOrWhiteSpace(checkKey) Then
                         Dim cheyk As New MySqlCommand($"SELECT COUNT(*) FROM `borroweredit_tbl` WHERE `{keyColumn}` = @CheckKey", con)
                         cheyk.Parameters.AddWithValue("@CheckKey", checkKey)
-
                         Dim existingRecordCount As Integer = Convert.ToInt32(cheyk.ExecuteScalar())
 
                         If existingRecordCount > 0 Then
@@ -445,6 +453,7 @@ Public Class Borrower
                 End If
 
 
+
                 Dim com As New MySqlCommand("UPDATE `borrower_tbl` SET `Borrower`=@Borrower, `FirstName`=@FirstName, `LastName`=@LastName, `MiddleName`=@MiddleName, `LRN`=@LRN, `EmployeeNo`=@EmployeeNo, `ContactNumber`=@ContactNumber, `Department`=@Department, `Grade`=@Grade, `Section`=@Section, `Strand`=@Strand WHERE `ID`=@ID", con)
 
                 com.Parameters.AddWithValue("@Borrower", borrowerType)
@@ -462,33 +471,47 @@ Public Class Borrower
                 com.ExecuteNonQuery()
 
 
+                Dim timeInOutRecordUpdateCom As String = "UPDATE `timeinoutrecord_tbl` SET `FullName` = @NewFullName WHERE `FullName` = @OldFullName AND `Borrower` = @Type"
 
+                Using updateTimeInOutRecordCmd As New MySqlCommand(timeInOutRecordUpdateCom, con)
+                    updateTimeInOutRecordCmd.Parameters.AddWithValue("@NewFullName", newFullName)
+                    updateTimeInOutRecordCmd.Parameters.AddWithValue("@OldFullName", oldFullNameInGrid)
+                    updateTimeInOutRecordCmd.Parameters.AddWithValue("@Type", originalBorrowerType)
+
+                    updateTimeInOutRecordCmd.ExecuteNonQuery()
+                End Using
 
                 Dim tablesToUpdate As New List(Of String) From {"borroweredit_tbl", "oras_tbl", "borrowing_tbl"}
+                Dim oldlrnForUpdate As String = ""
+                Dim oldemployeenoForUpdate As String = ""
+
+
+                If selectedRow.Cells("LRN").Value IsNot DBNull.Value AndAlso selectedRow.Cells("LRN").Value IsNot Nothing Then
+                    oldlrnForUpdate = selectedRow.Cells("LRN").Value.ToString().Trim()
+                End If
+                If selectedRow.Cells("EmployeeNo").Value IsNot DBNull.Value AndAlso selectedRow.Cells("EmployeeNo").Value IsNot Nothing Then
+                    oldemployeenoForUpdate = selectedRow.Cells("EmployeeNo").Value.ToString().Trim()
+                End If
 
                 If borrowerType = "Student" Then
-
-                    If oldlrn <> newlrn AndAlso Not String.IsNullOrWhiteSpace(oldlrn) AndAlso Not String.IsNullOrWhiteSpace(newlrn) Then
+                    If oldlrnForUpdate <> newlrn AndAlso Not String.IsNullOrWhiteSpace(oldlrnForUpdate) AndAlso Not String.IsNullOrWhiteSpace(newlrn) Then
                         For Each tableName As String In tablesToUpdate
                             Dim comLrnUpdate As New MySqlCommand($"UPDATE `{tableName}` SET `LRN` = @newVal WHERE `LRN` = @oldVal", con)
                             comLrnUpdate.Parameters.AddWithValue("@newVal", newlrn)
-                            comLrnUpdate.Parameters.AddWithValue("@oldVal", oldlrn)
+                            comLrnUpdate.Parameters.AddWithValue("@oldVal", oldlrnForUpdate)
                             comLrnUpdate.ExecuteNonQuery()
                         Next
                     End If
-
                 ElseIf borrowerType = "Teacher" Then
-
-                    If oldemployeeno <> newemployeeno AndAlso Not String.IsNullOrWhiteSpace(oldemployeeno) AndAlso Not String.IsNullOrWhiteSpace(newemployeeno) Then
+                    If oldemployeenoForUpdate <> newemployeeno AndAlso Not String.IsNullOrWhiteSpace(oldemployeenoForUpdate) AndAlso Not String.IsNullOrWhiteSpace(newemployeeno) Then
                         For Each tableName As String In tablesToUpdate
                             Dim comEmpUpdate As New MySqlCommand($"UPDATE `{tableName}` SET `EmployeeNo` = @newVal WHERE `EmployeeNo` = @oldVal", con)
                             comEmpUpdate.Parameters.AddWithValue("@newVal", newemployeeno)
-                            comEmpUpdate.Parameters.AddWithValue("@oldVal", oldemployeeno)
+                            comEmpUpdate.Parameters.AddWithValue("@oldVal", oldemployeenoForUpdate)
                             comEmpUpdate.ExecuteNonQuery()
                         Next
                     End If
                 End If
-
 
 
                 For Each form In Application.OpenForms
@@ -497,6 +520,11 @@ Public Class Borrower
                         brwr.refresheditt()
                     End If
                 Next
+
+                Dim timeInOutForm As Form = Application.OpenForms.OfType(Of TimeInOutRecord)().FirstOrDefault()
+                If timeInOutForm IsNot Nothing Then
+                    DirectCast(timeInOutForm, TimeInOutRecord).refreshtimeoutrecrod()
+                End If
 
                 MsgBox("Borrower updated successfully!", vbInformation)
                 Borrower_Load(sender, e)
