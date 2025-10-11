@@ -65,6 +65,7 @@ Partial Class Borrowing
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_borrowing = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label3 = New Label()
         lbltransac = New Label()
         Label1 = New Label()
         picbarcode = New PictureBox()
@@ -104,7 +105,6 @@ Partial Class Borrowing
         Label6 = New Label()
         txtbarcode = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Label3 = New Label()
         panel_borrowing.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(picbarcode, ComponentModel.ISupportInitialize).BeginInit()
@@ -175,6 +175,17 @@ Partial Class Borrowing
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' Label3
+        ' 
+        Label3.AutoSize = True
+        Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label3.Location = New Point(1116, 214)
+        Label3.Name = "Label3"
+        Label3.Size = New Size(137, 16)
+        Label3.TabIndex = 107
+        Label3.Text = "TransactionReceipt:"
+        ' 
         ' lbltransac
         ' 
         lbltransac.AutoSize = True
@@ -192,7 +203,7 @@ Partial Class Borrowing
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.Red
-        Label1.Location = New Point(820, 228)
+        Label1.Location = New Point(888, 228)
         Label1.Name = "Label1"
         Label1.Size = New Size(156, 16)
         Label1.TabIndex = 105
@@ -212,7 +223,7 @@ Partial Class Borrowing
         lblnotesu.AutoSize = True
         lblnotesu.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblnotesu.ForeColor = Color.Red
-        lblnotesu.Location = New Point(820, 211)
+        lblnotesu.Location = New Point(888, 211)
         lblnotesu.Name = "lblnotesu"
         lblnotesu.Size = New Size(182, 16)
         lblnotesu.TabIndex = 103
@@ -223,7 +234,7 @@ Partial Class Borrowing
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(771, 210)
+        Label12.Location = New Point(839, 210)
         Label12.Name = "Label12"
         Label12.Size = New Size(49, 16)
         Label12.TabIndex = 102
@@ -807,17 +818,6 @@ Partial Class Borrowing
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
-        ' 
-        ' Label3
-        ' 
-        Label3.AutoSize = True
-        Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(1116, 214)
-        Label3.Name = "Label3"
-        Label3.Size = New Size(137, 16)
-        Label3.TabIndex = 107
-        Label3.Text = "TransactionReceipt:"
         ' 
         ' Borrowing
         ' 
