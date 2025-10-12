@@ -23,10 +23,10 @@ Partial Class MainForm
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -96,8 +96,8 @@ Partial Class MainForm
         Panel_Menuscrip = New Panel()
         lblform = New Label()
         Panel_MPR = New Panel()
-        btnexit = New Guna.UI2.WinForms.Guna2Button()
         btnlogoutt = New Guna.UI2.WinForms.Guna2Button()
+        btnexit = New Guna.UI2.WinForms.Guna2Button()
         Panel_Header = New Panel()
         Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Label1 = New Label()
@@ -465,27 +465,6 @@ Partial Class MainForm
         Panel_MPR.Size = New Size(603, 53)
         Panel_MPR.TabIndex = 4
         ' 
-        ' btnexit
-        ' 
-        btnexit.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnexit.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnexit.BorderRadius = 9
-        btnexit.BorderThickness = 1
-        btnexit.CustomizableEdges = CustomizableEdges3
-        btnexit.DisabledState.BorderColor = Color.DarkGray
-        btnexit.DisabledState.CustomBorderColor = Color.DarkGray
-        btnexit.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnexit.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnexit.FillColor = Color.Empty
-        btnexit.Font = New Font("Tahoma", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnexit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnexit.Location = New Point(849, 18)
-        btnexit.Name = "btnexit"
-        btnexit.ShadowDecoration.CustomizableEdges = CustomizableEdges4
-        btnexit.Size = New Size(116, 27)
-        btnexit.TabIndex = 48
-        btnexit.Text = "↩️ EXIT"
-        ' 
         ' btnlogoutt
         ' 
         btnlogoutt.Anchor = AnchorStyles.Top Or AnchorStyles.Right
@@ -506,6 +485,27 @@ Partial Class MainForm
         btnlogoutt.Size = New Size(116, 27)
         btnlogoutt.TabIndex = 47
         btnlogoutt.Text = "↩️ LOG-OUT"
+        ' 
+        ' btnexit
+        ' 
+        btnexit.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnexit.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnexit.BorderRadius = 9
+        btnexit.BorderThickness = 1
+        btnexit.CustomizableEdges = CustomizableEdges3
+        btnexit.DisabledState.BorderColor = Color.DarkGray
+        btnexit.DisabledState.CustomBorderColor = Color.DarkGray
+        btnexit.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btnexit.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btnexit.FillColor = Color.Empty
+        btnexit.Font = New Font("Tahoma", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnexit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnexit.Location = New Point(849, 18)
+        btnexit.Name = "btnexit"
+        btnexit.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        btnexit.Size = New Size(116, 27)
+        btnexit.TabIndex = 48
+        btnexit.Text = "↩️ EXIT"
         ' 
         ' Panel_Header
         ' 

@@ -65,6 +65,8 @@ Public Class login
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
                     MainForm.StudentLogsToolStripMenuItem.Visible = False
+                    MainForm.Panel_Studentlogs.Visible = False
+                    MainForm.PenaltyManagementToolStripMenuItem.Visible = False
 
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
