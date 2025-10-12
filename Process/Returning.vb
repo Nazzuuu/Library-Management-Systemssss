@@ -26,6 +26,7 @@ Public Class Returning
 
 
     Private Sub clear_details_only()
+
         lblborrowertype.Text = ""
         lbllrn.Text = ""
         lblemployeeno.Text = ""
@@ -39,6 +40,9 @@ Public Class Returning
         lblsection.Text = ""
         lblstrand.Text = ""
         lbldepartment.Text = ""
+        cbbooks.Text = ""
+        txttransactionreceipt.Text = ""
+
         cbbooks.Items.Clear()
         chkSelectAll.Checked = False
         cbbooks.Enabled = True
@@ -115,9 +119,11 @@ Public Class Returning
             cbbooks.SelectedIndex = -1
             lblisbnbarcode.Text = "All books are selected will be returned."
             lblaccessionid.Text = ""
+            lbldetails.Visible = False
         Else
             lblisbnbarcode.Text = ""
             lblaccessionid.Text = ""
+            lbldetails.Visible = True
         End If
     End Sub
 
@@ -249,12 +255,12 @@ Public Class Returning
             MessageBox.Show($"{booksToReturn.Count} book(s) returned successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
 
-
+            clear_details_only()
             clear_click(sender, e)
 
             Dim tempTransNo As String = TransactionNo
-            txttransactionreceipt.Text = ""
             txttransactionreceipt.Text = tempTransNo
+
             RefreshReturningData()
 
         Catch ex As Exception

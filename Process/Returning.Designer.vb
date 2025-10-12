@@ -23,26 +23,26 @@ Partial Class Returning
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges32 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges23 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges24 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle7 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle8 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Label7 = New Label()
         txttransactionreceipt = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
@@ -78,10 +78,12 @@ Partial Class Returning
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2GroupBox2 = New Guna.UI2.WinForms.Guna2GroupBox()
+        lblaccessionid = New Label()
+        Label18 = New Label()
         chkSelectAll = New CheckBox()
         lblisbnbarcode = New Label()
         Label11 = New Label()
-        Label4 = New Label()
+        lbldetails = New Label()
         Label6 = New Label()
         lblduedate = New Label()
         Label8 = New Label()
@@ -91,8 +93,6 @@ Partial Class Returning
         lblbooktotal = New Label()
         cbbooks = New ComboBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Label18 = New Label()
-        lblaccessionid = New Label()
         Guna2GroupBox1.SuspendLayout()
         Guna2GroupBox3.SuspendLayout()
         Panel1.SuspendLayout()
@@ -117,7 +117,7 @@ Partial Class Returning
         ' 
         txttransactionreceipt.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txttransactionreceipt.BorderRadius = 12
-        txttransactionreceipt.CustomizableEdges = CustomizableEdges1
+        txttransactionreceipt.CustomizableEdges = CustomizableEdges17
         txttransactionreceipt.DefaultText = ""
         txttransactionreceipt.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txttransactionreceipt.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -131,7 +131,7 @@ Partial Class Returning
         txttransactionreceipt.Name = "txttransactionreceipt"
         txttransactionreceipt.PlaceholderText = ""
         txttransactionreceipt.SelectedText = ""
-        txttransactionreceipt.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txttransactionreceipt.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         txttransactionreceipt.Size = New Size(232, 33)
         txttransactionreceipt.TabIndex = 42
         ' 
@@ -257,13 +257,13 @@ Partial Class Returning
         Guna2GroupBox1.Controls.Add(lblemployeeno)
         Guna2GroupBox1.Controls.Add(Label1)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges3
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges19
         Guna2GroupBox1.FillColor = SystemColors.Control
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.Transparent
         Guna2GroupBox1.Location = New Point(38, 84)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         Guna2GroupBox1.Size = New Size(592, 218)
         Guna2GroupBox1.TabIndex = 91
         ' 
@@ -373,13 +373,13 @@ Partial Class Returning
         Guna2GroupBox3.Controls.Add(txttransactionreceipt)
         Guna2GroupBox3.Controls.Add(Guna2GroupBox2)
         Guna2GroupBox3.CustomBorderColor = Color.Transparent
-        Guna2GroupBox3.CustomizableEdges = CustomizableEdges15
+        Guna2GroupBox3.CustomizableEdges = CustomizableEdges31
         Guna2GroupBox3.FillColor = SystemColors.Control
         Guna2GroupBox3.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox3.ForeColor = Color.Transparent
         Guna2GroupBox3.Location = New Point(14, 13)
         Guna2GroupBox3.Name = "Guna2GroupBox3"
-        Guna2GroupBox3.ShadowDecoration.CustomizableEdges = CustomizableEdges16
+        Guna2GroupBox3.ShadowDecoration.CustomizableEdges = CustomizableEdges32
         Guna2GroupBox3.Size = New Size(1180, 674)
         Guna2GroupBox3.TabIndex = 93
         ' 
@@ -468,7 +468,7 @@ Partial Class Returning
         btnclear.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnclear.BorderRadius = 9
         btnclear.BorderThickness = 1
-        btnclear.CustomizableEdges = CustomizableEdges5
+        btnclear.CustomizableEdges = CustomizableEdges21
         btnclear.DisabledState.BorderColor = Color.DarkGray
         btnclear.DisabledState.CustomBorderColor = Color.DarkGray
         btnclear.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -478,7 +478,7 @@ Partial Class Returning
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnclear.Location = New Point(192, 320)
         btnclear.Name = "btnclear"
-        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         btnclear.Size = New Size(112, 27)
         btnclear.TabIndex = 97
         btnclear.Text = "CLEAR"
@@ -488,7 +488,7 @@ Partial Class Returning
         btnreturn.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnreturn.BorderRadius = 9
         btnreturn.BorderThickness = 1
-        btnreturn.CustomizableEdges = CustomizableEdges7
+        btnreturn.CustomizableEdges = CustomizableEdges23
         btnreturn.DisabledState.BorderColor = Color.DarkGray
         btnreturn.DisabledState.CustomBorderColor = Color.DarkGray
         btnreturn.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -498,7 +498,7 @@ Partial Class Returning
         btnreturn.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnreturn.Location = New Point(41, 320)
         btnreturn.Name = "btnreturn"
-        btnreturn.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        btnreturn.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         btnreturn.Size = New Size(112, 27)
         btnreturn.TabIndex = 96
         btnreturn.Text = "RETURN"
@@ -510,13 +510,13 @@ Partial Class Returning
         Guna2GroupBox4.BorderThickness = 2
         Guna2GroupBox4.Controls.Add(DataGridView1)
         Guna2GroupBox4.CustomBorderColor = Color.Transparent
-        Guna2GroupBox4.CustomizableEdges = CustomizableEdges9
+        Guna2GroupBox4.CustomizableEdges = CustomizableEdges25
         Guna2GroupBox4.FillColor = SystemColors.Control
         Guna2GroupBox4.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox4.ForeColor = Color.Transparent
         Guna2GroupBox4.Location = New Point(38, 366)
         Guna2GroupBox4.Name = "Guna2GroupBox4"
-        Guna2GroupBox4.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        Guna2GroupBox4.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         Guna2GroupBox4.Size = New Size(1101, 281)
         Guna2GroupBox4.TabIndex = 95
         ' 
@@ -529,42 +529,42 @@ Partial Class Returning
         DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
         DataGridView1.BackgroundColor = SystemColors.Control
         DataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal
-        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = Color.White
-        DataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DataGridViewCellStyle1.SelectionForeColor = Color.White
-        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
-        DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle5.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        DataGridViewCellStyle5.ForeColor = Color.White
+        DataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle5.SelectionForeColor = Color.White
+        DataGridViewCellStyle5.WrapMode = DataGridViewTriState.True
+        DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridView1.Cursor = Cursors.Hand
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = SystemColors.Window
-        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle2.ForeColor = Color.Transparent
-        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
-        DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle6.BackColor = SystemColors.Window
+        DataGridViewCellStyle6.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle6.ForeColor = Color.Transparent
+        DataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle6.WrapMode = DataGridViewTriState.False
+        DataGridView1.DefaultCellStyle = DataGridViewCellStyle6
         DataGridView1.Location = New Point(22, 18)
         DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
-        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle3.BackColor = SystemColors.Control
-        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
-        DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
-        DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle7.BackColor = SystemColors.Control
+        DataGridViewCellStyle7.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle7.ForeColor = SystemColors.WindowText
+        DataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle7.WrapMode = DataGridViewTriState.True
+        DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle7
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        DataGridViewCellStyle4.ForeColor = Color.Black
-        DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle8.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle8.ForeColor = Color.Black
+        DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle8
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         DataGridView1.Size = New Size(1064, 233)
         DataGridView1.TabIndex = 26
@@ -584,7 +584,7 @@ Partial Class Returning
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges11
+        txtsearch.CustomizableEdges = CustomizableEdges27
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -599,7 +599,7 @@ Partial Class Returning
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrower"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         txtsearch.Size = New Size(479, 30)
         txtsearch.TabIndex = 94
         ' 
@@ -613,7 +613,7 @@ Partial Class Returning
         Guna2GroupBox2.Controls.Add(chkSelectAll)
         Guna2GroupBox2.Controls.Add(lblisbnbarcode)
         Guna2GroupBox2.Controls.Add(Label11)
-        Guna2GroupBox2.Controls.Add(Label4)
+        Guna2GroupBox2.Controls.Add(lbldetails)
         Guna2GroupBox2.Controls.Add(Label6)
         Guna2GroupBox2.Controls.Add(lblduedate)
         Guna2GroupBox2.Controls.Add(Label8)
@@ -623,15 +623,37 @@ Partial Class Returning
         Guna2GroupBox2.Controls.Add(lblbooktotal)
         Guna2GroupBox2.Controls.Add(cbbooks)
         Guna2GroupBox2.CustomBorderColor = Color.Transparent
-        Guna2GroupBox2.CustomizableEdges = CustomizableEdges13
+        Guna2GroupBox2.CustomizableEdges = CustomizableEdges29
         Guna2GroupBox2.FillColor = SystemColors.Control
         Guna2GroupBox2.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox2.ForeColor = Color.Transparent
         Guna2GroupBox2.Location = New Point(660, 84)
         Guna2GroupBox2.Name = "Guna2GroupBox2"
-        Guna2GroupBox2.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        Guna2GroupBox2.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         Guna2GroupBox2.Size = New Size(479, 218)
         Guna2GroupBox2.TabIndex = 92
+        ' 
+        ' lblaccessionid
+        ' 
+        lblaccessionid.AutoSize = True
+        lblaccessionid.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblaccessionid.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblaccessionid.Location = New Point(124, 61)
+        lblaccessionid.Name = "lblaccessionid"
+        lblaccessionid.Size = New Size(15, 16)
+        lblaccessionid.TabIndex = 98
+        lblaccessionid.Text = ".."
+        ' 
+        ' Label18
+        ' 
+        Label18.AutoSize = True
+        Label18.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label18.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label18.Location = New Point(23, 61)
+        Label18.Name = "Label18"
+        Label18.Size = New Size(91, 16)
+        Label18.TabIndex = 97
+        Label18.Text = "AccessionID:"
         ' 
         ' chkSelectAll
         ' 
@@ -667,16 +689,16 @@ Partial Class Returning
         Label11.TabIndex = 63
         Label11.Text = "ISBN/Barcode:"
         ' 
-        ' Label4
+        ' lbldetails
         ' 
-        Label4.AutoSize = True
-        Label4.Font = New Font("Tahoma", 12F, FontStyle.Bold)
-        Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(323, 22)
-        Label4.Name = "Label4"
-        Label4.Size = New Size(118, 19)
-        Label4.TabIndex = 49
-        Label4.Text = "Book Details:"
+        lbldetails.AutoSize = True
+        lbldetails.Font = New Font("Tahoma", 12F, FontStyle.Bold)
+        lbldetails.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lbldetails.Location = New Point(323, 22)
+        lbldetails.Name = "lbldetails"
+        lbldetails.Size = New Size(118, 19)
+        lbldetails.TabIndex = 49
+        lbldetails.Text = "Book Details:"
         ' 
         ' Label6
         ' 
@@ -768,28 +790,6 @@ Partial Class Returning
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
-        ' Label18
-        ' 
-        Label18.AutoSize = True
-        Label18.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label18.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label18.Location = New Point(23, 61)
-        Label18.Name = "Label18"
-        Label18.Size = New Size(91, 16)
-        Label18.TabIndex = 97
-        Label18.Text = "AccessionID:"
-        ' 
-        ' lblaccessionid
-        ' 
-        lblaccessionid.AutoSize = True
-        lblaccessionid.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lblaccessionid.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblaccessionid.Location = New Point(124, 61)
-        lblaccessionid.Name = "lblaccessionid"
-        lblaccessionid.Size = New Size(15, 16)
-        lblaccessionid.TabIndex = 98
-        lblaccessionid.Text = ".."
-        ' 
         ' Returning
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -838,7 +838,7 @@ Partial Class Returning
     Friend WithEvents btnclear As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Guna2GroupBox2 As Guna.UI2.WinForms.Guna2GroupBox
     Friend WithEvents Label11 As Label
-    Friend WithEvents Label4 As Label
+    Friend WithEvents lbldetails As Label
     Friend WithEvents Label6 As Label
     Friend WithEvents lblduedate As Label
     Friend WithEvents Label8 As Label
