@@ -330,14 +330,14 @@ Partial Class MainForm
         ' 
         BorrowToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowToolStripMenuItem.Name = "BorrowToolStripMenuItem"
-        BorrowToolStripMenuItem.Size = New Size(177, 22)
+        BorrowToolStripMenuItem.Size = New Size(180, 22)
         BorrowToolStripMenuItem.Text = "📥 Borrowing"
         ' 
         ' ReturnToolStripMenuItem
         ' 
         ReturnToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReturnToolStripMenuItem.Name = "ReturnToolStripMenuItem"
-        ReturnToolStripMenuItem.Size = New Size(177, 22)
+        ReturnToolStripMenuItem.Size = New Size(180, 22)
         ReturnToolStripMenuItem.Text = "📤 Returning"
         ' 
         ' EditsToolStripMenuItem1

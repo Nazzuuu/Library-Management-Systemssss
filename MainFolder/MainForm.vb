@@ -790,4 +790,7 @@ Public Class MainForm
 
     End Sub
 
+    Private Sub ReturnToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReturnToolStripMenuItem.Click
+        Returning.ShowDialog()
+    End Sub
 End Class
