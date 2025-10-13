@@ -41,7 +41,7 @@ Public Class Returning
         lblstrand.Text = ""
         lbldepartment.Text = ""
         cbbooks.Text = ""
-        txttransactionreceipt.Text = ""
+
 
         cbbooks.Items.Clear()
         chkSelectAll.Checked = False
@@ -342,6 +342,7 @@ Public Class Returning
     End Sub
 
     Private Sub txttransactionreceipt_TextChanged(sender As Object, e As EventArgs) Handles txttransactionreceipt.TextChanged
+
         Const MIN_LENGTH As Integer = 11
 
         clear_details_only()
@@ -401,7 +402,7 @@ Public Class Returning
 
                     If cbbooks.Items.Count = 0 Then
                         reader_items.Close()
-                        clear_details_only()
+
                         MessageBox.Show("This transaction is complete. All borrowed books have been returned.", "Transaction Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
                         Return
                     End If
@@ -475,4 +476,11 @@ Public Class Returning
 
     End Sub
 
+    Private Sub Returning_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+
+        If e.KeyCode = Keys.Escape Then
+            Me.Close()
+        End If
+
+    End Sub
 End Class
