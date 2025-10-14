@@ -637,7 +637,7 @@ Public Class Borrowing
 
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse
-    String.IsNullOrWhiteSpace(txtname.Text) Then
+        String.IsNullOrWhiteSpace(txtname.Text) Then
 
             MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
@@ -715,6 +715,9 @@ Public Class Borrowing
 
 
             Dim transactionReceiptID As String = lbltransac.Text
+            Dim formattedBorrowedDate As String = DateTimePicker1.Value.ToString("MMMM-dd-yyyy")
+            Dim formattedDueDate As String = DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy")
+
 
             Dim com As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt) " &
                             "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt)"
@@ -730,39 +733,59 @@ Public Class Borrowing
                 comsi.Parameters.AddWithValue("@Barcode", txtbarcode.Text)
                 comsi.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
                 comsi.Parameters.AddWithValue("@Shelf", txtshelf.Text)
-                comsi.Parameters.AddWithValue("@BDate", DateTimePicker1.Value.ToString("MMMM-dd-yyyy"))
-                comsi.Parameters.AddWithValue("@DDate", DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"))
+                comsi.Parameters.AddWithValue("@BDate", formattedBorrowedDate)
+                comsi.Parameters.AddWithValue("@DDate", formattedDueDate)
                 comsi.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
 
                 comsi.ExecuteNonQuery()
-
-
-                Dim accessionID As String = txtaccessionid.Text.ToString
-
-                pendingstats(accessionID, "Pending")
-
-                For Each form In Application.OpenForms
-                    If TypeOf form Is MainForm Then
-                        Dim mform = DirectCast(form, MainForm)
-                        mform.lblborrowcount()
-                    End If
-                Next
-
-
-                MsgBox("Borrowing record successfully added.", vbInformation, "Success")
-
-
-                InsertPrintReceipt(borrower, txtname.Text, DateTimePicker1.Value.ToString("MMMM-dd-yyyy"), DateTime.Parse(txtduedate.Text).ToString("MMMM-dd-yyyy"), transactionReceiptID)
-
-                Dim printForm As New PrintReceiptForm()
-
-                printForm.LoadPrintReceiptDataByTransaction(transactionReceiptID)
-
-
-                refreshborrowingsu()
-                ClearBookFields()
-
             End Using
+
+
+            Dim historyCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt) " &
+                                    "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt)"
+
+            Using comHistory As New MySqlCommand(historyCom, con)
+                comHistory.Parameters.AddWithValue("@Borrower", borrower)
+                comHistory.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text))
+                comHistory.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text))
+                comHistory.Parameters.AddWithValue("@Name", txtname.Text)
+                comHistory.Parameters.AddWithValue("@ISBN", txtisbn.Text)
+                comHistory.Parameters.AddWithValue("@Barcode", txtbarcode.Text)
+                comHistory.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
+                comHistory.Parameters.AddWithValue("@Title", txtbooktitle.Text)
+                comHistory.Parameters.AddWithValue("@Shelf", txtshelf.Text)
+                comHistory.Parameters.AddWithValue("@BDate", formattedBorrowedDate)
+                comHistory.Parameters.AddWithValue("@DDate", formattedDueDate)
+                comHistory.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
+
+                comHistory.ExecuteNonQuery()
+            End Using
+
+
+            Dim accessionID As String = txtaccessionid.Text.ToString
+
+            pendingstats(accessionID, "Pending")
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is MainForm Then
+                    Dim mform = DirectCast(form, MainForm)
+                    mform.lblborrowcount()
+                End If
+            Next
+
+
+            MsgBox("Borrowing record successfully added.", vbInformation, "Success")
+
+
+            InsertPrintReceipt(borrower, txtname.Text, formattedBorrowedDate, formattedDueDate, transactionReceiptID)
+
+            Dim printForm As New PrintReceiptForm()
+
+            printForm.LoadPrintReceiptDataByTransaction(transactionReceiptID)
+
+
+            refreshborrowingsu()
+            ClearBookFields()
 
         Catch ex As Exception
             MessageBox.Show("Error adding record: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -773,6 +796,7 @@ Public Class Borrowing
         End Try
 
     End Sub
+
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         Dim borrower As String = ""
@@ -1205,6 +1229,22 @@ Public Class Borrowing
 
     Private Sub btnview_MouseLeave(sender As Object, e As EventArgs) Handles btnview.MouseLeave
         Cursor = Cursors.Default
+    End Sub
+
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        If dt IsNot Nothing Then
+            If txtsearch.Text.Trim() <> "" Then
+
+                Dim filter As String = String.Format("Borrower LIKE '%{0}%' OR Name LIKE '%{0}%'", txtsearch.Text.Trim())
+
+                dt.DefaultView.RowFilter = filter
+            Else
+                dt.DefaultView.RowFilter = ""
+            End If
+        End If
+
     End Sub
 
     'fuck sakit na sa braincellsuu'''

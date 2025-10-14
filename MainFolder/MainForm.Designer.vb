@@ -92,6 +92,7 @@ Partial Class MainForm
         PenaltyToolStripMenuItem = New ToolStripMenuItem()
         Audit_Trail = New ToolStripMenuItem()
         EditInfoToolStripMenuItem = New ToolStripMenuItem()
+        BorrowingHistoryToolStripMenuItem = New ToolStripMenuItem()
         Panel1 = New Panel()
         Panel_Menuscrip = New Panel()
         lblform = New Label()
@@ -330,14 +331,14 @@ Partial Class MainForm
         ' 
         BorrowToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowToolStripMenuItem.Name = "BorrowToolStripMenuItem"
-        BorrowToolStripMenuItem.Size = New Size(180, 22)
+        BorrowToolStripMenuItem.Size = New Size(177, 22)
         BorrowToolStripMenuItem.Text = "📥 Borrowing"
         ' 
         ' ReturnToolStripMenuItem
         ' 
         ReturnToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReturnToolStripMenuItem.Name = "ReturnToolStripMenuItem"
-        ReturnToolStripMenuItem.Size = New Size(180, 22)
+        ReturnToolStripMenuItem.Size = New Size(177, 22)
         ReturnToolStripMenuItem.Text = "📤 Returning"
         ' 
         ' EditsToolStripMenuItem1
@@ -393,7 +394,7 @@ Partial Class MainForm
         ' 
         ' SettingsStripMenuItem
         ' 
-        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, Audit_Trail, EditInfoToolStripMenuItem})
+        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, Audit_Trail, EditInfoToolStripMenuItem, BorrowingHistoryToolStripMenuItem})
         SettingsStripMenuItem.ForeColor = Color.White
         SettingsStripMenuItem.Name = "SettingsStripMenuItem"
         SettingsStripMenuItem.Size = New Size(105, 22)
@@ -403,22 +404,29 @@ Partial Class MainForm
         ' 
         PenaltyToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         PenaltyToolStripMenuItem.Name = "PenaltyToolStripMenuItem"
-        PenaltyToolStripMenuItem.Size = New Size(177, 22)
+        PenaltyToolStripMenuItem.Size = New Size(236, 22)
         PenaltyToolStripMenuItem.Text = "⚠️ Penalty"
         ' 
         ' Audit_Trail
         ' 
         Audit_Trail.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Audit_Trail.Name = "Audit_Trail"
-        Audit_Trail.Size = New Size(177, 22)
+        Audit_Trail.Size = New Size(236, 22)
         Audit_Trail.Text = "📜 Audit Trail"
         ' 
         ' EditInfoToolStripMenuItem
         ' 
         EditInfoToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         EditInfoToolStripMenuItem.Name = "EditInfoToolStripMenuItem"
-        EditInfoToolStripMenuItem.Size = New Size(177, 22)
+        EditInfoToolStripMenuItem.Size = New Size(236, 22)
         EditInfoToolStripMenuItem.Text = "✎ Edit Info"
+        ' 
+        ' BorrowingHistoryToolStripMenuItem
+        ' 
+        BorrowingHistoryToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        BorrowingHistoryToolStripMenuItem.Name = "BorrowingHistoryToolStripMenuItem"
+        BorrowingHistoryToolStripMenuItem.Size = New Size(236, 22)
+        BorrowingHistoryToolStripMenuItem.Text = "📚 Borrowing History"
         ' 
         ' Panel1
         ' 
@@ -1184,5 +1192,6 @@ Partial Class MainForm
     Friend WithEvents Panel_dash As Panel
     Friend WithEvents AttendanceRecordToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents btnexit As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents BorrowingHistoryToolStripMenuItem As ToolStripMenuItem
 
 End Class

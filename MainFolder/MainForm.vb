@@ -121,6 +121,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Borrowing)
         Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_dash.Controls.Remove(TimeInOutRecord)
+        Panel_dash.Controls.Remove(BorrowingHistory)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -155,6 +156,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Borrowing)
         Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_dash.Controls.Remove(TimeInOutRecord)
+        Panel_dash.Controls.Remove(BorrowingHistory)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -187,6 +189,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Borrowing)
         Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_dash.Controls.Remove(TimeInOutRecord)
+        Panel_dash.Controls.Remove(BorrowingHistory)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -220,6 +223,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Borrowing)
         Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_dash.Controls.Remove(TimeInOutRecord)
+        Panel_dash.Controls.Remove(BorrowingHistory)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -792,5 +796,28 @@ Public Class MainForm
 
     Private Sub ReturnToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReturnToolStripMenuItem.Click
         Returning.ShowDialog()
+    End Sub
+
+    Private Sub BorrowingHistoryToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowingHistoryToolStripMenuItem.Click
+
+        Panel_dash.Controls.Clear()
+
+        With BorrowingHistory
+            .TopMost = True
+            .TopLevel = False
+            .BringToFront()
+            Panel_dash.Controls.Add(BorrowingHistory)
+
+
+            .Show()
+
+            Acquisition.DataGridView1.ClearSelection()
+            Acquisition.DataGridView1.CurrentCell = Nothing
+
+
+        End With
+
+        lblform.Text = "BORROWING HISTORY FORM"
+
     End Sub
 End Class

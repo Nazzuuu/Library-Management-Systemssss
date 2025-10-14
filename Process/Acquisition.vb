@@ -595,7 +595,8 @@ Public Class Acquisition
         rbisbn.Enabled = True
 
         DateTimePicker1.Value = DateTime.Now
-        Datagridview1.ClearSelection()
+        DateTimePicker1.Enabled = true
+        DataGridView1.ClearSelection()
     End Sub
 
 
