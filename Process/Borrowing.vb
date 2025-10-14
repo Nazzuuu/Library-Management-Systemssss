@@ -325,7 +325,7 @@ Public Class Borrowing
         Try
             con.Open()
 
-            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, MiddleName) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@emp", enteredEmployeeID)
                 Dim emp As Object = comsi.ExecuteScalar()
@@ -412,7 +412,7 @@ Public Class Borrowing
         Try
             con.Open()
 
-            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`) FROM `borrower_tbl` WHERE `LRN` = @lrn"
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`,MiddleName) FROM `borrower_tbl` WHERE `LRN` = @lrn"
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@lrn", enteredLRN)
                 Dim lrn As Object = comsi.ExecuteScalar()
