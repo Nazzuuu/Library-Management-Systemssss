@@ -16,7 +16,7 @@ Public Class login
 
         Dim con As New MySqlConnection(connectionString)
 
-        ' Ang comsus ay tama na, dahil kinukuha na nito ang Username, Password, at Email.
+
         Dim comsus As String = "SELECT Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
             "UNION " &
             "SELECT Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
@@ -38,24 +38,37 @@ Public Class login
                 GlobalUsername = userEmail
 
 
+                MainForm.AcquisitionToolStripMenuItem.Visible = True
+                MainForm.AccessionToolStripMenuItem.Visible = True
+                MainForm.UserMaintenanceToolStripMenuItem.Visible = True
+                MainForm.Audit_Trail.Visible = True
+                MainForm.EditInfoToolStripMenuItem.Visible = True
+                MainForm.EditsToolStripMenuItem1.Visible = True
+                MainForm.BorrowToolStripMenuItem.Visible = True
+                MainForm.StudentLogsToolStripMenuItem.Visible = True
+                MainForm.Panel_Studentlogs.Visible = True
+                MainForm.PenaltyManagementToolStripMenuItem.Visible = True
+
+
                 If role = "Librarian" Then
-                    MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    MainForm.Show()
+
+
+                    MainForm.Refresh()
                     MainForm.lbl_currentuser.Text = "Librarian"
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
-                    MainForm.EditsToolStripMenuItem1.Visible = False
-                    MainForm.BorrowToolStripMenuItem.Visible = False
-                    MainForm.StudentLogsToolStripMenuItem.Visible = False
+
+
+                    MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MainForm.Show()
+
                     Me.Hide()
                     clear()
 
 
                 ElseIf role = "Staff" Then
-                    MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    MainForm.Show()
-                    MainForm.lbl_currentuser.Text = "Staff"
 
+                    MainForm.Refresh()
 
                     MainForm.AcquisitionToolStripMenuItem.Visible = False
                     MainForm.AccessionToolStripMenuItem.Visible = False
@@ -68,16 +81,22 @@ Public Class login
                     MainForm.Panel_Studentlogs.Visible = False
                     MainForm.PenaltyManagementToolStripMenuItem.Visible = False
 
+                    MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MainForm.Show()
+                    MainForm.lbl_currentuser.Text = "Staff"
+
+
+
+
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
                     Me.Hide()
                     clear()
 
                 ElseIf role = "Assistant Librarian" Then
-                    MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    MainForm.Show()
-                    MainForm.lbl_currentuser.Text = "Asst. Librarian"
 
+
+                    MainForm.Refresh()
 
                     MainForm.UserMaintenanceToolStripMenuItem.Visible = False
                     MainForm.Audit_Trail.Visible = False
@@ -85,6 +104,13 @@ Public Class login
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
                     MainForm.StudentLogsToolStripMenuItem.Visible = False
+
+                    MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MainForm.Show()
+                    MainForm.lbl_currentuser.Text = "Asst. Librarian"
+
+
+
 
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
@@ -113,8 +139,10 @@ Public Class login
 
     Private Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         TopMost = True
-        koneksyon()
+        Koneksyon()
 
+
+        MainForm.Refresh()
 
         txtpass.PasswordChar = "•"
         PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
