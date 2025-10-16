@@ -57,7 +57,7 @@ Public Class login
                     MainForm.Refresh()
                     MainForm.StudentLogsToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
-                    MainForm.BorrowToolStripMenuItem.Visible = False
+
 
                     MainForm.lbl_currentuser.Text = "Librarian"
                     MainForm.lblgmail.Text = userEmail
@@ -88,7 +88,7 @@ Public Class login
                     MainForm.PenaltyManagementToolStripMenuItem.Visible = False
                     MainForm.StudentLogsToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
-                    MainForm.BorrowToolStripMenuItem.Visible = False
+
 
                     MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
@@ -114,7 +114,7 @@ Public Class login
                     MainForm.BorrowToolStripMenuItem.Visible = False
                     MainForm.StudentLogsToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
-                    MainForm.BorrowToolStripMenuItem.Visible = False
+
 
                     MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()

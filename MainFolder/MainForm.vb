@@ -674,6 +674,8 @@ Public Class MainForm
         Borrowereditsinfo.ShowDialog()
     End Sub
 
+
+
     Public Sub lblborrowcount()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim count As Integer = 0
@@ -682,25 +684,30 @@ Public Class MainForm
             con.Open()
 
 
-            Dim query As String = "SELECT COUNT(*) FROM borrowing_tbl"
+            Dim query As String = "SELECT COUNT(AccessionID) FROM acession_tbl WHERE Status = 'Borrowed'"
+
 
             Using cmd As New MySqlCommand(query, con)
-                count = Convert.ToInt32(cmd.ExecuteScalar())
-            End Using
+                Dim result As Object = cmd.ExecuteScalar()
 
+                If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                    count = Convert.ToInt32(result)
+                Else
+                    count = 0
+                End If
+            End Using
 
             lbl_borrow.Text = count.ToString()
 
-
         Catch ex As Exception
-
-            MessageBox.Show("Error counting borrowed books: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error counting currently borrowed books: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
                 con.Close()
             End If
         End Try
     End Sub
+
 
     Private Sub PrintReceiptToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PrintReceiptToolStripMenuItem.Click
 
@@ -719,6 +726,13 @@ Public Class MainForm
         End With
 
         lblform.Text = "PRINT RECEIPT FORM"
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is PrintReceiptForm Then
+                Dim lblload = DirectCast(form, PrintReceiptForm)
+                lblload.refreshreceipt()
+            End If
+        Next
 
     End Sub
 
@@ -819,5 +833,16 @@ Public Class MainForm
 
         lblform.Text = "BORROWING HISTORY FORM"
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is BorrowingHistory Then
+                Dim load = DirectCast(form, BorrowingHistory)
+                load.refreshhistory()
+            End If
+        Next
+
+    End Sub
+
+    Private Sub BorrowingConfirmationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowingConfirmationToolStripMenuItem.Click
+        BookBorrowingConfirmation.ShowDialog()
     End Sub
 End Class

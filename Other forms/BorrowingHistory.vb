@@ -34,7 +34,7 @@ Public Class BorrowingHistory
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
 
-                Dim filter As String = String.Format("Borrower LIKE '%{0}%' OR BookTitle LIKE '%{0}%' OR Name LIKE '%{0}%'", txtsearch.Text.Trim())
+                Dim filter As String = String.Format("Borrower LIKE '%{0}%' OR BookTitle LIKE '%{0}%' OR Name LIKE '%{0}%' OR Status LIKE '%{0}%'", txtsearch.Text.Trim())
 
                 dt.DefaultView.RowFilter = filter
             Else

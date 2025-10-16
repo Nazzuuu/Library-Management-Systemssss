@@ -14,6 +14,7 @@ Public Class PrintReceiptForm
 
     Private Sub PrintReceipt_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         DataGridView1.ClearSelection()
+        refreshreceipt()
     End Sub
 
 
@@ -190,7 +191,7 @@ Public Class PrintReceiptForm
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim dt As New DataTable
 
-        Dim com As String = "SELECT BookTitle, ISBN, Barcode, AccessionID FROM `borrowing_tbl` WHERE `TransactionReceipt` = @TID"
+        Dim com As String = "SELECT BookTitle, ISBN, Barcode, AccessionID FROM `borrowinghistory_tbl` WHERE `TransactionReceipt` = @TID AND `Status` = 'Granted'"
 
         Try
             con.Open()
@@ -209,7 +210,6 @@ Public Class PrintReceiptForm
 
         Return dt
     End Function
-
 
     Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
         Dim g As Graphics = e.Graphics
