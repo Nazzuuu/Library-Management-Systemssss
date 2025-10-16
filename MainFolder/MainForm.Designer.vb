@@ -91,8 +91,8 @@ Partial Class MainForm
         SettingsStripMenuItem = New ToolStripMenuItem()
         PenaltyToolStripMenuItem = New ToolStripMenuItem()
         Audit_Trail = New ToolStripMenuItem()
-        EditInfoToolStripMenuItem = New ToolStripMenuItem()
         BorrowingHistoryToolStripMenuItem = New ToolStripMenuItem()
+        EditInfoToolStripMenuItem = New ToolStripMenuItem()
         Panel1 = New Panel()
         Panel_Menuscrip = New Panel()
         lblform = New Label()
@@ -394,7 +394,7 @@ Partial Class MainForm
         ' 
         ' SettingsStripMenuItem
         ' 
-        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, Audit_Trail, EditInfoToolStripMenuItem, BorrowingHistoryToolStripMenuItem})
+        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, Audit_Trail, BorrowingHistoryToolStripMenuItem, EditInfoToolStripMenuItem})
         SettingsStripMenuItem.ForeColor = Color.White
         SettingsStripMenuItem.Name = "SettingsStripMenuItem"
         SettingsStripMenuItem.Size = New Size(105, 22)
@@ -414,19 +414,19 @@ Partial Class MainForm
         Audit_Trail.Size = New Size(236, 22)
         Audit_Trail.Text = "📜 Audit Trail"
         ' 
-        ' EditInfoToolStripMenuItem
-        ' 
-        EditInfoToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        EditInfoToolStripMenuItem.Name = "EditInfoToolStripMenuItem"
-        EditInfoToolStripMenuItem.Size = New Size(236, 22)
-        EditInfoToolStripMenuItem.Text = "✎ Edit Info"
-        ' 
         ' BorrowingHistoryToolStripMenuItem
         ' 
         BorrowingHistoryToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowingHistoryToolStripMenuItem.Name = "BorrowingHistoryToolStripMenuItem"
         BorrowingHistoryToolStripMenuItem.Size = New Size(236, 22)
         BorrowingHistoryToolStripMenuItem.Text = "📚 Borrowing History"
+        ' 
+        ' EditInfoToolStripMenuItem
+        ' 
+        EditInfoToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        EditInfoToolStripMenuItem.Name = "EditInfoToolStripMenuItem"
+        EditInfoToolStripMenuItem.Size = New Size(236, 22)
+        EditInfoToolStripMenuItem.Text = "✎ Edit Info"
         ' 
         ' Panel1
         ' 

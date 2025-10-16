@@ -48,12 +48,17 @@ Public Class login
                 MainForm.StudentLogsToolStripMenuItem.Visible = True
                 MainForm.Panel_Studentlogs.Visible = True
                 MainForm.PenaltyManagementToolStripMenuItem.Visible = True
+                MainForm.PenaltyToolStripMenuItem.Visible = True
 
 
                 If role = "Librarian" Then
 
 
                     MainForm.Refresh()
+                    MainForm.StudentLogsToolStripMenuItem.Visible = False
+                    MainForm.EditsToolStripMenuItem1.Visible = False
+                    MainForm.BorrowToolStripMenuItem.Visible = False
+
                     MainForm.lbl_currentuser.Text = "Librarian"
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
@@ -77,10 +82,13 @@ Public Class login
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
-                    MainForm.StudentLogsToolStripMenuItem.Visible = False
+
                     MainForm.Audit_Trail.Visible = False
                     MainForm.PenaltyToolStripMenuItem.Visible = False
                     MainForm.PenaltyManagementToolStripMenuItem.Visible = False
+                    MainForm.StudentLogsToolStripMenuItem.Visible = False
+                    MainForm.EditsToolStripMenuItem1.Visible = False
+                    MainForm.BorrowToolStripMenuItem.Visible = False
 
                     MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
@@ -105,6 +113,8 @@ Public Class login
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
                     MainForm.StudentLogsToolStripMenuItem.Visible = False
+                    MainForm.EditsToolStripMenuItem1.Visible = False
+                    MainForm.BorrowToolStripMenuItem.Visible = False
 
                     MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
