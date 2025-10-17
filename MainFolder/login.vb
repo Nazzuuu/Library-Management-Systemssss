@@ -43,7 +43,7 @@ Public Class login
                 MainForm.UserMaintenanceToolStripMenuItem.Visible = True
                 MainForm.Audit_Trail.Visible = True
                 MainForm.EditInfoToolStripMenuItem.Visible = True
-                MainForm.EditsToolStripMenuItem1.Visible = True
+                MainForm.EditsToolStripMenuItem1.Visible = False
                 MainForm.BorrowToolStripMenuItem.Visible = True
                 MainForm.StudentLogsToolStripMenuItem.Visible = True
                 MainForm.Panel_Studentlogs.Visible = True
@@ -55,8 +55,8 @@ Public Class login
 
 
                     MainForm.Refresh()
-                    MainForm.StudentLogsToolStripMenuItem.Visible = False
-                    MainForm.EditsToolStripMenuItem1.Visible = False
+
+
 
 
                     MainForm.lbl_currentuser.Text = "Librarian"
@@ -86,7 +86,7 @@ Public Class login
                     MainForm.Audit_Trail.Visible = False
                     MainForm.PenaltyToolStripMenuItem.Visible = False
                     MainForm.PenaltyManagementToolStripMenuItem.Visible = False
-                    MainForm.StudentLogsToolStripMenuItem.Visible = False
+
                     MainForm.EditsToolStripMenuItem1.Visible = False
 
 
@@ -112,7 +112,7 @@ Public Class login
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
-                    MainForm.StudentLogsToolStripMenuItem.Visible = False
+
                     MainForm.EditsToolStripMenuItem1.Visible = False
 
 

@@ -21,12 +21,31 @@ Public Class RegisteredBrwr
 
     Private Sub RegisteredBrwr_Activated(sender As Object, e As EventArgs) Handles Me.Activated
 
-        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrEmpty(GlobalVarsModule.CurrentUserID) Then
+        Dim isSpecificBorrowerLoggedIn As Boolean = (GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrEmpty(GlobalVarsModule.CurrentUserID))
 
+        If isSpecificBorrowerLoggedIn Then
+            ' --- LOGIC PARA SA SPECIFIC BORROWER ---
+
+            ' 1. Disable Search
             txtsearch.Enabled = False
-        Else
 
-            txtsearch.Enabled = Not IsTimeInMode
+            ' 2. Hide Register/View Button
+            oras.btnregisterview.Visible = False
+
+            ' 3. Move View Button (to the center, assuming 398 is the desired location when one button is hidden)
+            oras.btnview.Location = New Point(398, 274)
+        Else
+            ' --- LOGIC PARA SA ADMIN/STAFF (Selecting, Time-in, Viewing) ---
+
+            ' 1. Enable Search (Para sa lahat ng Admin/Staff modes)
+            txtsearch.Enabled = True
+
+            ' 2. Show Register/View Button
+            oras.btnregisterview.Visible = True
+
+            ' 3. Set View Button Location (assuming 607 is the desired location when both buttons are visible)
+            oras.btnview.Location = New Point(607, 274)
+
         End If
 
         Me.IsSearchOverride = False
@@ -190,6 +209,9 @@ Public Class RegisteredBrwr
                 con.Close()
             End If
         End Try
+
+        IsTimeInMode = True
+        txtsearch.Enabled = True
 
     End Sub
 

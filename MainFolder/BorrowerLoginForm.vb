@@ -36,7 +36,6 @@ Public Class BorrowerLoginForm
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
-
         Dim com As String = "SELECT `Username`, `Password`, `Email`, " &
                             "    CASE " &
                             "        WHEN `LRN` IS NOT NULL AND `LRN` <> '0' AND `LRN` <> '' THEN 'Student' " &
@@ -51,9 +50,12 @@ Public Class BorrowerLoginForm
         cmd.Parameters.AddWithValue("@User", Username)
         cmd.Parameters.AddWithValue("@Pass", Password)
 
+        Dim reader As MySqlDataReader = Nothing
+
         Try
             con.Open()
-            Dim reader As MySqlDataReader = cmd.ExecuteReader()
+            reader = cmd.ExecuteReader()
+
             If reader.Read() Then
 
                 Dim userEmail As String = reader("Email").ToString()
@@ -64,48 +66,68 @@ Public Class BorrowerLoginForm
                 GlobalVarsModule.CurrentUserRole = "Borrower"
                 GlobalVarsModule.CurrentBorrowerType = borrowerType
                 GlobalVarsModule.CurrentBorrowerID = borrowerID
-
-
                 GlobalVarsModule.CurrentUserID = borrowerID
+
+
                 MainForm.SetupBorrowerUI(borrowerType)
-
-
 
                 If borrowerType = "Unknown" Then
                     MessageBox.Show("Login successful, but borrower type (LRN or Employee No) is missing in the record. Please check your account details.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 End If
 
-                MessageBox.Show("Borrower successfully logged in. Welcome, " & Username & "!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                reader.Close()
+
+
+
+                If Not GlobalVarsModule.IsBorrowerStillTimedIn(borrowerID) Then
+
+                    Dim lrn As Object = If(borrowerType = "Student", borrowerID, CType(DBNull.Value, Object))
+                    Dim employeeNo As Object = If(borrowerType = "Teacher", borrowerID, CType(DBNull.Value, Object))
+
+                    Dim comInsert As String = "INSERT INTO `oras_tbl` (`LRN`, `EmployeeNo`, `TimeIn`) VALUES (@lrn, @emp, NOW())"
+
+                    Using cmdInsert As New MySqlCommand(comInsert, con)
+                        cmdInsert.Parameters.AddWithValue("@lrn", lrn)
+                        cmdInsert.Parameters.AddWithValue("@emp", employeeNo)
+
+                        cmdInsert.ExecuteNonQuery()
+
+                        MessageBox.Show($"Welcome, {Username}!", "Time In Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    End Using
+                Else
+
+                    Dim reminderMessage As String = $"Welcome back!, {Username}. You are currently Timed In," & Environment.NewLine &
+                                                $"Kindly ensure that you (Time Out) before leaving the library premises."
+
+                    MessageBox.Show(reminderMessage, "Time Out Reminder 🔔", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                End If
+
 
                 Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
                 If orasForm IsNot Nothing Then
                     orasForm.ludeyngoras()
                 End If
 
-                MainForm.PrintReceiptToolStripMenuItem.Visible = False
-                MainForm.SetupBorrowerUI(borrowerType)
-                MainForm.Show()
-                Me.Hide()
-
 
                 GlobalVarsModule.CurrentUserRole = "Borrower"
                 GlobalVarsModule.CurrentBorrowerType = borrowerType
                 GlobalVarsModule.CurrentBorrowerID = borrowerID
-
-
                 GlobalVarsModule.CurrentUserID = borrowerID
 
+                MainForm.PrintReceiptToolStripMenuItem.Visible = False
+                MainForm.SetupBorrowerUI(borrowerType)
 
                 If MainForm.BorrowerEditsInfoForm Is Nothing Then
                     MainForm.BorrowerEditsInfoForm = New Borrowereditsinfo()
                 End If
 
-
                 MainForm.BorrowerEditsInfoForm.visibilitysus(borrowerType)
 
                 MainForm.lbl_currentuser.Text = borrowerType
                 MainForm.lblgmail.Text = userEmail
-                MainForm.lblform.Text = "BORROWING FORM"
+                ' Ang lblform.Text ay papalitan sa huli
+                ' MainForm.lblform.Text = "BORROWING FORM" 
 
 
                 If MainForm.MaintenanceToolStripMenuItem IsNot Nothing Then
@@ -114,13 +136,10 @@ Public Class BorrowerLoginForm
                 End If
                 If MainForm.SettingsStripMenuItem IsNot Nothing Then
                     MainForm.SettingsStripMenuItem.Visible = False
-
                 End If
-
 
                 If MainForm.ProcessStripMenuItem IsNot Nothing Then
                     MainForm.ProcessStripMenuItem.Visible = True
-
 
                     For Each item As ToolStripItem In MainForm.ProcessStripMenuItem.DropDownItems
                         item.Visible = False
@@ -150,35 +169,21 @@ Public Class BorrowerLoginForm
                 End If
 
 
-                MainForm.Panel_dash.Controls.Clear()
+                With Borrowing
+                    MainForm.Panel_dash.Controls.Clear()
+                    .TopMost = True
+                    .TopLevel = False
 
-                If MainForm.dshboard IsNot Nothing Then
+                    .BringToFront()
+                    MainForm.Panel_dash.Controls.Add(Borrowing)
+                    .Show()
 
-                    MainForm.Panel_dash.Controls.Add(MainForm.dshboard)
-                    MainForm.dshboard.BringToFront()
-                    MainForm.dshboard.Visible = True
+                End With
 
-                End If
+                MainForm.lblform.Text = "BORROWING FORM"
 
-                If MainForm.Panel_User IsNot Nothing Then
-
-                    MainForm.Panel_dash.Controls.Add(MainForm.Panel_User)
-                    MainForm.Panel_User.BringToFront()
-                    MainForm.Panel_User.Visible = True
-                End If
-
-                If MainForm.Panel_welcome IsNot Nothing Then
-
-                    MainForm.Panel_dash.Controls.Add(MainForm.Panel_welcome)
-                    MainForm.Panel_welcome.BringToFront()
-                    MainForm.Panel_welcome.Visible = True
-                End If
-
-
-                MainForm.lblform.Text = "MAIN FORM"
-
-
-
+                MainForm.Show()
+                Me.Hide()
                 refreshbrwrlogin()
 
             Else
@@ -190,13 +195,16 @@ Public Class BorrowerLoginForm
         Catch ex As MySqlException
             MessageBox.Show("Database Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Catch ex As Exception
-
             If ex.Message.Contains("MdiParent") Then
                 MessageBox.Show("An unexpected error occurred: Form that was specified to be the MdiParent for this form is not an MdiContainer. (Parameter 'value')" & Environment.NewLine & "Please ensure the 'Borrowing' form is configured correctly to load inside MainForm's Panel_dash.", "Form Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Else
                 MessageBox.Show("An unexpected error occurred: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
         Finally
+
+            If reader IsNot Nothing AndAlso Not reader.IsClosed Then
+                reader.Close()
+            End If
             If con.State = ConnectionState.Open Then
                 con.Close()
             End If

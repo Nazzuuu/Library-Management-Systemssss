@@ -73,6 +73,26 @@ Public Class oras
         Timer1.Interval = 1000
         Timer1.Start()
 
+
+        Dim isBorrower As Boolean = (GlobalVarsModule.CurrentUserRole = "Borrower" OrElse GlobalVarsModule.CurrentUserRole = "Student" OrElse GlobalVarsModule.CurrentUserRole = "Teacher")
+
+        If isBorrower Then
+
+
+            btnregisterview.Visible = False
+            btnedit.Enabled = True
+            btnclear.Enabled = True
+            btnview.Location = New Point(398, 274)
+
+        Else
+
+            txtsearch.Enabled = True
+            btnregisterview.Visible = True
+            btnedit.Enabled = True
+            btnclear.Enabled = True
+            btnview.Location = New Point(607, 274)
+
+        End If
     End Sub
 
     Private Sub Oras_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown

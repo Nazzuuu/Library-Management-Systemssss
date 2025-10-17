@@ -211,9 +211,9 @@ Public Class MainForm
 
         ProcessStripMenuItem.ForeColor = Color.DarkGray
 
-        Dim lumabasna As Boolean = False
-        Book.Close()
 
+        Panel_dash.Controls.Clear()
+        Book.Close()
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users)
@@ -226,19 +226,51 @@ Public Class MainForm
         Panel_dash.Controls.Remove(BorrowingHistory)
         Panel_User.Show()
 
-        If lumabasna = False Then
-            Panel_dash.Controls.Add(dshboard)
-            Panel_dash.Controls.Add(Panel_User)
-            Panel_dash.Controls.Add(Panel_welcome)
-            Panel_dash.Controls.Add(Guna2Button1)
-            lumabasna = True
+
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+
+            If Borrowing Is Nothing Then
+                Borrowing = New Borrowing()
+            End If
+
+            With Borrowing
+                .TopMost = True
+                .TopLevel = False
+
+                .BringToFront()
+                Panel_dash.Controls.Add(Borrowing)
+
+
+                .SetupBorrowerFields()
+                .Show()
+
+                .DataGridView1.ClearSelection()
+                .DataGridView1.CurrentCell = Nothing
+            End With
+
+            lblform.Text = "BORROWING FORM"
+
+        Else
+
+
+            Dim lumabasna As Boolean = False
+            If lumabasna = False Then
+                Panel_dash.Controls.Add(dshboard)
+                Panel_dash.Controls.Add(Panel_User)
+                Panel_dash.Controls.Add(Panel_welcome)
+                Panel_dash.Controls.Add(Guna2Button1)
+                lumabasna = True
+            End If
+
+            Accession.DataGridView1.ClearSelection()
+            Acquisition.DataGridView1.ClearSelection()
+            oras.DataGridView1.ClearSelection()
+
+            lblform.Text = "MAIN FORM"
+
         End If
 
-        Accession.DataGridView1.ClearSelection()
-        Acquisition.DataGridView1.ClearSelection()
-        oras.DataGridView1.ClearSelection()
-
-        lblform.Text = "MAIN FORM"
 
     End Sub
 
