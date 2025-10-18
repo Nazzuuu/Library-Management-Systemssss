@@ -78,6 +78,8 @@ Partial Class Accession
         Label2 = New Label()
         Label1 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label12 = New Label()
+        Label13 = New Label()
         btnshelf = New Guna.UI2.WinForms.Guna2Button()
         lblnote = New Label()
         lblnotes = New Label()
@@ -98,8 +100,6 @@ Partial Class Accession
         txtaccessionid = New Guna.UI2.WinForms.Guna2TextBox()
         panel_accession = New Panel()
         shelftooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
-        Label12 = New Label()
-        Label13 = New Label()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -374,6 +374,7 @@ Partial Class Accession
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(rbforlibraryonly)
         Guna2GroupBox1.Controls.Add(Label12)
         Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(btnshelf)
@@ -414,6 +415,28 @@ Partial Class Accession
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(32, 226)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 106
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(81, 227)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(215, 16)
+        Label13.TabIndex = 105
+        Label13.Text = "Select Transaction Number first."
         ' 
         ' btnshelf
         ' 
@@ -493,12 +516,11 @@ Partial Class Accession
         ' 
         ' Panel1
         ' 
-        Panel1.Controls.Add(rbforlibraryonly)
         Panel1.Controls.Add(Label5)
         Panel1.Controls.Add(rbborrowable)
-        Panel1.Location = New Point(914, 175)
+        Panel1.Location = New Point(936, 175)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(412, 36)
+        Panel1.Size = New Size(256, 36)
         Panel1.TabIndex = 94
         ' 
         ' rbforlibraryonly
@@ -506,13 +528,14 @@ Partial Class Accession
         rbforlibraryonly.AutoSize = True
         rbforlibraryonly.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbforlibraryonly.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbforlibraryonly.Location = New Point(227, 8)
+        rbforlibraryonly.Location = New Point(1051, 27)
         rbforlibraryonly.Name = "rbforlibraryonly"
         rbforlibraryonly.Size = New Size(173, 20)
         rbforlibraryonly.TabIndex = 82
         rbforlibraryonly.TabStop = True
         rbforlibraryonly.Text = "For In-Library Use Only"
         rbforlibraryonly.UseVisualStyleBackColor = True
+        rbforlibraryonly.Visible = False
         ' 
         ' Label5
         ' 
@@ -723,28 +746,6 @@ Partial Class Accession
         shelftooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
         shelftooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         shelftooltip.MaximumSize = New Size(0, 0)
-        ' 
-        ' Label12
-        ' 
-        Label12.AutoSize = True
-        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label12.ForeColor = Color.Black
-        Label12.Location = New Point(32, 226)
-        Label12.Name = "Label12"
-        Label12.Size = New Size(42, 16)
-        Label12.TabIndex = 106
-        Label12.Text = "Note:"
-        ' 
-        ' Label13
-        ' 
-        Label13.AutoSize = True
-        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label13.ForeColor = Color.Red
-        Label13.Location = New Point(81, 227)
-        Label13.Name = "Label13"
-        Label13.Size = New Size(215, 16)
-        Label13.TabIndex = 105
-        Label13.Text = "Select Transaction Number first."
         ' 
         ' Accession
         ' 

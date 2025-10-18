@@ -240,7 +240,7 @@ Public Class MainForm
 
                 .BringToFront()
                 Panel_dash.Controls.Add(Borrowing)
-
+                Accession.btnview.Visible = True
 
                 .SetupBorrowerFields()
                 .Show()
@@ -262,6 +262,8 @@ Public Class MainForm
                 Panel_dash.Controls.Add(Guna2Button1)
                 lumabasna = True
             End If
+
+            Accession.btnview.Visible = True
 
             Accession.DataGridView1.ClearSelection()
             Acquisition.DataGridView1.ClearSelection()

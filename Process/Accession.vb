@@ -49,6 +49,7 @@ Public Class Accession
         End Try
 
         btnview.Enabled = True
+        btnview.Visible = True
         shelfsu()
         DataGridView1.ClearSelection()
     End Sub
@@ -317,7 +318,7 @@ Public Class Accession
 
             transaction.Commit()
 
-            btnview.Enabled = True
+            btnview.Visible = True
 
             MessageBox.Show("Reserve copies saved. Total reserved: " & reserveCount.ToString(), "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
@@ -487,7 +488,7 @@ Public Class Accession
         Dim currentStatus As String = selectedRow.Cells("Status").Value.ToString().Trim()
         Dim oldAccessionID As String = selectedRow.Cells("AccessionID").Value.ToString().Trim()
         Dim abeyl As Boolean = currentStatus.Equals("Available", StringComparison.OrdinalIgnoreCase)
-        Dim libraryonleh As Boolean = currentStatus.Equals("For In-Library Use Only", StringComparison.OrdinalIgnoreCase) ' Idinagdag ito para sa clarity
+        Dim libraryonleh As Boolean = currentStatus.Equals("For In-Library Use Only", StringComparison.OrdinalIgnoreCase)
 
 
         Dim statsskie As New List(Of String) From {"Pending", "Lost", "Damage"}

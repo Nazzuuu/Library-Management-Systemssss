@@ -998,6 +998,7 @@ Public Class Borrowing
 
                 rbstudent.Checked = True
                 rbstudent.Enabled = False
+                Accession.btnview.Visible = True
 
             ElseIf borrowerType = "Teacher" Then
 
@@ -1009,7 +1010,7 @@ Public Class Borrowing
                 lblemployee.Visible = True
                 txtemployee.Visible = True
                 rbteacher.Visible = True
-
+                Accession.btnview.Visible = True
 
                 lblemployee.Location = New Point(30, 78)
                 txtemployee.Location = New Point(30, 97)

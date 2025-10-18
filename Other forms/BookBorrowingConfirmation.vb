@@ -21,6 +21,7 @@ Public Class BookBorrowingConfirmation
             con.Open()
             adap.Fill(ds, "info")
             DataGridView1.DataSource = ds.Tables("info")
+            DataGridView1.Columns("ID").Visible = False
 
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
