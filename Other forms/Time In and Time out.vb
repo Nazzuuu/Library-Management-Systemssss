@@ -295,6 +295,11 @@ Public Class oras
                         registeredForm.ludeyngtimedinborrower()
                     End If
 
+                    Dim hays As TimeInOutRecord = Application.OpenForms.OfType(Of TimeInOutRecord)().FirstOrDefault()
+                    If hays IsNot Nothing Then
+                        hays.refreshtimeoutrecrod()
+                    End If
+
                 Catch ex As Exception
                     MessageBox.Show("Error recording time-out: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End Try

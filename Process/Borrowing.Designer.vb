@@ -714,9 +714,9 @@ Partial Class Borrowing
         btnadd.Location = New Point(30, 249)
         btnadd.Name = "btnadd"
         btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges28
-        btnadd.Size = New Size(90, 27)
+        btnadd.Size = New Size(101, 27)
         btnadd.TabIndex = 42
-        btnadd.Text = "ADD"
+        btnadd.Text = "BORROW"
         ' 
         ' Label6
         ' 

@@ -1,8 +1,40 @@
 ﻿Imports MySql.Data.MySqlClient
+Imports System.Data
+Imports System.Drawing
 
 Public Class Penalty_Management
 
+    Dim connectionString As String = GlobalVarsModule.connectionString ' Assuming this comes from your GlobalVarsModule
     Dim selectrow As Integer
+
+    Private Function IsPenaltyTypeExist(ByVal penaltyType As String, Optional ByVal excludeId As Integer = 0) As Boolean
+        Dim con As New MySqlConnection(connectionString)
+        Dim query As String = "SELECT COUNT(*) FROM `penalty_management_tbl` WHERE `PenaltyType` = @type AND `ID` <> @id"
+        Dim count As Integer = 0
+
+        Try
+            con.Open()
+            Using cmd As New MySqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@type", penaltyType)
+                cmd.Parameters.AddWithValue("@id", excludeId)
+                count = Convert.ToInt32(cmd.ExecuteScalar())
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error checking penalty type redundancy: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then con.Close()
+        End Try
+
+        Return count > 0
+    End Function
+
+    Private Function IsValidAmount(ByVal amountText As String) As Boolean
+        Dim amount As Decimal
+        If Not Decimal.TryParse(amountText, amount) Then
+            Return False
+        End If
+        Return amount > 0
+    End Function
 
     Private Sub Penalty_Management_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -104,6 +136,7 @@ Public Class Penalty_Management
         txtdescription.Text = ""
         cbpenaltytype.SelectedIndex = -1
         DataGridView1.ClearSelection()
+        selectrow = 0
 
     End Sub
 
@@ -114,7 +147,18 @@ Public Class Penalty_Management
             Return
         End If
 
+        If Not IsValidAmount(txtamount.Text) Then
+            MessageBox.Show("Amount must be a positive number (greater than zero).", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
         Dim penaltyType = cbpenaltytype.Text
+
+        If IsPenaltyTypeExist(penaltyType) Then
+            MessageBox.Show("Penalty Type '" & penaltyType & "' already exists. Penalty types must be unique.", "Redundancy Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
         Dim amount = Decimal.Parse(txtamount.Text)
         Dim description = txtdescription.Text
 
@@ -127,15 +171,15 @@ Public Class Penalty_Management
         cmd.Parameters.AddWithValue("@desc", description)
 
         Try
-            con.Open
-            cmd.ExecuteNonQuery
+            con.Open()
+            cmd.ExecuteNonQuery()
             MessageBox.Show("Penalty added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Penalty_Management_Load(sender, e)
-            clearlahat
+            clearlahat()
         Catch ex As Exception
             MessageBox.Show("Error adding penalty: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
-            con.Close
+            If con.State = ConnectionState.Open Then con.Close()
         End Try
 
     End Sub
@@ -152,7 +196,18 @@ Public Class Penalty_Management
             Return
         End If
 
+        If Not IsValidAmount(txtamount.Text) Then
+            MessageBox.Show("Amount must be a positive number (greater than zero).", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
         Dim penaltyType = cbpenaltytype.Text
+
+        If IsPenaltyTypeExist(penaltyType, selectrow) Then
+            MessageBox.Show("Penalty Type '" & penaltyType & "' already exists. Penalty types must be unique.", "Redundancy Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
         Dim amount = Decimal.Parse(txtamount.Text)
         Dim description = txtdescription.Text
 
@@ -166,70 +221,22 @@ Public Class Penalty_Management
         cmd.Parameters.AddWithValue("@id", selectrow)
 
         Try
-            con.Open
-            cmd.ExecuteNonQuery
+            con.Open()
+            cmd.ExecuteNonQuery()
             MessageBox.Show("Penalty updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Penalty_Management_Load(sender, e)
-            clearlahat
+            clearlahat()
         Catch ex As Exception
             MessageBox.Show("Error updating penalty: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
-            con.Close
+            If con.State = ConnectionState.Open Then con.Close()
         End Try
-
-    End Sub
-
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim dialogResult = MessageBox.Show("Are you sure you want to delete this penalty?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-
-            If dialogResult = DialogResult.Yes Then
-
-                Dim con As New MySqlConnection(connectionString)
-                Dim selectedRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = selectedRow.Cells("ID").Value
-                Dim penaltyType = selectedRow.Cells("PenaltyType").Value.ToString.Trim
-
-                Try
-                    con.Open
-
-
-
-                    Dim delete As New MySqlCommand("DELETE FROM `penalty_management_tbl` WHERE `ID` = @id", con)
-                    delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery
-
-
-                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `penalty_management_tbl`", con)
-                    Dim rowCount As Long = count.ExecuteScalar()
-
-                    If rowCount = 0 Then
-                        Dim reset As New MySqlCommand("ALTER TABLE `penalty_management_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery
-                    End If
-
-                    MessageBox.Show("Penalty deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-                    Penalty_Management_Load(sender, e)
-                    clearlahat
-
-                Catch ex As Exception
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Finally
-                    con.Close
-                End Try
-            End If
-        Else
-            MessageBox.Show("Please select a record to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        End If
 
     End Sub
 
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-        clearlahat
+        clearlahat()
     End Sub
 
     Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
@@ -240,9 +247,9 @@ Public Class Penalty_Management
 
             selectrow = Convert.ToInt32(row.Cells("ID").Value)
 
-            cbpenaltytype.Text = row.Cells("PenaltyType").Value.ToString
-            txtamount.Text = row.Cells("Amount").Value.ToString
-            txtdescription.Text = row.Cells("Description").Value.ToString
+            cbpenaltytype.Text = row.Cells("PenaltyType").Value.ToString()
+            txtamount.Text = row.Cells("Amount").Value.ToString()
+            txtdescription.Text = row.Cells("Description").Value.ToString()
 
         End If
 
@@ -266,13 +273,7 @@ Public Class Penalty_Management
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
 
-    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
 
     Private Sub btnclear_MouseHover(sender As Object, e As EventArgs) Handles btnclear.MouseHover
         Cursor = Cursors.Hand

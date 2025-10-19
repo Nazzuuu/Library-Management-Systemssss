@@ -72,10 +72,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Settingsss\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="MySql.Data">
       <HintPath>..\..\..\OneDrive\Desktop\Library System ( 2nd - yr Final Backup ng System)\bin\Debug\net8.0-windows\MySql.Data.dll</HintPath>
     </Reference>

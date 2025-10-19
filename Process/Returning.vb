@@ -136,26 +136,20 @@ Public Class Returning
         Dim bookStatus As String = "Normal"
         Dim newAccessionStatus As String = "Available"
 
-
         If rboverdue.Checked Then
-
-
-            Dim dueDateString As String = lblborroweddate.Text
+            Dim dueDateString As String = lblduedate.Text
             Dim dueDate As Date
 
             If Date.TryParse(dueDateString, dueDate) Then
-
                 If DateTime.Now.Date <= dueDate.Date Then
                     MessageBox.Show("Cannot set status to Overdue. The current date is not past the Due Date (" & dueDateString & ").", "Invalid Status", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     rboverdue.Checked = False
                     Return
                 End If
             Else
-
                 MessageBox.Show("Due Date format is invalid. Cannot check for Overdue status.", "Date Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Return
             End If
-
 
             bookStatus = "Overdue"
             newAccessionStatus = "Available"
@@ -167,9 +161,11 @@ Public Class Returning
             End If
             bookStatus = "Damaged (" & cbdamage.SelectedItem.ToString() & ")"
             newAccessionStatus = "Damaged"
+
         ElseIf rblost.Checked Then
             bookStatus = "Lost"
             newAccessionStatus = "Lost"
+
         Else
             bookStatus = "Normal"
             newAccessionStatus = "Available"
@@ -192,6 +188,8 @@ Public Class Returning
             Return
         End If
 
+
+
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim trans As MySqlTransaction = Nothing
 
@@ -203,20 +201,18 @@ Public Class Returning
 
 
             Dim insert_com As String = "INSERT INTO `returning_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
-                                   "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+                                 "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
+
                 insert_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
                 insert_cmd.Parameters.AddWithValue("@lrn", If(String.IsNullOrWhiteSpace(lbllrn.Text) OrElse lbllrn.Text = "N/A", Nothing, lbllrn.Text))
                 insert_cmd.Parameters.AddWithValue("@empNo", If(String.IsNullOrWhiteSpace(lblemployeeno.Text) OrElse lblemployeeno.Text = "N/A", Nothing, lblemployeeno.Text))
                 insert_cmd.Parameters.AddWithValue("@fullName", lblfullname.Text)
-
-
                 insert_cmd.Parameters.AddWithValue("@dept", If(String.IsNullOrWhiteSpace(lbldepartment.Text), Nothing, lbldepartment.Text))
                 insert_cmd.Parameters.AddWithValue("@grade", If(String.IsNullOrWhiteSpace(lblgrade.Text), Nothing, lblgrade.Text))
                 insert_cmd.Parameters.AddWithValue("@section", If(String.IsNullOrWhiteSpace(lblsection.Text), Nothing, lblsection.Text))
                 insert_cmd.Parameters.AddWithValue("@strand", If(String.IsNullOrWhiteSpace(lblstrand.Text), Nothing, lblstrand.Text))
-
                 insert_cmd.Parameters.AddWithValue("@returnedBook", returnedBookTitles)
                 insert_cmd.Parameters.AddWithValue("@bookTotal", booksToReturn.Count)
                 insert_cmd.Parameters.AddWithValue("@borrowDate", lblborroweddate.Text)
@@ -228,8 +224,43 @@ Public Class Returning
                 insert_cmd.ExecuteNonQuery()
             End Using
 
-            For Each bookTitle As String In booksToReturn
 
+            If rboverdue.Checked OrElse rbdamage.Checked OrElse rblost.Checked Then
+
+
+                Dim insert_penalty_com As String = "INSERT INTO `penalty_tbl` " &
+                                             "(`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
+                                             "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+
+                Using insert_penalty_cmd As New MySqlCommand(insert_penalty_com, con, trans)
+
+                    insert_penalty_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
+                    insert_penalty_cmd.Parameters.AddWithValue("@lrn", If(String.IsNullOrWhiteSpace(lbllrn.Text) OrElse lbllrn.Text = "N/A", Nothing, lbllrn.Text))
+                    insert_penalty_cmd.Parameters.AddWithValue("@empNo", If(String.IsNullOrWhiteSpace(lblemployeeno.Text) OrElse lblemployeeno.Text = "N/A", Nothing, lblemployeeno.Text))
+                    insert_penalty_cmd.Parameters.AddWithValue("@fullName", lblfullname.Text)
+
+                    insert_penalty_cmd.Parameters.AddWithValue("@dept", If(String.IsNullOrWhiteSpace(lbldepartment.Text), Nothing, lbldepartment.Text))
+                    insert_penalty_cmd.Parameters.AddWithValue("@grade", If(String.IsNullOrWhiteSpace(lblgrade.Text), Nothing, lblgrade.Text))
+                    insert_penalty_cmd.Parameters.AddWithValue("@section", If(String.IsNullOrWhiteSpace(lblsection.Text), Nothing, lblsection.Text))
+                    insert_penalty_cmd.Parameters.AddWithValue("@strand", If(String.IsNullOrWhiteSpace(lblstrand.Text), Nothing, lblstrand.Text))
+
+                    insert_penalty_cmd.Parameters.AddWithValue("@returnedBook", returnedBookTitles)
+                    insert_penalty_cmd.Parameters.AddWithValue("@bookTotal", booksToReturn.Count)
+                    insert_penalty_cmd.Parameters.AddWithValue("@borrowDate", lblborroweddate.Text)
+                    insert_penalty_cmd.Parameters.AddWithValue("@dueDate", lblduedate.Text)
+                    insert_penalty_cmd.Parameters.AddWithValue("@returnDate", DateTime.Now.ToShortDateString())
+                    insert_penalty_cmd.Parameters.AddWithValue("@transNo", TransactionNo)
+                    insert_penalty_cmd.Parameters.AddWithValue("@bookStatus", bookStatus)
+
+
+
+                    insert_penalty_cmd.ExecuteNonQuery()
+                End Using
+            End If
+
+
+
+            For Each bookTitle As String In booksToReturn
 
                 Dim get_accession_com As String = "SELECT `AccessionID` FROM `borrowing_tbl` WHERE `TransactionReceipt` = @transNo AND `BookTitle` = @bookTitle LIMIT 1"
                 Dim accessionID As String = String.Empty
@@ -253,7 +284,6 @@ Public Class Returning
                         update_accession_cmd.ExecuteNonQuery()
                     End Using
                 End If
-
 
                 Dim delete_com As String = "DELETE FROM `borrowing_tbl` WHERE `TransactionReceipt` = @transNo AND `BookTitle` = @bookTitle LIMIT 1"
                 Using delete_cmd As New MySqlCommand(delete_com, con, trans)
@@ -287,6 +317,7 @@ Public Class Returning
         End Try
     End Sub
 
+
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
 
@@ -315,7 +346,6 @@ Public Class Returning
         Try
             con.Open()
 
-
             Dim bookStatus As String = "Normal"
             Dim newAccessionStatus As String = "Available"
 
@@ -330,24 +360,19 @@ Public Class Returning
                 bookStatus = "Lost"
                 newAccessionStatus = "Lost"
             ElseIf rboverdue.Checked Then
-
-
                 Dim dueDateString As String = selectedRow.Cells("DueDate").Value?.ToString()
                 Dim dueDate As Date
 
                 If Date.TryParse(dueDateString, dueDate) Then
-
                     If DateTime.Now.Date <= dueDate.Date Then
                         MessageBox.Show("Cannot change status to Overdue. The current date is not past the original Due Date (" & dueDateString & ").", "Invalid Status", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                         rboverdue.Checked = False
                         Return
                     End If
                 Else
-
                     MessageBox.Show("Due Date format is invalid. Cannot check for Overdue status.", "Date Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Return
                 End If
-
 
                 bookStatus = "Overdue"
                 newAccessionStatus = "Available"
@@ -359,6 +384,7 @@ Public Class Returning
                     End If
                 End If
             End If
+
 
             Dim get_accession_com As String = "SELECT `AccessionID` FROM `borrowinghistory_tbl` WHERE `TransactionReceipt` = @transNo AND `BookTitle` = @bookTitle LIMIT 1"
 
@@ -380,7 +406,6 @@ Public Class Returning
 
             trans = con.BeginTransaction()
 
-
             Dim update_accession_com As String = "UPDATE `acession_tbl` SET `Status` = @newStatus WHERE `AccessionID` = @accessionId"
             Using update_accession_cmd As New MySqlCommand(update_accession_com, con, trans)
                 update_accession_cmd.Parameters.AddWithValue("@newStatus", newAccessionStatus)
@@ -388,17 +413,14 @@ Public Class Returning
                 update_accession_cmd.ExecuteNonQuery()
             End Using
 
-
-
             Dim insert_com As String = "INSERT INTO `returning_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
-                                   "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, 1, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+          "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, 1, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
                 insert_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
                 insert_cmd.Parameters.AddWithValue("@lrn", If(String.IsNullOrWhiteSpace(lbllrn.Text) OrElse lbllrn.Text = "N/A", Nothing, lbllrn.Text))
                 insert_cmd.Parameters.AddWithValue("@empNo", If(String.IsNullOrWhiteSpace(lblemployeeno.Text) OrElse lblemployeeno.Text = "N/A", Nothing, lblemployeeno.Text))
                 insert_cmd.Parameters.AddWithValue("@fullName", lblfullname.Text)
-
 
                 insert_cmd.Parameters.AddWithValue("@dept", If(String.IsNullOrWhiteSpace(lbldepartment.Text), Nothing, lbldepartment.Text))
                 insert_cmd.Parameters.AddWithValue("@grade", If(String.IsNullOrWhiteSpace(lblgrade.Text), Nothing, lblgrade.Text))
@@ -414,26 +436,30 @@ Public Class Returning
                 insert_cmd.ExecuteNonQuery()
             End Using
 
-
             Dim newBookTotal As Integer = originalBookTotal - 1
+            Dim newReturnedBookList As String = String.Empty
 
+            Dim originalReturnedBooksString As String = selectedRow.Cells("ReturnedBook").Value?.ToString()
 
-            Dim currentBooks As New List(Of String)(cbbooks.Items.Cast(Of String)())
-            currentBooks.Remove(bookToSplitTitle)
-            Dim newReturnedBookList As String = String.Join(" | ", currentBooks)
+            If originalReturnedBooksString IsNot Nothing Then
+                Dim currentBooksInOriginalRow As New List(Of String)(originalReturnedBooksString.Split(New String() {" | "}, StringSplitOptions.RemoveEmptyEntries))
+                currentBooksInOriginalRow.Remove(bookToSplitTitle)
+                newReturnedBookList = String.Join(" | ", currentBooksInOriginalRow)
+            End If
 
-            Dim update_com As String = "UPDATE `returning_tbl` SET `ReturnedBook` = @newReturnedBook, `BookTotal` = @newBookTotal " &
-                                   "WHERE `ID` = @originalID"
+            If newBookTotal > 0 Then
 
-            Using update_cmd As New MySqlCommand(update_com, con, trans)
-                update_cmd.Parameters.AddWithValue("@newReturnedBook", newReturnedBookList)
-                update_cmd.Parameters.AddWithValue("@newBookTotal", newBookTotal)
-                update_cmd.Parameters.AddWithValue("@originalID", originalID)
-                update_cmd.ExecuteNonQuery()
-            End Using
+                Dim update_com As String = "UPDATE `returning_tbl` SET `ReturnedBook` = @newReturnedBook, `BookTotal` = @newBookTotal " &
+                                      "WHERE `ID` = @originalID"
 
+                Using update_cmd As New MySqlCommand(update_com, con, trans)
+                    update_cmd.Parameters.AddWithValue("@newReturnedBook", newReturnedBookList)
+                    update_cmd.Parameters.AddWithValue("@newBookTotal", newBookTotal)
+                    update_cmd.Parameters.AddWithValue("@originalID", originalID)
+                    update_cmd.ExecuteNonQuery()
+                End Using
+            Else
 
-            If newBookTotal = 0 Then
                 Dim delete_original_com As String = "DELETE FROM `returning_tbl` WHERE `ID` = @originalID"
                 Using delete_original_cmd As New MySqlCommand(delete_original_com, con, trans)
                     delete_original_cmd.Parameters.AddWithValue("@originalID", originalID)
@@ -441,17 +467,50 @@ Public Class Returning
                 End Using
             End If
 
-            trans.Commit()
 
+            Dim delete_penalty_com As String = "DELETE FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
+            Using delete_penalty_cmd As New MySqlCommand(delete_penalty_com, con, trans)
+                delete_penalty_cmd.Parameters.AddWithValue("@transNo", transacReceipt)
+                delete_penalty_cmd.ExecuteNonQuery()
+            End Using
+
+
+            Dim returningData As New DataTable()
+
+            Dim select_returning_com As String = "SELECT * FROM `returning_tbl` WHERE `TransactionReceipt` = @transNo AND (`Status` <> 'Normal')"
+
+            Using select_returning_cmd As New MySqlCommand(select_returning_com, con, trans)
+                select_returning_cmd.Parameters.AddWithValue("@transNo", transacReceipt)
+
+                Using adapter As New MySqlDataAdapter(select_returning_cmd)
+                    adapter.Fill(returningData)
+                End Using
+            End Using
+
+            For Each row As DataRow In returningData.Rows
+                Dim currentReturnedBookStatus As String = row("Status").ToString()
+
+                If currentReturnedBookStatus.StartsWith("Overdue") OrElse currentReturnedBookStatus.Contains("Damaged") OrElse currentReturnedBookStatus.StartsWith("Lost") Then
+
+                    InsertPenaltyRecord(row, con, trans)
+                End If
+            Next
+
+            trans.Commit()
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Accession Then DirectCast(form, Accession).RefreshAccessionData()
             Next
 
-            MessageBox.Show($"Book status for '{bookToSplitTitle}' updated to '{bookStatus}' successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show($"Book status for '{bookToSplitTitle}' updated to '{bookStatus}' successfully! Penalty data has been synchronized.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
             clear_click(sender, e)
             RefreshReturningData()
+
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is Penalty Then DirectCast(form, Penalty).refreshpenalty()
+            Next
 
         Catch ex As Exception
             trans?.Rollback()
@@ -462,6 +521,37 @@ Public Class Returning
             End If
         End Try
     End Sub
+
+    Private Sub InsertPenaltyRecord(ByVal row As DataRow, ByVal con As MySqlConnection, ByVal trans As MySqlTransaction)
+        Dim insert_penalty_com As String = "INSERT INTO `penalty_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
+                                     "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+
+        Using insert_penalty_cmd As New MySqlCommand(insert_penalty_com, con, trans)
+            insert_penalty_cmd.Parameters.AddWithValue("@borrowerType", row("Borrower"))
+            insert_penalty_cmd.Parameters.AddWithValue("@lrn", row("LRN"))
+            insert_penalty_cmd.Parameters.AddWithValue("@empNo", row("EmployeeNo"))
+            insert_penalty_cmd.Parameters.AddWithValue("@fullName", row("FullName"))
+            insert_penalty_cmd.Parameters.AddWithValue("@dept", row("Department"))
+            insert_penalty_cmd.Parameters.AddWithValue("@grade", row("Grade"))
+            insert_penalty_cmd.Parameters.AddWithValue("@section", row("Section"))
+            insert_penalty_cmd.Parameters.AddWithValue("@strand", row("Strand"))
+
+
+            insert_penalty_cmd.Parameters.AddWithValue("@returnedBook", row("ReturnedBook"))
+            insert_penalty_cmd.Parameters.AddWithValue("@bookTotal", row("BookTotal"))
+
+            insert_penalty_cmd.Parameters.AddWithValue("@borrowDate", row("BorrowedDate"))
+            insert_penalty_cmd.Parameters.AddWithValue("@dueDate", row("DueDate"))
+            insert_penalty_cmd.Parameters.AddWithValue("@returnDate", row("ReturnDate"))
+            insert_penalty_cmd.Parameters.AddWithValue("@transNo", row("TransactionReceipt"))
+            insert_penalty_cmd.Parameters.AddWithValue("@bookStatus", row("Status"))
+
+            insert_penalty_cmd.ExecuteNonQuery()
+        End Using
+    End Sub
+
+
+
     Private Sub clear_click(sender As Object, e As EventArgs) Handles btnclear.Click
         txttransactionreceipt.Clear()
         clear_details_only()
@@ -560,6 +650,11 @@ Public Class Returning
             Dim borrowerIDColumn As String = ""
             Dim borrowerType As String = ""
             Dim borrowerName As String = ""
+            Dim borrowedDateStr As String = ""
+            Dim dueDateStr As String = ""
+            Dim totalBooksCount As String = ""
+
+
 
             Dim com_id As String = "SELECT `LRN`, `EmployeeNo`, `Name`, `Borrower` FROM `borrowing_tbl` " &
                                "WHERE `TransactionReceipt` = @transNo LIMIT 1"
@@ -569,6 +664,7 @@ Public Class Returning
 
                 Using reader_id As MySqlDataReader = comsi_id.ExecuteReader()
                     If reader_id.Read() Then
+
                         borrowerName = reader_id("Name").ToString()
                         borrowerType = reader_id("Borrower").ToString()
 
@@ -583,15 +679,12 @@ Public Class Returning
                         reader_id.Close()
                     Else
                         reader_id.Close()
-
-                        MessageBox.Show("This transaction is complete or record not found in active borrowings.", "Transaction Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                        Return
                     End If
                 End Using
             End Using
 
 
-            Dim com_header As String = "SELECT `BorrowedDate`, `DueDate`, `BorrowedBookCount` " &
+            Dim com_header As String = "SELECT `Borrower`, `Name`, `BorrowedDate`, `DueDate`, `BorrowedBookCount` " &
                                    "FROM `printreceipt_tbl` " &
                                    "WHERE `TransactionReceipt` = @transNo LIMIT 1"
 
@@ -600,22 +693,57 @@ Public Class Returning
 
                 Using reader_header As MySqlDataReader = comsi_header.ExecuteReader()
                     If reader_header.Read() Then
-                        lblfullname.Text = borrowerName
-                        lblborrowertype.Text = borrowerType
-                        lblborroweddate.Text = Convert.ToDateTime(reader_header("BorrowedDate")).ToShortDateString()
-                        lblduedate.Text = Convert.ToDateTime(reader_header("DueDate")).ToShortDateString()
-                        lblbooktotal.Text = reader_header("BorrowedBookCount").ToString() & " (Total)"
+
+                        borrowerName = reader_header("Name").ToString()
+                        borrowerType = reader_header("Borrower").ToString()
+                        borrowedDateStr = Convert.ToDateTime(reader_header("BorrowedDate")).ToShortDateString()
+                        dueDateStr = Convert.ToDateTime(reader_header("DueDate")).ToShortDateString()
+                        totalBooksCount = reader_header("BorrowedBookCount").ToString()
 
                         reader_header.Close()
                     Else
                         reader_header.Close()
-                        Return '
+
+                        MessageBox.Show("Transaction record not found.", "Transaction Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        Return
                     End If
                 End Using
             End Using
 
 
-            LoadBorrowerDetails(borrowerIDValue, borrowerIDColumn)
+            lblfullname.Text = borrowerName
+            lblborrowertype.Text = borrowerType
+            lblborroweddate.Text = borrowedDateStr
+            lblduedate.Text = dueDateStr
+            lblbooktotal.Text = totalBooksCount & " (Total)"
+
+            If String.IsNullOrWhiteSpace(borrowerIDValue) Then
+                Dim com_history_id As String = "SELECT `LRN`, `EmployeeNo`, `Borrower` FROM `borrowinghistory_tbl` " &
+                                          "WHERE `TransactionReceipt` = @transNo LIMIT 1"
+                Using comsi_history_id As New MySqlCommand(com_history_id, con)
+                    comsi_history_id.Parameters.AddWithValue("@transNo", TransactionNo)
+                    Using reader_history_id As MySqlDataReader = comsi_history_id.ExecuteReader()
+                        If reader_history_id.Read() Then
+                            borrowerType = reader_history_id("Borrower").ToString()
+                            If borrowerType.ToLower() = "student" Then
+                                borrowerIDValue = reader_history_id("LRN").ToString()
+                                borrowerIDColumn = "LRN"
+                            Else
+                                borrowerIDValue = reader_history_id("EmployeeNo").ToString()
+                                borrowerIDColumn = "EmployeeNo"
+                            End If
+                        End If
+                    End Using
+                End Using
+            End If
+
+
+
+            If Not String.IsNullOrWhiteSpace(borrowerIDValue) Then
+                LoadBorrowerDetails(borrowerIDValue, borrowerIDColumn)
+            End If
+
+
 
             Dim com_items As String = "SELECT `BookTitle` FROM `borrowing_tbl` " &
                                  "WHERE `TransactionReceipt` = @transNo"
@@ -631,6 +759,7 @@ Public Class Returning
                     If cbbooks.Items.Count = 0 Then
                         reader_items.Close()
                         If Not IsLoadingTransaction Then
+
                             MessageBox.Show("This transaction is complete. All borrowed books have been returned.", "Transaction Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
                         End If
                         Return
@@ -811,6 +940,7 @@ Public Class Returning
             If txtsearch.Text.Trim() <> "" Then
 
                 Dim filter As String = String.Format("Borrower LIKE '%{0}%' OR BookTitle LIKE '%{0}%'", txtsearch.Text.Trim())
+
 
                 dt.DefaultView.RowFilter = filter
             Else

@@ -792,6 +792,13 @@ Public Class MainForm
         End With
 
         lblform.Text = "TIME-IN/OUT RECORD FORM"
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is TimeInOutRecord Then
+                Dim haysu = DirectCast(form, TimeInOutRecord)
+                haysu.refreshtimeoutrecrod()
+            End If
+        Next
     End Sub
 
 
@@ -878,5 +885,9 @@ Public Class MainForm
 
     Private Sub BorrowingConfirmationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowingConfirmationToolStripMenuItem.Click
         BookBorrowingConfirmation.ShowDialog()
+    End Sub
+
+    Private Sub PenaltyToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PenaltyToolStripMenuItem.Click
+        Penalty.ShowDialog()
     End Sub
 End Class

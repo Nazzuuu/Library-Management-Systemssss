@@ -166,12 +166,6 @@ Public Class BookBorrowingConfirmation
             End Using
 
 
-            Dim deleteComBorrowing As String = "DELETE FROM borrowing_tbl WHERE TransactionReceipt = @TID"
-            Using cmdDeleteBorrowing As New MySqlCommand(deleteComBorrowing, con)
-                cmdDeleteBorrowing.Parameters.AddWithValue("@TID", transactionReceiptID)
-                cmdDeleteBorrowing.ExecuteNonQuery()
-            End Using
-
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Borrowing Then
