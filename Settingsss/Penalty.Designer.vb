@@ -112,10 +112,10 @@ Partial Class Penalty
         Guna2GroupBox3.FillColor = SystemColors.Control
         Guna2GroupBox3.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox3.ForeColor = Color.Transparent
-        Guna2GroupBox3.Location = New Point(20, 15)
+        Guna2GroupBox3.Location = New Point(12, 13)
         Guna2GroupBox3.Name = "Guna2GroupBox3"
         Guna2GroupBox3.ShadowDecoration.CustomizableEdges = CustomizableEdges14
-        Guna2GroupBox3.Size = New Size(1180, 674)
+        Guna2GroupBox3.Size = New Size(1333, 626)
         Guna2GroupBox3.TabIndex = 94
         ' 
         ' lbltransactionreceipt
@@ -123,7 +123,7 @@ Partial Class Penalty
         lbltransactionreceipt.AutoSize = True
         lbltransactionreceipt.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lbltransactionreceipt.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbltransactionreceipt.Location = New Point(191, 32)
+        lbltransactionreceipt.Location = New Point(191, 15)
         lbltransactionreceipt.Name = "lbltransactionreceipt"
         lbltransactionreceipt.Size = New Size(15, 16)
         lbltransactionreceipt.TabIndex = 106
@@ -142,7 +142,7 @@ Partial Class Penalty
         btnpenalized.FillColor = Color.Empty
         btnpenalized.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnpenalized.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnpenalized.Location = New Point(507, 309)
+        btnpenalized.Location = New Point(507, 272)
         btnpenalized.Name = "btnpenalized"
         btnpenalized.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnpenalized.Size = New Size(123, 27)
@@ -160,10 +160,10 @@ Partial Class Penalty
         Guna2GroupBox4.FillColor = SystemColors.Control
         Guna2GroupBox4.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox4.ForeColor = Color.Transparent
-        Guna2GroupBox4.Location = New Point(660, 84)
+        Guna2GroupBox4.Location = New Point(660, 50)
         Guna2GroupBox4.Name = "Guna2GroupBox4"
         Guna2GroupBox4.ShadowDecoration.CustomizableEdges = CustomizableEdges4
-        Guna2GroupBox4.Size = New Size(479, 542)
+        Guna2GroupBox4.Size = New Size(645, 542)
         Guna2GroupBox4.TabIndex = 95
         ' 
         ' DataGridView1
@@ -212,7 +212,7 @@ Partial Class Penalty
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        DataGridView1.Size = New Size(441, 499)
+        DataGridView1.Size = New Size(599, 499)
         DataGridView1.TabIndex = 27
         ' 
         ' PictureBox1
@@ -220,7 +220,7 @@ Partial Class Penalty
         PictureBox1.BackColor = Color.White
         PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
         PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        PictureBox1.Location = New Point(1104, 30)
+        PictureBox1.Location = New Point(1272, 16)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(20, 18)
         PictureBox1.TabIndex = 93
@@ -240,13 +240,13 @@ Partial Class Penalty
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Location = New Point(660, 24)
+        txtsearch.Location = New Point(660, 10)
         txtsearch.Margin = New Padding(4)
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrower"
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges6
-        txtsearch.Size = New Size(479, 30)
+        txtsearch.Size = New Size(645, 30)
         txtsearch.TabIndex = 94
         ' 
         ' Guna2GroupBox1
@@ -276,7 +276,7 @@ Partial Class Penalty
         Guna2GroupBox1.FillColor = SystemColors.Control
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.Transparent
-        Guna2GroupBox1.Location = New Point(38, 84)
+        Guna2GroupBox1.Location = New Point(38, 47)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         Guna2GroupBox1.Size = New Size(592, 218)
@@ -496,7 +496,7 @@ Partial Class Penalty
         Guna2GroupBox2.FillColor = SystemColors.Control
         Guna2GroupBox2.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox2.ForeColor = Color.Transparent
-        Guna2GroupBox2.Location = New Point(40, 342)
+        Guna2GroupBox2.Location = New Point(40, 305)
         Guna2GroupBox2.Name = "Guna2GroupBox2"
         Guna2GroupBox2.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         Guna2GroupBox2.Size = New Size(590, 284)
@@ -705,7 +705,7 @@ Partial Class Penalty
         Label7.AutoSize = True
         Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(45, 33)
+        Label7.Location = New Point(45, 16)
         Label7.Name = "Label7"
         Label7.Size = New Size(141, 16)
         Label7.TabIndex = 43
@@ -720,9 +720,9 @@ Partial Class Penalty
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1220, 705)
+        ClientSize = New Size(1370, 700)
         Controls.Add(Guna2GroupBox3)
-        FormBorderStyle = FormBorderStyle.FixedDialog
+        FormBorderStyle = FormBorderStyle.None
         KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False

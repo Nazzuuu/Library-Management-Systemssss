@@ -502,7 +502,7 @@ Public Class Returning
                 If TypeOf form Is Accession Then DirectCast(form, Accession).RefreshAccessionData()
             Next
 
-            MessageBox.Show($"Book status for '{bookToSplitTitle}' updated to '{bookStatus}' successfully! Penalty data has been synchronized.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show($"Book status for '{bookToSplitTitle}' updated to '{bookStatus}' successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
             clear_click(sender, e)
             RefreshReturningData()
@@ -950,11 +950,4 @@ Public Class Returning
 
     End Sub
 
-    Private Sub Returning_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
-
-        If e.KeyCode = Keys.Escape Then
-            Me.Close()
-        End If
-
-    End Sub
 End Class

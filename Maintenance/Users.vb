@@ -2,36 +2,52 @@
 Imports System.Security.Cryptography
 Imports System.Text
 Imports MySql.Data.MySqlClient
-Imports TheArtOfDevHtmlRenderer.Adapters
-Imports Windows.Win32.System
+Imports System.Data
 Imports System.Text.RegularExpressions
+
 Public Class Users
 
-    Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
-        txtpassword.PasswordChar = "•"
-        PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
-
+    Public Sub LoadStaffData()
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `user_staff_tbl`"
         Dim adapp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
 
-        adapp.Fill(dt, "INFO")
-        DataGridView1.DataSource = dt.Tables("INFO")
+        Try
+            con.Open()
+            adapp.Fill(dt, "INFO")
+            DataGridView1.DataSource = dt.Tables("INFO")
+            con.Close()
 
-        DataGridView1.Columns("ID").Visible = False
-        DataGridView1.Columns("Password").Visible = False
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.Columns("ID").Visible = False
+            DataGridView1.Columns("Password").Visible = False
 
-        DataGridView1.ClearSelection()
-        DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+        Catch ex As Exception
+            MsgBox("Error loading staff data: " & ex.Message, vbCritical, "Database Error")
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
 
+    Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        txtpassword.PasswordChar = "•"
+
+        PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+
+        LoadStaffData()
 
         AddHandler DataGridView1.CellFormatting, AddressOf Me.DataGridView1_CellFormatting
+
+        lblpassword.Visible = False
 
     End Sub
 
@@ -54,9 +70,10 @@ Public Class Users
         Dim pass As String = txtpassword.Text.Trim()
         Dim email As String = txtemail.Text.Trim()
         Dim contact As String = txtcontactnumber.Text.Trim()
+        Dim address As String = txtaddress.Text.Trim()
 
-        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
-            MsgBox("Please fill in all the required fields.", vbExclamation, "Missing Information")
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
+            MsgBox("Please fill in all the required fields (including Address).", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
@@ -109,7 +126,7 @@ Public Class Users
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleName`, `Username`, `Password`, `Email`, `ContactNumber`, `Gender`, `Role`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @gender, @role)", con)
+            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleName`, `Username`, `Password`, `Email`, `ContactNumber`, `Address`, `Gender`, `Role`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @address, @gender, @role)", con)
             com.Parameters.AddWithValue("@firstName", firstName)
             com.Parameters.AddWithValue("@lastName", lastName)
             com.Parameters.AddWithValue("@middleName", middleName)
@@ -117,12 +134,13 @@ Public Class Users
             com.Parameters.AddWithValue("@password", pass)
             com.Parameters.AddWithValue("@email", email)
             com.Parameters.AddWithValue("@contact", contact)
+            com.Parameters.AddWithValue("@address", address)
             com.Parameters.AddWithValue("@gender", gender)
             com.Parameters.AddWithValue("@role", role)
             com.ExecuteNonQuery()
 
             MsgBox("User added successfully!", vbInformation)
-            Users_Staffs_Load(sender, e)
+            LoadStaffData()
             clearfields()
 
         Catch ex As Exception
@@ -148,10 +166,11 @@ Public Class Users
         Dim pass As String = txtpassword.Text.Trim()
         Dim email As String = txtemail.Text.Trim()
         Dim contact As String = txtcontactnumber.Text.Trim()
+        Dim address As String = txtaddress.Text.Trim()
         Dim gender As String = ""
 
-        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
-            MsgBox("Please fill in all the required fields.", vbExclamation, "Missing Information")
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
+            MsgBox("Please fill in all the required fields (including Address).", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
@@ -205,7 +224,7 @@ Public Class Users
                 Exit Sub
             End If
 
-            Dim Coms As New MySqlCommand("UPDATE `user_staff_tbl` SET `FirstName` = @firstName, `LastName` = @lastName, `MiddleName` = @middleName, `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Gender` = @gender, `Role` = @role WHERE `ID` = @id", con)
+            Dim Coms As New MySqlCommand("UPDATE `user_staff_tbl` SET `FirstName` = @firstName, `LastName` = @lastName, `MiddleName` = @middleName, `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Address` = @address, `Gender` = @gender, `Role` = @role WHERE `ID` = @id", con)
             Coms.Parameters.AddWithValue("@firstName", firstName)
             Coms.Parameters.AddWithValue("@lastName", lastName)
             Coms.Parameters.AddWithValue("@middleName", middleName)
@@ -213,6 +232,7 @@ Public Class Users
             Coms.Parameters.AddWithValue("@password", pass)
             Coms.Parameters.AddWithValue("@email", email)
             Coms.Parameters.AddWithValue("@contact", contact)
+            Coms.Parameters.AddWithValue("@address", address)
             Coms.Parameters.AddWithValue("@gender", gender)
             Coms.Parameters.AddWithValue("@role", role)
             Coms.Parameters.AddWithValue("@id", ID)
@@ -224,7 +244,7 @@ Public Class Users
             End If
 
             MsgBox("User updated successfully!", vbInformation)
-            Users_Staffs_Load(sender, e)
+            LoadStaffData()
             clearfields()
 
         Catch ex As Exception
@@ -235,6 +255,7 @@ Public Class Users
             End If
         End Try
     End Sub
+
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then
@@ -253,15 +274,8 @@ Public Class Users
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
-                    For Each form In Application.OpenForms
-                        If TypeOf form Is Book Then
-                            Dim book = DirectCast(form, Book)
-                            book.cbcategoryy()
-                        End If
-                    Next
-
                     MsgBox("User deleted successfully.", vbInformation)
-                    Users_Staffs_Load(sender, e)
+                    LoadStaffData()
                     clearfields()
 
 
@@ -277,15 +291,15 @@ Public Class Users
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
                 End Try
             End If
 
         End If
     End Sub
-
-
-
-
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
@@ -298,6 +312,8 @@ Public Class Users
             txtemail.Text = If(IsDBNull(row.Cells("Email").Value), String.Empty, row.Cells("Email").Value.ToString())
             txtcontactnumber.Text = If(IsDBNull(row.Cells("ContactNumber").Value), String.Empty, row.Cells("ContactNumber").Value.ToString())
             txtpassword.Text = If(IsDBNull(row.Cells("Password").Value), String.Empty, row.Cells("Password").Value.ToString())
+
+            txtaddress.Text = If(IsDBNull(row.Cells("Address").Value), String.Empty, row.Cells("Address").Value.ToString())
 
             Dim gender As String = If(IsDBNull(row.Cells("Gender").Value), String.Empty, row.Cells("Gender").Value.ToString())
             rbmale.Checked = (gender = "Male")
@@ -312,16 +328,18 @@ Public Class Users
             Dim middleName As String = If(IsDBNull(row.Cells("MiddleName").Value), String.Empty, row.Cells("MiddleName").Value.ToString())
 
             If middleName = "N/A" Then
-
                 CheckBox2.Checked = True
-                txtmname.Text = "N/A"
+                txtmname.Text = ""
                 txtmname.Enabled = False
             Else
-
                 CheckBox2.Checked = False
                 txtmname.Text = middleName
                 txtmname.Enabled = True
             End If
+
+            txtemail_TextChanged(txtemail, EventArgs.Empty)
+            txtpass(txtpassword, EventArgs.Empty)
+
         End If
     End Sub
 
@@ -351,7 +369,7 @@ Public Class Users
         txtpassword.Text = ""
         txtemail.Text = ""
         txtcontactnumber.Text = ""
-
+        txtaddress.Text = ""
 
         rbmale.Checked = False
         rbfemale.Checked = False
@@ -363,34 +381,31 @@ Public Class Users
 
         DataGridView1.ClearSelection()
 
+        lblexample.ForeColor = Color.Black
+        lblexample.Text = "Name@domain.com"
+        lblpassword.Visible = False
+
     End Sub
 
     Private Sub txtusername_KeyDown(sender As Object, e As KeyEventArgs) Handles txtusername.KeyDown
-
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
         End If
-
     End Sub
 
     Private Sub txtpassword_KeyDown(sender As Object, e As KeyEventArgs) Handles txtpassword.KeyDown
-
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
         End If
-
     End Sub
 
     Private Sub txtemail_KeyDown(sender As Object, e As KeyEventArgs) Handles txtemail.KeyDown
-
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
         End If
-
     End Sub
 
     Private Sub txtcontactnumber_KeyDown(sender As Object, e As KeyEventArgs) Handles txtcontactnumber.KeyDown
-
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
         End If
@@ -398,25 +413,19 @@ Public Class Users
         If e.KeyCode = Keys.Back Then
             RemoveHandler txtcontactnumber.TextChanged, AddressOf txtcontactnumber_TextChanged
         End If
-
     End Sub
 
     Private Sub txtcontactnumber_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtcontactnumber.KeyPress
-
         If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
             e.Handled = True
         End If
-
     End Sub
 
     Private Sub txtemail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtemail.KeyPress
-
-
         If Char.IsLetterOrDigit(e.KeyChar) OrElse Char.IsControl(e.KeyChar) Then
             e.Handled = False
             Return
         End If
-
 
         Select Case e.KeyChar
             Case "@"c, "."c, "-"c, "_"c
@@ -424,31 +433,25 @@ Public Class Users
                 Return
         End Select
 
-
         If Char.IsWhiteSpace(e.KeyChar) Then
             e.Handled = True
             Return
         End If
 
         e.Handled = True
-
     End Sub
 
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
-
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
         End If
-
     End Sub
 
     Private Sub txtcontactnumber_KeyUp(sender As Object, e As KeyEventArgs) Handles txtcontactnumber.KeyUp
-
         If e.KeyCode = Keys.Back Then
             AddHandler txtcontactnumber.TextChanged, AddressOf txtcontactnumber_TextChanged
         End If
-
     End Sub
 
     Private Sub txtcontactnumber_TextChanged(sender As Object, e As EventArgs) Handles txtcontactnumber.TextChanged
@@ -460,9 +463,11 @@ Public Class Users
         End If
 
         If oreyjeynal.StartsWith("09") Then
-
+            If oreyjeynal.Length > 11 Then
+                txtcontactnumber.Text = oreyjeynal.Substring(0, 11)
+                txtcontactnumber.SelectionStart = 11
+            End If
         Else
-
             If oreyjeynal.Length > 0 Then
                 txtcontactnumber.Clear()
                 txtcontactnumber.Text = "09"
@@ -471,8 +476,6 @@ Public Class Users
         End If
 
     End Sub
-
-
 
     Private Sub CheckBox2_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox2.CheckedChanged
 
@@ -540,7 +543,6 @@ Public Class Users
 
     Private Sub txtemail_TextChanged(sender As Object, e As EventArgs) Handles txtemail.TextChanged
 
-
         Dim email As String = txtemail.Text.Trim()
 
         If String.IsNullOrWhiteSpace(email) Then
@@ -549,7 +551,6 @@ Public Class Users
             lblexample.Text = "Name@domain.com"
             Exit Sub
         End If
-
 
         Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9]+(?:[._%+-][a-zA-Z0-9]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$")
 
@@ -571,7 +572,6 @@ Public Class Users
 
         Dim EmailText As String = txtemail.Text.Trim()
 
-
         Dim EmailPattern As String = "^[a-zA-Z0-9]+(?:[._%+-][a-zA-Z0-9]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$"
 
         If String.IsNullOrEmpty(EmailText) Then
@@ -590,6 +590,51 @@ Public Class Users
 
     End Sub
 
+    Private Sub txtaddress_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtaddress.KeyPress
+
+        If Char.IsLetterOrDigit(e.KeyChar) OrElse Char.IsControl(e.KeyChar) OrElse Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+        Select Case e.KeyChar
+            Case "#"c, "."c, ","c, "-"c, "/"c, "'"c, ":"c, "("c, ")"c
+                e.Handled = False
+                Return
+        End Select
+
+        e.Handled = True
+
+    End Sub
+
+    Private Sub txtaddress_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtaddress.Validating
+
+        Dim AddressText As String = txtaddress.Text.Trim()
+        Dim AddressPattern As String = "^(?=.*[a-zA-Z0-9])(?!.*[#.,/\-:'()\s]{2,})[a-zA-Z0-9\s#.,/\-:'()]+$"
+
+        If String.IsNullOrEmpty(AddressText) Then
+            e.Cancel = False
+            Return
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(AddressText, AddressPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+            MessageBox.Show("Invalid address format. Please ensure it contains alphanumeric characters and avoids consecutive special symbols.", "Validation Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            e.Cancel = True
+        Else
+            e.Cancel = False
+        End If
+
+    End Sub
+
+    Private Sub txtaddress_KeyDown(sender As Object, e As KeyEventArgs) Handles txtaddress.KeyDown
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+    End Sub
+
+
     Private Function paswurdstringth(ByVal Password As String) As Integer
         Dim Score As Integer = 0
 
@@ -599,7 +644,6 @@ Public Class Users
         If Password.Length >= 12 Then
             Score += 1
         End If
-
 
         If System.Text.RegularExpressions.Regex.IsMatch(Password, "[a-z]") Then
             Score += 1
@@ -617,14 +661,12 @@ Public Class Users
             Score += 2
         End If
 
-
         If String.IsNullOrWhiteSpace(Password) Then
             Return 0
         End If
 
         Return Score
     End Function
-
 
     Private Sub txtpass(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
         Dim Password As String = txtpassword.Text
@@ -719,5 +761,4 @@ Public Class Users
         Cursor = Cursors.Default
     End Sub
 
-    ''pagod na ako mga bes''
 End Class

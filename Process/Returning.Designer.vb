@@ -110,7 +110,7 @@ Partial Class Returning
         Label7.AutoSize = True
         Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(40, 14)
+        Label7.Location = New Point(40, 19)
         Label7.Name = "Label7"
         Label7.Size = New Size(141, 16)
         Label7.TabIndex = 43
@@ -130,7 +130,7 @@ Partial Class Returning
         txttransactionreceipt.Font = New Font("Segoe UI", 9F)
         txttransactionreceipt.ForeColor = Color.Black
         txttransactionreceipt.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txttransactionreceipt.Location = New Point(38, 33)
+        txttransactionreceipt.Location = New Point(38, 38)
         txttransactionreceipt.Name = "txttransactionreceipt"
         txttransactionreceipt.PlaceholderText = ""
         txttransactionreceipt.SelectedText = ""
@@ -264,7 +264,7 @@ Partial Class Returning
         Guna2GroupBox1.FillColor = SystemColors.Control
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.Transparent
-        Guna2GroupBox1.Location = New Point(38, 84)
+        Guna2GroupBox1.Location = New Point(38, 89)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         Guna2GroupBox1.Size = New Size(592, 218)
@@ -381,10 +381,10 @@ Partial Class Returning
         Guna2GroupBox3.FillColor = SystemColors.Control
         Guna2GroupBox3.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox3.ForeColor = Color.Transparent
-        Guna2GroupBox3.Location = New Point(14, 13)
+        Guna2GroupBox3.Location = New Point(12, 13)
         Guna2GroupBox3.Name = "Guna2GroupBox3"
         Guna2GroupBox3.ShadowDecoration.CustomizableEdges = CustomizableEdges18
-        Guna2GroupBox3.Size = New Size(1180, 674)
+        Guna2GroupBox3.Size = New Size(1333, 626)
         Guna2GroupBox3.TabIndex = 93
         ' 
         ' btnedit
@@ -400,7 +400,7 @@ Partial Class Returning
         btnedit.FillColor = Color.Empty
         btnedit.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnedit.Location = New Point(185, 320)
+        btnedit.Location = New Point(185, 325)
         btnedit.Name = "btnedit"
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btnedit.Size = New Size(90, 27)
@@ -412,7 +412,7 @@ Partial Class Returning
         lbldamage.AutoSize = True
         lbldamage.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lbldamage.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbldamage.Location = New Point(907, 310)
+        lbldamage.Location = New Point(907, 329)
         lbldamage.Name = "lbldamage"
         lbldamage.Size = New Size(99, 16)
         lbldamage.TabIndex = 100
@@ -421,7 +421,7 @@ Partial Class Returning
         ' cbdamage
         ' 
         cbdamage.FormattingEnabled = True
-        cbdamage.Location = New Point(907, 329)
+        cbdamage.Location = New Point(1012, 327)
         cbdamage.Name = "cbdamage"
         cbdamage.Size = New Size(224, 23)
         cbdamage.TabIndex = 99
@@ -432,7 +432,7 @@ Partial Class Returning
         Panel1.Controls.Add(rboverdue)
         Panel1.Controls.Add(Label16)
         Panel1.Controls.Add(rbdamage)
-        Panel1.Location = New Point(465, 315)
+        Panel1.Location = New Point(465, 320)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(427, 37)
         Panel1.TabIndex = 98
@@ -500,7 +500,7 @@ Partial Class Returning
         btnclear.FillColor = Color.Empty
         btnclear.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclear.Location = New Point(317, 320)
+        btnclear.Location = New Point(317, 325)
         btnclear.Name = "btnclear"
         btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         btnclear.Size = New Size(112, 27)
@@ -520,7 +520,7 @@ Partial Class Returning
         btnreturn.FillColor = Color.Empty
         btnreturn.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnreturn.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnreturn.Location = New Point(41, 320)
+        btnreturn.Location = New Point(41, 325)
         btnreturn.Name = "btnreturn"
         btnreturn.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         btnreturn.Size = New Size(112, 27)
@@ -538,10 +538,10 @@ Partial Class Returning
         Guna2GroupBox4.FillColor = SystemColors.Control
         Guna2GroupBox4.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox4.ForeColor = Color.Transparent
-        Guna2GroupBox4.Location = New Point(38, 366)
+        Guna2GroupBox4.Location = New Point(38, 371)
         Guna2GroupBox4.Name = "Guna2GroupBox4"
         Guna2GroupBox4.ShadowDecoration.CustomizableEdges = CustomizableEdges12
-        Guna2GroupBox4.Size = New Size(1101, 281)
+        Guna2GroupBox4.Size = New Size(1252, 226)
         Guna2GroupBox4.TabIndex = 95
         ' 
         ' DataGridView1
@@ -571,7 +571,7 @@ Partial Class Returning
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(22, 18)
+        DataGridView1.Location = New Point(23, 18)
         DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
@@ -590,7 +590,7 @@ Partial Class Returning
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        DataGridView1.Size = New Size(1064, 233)
+        DataGridView1.Size = New Size(1208, 185)
         DataGridView1.TabIndex = 26
         ' 
         ' PictureBox1
@@ -598,7 +598,7 @@ Partial Class Returning
         PictureBox1.BackColor = Color.White
         PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
         PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        PictureBox1.Location = New Point(1104, 30)
+        PictureBox1.Location = New Point(1249, 44)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(20, 18)
         PictureBox1.TabIndex = 93
@@ -618,13 +618,13 @@ Partial Class Returning
         txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Location = New Point(660, 24)
+        txtsearch.Location = New Point(660, 38)
         txtsearch.Margin = New Padding(4)
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrower"
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges14
-        txtsearch.Size = New Size(479, 30)
+        txtsearch.Size = New Size(625, 30)
         txtsearch.TabIndex = 94
         ' 
         ' Guna2GroupBox2
@@ -651,10 +651,10 @@ Partial Class Returning
         Guna2GroupBox2.FillColor = SystemColors.Control
         Guna2GroupBox2.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox2.ForeColor = Color.Transparent
-        Guna2GroupBox2.Location = New Point(660, 84)
+        Guna2GroupBox2.Location = New Point(660, 89)
         Guna2GroupBox2.Name = "Guna2GroupBox2"
         Guna2GroupBox2.ShadowDecoration.CustomizableEdges = CustomizableEdges16
-        Guna2GroupBox2.Size = New Size(479, 218)
+        Guna2GroupBox2.Size = New Size(630, 218)
         Guna2GroupBox2.TabIndex = 92
         ' 
         ' lblaccessionid
@@ -718,7 +718,7 @@ Partial Class Returning
         lbldetails.AutoSize = True
         lbldetails.Font = New Font("Tahoma", 12F, FontStyle.Bold)
         lbldetails.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbldetails.Location = New Point(323, 22)
+        lbldetails.Location = New Point(472, 21)
         lbldetails.Name = "lbldetails"
         lbldetails.Size = New Size(118, 19)
         lbldetails.TabIndex = 49
@@ -818,9 +818,9 @@ Partial Class Returning
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1220, 705)
+        ClientSize = New Size(1370, 700)
         Controls.Add(Guna2GroupBox3)
-        FormBorderStyle = FormBorderStyle.FixedDialog
+        FormBorderStyle = FormBorderStyle.None
         KeyPreview = True
         MaximizeBox = False
         MinimizeBox = False

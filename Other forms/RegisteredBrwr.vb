@@ -24,26 +24,16 @@ Public Class RegisteredBrwr
         Dim isSpecificBorrowerLoggedIn As Boolean = (GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrEmpty(GlobalVarsModule.CurrentUserID))
 
         If isSpecificBorrowerLoggedIn Then
-            ' --- LOGIC PARA SA SPECIFIC BORROWER ---
 
-            ' 1. Disable Search
             txtsearch.Enabled = False
-
-            ' 2. Hide Register/View Button
             oras.btnregisterview.Visible = False
 
-            ' 3. Move View Button (to the center, assuming 398 is the desired location when one button is hidden)
             oras.btnview.Location = New Point(398, 274)
         Else
-            ' --- LOGIC PARA SA ADMIN/STAFF (Selecting, Time-in, Viewing) ---
 
-            ' 1. Enable Search (Para sa lahat ng Admin/Staff modes)
             txtsearch.Enabled = True
-
-            ' 2. Show Register/View Button
             oras.btnregisterview.Visible = True
 
-            ' 3. Set View Button Location (assuming 607 is the desired location when both buttons are visible)
             oras.btnview.Location = New Point(607, 274)
 
         End If
@@ -113,7 +103,10 @@ Public Class RegisteredBrwr
         Dim borrowerType As String = selectedItem.SubItems(0).Text
         Dim firstName As String = selectedItem.SubItems(1).Text
         Dim lastName As String = selectedItem.SubItems(2).Text
-        Dim middleName As String = selectedItem.SubItems(3).Text
+
+
+        Dim middleInitial As String = selectedItem.SubItems(3).Text
+
         Dim lrn As String = selectedItem.SubItems(4).Text
         Dim employeeNo As String = selectedItem.SubItems(5).Text
         Dim contactNumber As String = selectedItem.SubItems(6).Text
@@ -124,7 +117,8 @@ Public Class RegisteredBrwr
 
         Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
         If orasForm IsNot Nothing Then
-            orasForm.brwrinfo(borrowerType, firstName, lastName, middleName, lrn, employeeNo, contactNumber, department, grade, section, strand)
+
+            orasForm.brwrinfo(borrowerType, firstName, lastName, middleInitial, lrn, employeeNo, contactNumber, department, grade, section, strand)
         End If
 
         Me.Close()
@@ -186,7 +180,7 @@ Public Class RegisteredBrwr
                 Dim item As New ListViewItem(reader.GetString("Borrower"))
                 item.SubItems.Add(reader.GetString("FirstName"))
                 item.SubItems.Add(reader.GetString("LastName"))
-                item.SubItems.Add(If(reader.IsDBNull(reader.GetOrdinal("MiddleName")), "", reader.GetString("MiddleName")))
+                item.SubItems.Add(If(reader.IsDBNull(reader.GetOrdinal("MiddleInitial")), "", reader.GetString("MiddleInitial")))
                 item.SubItems.Add(If(reader.IsDBNull(reader.GetOrdinal("LRN")), "", reader.GetString("LRN")))
                 item.SubItems.Add(If(reader.IsDBNull(reader.GetOrdinal("EmployeeNo")), "", reader.GetString("EmployeeNo")))
                 item.SubItems.Add(reader.GetString("ContactNumber"))

@@ -13,13 +13,15 @@ Public Class Penalty
     End Sub
 
     Public Sub refreshpenalty(Optional searchText As String = "")
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim ds As New DataSet
         Dim com As String
 
         If String.IsNullOrWhiteSpace(searchText) Then
+
             com = "SELECT * FROM `penalty_tbl` ORDER BY ID DESC"
         Else
+
             com = "SELECT * FROM `penalty_tbl` WHERE `FullName` LIKE @search OR `LRN` LIKE @search OR `EmployeeNo` LIKE @search OR `TransactionReceipt` LIKE @search ORDER BY ID DESC"
         End If
 
@@ -27,28 +29,35 @@ Public Class Penalty
             con.Open()
             Using adap As New MySqlDataAdapter(com, con)
                 If Not String.IsNullOrWhiteSpace(searchText) Then
-                    adap.SelectCommand.Parameters.AddWithValue("@search", "%" & searchText & "%")
+
+                    adap.SelectCommand.Parameters.AddWithValue("@search", searchText & "%")
                 End If
 
                 adap.Fill(ds, "INFO")
                 DataGridView1.DataSource = ds.Tables("INFO")
 
+
+
                 If DataGridView1.Rows.Count > 0 Then
                     If Not String.IsNullOrWhiteSpace(searchText) Then
+
                         DataGridView1.MultiSelect = True
                         DataGridView1.SelectAll()
                         DataGridView1.FirstDisplayedScrollingRowIndex = 0
 
                         LoadDetailsFromSelectedRow(DataGridView1.Rows(0))
                     Else
+
                         DataGridView1.ClearSelection()
                         DataGridView1.MultiSelect = False
                     End If
                 Else
+
                     DataGridView1.ClearSelection()
                     DataGridView1.MultiSelect = False
                     ClearAllDetails()
                 End If
+
 
                 DataGridView1.Columns("ID").Visible = False
                 DataGridView1.Columns("Grade").Visible = False
@@ -70,7 +79,6 @@ Public Class Penalty
             If con.State = ConnectionState.Open Then con.Close()
         End Try
     End Sub
-
     Private Function GetAccessionIDsByTransaction(ByVal transactionNo As String) As String
         Dim con As New MySqlConnection(connectionString)
         Dim accessionIDs As New List(Of String)
@@ -318,36 +326,38 @@ Public Class Penalty
 
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
-        Dim searchText As String = txtsearch.Text.Trim()
 
-        refreshpenalty(searchText)
+        Dim searchText As String = txtsearch.Text.Trim()
 
         If String.IsNullOrWhiteSpace(searchText) Then
             ClearAllDetails()
             refreshpenalty()
-        ElseIf DataGridView1.Rows.Count > 0 Then
-            LoadDetailsFromSelectedRow(DataGridView1.Rows(0))
-        Else
-            ClearAllDetails()
         End If
+
     End Sub
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
         If e.KeyCode = Keys.Enter Then
-            If DataGridView1.Rows.Count > 0 Then
+            Dim searchText As String = txtsearch.Text.Trim()
+
+
+            refreshpenalty(searchText)
+
+            If String.IsNullOrWhiteSpace(searchText) Then
+                ClearAllDetails()
+
+                refreshpenalty()
+            ElseIf DataGridView1.Rows.Count > 0 Then
                 LoadDetailsFromSelectedRow(DataGridView1.Rows(0))
-                e.SuppressKeyPress = True
-                e.Handled = True
+            Else
+                ClearAllDetails()
             End If
+
+            e.SuppressKeyPress = True
+            e.Handled = True
         End If
     End Sub
 
-
-    Private Sub Penalty_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
-        If e.KeyCode = Keys.Escape Then
-            Me.Close()
-        End If
-    End Sub
 
     Private Sub btnpenalized_Click(sender As Object, e As EventArgs) Handles btnpenalized.Click
 

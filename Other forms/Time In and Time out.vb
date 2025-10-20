@@ -116,24 +116,24 @@ Public Class oras
         Dim currentBorrowerID As String = GlobalVarsModule.CurrentBorrowerID
 
         Dim com As String = "SELECT " &
-                        "o.`ID`, " &
-                        "b.`Borrower`, " &
-                        "o.`LRN`, " &
-                        "o.`EmployeeNo`, " &
-                        "b.`FirstName`, " &
-                        "b.`LastName`, " &
-                        "b.`MiddleName`, " &
-                        "b.`ContactNumber`, " &
-                        "b.`Department`, " &
-                        "b.`Grade`, " &
-                        "b.`Section`, " &
-                        "b.`Strand`, " &
-                        "o.`TimeIn`, " &
-                        "o.`TimeOut` " &
-                        "FROM `oras_tbl` o " &
-                        "LEFT JOIN `borrower_tbl` b " &
-                        "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
-                        "WHERE o.`TimeOut` IS NULL "
+                            "o.`ID`, " &
+                            "b.`Borrower`, " &
+                            "o.`LRN`, " &
+                            "o.`EmployeeNo`, " &
+                            "b.`FirstName`, " &
+                            "b.`LastName`, " &
+                            "b.`MiddleInitial`, " &
+                            "b.`ContactNumber`, " &
+                            "b.`Department`, " &
+                            "b.`Grade`, " &
+                            "b.`Section`, " &
+                            "b.`Strand`, " &
+                            "o.`TimeIn`, " &
+                            "o.`TimeOut` " &
+                            "FROM `oras_tbl` o " &
+                            "LEFT JOIN `borrower_tbl` b " &
+                            "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
+                            "WHERE o.`TimeOut` IS NULL "
 
 
         If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
@@ -213,12 +213,14 @@ Public Class oras
 
     End Sub
 
-    Public Sub brwrinfo(borrowerType As String, firstName As String, lastName As String, middleName As String, lrn As String, employeeNo As String, contactNumber As String, department As String, grade As String, section As String, strand As String)
+
+    Public Sub brwrinfo(borrowerType As String, firstName As String, lastName As String, middleInitial As String, lrn As String, employeeNo As String, contactNumber As String, department As String, grade As String, section As String, strand As String)
 
         txtborrower.Text = borrowerType
         txtfname.Text = firstName
         txtlname.Text = lastName
-        txtmname.Text = middleName
+
+        txtmname.Text = middleInitial
         txtlrn.Text = lrn
         txtemployee.Text = employeeNo
         txtcontact.Text = contactNumber
@@ -347,7 +349,8 @@ Public Class oras
             txtborrower.Text = If(row.Cells("Borrower").Value Is DBNull.Value, "", row.Cells("Borrower").Value.ToString())
             txtfname.Text = If(row.Cells("FirstName").Value Is DBNull.Value, "", row.Cells("FirstName").Value.ToString())
             txtlname.Text = If(row.Cells("LastName").Value Is DBNull.Value, "", row.Cells("LastName").Value.ToString())
-            txtmname.Text = If(row.Cells("MiddleName").Value Is DBNull.Value, "", row.Cells("MiddleName").Value.ToString())
+
+            txtmname.Text = If(row.Cells("MiddleInitial").Value Is DBNull.Value, "", row.Cells("MiddleInitial").Value.ToString())
 
             txtlrn.Text = If(row.Cells("LRN").Value Is DBNull.Value, "", row.Cells("LRN").Value.ToString())
             txtemployee.Text = If(row.Cells("EmployeeNo").Value Is DBNull.Value, "", row.Cells("EmployeeNo").Value.ToString())

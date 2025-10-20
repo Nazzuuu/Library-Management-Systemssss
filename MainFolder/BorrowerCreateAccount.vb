@@ -14,7 +14,7 @@ Public Class BorrowerCreateAccount
         Dim columnName As String = If(IDType = "LRN", "LRN", "EmployeeNo")
 
 
-        Dim com As String = $"SELECT CONCAT_WS(' ', `FirstName`, NULLIF(NULLIF(TRIM(`MiddleName`), 'N/A'), ''), `LastName`) FROM `borrower_tbl` WHERE `{columnName}` = @ID LIMIT 1"
+        Dim com As String = $"SELECT CONCAT_WS(' ', `FirstName`, NULLIF(NULLIF(TRIM(`MiddleInitial`), 'N/A'), ''), `LastName`) FROM `borrower_tbl` WHERE `{columnName}` = @ID LIMIT 1"
 
         Using con As New MySqlConnection(connectionString)
             Try

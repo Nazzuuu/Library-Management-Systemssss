@@ -39,10 +39,8 @@ Partial Class Users
         Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -55,6 +53,10 @@ Partial Class Users
         Dim CustomizableEdges24 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
         PictureBox1 = New PictureBox()
@@ -92,6 +94,8 @@ Partial Class Users
         txtusername = New Guna.UI2.WinForms.Guna2TextBox()
         panel_book = New Panel()
         OpenFileDialog1 = New OpenFileDialog()
+        Label10 = New Label()
+        txtaddress = New Guna.UI2.WinForms.Guna2TextBox()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -298,6 +302,8 @@ Partial Class Users
         groupbox.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         groupbox.BorderRadius = 9
         groupbox.BorderThickness = 2
+        groupbox.Controls.Add(Label10)
+        groupbox.Controls.Add(txtaddress)
         groupbox.Controls.Add(PictureBox2)
         groupbox.Controls.Add(lblpassword)
         groupbox.Controls.Add(Panel1)
@@ -328,13 +334,13 @@ Partial Class Users
         groupbox.Controls.Add(Label6)
         groupbox.Controls.Add(txtusername)
         groupbox.CustomBorderColor = Color.Transparent
-        groupbox.CustomizableEdges = CustomizableEdges27
+        groupbox.CustomizableEdges = CustomizableEdges29
         groupbox.FillColor = Color.Transparent
         groupbox.Font = New Font("Segoe UI", 9F)
         groupbox.ForeColor = Color.FromArgb(CByte(125), CByte(137), CByte(149))
         groupbox.Location = New Point(12, 13)
         groupbox.Name = "groupbox"
-        groupbox.ShadowDecoration.CustomizableEdges = CustomizableEdges28
+        groupbox.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         groupbox.Size = New Size(1333, 626)
         groupbox.TabIndex = 0
         ' 
@@ -365,7 +371,7 @@ Partial Class Users
         Panel1.Controls.Add(rbassistant)
         Panel1.Controls.Add(rbstaff)
         Panel1.Controls.Add(Label9)
-        Panel1.Location = New Point(611, 211)
+        Panel1.Location = New Point(946, 14)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(341, 44)
         Panel1.TabIndex = 80
@@ -456,7 +462,7 @@ Partial Class Users
         ' 
         txtmname.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtmname.BorderRadius = 12
-        txtmname.CustomizableEdges = CustomizableEdges13
+        txtmname.CustomizableEdges = CustomizableEdges15
         txtmname.DefaultText = ""
         txtmname.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtmname.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -470,7 +476,7 @@ Partial Class Users
         txtmname.Name = "txtmname"
         txtmname.PlaceholderText = ""
         txtmname.SelectedText = ""
-        txtmname.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        txtmname.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         txtmname.Size = New Size(232, 33)
         txtmname.TabIndex = 75
         ' 
@@ -478,7 +484,7 @@ Partial Class Users
         ' 
         txtlname.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtlname.BorderRadius = 12
-        txtlname.CustomizableEdges = CustomizableEdges15
+        txtlname.CustomizableEdges = CustomizableEdges17
         txtlname.DefaultText = ""
         txtlname.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtlname.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -492,7 +498,7 @@ Partial Class Users
         txtlname.Name = "txtlname"
         txtlname.PlaceholderText = ""
         txtlname.SelectedText = ""
-        txtlname.ShadowDecoration.CustomizableEdges = CustomizableEdges16
+        txtlname.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         txtlname.Size = New Size(232, 33)
         txtlname.TabIndex = 74
         ' 
@@ -500,7 +506,7 @@ Partial Class Users
         ' 
         txtfname.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtfname.BorderRadius = 12
-        txtfname.CustomizableEdges = CustomizableEdges17
+        txtfname.CustomizableEdges = CustomizableEdges19
         txtfname.DefaultText = ""
         txtfname.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtfname.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -514,7 +520,7 @@ Partial Class Users
         txtfname.Name = "txtfname"
         txtfname.PlaceholderText = ""
         txtfname.SelectedText = ""
-        txtfname.ShadowDecoration.CustomizableEdges = CustomizableEdges18
+        txtfname.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         txtfname.Size = New Size(232, 33)
         txtfname.TabIndex = 73
         ' 
@@ -534,7 +540,7 @@ Partial Class Users
         rbmale.AutoSize = True
         rbmale.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbmale.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbmale.Location = New Point(406, 172)
+        rbmale.Location = New Point(740, 227)
         rbmale.Name = "rbmale"
         rbmale.Size = New Size(55, 20)
         rbmale.TabIndex = 70
@@ -547,7 +553,7 @@ Partial Class Users
         rbfemale.AutoSize = True
         rbfemale.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbfemale.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbfemale.Location = New Point(517, 172)
+        rbfemale.Location = New Point(818, 227)
         rbfemale.Name = "rbfemale"
         rbfemale.Size = New Size(69, 20)
         rbfemale.TabIndex = 69
@@ -560,7 +566,7 @@ Partial Class Users
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(324, 172)
+        Label4.Location = New Point(658, 227)
         Label4.Name = "Label4"
         Label4.Size = New Size(58, 16)
         Label4.TabIndex = 61
@@ -581,7 +587,7 @@ Partial Class Users
         ' 
         txtcontactnumber.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtcontactnumber.BorderRadius = 12
-        txtcontactnumber.CustomizableEdges = CustomizableEdges19
+        txtcontactnumber.CustomizableEdges = CustomizableEdges21
         txtcontactnumber.DefaultText = ""
         txtcontactnumber.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtcontactnumber.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -595,7 +601,7 @@ Partial Class Users
         txtcontactnumber.Name = "txtcontactnumber"
         txtcontactnumber.PlaceholderText = ""
         txtcontactnumber.SelectedText = ""
-        txtcontactnumber.ShadowDecoration.CustomizableEdges = CustomizableEdges20
+        txtcontactnumber.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         txtcontactnumber.Size = New Size(232, 33)
         txtcontactnumber.TabIndex = 59
         ' 
@@ -614,7 +620,7 @@ Partial Class Users
         ' 
         txtemail.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtemail.BorderRadius = 12
-        txtemail.CustomizableEdges = CustomizableEdges21
+        txtemail.CustomizableEdges = CustomizableEdges23
         txtemail.DefaultText = ""
         txtemail.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtemail.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -628,7 +634,7 @@ Partial Class Users
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""
-        txtemail.ShadowDecoration.CustomizableEdges = CustomizableEdges22
+        txtemail.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         txtemail.Size = New Size(232, 33)
         txtemail.TabIndex = 57
         ' 
@@ -647,7 +653,7 @@ Partial Class Users
         ' 
         txtpassword.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtpassword.BorderRadius = 12
-        txtpassword.CustomizableEdges = CustomizableEdges23
+        txtpassword.CustomizableEdges = CustomizableEdges25
         txtpassword.DefaultText = ""
         txtpassword.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtpassword.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -661,7 +667,7 @@ Partial Class Users
         txtpassword.Name = "txtpassword"
         txtpassword.PlaceholderText = ""
         txtpassword.SelectedText = ""
-        txtpassword.ShadowDecoration.CustomizableEdges = CustomizableEdges24
+        txtpassword.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         txtpassword.Size = New Size(232, 33)
         txtpassword.TabIndex = 55
         ' 
@@ -669,7 +675,7 @@ Partial Class Users
         ' 
         txtusername.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtusername.BorderRadius = 12
-        txtusername.CustomizableEdges = CustomizableEdges25
+        txtusername.CustomizableEdges = CustomizableEdges27
         txtusername.DefaultText = ""
         txtusername.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtusername.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -683,7 +689,7 @@ Partial Class Users
         txtusername.Name = "txtusername"
         txtusername.PlaceholderText = ""
         txtusername.SelectedText = ""
-        txtusername.ShadowDecoration.CustomizableEdges = CustomizableEdges26
+        txtusername.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         txtusername.Size = New Size(232, 33)
         txtusername.TabIndex = 38
         ' 
@@ -699,6 +705,40 @@ Partial Class Users
         ' OpenFileDialog1
         ' 
         OpenFileDialog1.FileName = "OpenFileDialog1"
+        ' 
+        ' Label10
+        ' 
+        Label10.AutoSize = True
+        Label10.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label10.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label10.Location = New Point(314, 137)
+        Label10.Name = "Label10"
+        Label10.Size = New Size(130, 16)
+        Label10.TabIndex = 127
+        Label10.Text = "Address (Optional)"
+        ' 
+        ' txtaddress
+        ' 
+        txtaddress.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtaddress.BorderRadius = 12
+        txtaddress.CustomizableEdges = CustomizableEdges13
+        txtaddress.DefaultText = ""
+        txtaddress.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtaddress.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtaddress.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtaddress.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtaddress.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtaddress.Font = New Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        txtaddress.ForeColor = Color.Black
+        txtaddress.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtaddress.Location = New Point(314, 164)
+        txtaddress.Margin = New Padding(3, 5, 3, 5)
+        txtaddress.Name = "txtaddress"
+        txtaddress.PlaceholderText = ""
+        txtaddress.SelectedText = ""
+        txtaddress.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        txtaddress.Size = New Size(242, 33)
+        txtaddress.TabIndex = 126
         ' 
         ' Users
         ' 
@@ -758,4 +798,6 @@ Partial Class Users
     Friend WithEvents Label9 As Label
     Friend WithEvents lblpassword As Label
     Friend WithEvents PictureBox2 As PictureBox
+    Friend WithEvents Label10 As Label
+    Friend WithEvents txtaddress As Guna.UI2.WinForms.Guna2TextBox
 End Class

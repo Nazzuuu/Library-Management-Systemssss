@@ -122,6 +122,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_dash.Controls.Remove(TimeInOutRecord)
         Panel_dash.Controls.Remove(BorrowingHistory)
+        Panel_dash.Controls.Remove(Penalty)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -157,6 +158,9 @@ Public Class MainForm
         Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_dash.Controls.Remove(TimeInOutRecord)
         Panel_dash.Controls.Remove(BorrowingHistory)
+        Panel_dash.Controls.Remove(Penalty)
+        Panel_dash.Controls.Remove(BookBorrowingConfirmation)
+        Panel_dash.Controls.Remove(Returning)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -190,6 +194,9 @@ Public Class MainForm
         Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_dash.Controls.Remove(TimeInOutRecord)
         Panel_dash.Controls.Remove(BorrowingHistory)
+        Panel_dash.Controls.Remove(Penalty)
+        Panel_dash.Controls.Remove(BookBorrowingConfirmation)
+        Panel_dash.Controls.Remove(Returning)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -224,6 +231,9 @@ Public Class MainForm
         Panel_dash.Controls.Remove(PrintReceiptForm)
         Panel_dash.Controls.Remove(TimeInOutRecord)
         Panel_dash.Controls.Remove(BorrowingHistory)
+        Panel_dash.Controls.Remove(Penalty)
+        Panel_dash.Controls.Remove(BookBorrowingConfirmation)
+        Panel_dash.Controls.Remove(Returning)
         Panel_User.Show()
 
 
@@ -850,7 +860,23 @@ Public Class MainForm
     End Sub
 
     Private Sub ReturnToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReturnToolStripMenuItem.Click
-        Returning.ShowDialog()
+
+        Panel_dash.Controls.Clear()
+
+        With Returning
+            .TopLevel = False
+            .TopMost = True
+            .BringToFront()
+            Panel_dash.Controls.Add(Returning)
+
+            .Show()
+
+            Book.DataGridView1.ClearSelection()
+            Book.DataGridView1.CurrentCell = Nothing
+        End With
+
+        lblform.Text = "RETURNING FORM"
+
     End Sub
 
     Private Sub BorrowingHistoryToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowingHistoryToolStripMenuItem.Click
@@ -884,10 +910,42 @@ Public Class MainForm
     End Sub
 
     Private Sub BorrowingConfirmationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowingConfirmationToolStripMenuItem.Click
-        BookBorrowingConfirmation.ShowDialog()
+
+        Panel_dash.Controls.Clear()
+
+        With BookBorrowingConfirmation
+            .TopLevel = False
+            .TopMost = True
+            .BringToFront()
+            Panel_dash.Controls.Add(BookBorrowingConfirmation)
+
+            .Show()
+
+            Book.DataGridView1.ClearSelection()
+            Book.DataGridView1.CurrentCell = Nothing
+        End With
+
+        lblform.Text = "CONFIRMATION FORM"
+
     End Sub
 
     Private Sub PenaltyToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PenaltyToolStripMenuItem.Click
-        Penalty.ShowDialog()
+
+        Panel_dash.Controls.Clear()
+
+        With Penalty
+            .TopLevel = False
+            .TopMost = True
+            .BringToFront()
+            Panel_dash.Controls.Add(Penalty)
+
+            .Show()
+
+            Book.DataGridView1.ClearSelection()
+            Book.DataGridView1.CurrentCell = Nothing
+        End With
+
+        lblform.Text = "PENALTY FORM"
+
     End Sub
 End Class

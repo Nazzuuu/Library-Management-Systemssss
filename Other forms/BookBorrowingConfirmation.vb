@@ -366,11 +366,6 @@ Public Class BookBorrowingConfirmation
         End Try
     End Sub
 
-    Private Sub BookBorrowingConfirmation_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
-        If e.KeyCode = Keys.Escape Then
-            Me.Close()
-        End If
-    End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
         If String.IsNullOrWhiteSpace(txtsearch.Text) Then

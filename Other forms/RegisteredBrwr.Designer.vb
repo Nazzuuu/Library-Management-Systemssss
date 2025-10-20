@@ -22,10 +22,10 @@ Partial Class RegisteredBrwr
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         ListView1 = New ListView()
@@ -66,7 +66,7 @@ Partial Class RegisteredBrwr
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges9
+        txtsearch.CustomizableEdges = CustomizableEdges1
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -81,7 +81,7 @@ Partial Class RegisteredBrwr
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrwer"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtsearch.Size = New Size(774, 30)
         txtsearch.TabIndex = 23
         ' 
@@ -118,7 +118,7 @@ Partial Class RegisteredBrwr
         ' 
         ' txtmname
         ' 
-        txtmname.Text = "MiddleName"
+        txtmname.Text = "MiddleInitial"
         txtmname.Width = 120
         ' 
         ' txtlrn
@@ -163,13 +163,13 @@ Partial Class RegisteredBrwr
         Guna2GroupBox1.BorderThickness = 2
         Guna2GroupBox1.Controls.Add(ListView1)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges11
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges3
         Guna2GroupBox1.FillColor = SystemColors.Control
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.Transparent
         Guna2GroupBox1.Location = New Point(13, 143)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         Guna2GroupBox1.Size = New Size(1170, 294)
         Guna2GroupBox1.TabIndex = 24
         ' 

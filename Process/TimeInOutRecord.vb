@@ -23,7 +23,7 @@ Public Class TimeInOutRecord
                         "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
                         "b.`Borrower`, " &
                         "CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
-                        "IF(b.`MiddleName` IS NULL OR b.`MiddleName` = '' OR UPPER(b.`MiddleName`) = 'N/A', '', CONCAT(' ', b.`MiddleName`))" &
+                        "IF(b.`MiddleInitial` IS NULL OR b.`MiddleInitial` = '' OR UPPER(b.`MiddleInitial`) = 'N/A', '', CONCAT(' ', b.`MiddleInitial`))" &
                         ") AS `FullName`, " &
                         "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
                         "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
@@ -50,7 +50,7 @@ Public Class TimeInOutRecord
                     If DataGridView1.Columns.Contains("Date") Then DataGridView1.Columns("Date").HeaderText = "DATE"
                     If DataGridView1.Columns.Contains("Borrower") Then DataGridView1.Columns("Borrower").HeaderText = "BORROWER TYPE"
                     If DataGridView1.Columns.Contains("FullName") Then DataGridView1.Columns("FullName").HeaderText = "FULL NAME"
-                    If DataGridView1.Columns.Contains("TimeIn") Then DataGridView1.Columns("TimeIn").HeaderText = "TIME IN" ' Headers are set here
+                    If DataGridView1.Columns.Contains("TimeIn") Then DataGridView1.Columns("TimeIn").HeaderText = "TIME IN"
                     If DataGridView1.Columns.Contains("TimeOut") Then
                         DataGridView1.Columns("TimeOut").HeaderText = "TIME OUT"
                         DataGridView1.Columns("TimeOut").Visible = True

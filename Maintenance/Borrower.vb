@@ -1,6 +1,12 @@
 ﻿Imports System.Management
 Imports MySql.Data.MySqlClient
+Imports System.Data
+
 Public Class Borrower
+
+
+    Private ReadOnly connectionString As String = GlobalVarsModule.connectionString
+    Private isBackspacing As Boolean = False
 
     Private Sub Borrower_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -12,11 +18,10 @@ Public Class Borrower
 
         Dim con As New MySqlConnection(connectionString)
 
-
         Dim com As String = "SELECT b.*, " &
-                        "CASE WHEN e.ID IS NOT NULL THEN 1 ELSE 0 END AS HasAccount " &
-                        "FROM `borrower_tbl` b " &
-                        "LEFT JOIN `borroweredit_tbl` e ON b.LRN = e.LRN OR b.EmployeeNo = e.EmployeeNo"
+                             "CASE WHEN e.ID IS NOT NULL THEN 1 ELSE 0 END AS HasAccount " &
+                             "FROM `borrower_tbl` b " &
+                             "LEFT JOIN `borroweredit_tbl` e ON b.LRN = e.LRN OR b.EmployeeNo = e.EmployeeNo"
 
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -119,10 +124,12 @@ Public Class Borrower
     Public Sub strandlocation()
 
         cbstrand.Visible = True
+
         cbstrand.Location = New Point(942, 285)
 
 
         lblstrand.Visible = True
+
         lblstrand.Location = New Point(942, 266)
 
     End Sub
@@ -211,13 +218,15 @@ Public Class Borrower
         DataGridView1.ClearSelection()
 
     End Sub
+
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
             Dim searchValue As String = txtsearch.Text.Trim()
             If Not String.IsNullOrEmpty(searchValue) Then
-                Dim filter As String = String.Format("FirstName LIKE '%{0}%' OR Department LIKE '%{0}%' OR LastName LIKE '%{0}%' OR MiddleName LIKE '%{0}%' OR LRN LIKE '%{0}%' OR Borrower LIKE '%{0}%'", searchValue)
+
+                Dim filter As String = String.Format("FirstName LIKE '%{0}%' OR Department LIKE '%{0}%' OR LastName LIKE '%{0}%' OR MiddleInitial LIKE '%{0}%' OR LRN LIKE '%{0}%' OR Borrower LIKE '%{0}%'", searchValue)
                 dt.DefaultView.RowFilter = filter
             Else
                 dt.DefaultView.RowFilter = ""
@@ -226,11 +235,14 @@ Public Class Borrower
 
     End Sub
 
-    Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
+
+    Private Sub btnadd_Click_1(sender As Object, e As EventArgs) Handles btnadd.Click
+
 
         Dim con As New MySqlConnection(connectionString)
         Dim borrowerType As String = ""
-        Dim middleName As String = txtmname.Text.Trim()
+
+        Dim middleInitial As String = txtmname.Text.Trim()
         Dim lrn As Object = DBNull.Value
         Dim employeeNo As Object = DBNull.Value
         Dim contactNumber As String = txtcontactnumber.Text.Trim()
@@ -244,7 +256,7 @@ Public Class Borrower
         End If
 
         If rbnone.Checked Then
-            middleName = "N/A"
+            middleInitial = "N/A"
         End If
 
 
@@ -252,6 +264,7 @@ Public Class Borrower
             MsgBox("Please fill in all required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
+
 
         If borrowerType = "Student" Then
             If String.IsNullOrWhiteSpace(txtlrn.Text) Then
@@ -286,12 +299,12 @@ Public Class Borrower
             End If
 
 
-            Dim com As New MySqlCommand("INSERT INTO `borrower_tbl`(`Borrower`, `FirstName`, `LastName`, `MiddleName`, `LRN`, `EmployeeNo`, `ContactNumber`, `Department`, `Grade`, `Section`, `Strand`) VALUES (@Borrower, @FirstName, @LastName, @MiddleName, @LRN, @EmployeeNo, @ContactNumber, @Department, @Grade, @Section, @Strand)", con)
+            Dim com As New MySqlCommand("INSERT INTO `borrower_tbl`(`Borrower`, `FirstName`, `LastName`, `MiddleInitial`, `LRN`, `EmployeeNo`, `ContactNumber`, `Department`, `Grade`, `Section`, `Strand`) VALUES (@Borrower, @FirstName, @LastName, @MiddleInitial, @LRN, @EmployeeNo, @ContactNumber, @Department, @Grade, @Section, @Strand)", con)
 
             com.Parameters.AddWithValue("@Borrower", borrowerType)
             com.Parameters.AddWithValue("@FirstName", firstName)
             com.Parameters.AddWithValue("@LastName", lastName)
-            com.Parameters.AddWithValue("@MiddleName", middleName)
+            com.Parameters.AddWithValue("@MiddleInitial", middleInitial)
             com.Parameters.AddWithValue("@LRN", lrn)
             com.Parameters.AddWithValue("@EmployeeNo", employeeNo)
             com.Parameters.AddWithValue("@ContactNumber", contactNumber)
@@ -323,10 +336,12 @@ Public Class Borrower
                 con.Close()
             End If
         End Try
+
     End Sub
 
 
-    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+
+    Private Sub btnedit_Click_1(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
@@ -344,19 +359,17 @@ Public Class Borrower
 
             Dim oldFirstName As String = selectedRow.Cells("FirstName").Value.ToString().Trim()
             Dim oldLastName As String = selectedRow.Cells("LastName").Value.ToString().Trim()
-            Dim oldMiddleNameValue As Object = selectedRow.Cells("MiddleName").Value
-            Dim oldMiddleName As String = If(oldMiddleNameValue Is DBNull.Value OrElse oldMiddleNameValue Is Nothing, "", oldMiddleNameValue.ToString().Trim())
+            Dim oldMiddleInitialValue As Object = selectedRow.Cells("MiddleInitial").Value
+            Dim oldMiddleInitial As String = If(oldMiddleInitialValue Is DBNull.Value OrElse oldMiddleInitialValue Is Nothing, "", oldMiddleInitialValue.ToString().Trim())
 
             Dim oldFullNameInGrid As String = $"{oldLastName}, {oldFirstName}"
-            If oldMiddleName.ToUpper() <> "N/A" AndAlso Not String.IsNullOrWhiteSpace(oldMiddleName) Then
-
-                oldFullNameInGrid = $"{oldLastName}, {oldFirstName} {oldMiddleName}"
+            If oldMiddleInitial.ToUpper() <> "N/A" AndAlso Not String.IsNullOrWhiteSpace(oldMiddleInitial) Then
+                oldFullNameInGrid = $"{oldLastName}, {oldFirstName} {oldMiddleInitial}"
             End If
 
 
-
             Dim borrowerType As String = ""
-            Dim middleName As String = txtmname.Text.Trim()
+            Dim middleInitial As String = txtmname.Text.Trim()
             Dim lrn As Object = DBNull.Value
             Dim employeeNo As Object = DBNull.Value
             Dim contactNumber As String = txtcontactnumber.Text.Trim()
@@ -367,13 +380,10 @@ Public Class Borrower
             Dim newemployeeno As String = txtemployeeno.Text.Trim()
 
 
-
             Dim newFullName As String = $"{lastName}, {firstName}"
-            If Not rbnone.Checked AndAlso Not String.IsNullOrWhiteSpace(middleName) Then
-
-                newFullName = $"{lastName}, {firstName} {middleName}"
+            If Not rbnone.Checked AndAlso Not String.IsNullOrWhiteSpace(middleInitial) Then
+                newFullName = $"{lastName}, {firstName} {middleInitial}"
             End If
-
 
 
             If rbstudent.Checked Then
@@ -383,7 +393,7 @@ Public Class Borrower
             End If
 
             If rbnone.Checked Then
-                middleName = "N/A"
+                middleInitial = "N/A"
             End If
 
             If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(contactNumber) Then
@@ -453,13 +463,12 @@ Public Class Borrower
                 End If
 
 
-
-                Dim com As New MySqlCommand("UPDATE `borrower_tbl` SET `Borrower`=@Borrower, `FirstName`=@FirstName, `LastName`=@LastName, `MiddleName`=@MiddleName, `LRN`=@LRN, `EmployeeNo`=@EmployeeNo, `ContactNumber`=@ContactNumber, `Department`=@Department, `Grade`=@Grade, `Section`=@Section, `Strand`=@Strand WHERE `ID`=@ID", con)
+                Dim com As New MySqlCommand("UPDATE `borrower_tbl` SET `Borrower`=@Borrower, `FirstName`=@FirstName, `LastName`=@LastName, `MiddleInitial`=@MiddleInitial, `LRN`=@LRN, `EmployeeNo`=@EmployeeNo, `ContactNumber`=@ContactNumber, `Department`=@Department, `Grade`=@Grade, `Section`=@Section, `Strand`=@Strand WHERE `ID`=@ID", con)
 
                 com.Parameters.AddWithValue("@Borrower", borrowerType)
                 com.Parameters.AddWithValue("@FirstName", firstName)
                 com.Parameters.AddWithValue("@LastName", lastName)
-                com.Parameters.AddWithValue("@MiddleName", middleName)
+                com.Parameters.AddWithValue("@MiddleInitial", middleInitial)
                 com.Parameters.AddWithValue("@LRN", lrn)
                 com.Parameters.AddWithValue("@EmployeeNo", employeeNo)
                 com.Parameters.AddWithValue("@ContactNumber", contactNumber)
@@ -549,10 +558,10 @@ Public Class Borrower
                 End If
             End Try
         End If
+
     End Sub
 
-
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
+    Private Sub btndelete_Click(sender As Object, e As EventArgs)
 
 
         If DataGridView1.SelectedRows.Count = 0 Then
@@ -637,19 +646,6 @@ Public Class Borrower
     End Sub
 
 
-    Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-
-        ClearFields
-
-        cbstrand.Visible = True
-        cbstrand.Location = New Point(942, 285)
-
-
-        lblstrand.Visible = True
-        lblstrand.Location = New Point(942, 266)
-
-    End Sub
-
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
@@ -661,6 +657,10 @@ Public Class Borrower
             Dim borrowerType As String = row.Cells("Borrower").Value.ToString()
 
 
+            If Not DataGridView1.Columns.Contains("MiddleInitial") Then
+
+                Exit Sub
+            End If
 
             If borrowerType = "Student" Then
 
@@ -686,9 +686,11 @@ Public Class Borrower
 
             txtfname.Text = row.Cells("FirstName").Value.ToString()
 
-            Dim middleName As String = row.Cells("MiddleName").Value.ToString()
 
-            If middleName.Trim().ToUpper() = "N/A" Then
+            Dim middleInitial As String = row.Cells("MiddleInitial").Value.ToString()
+
+
+            If middleInitial.Trim().ToUpper() = "N/A" Then
 
                 rbnone.Checked = True
                 txtmname.Text = ""
@@ -696,13 +698,13 @@ Public Class Borrower
             Else
 
                 rbnone.Checked = False
-                txtmname.Text = middleName
+                txtmname.Text = middleInitial
 
             End If
 
 
             txtlname.Text = row.Cells("LastName").Value.ToString()
-            txtlrn.Text = row.Cells("LRN").Value.ToString()
+            txtlrn.Text = If(IsDBNull(row.Cells("LRN").Value), "", row.Cells("LRN").Value.ToString())
             txtcontactnumber.Text = row.Cells("ContactNumber").Value.ToString()
             cbdepartment.Text = row.Cells("Department").Value.ToString()
             cbgrade.Text = row.Cells("Grade").Value.ToString()
@@ -1062,6 +1064,10 @@ Public Class Borrower
             e.SuppressKeyPress = True
         End If
 
+        If e.KeyCode = Keys.Back Then
+
+            isBackspacing = True
+        End If
     End Sub
 
     Private Sub txtfname_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtfname.KeyPress
@@ -1096,13 +1102,6 @@ Public Class Borrower
 
     End Sub
 
-    Private Sub txtmname_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtmname.KeyPress
-
-        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
-            e.Handled = True
-        End If
-
-    End Sub
 
     Private Sub txtlrn_KeyDown(sender As Object, e As KeyEventArgs) Handles txtlrn.KeyDown
 
@@ -1216,4 +1215,80 @@ Public Class Borrower
     Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
         Cursor = Cursors.Default
     End Sub
+
+
+    Private Sub btnclear_Click_1(sender As Object, e As EventArgs) Handles btnclear.Click
+
+        ClearFields()
+
+        cbstrand.Visible = True
+        cbstrand.Location = New Point(942, 285)
+
+
+        lblstrand.Visible = True
+        lblstrand.Location = New Point(942, 266)
+
+
+    End Sub
+
+    Private Sub txtmname_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtmname.KeyPress
+
+        If Char.IsControl(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+        If Not Char.IsLetter(e.KeyChar) Then
+            e.Handled = True
+            Return
+        End If
+
+        If txtmname.Text.Replace(".", "").Length >= 1 Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtmname_TextChanged(sender As Object, e As EventArgs) Handles txtmname.TextChanged
+        Static isFormatting As Boolean = False
+
+        If isFormatting Then
+            Return
+        End If
+
+        Dim currentText As String = txtmname.Text
+
+        If String.IsNullOrWhiteSpace(currentText) Then
+            Return
+        End If
+
+        isFormatting = True
+
+        Dim initial As String = currentText.Replace(".", "").Trim()
+
+        If initial.Length = 1 AndAlso currentText.Length = 1 Then
+            isFormatting = False
+            txtmname.SelectionStart = txtmname.Text.Length
+            Return
+        End If
+
+        If initial.Length > 0 Then
+            Dim formattedInitial As String = initial.Substring(0, 1).ToUpper() & "."
+
+            If txtmname.Text <> formattedInitial Then
+                txtmname.Text = formattedInitial
+                txtmname.SelectionStart = txtmname.Text.Length
+            Else
+                txtmname.SelectionStart = txtmname.Text.Length
+            End If
+
+        Else
+            If currentText.Length > 0 Then
+                txtmname.Text = ""
+            End If
+        End If
+
+        isFormatting = False
+    End Sub
+
 End Class
