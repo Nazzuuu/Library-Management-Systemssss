@@ -12,6 +12,11 @@ Public Class MainForm
         GlobalVarsModule.CurrentUserRole = "Guest"
 
         lblborrowcount()
+        lblreturncount()
+        lbldamagecount()
+        lbllostcount()
+        lbloverduecount()
+        lblresercopies()
         btnexit.Visible = False
     End Sub
 
@@ -107,6 +112,17 @@ Public Class MainForm
 
     Private Sub MaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MaintenanceToolStripMenuItem.Click
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+                load.lblreturncount()
+                load.lblresercopies()
+            End If
+        Next
+
         MaintenanceToolStripMenuItem.ForeColor = Color.DarkGray
 
         Dim lumabasna As Boolean = False
@@ -123,6 +139,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(TimeInOutRecord)
         Panel_dash.Controls.Remove(BorrowingHistory)
         Panel_dash.Controls.Remove(Penalty)
+        Panel_dash.Controls.Remove(Returning)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -142,6 +159,17 @@ Public Class MainForm
     End Sub
 
     Private Sub ToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles SettingsStripMenuItem.Click
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+                load.lblreturncount()
+                load.lblresercopies()
+            End If
+        Next
 
         SettingsStripMenuItem.ForeColor = Color.DarkGray
 
@@ -179,6 +207,16 @@ Public Class MainForm
 
     Private Sub ActiveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles Audit_Trail.Click
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+                load.lblreturncount()
+            End If
+        Next
+
         SettingsStripMenuItem.ForeColor = Color.White
 
         Dim lumabasna As Boolean = False
@@ -213,6 +251,16 @@ Public Class MainForm
     End Sub
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ProcessStripMenuItem.Click
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+                load.lblreturncount()
+            End If
+        Next
 
         ProcessStripMenuItem.ShowDropDown()
 
@@ -469,6 +517,16 @@ Public Class MainForm
         End With
 
         lblform.Text = "ACCESSION FORM"
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+            End If
+        Next
+
     End Sub
 
     Private Sub TimeInToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TimeInToolStripMenuItem.Click
@@ -752,6 +810,154 @@ Public Class MainForm
         End Try
     End Sub
 
+
+    Public Sub lblreturncount()
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim finalReturnCount As Integer = 0
+
+        Try
+            con.Open()
+
+
+            Dim returnedQuery As String = "SELECT COALESCE(SUM(BookTotal), 0) FROM returning_tbl WHERE Status NOT LIKE 'Lost%'"
+
+            Using cmd As New MySqlCommand(returnedQuery, con)
+                Dim result As Object = cmd.ExecuteScalar()
+                finalReturnCount = Convert.ToInt32(result)
+            End Using
+
+            lbl_return.Text = finalReturnCount.ToString("0")
+
+        Catch ex As Exception
+            MessageBox.Show("Error getting the final count of returned books: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
+
+    Public Sub lbldamagecount()
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim count As Integer = 0
+
+        Try
+            con.Open()
+
+            Dim query As String = "SELECT COUNT(*) FROM acession_tbl WHERE Status LIKE 'Damaged%'"
+
+            Using cmd As New MySqlCommand(query, con)
+                Dim result As Object = cmd.ExecuteScalar()
+
+                If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                    count = Convert.ToInt32(result)
+                Else
+                    count = 0
+                End If
+            End Using
+
+            lbl_damage.Text = count.ToString("0")
+
+        Catch ex As Exception
+            MessageBox.Show("Error counting damaged books: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
+
+    Public Sub lbllostcount()
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim count As Integer = 0
+
+        Try
+            con.Open()
+
+            Dim query As String = "SELECT COUNT(*) FROM acession_tbl WHERE Status LIKE 'Lost%'"
+
+            Using cmd As New MySqlCommand(query, con)
+                Dim result As Object = cmd.ExecuteScalar()
+
+                If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                    count = Convert.ToInt32(result)
+                Else
+                    count = 0
+                End If
+            End Using
+
+            lbl_lost.Text = count.ToString("0")
+
+        Catch ex As Exception
+            MessageBox.Show("Error counting lost books: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
+
+    Public Sub lbloverduecount()
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim count As Integer = 0
+
+        Try
+            con.Open()
+
+            Dim query As String = "SELECT COUNT(*) FROM acession_tbl WHERE Status = 'Overdue'"
+
+            Using cmd As New MySqlCommand(query, con)
+                Dim result As Object = cmd.ExecuteScalar()
+
+                If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                    count = Convert.ToInt32(result)
+                Else
+                    count = 0
+                End If
+            End Using
+
+
+            lbl_overdue.Text = count.ToString("0")
+
+        Catch ex As Exception
+            MessageBox.Show("Error counting overdue books: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
+
+    Public Sub lblresercopies()
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim count As Integer = 0
+
+        Try
+            con.Open()
+
+            Dim query As String = "SELECT COUNT(*) FROM reservecopiess_tbl"
+
+            Using cmd As New MySqlCommand(query, con)
+                Dim result As Object = cmd.ExecuteScalar()
+
+                If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                    count = Convert.ToInt32(result)
+                Else
+                    count = 0
+                End If
+            End Using
+
+            lbl_reserve.Text = count.ToString("0")
+
+        Catch ex As Exception
+            MessageBox.Show("Error counting reserved copies: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
 
     Private Sub PrintReceiptToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PrintReceiptToolStripMenuItem.Click
 

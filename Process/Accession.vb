@@ -52,6 +52,15 @@ Public Class Accession
         btnview.Visible = True
         shelfsu()
         DataGridView1.ClearSelection()
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+            End If
+        Next
     End Sub
 
     Public Sub shelfsu()
@@ -154,6 +163,7 @@ Public Class Accession
             cbshelf.Enabled = False
 
             btnview.Visible = True
+            btnshelf.Enabled = False
             clearna()
 
 
@@ -177,7 +187,7 @@ Public Class Accession
             rbborrowable.Enabled = True
             rbforlibraryonly.Enabled = True
             cbshelf.Enabled = True
-
+            btnshelf.Enabled = True
 
         End If
     End Sub

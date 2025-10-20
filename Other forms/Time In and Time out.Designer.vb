@@ -379,9 +379,9 @@ Partial Class oras
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label4.Location = New Point(540, 134)
         Label4.Name = "Label4"
-        Label4.Size = New Size(92, 16)
+        Label4.Size = New Size(93, 16)
         Label4.TabIndex = 80
-        Label4.Text = "Middle Name:"
+        Label4.Text = "Middle Initial:"
         ' 
         ' txtmname
         ' 

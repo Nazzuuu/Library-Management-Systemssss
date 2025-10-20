@@ -300,6 +300,7 @@ Public Class Returning
             For Each form In Application.OpenForms
                 If TypeOf form Is Accession Then DirectCast(form, Accession).RefreshAccessionData()
                 If TypeOf form Is MainForm Then DirectCast(form, MainForm).lblborrowcount()
+                If TypeOf form Is MainForm Then DirectCast(form, MainForm).lblreturncount()
             Next
 
             MessageBox.Show($"{booksToReturn.Count} book(s) returned successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)

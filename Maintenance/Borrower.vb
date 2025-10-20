@@ -345,10 +345,7 @@ Public Class Borrower
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            If DataGridView1.SelectedRows.Count = 0 Then
-                MsgBox("Please select a record to edit.")
-                Return
-            End If
+
 
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = Convert.ToInt32(selectedRow.Cells("ID").Value)
@@ -557,6 +554,8 @@ Public Class Borrower
                     con.Close()
                 End If
             End Try
+        Else
+            MsgBox("Please select a row to edit.", vbExclamation)
         End If
 
     End Sub

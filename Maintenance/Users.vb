@@ -7,6 +7,8 @@ Imports System.Text.RegularExpressions
 
 Public Class Users
 
+    Private isBackspacing As Boolean = False
+
     Public Sub LoadStaffData()
         Dim con As New MySqlConnection(connectionString)
         Dim com As String = "SELECT * FROM `user_staff_tbl`"
@@ -126,7 +128,7 @@ Public Class Users
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleName`, `Username`, `Password`, `Email`, `ContactNumber`, `Address`, `Gender`, `Role`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @address, @gender, @role)", con)
+            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleInitial`, `Username`, `Password`, `Email`, `ContactNumber`, `Address`, `Gender`, `Role`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @address, @gender, @role)", con)
             com.Parameters.AddWithValue("@firstName", firstName)
             com.Parameters.AddWithValue("@lastName", lastName)
             com.Parameters.AddWithValue("@middleName", middleName)
@@ -166,11 +168,11 @@ Public Class Users
         Dim pass As String = txtpassword.Text.Trim()
         Dim email As String = txtemail.Text.Trim()
         Dim contact As String = txtcontactnumber.Text.Trim()
-        Dim address As String = txtaddress.Text.Trim()
+
         Dim gender As String = ""
 
-        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
-            MsgBox("Please fill in all the required fields (including Address).", vbExclamation, "Missing Information")
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
+            MsgBox("Please fill in all the required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
@@ -224,7 +226,7 @@ Public Class Users
                 Exit Sub
             End If
 
-            Dim Coms As New MySqlCommand("UPDATE `user_staff_tbl` SET `FirstName` = @firstName, `LastName` = @lastName, `MiddleName` = @middleName, `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Address` = @address, `Gender` = @gender, `Role` = @role WHERE `ID` = @id", con)
+            Dim Coms As New MySqlCommand("UPDATE `user_staff_tbl` SET `FirstName` = @firstName, `LastName` = @lastName, `MiddleInitial` = @middleName, `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Address` = @address, `Gender` = @gender, `Role` = @role WHERE `ID` = @id", con)
             Coms.Parameters.AddWithValue("@firstName", firstName)
             Coms.Parameters.AddWithValue("@lastName", lastName)
             Coms.Parameters.AddWithValue("@middleName", middleName)
@@ -232,7 +234,7 @@ Public Class Users
             Coms.Parameters.AddWithValue("@password", pass)
             Coms.Parameters.AddWithValue("@email", email)
             Coms.Parameters.AddWithValue("@contact", contact)
-            Coms.Parameters.AddWithValue("@address", address)
+            Coms.Parameters.AddWithValue("@address", txtaddress.Text.ToString)
             Coms.Parameters.AddWithValue("@gender", gender)
             Coms.Parameters.AddWithValue("@role", role)
             Coms.Parameters.AddWithValue("@id", ID)
@@ -325,7 +327,7 @@ Public Class Users
             rbassistant.Checked = (role = "Assistant Librarian")
             rbstaff.Checked = (role = "Staff")
 
-            Dim middleName As String = If(IsDBNull(row.Cells("MiddleName").Value), String.Empty, row.Cells("MiddleName").Value.ToString())
+            Dim middleName As String = If(IsDBNull(row.Cells("MiddleInitial").Value), String.Empty, row.Cells("MiddleInitial").Value.ToString())
 
             If middleName = "N/A" Then
                 CheckBox2.Checked = True
@@ -525,18 +527,16 @@ Public Class Users
 
     End Sub
 
-    Private Sub txtmname_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtmname.KeyPress
-
-        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
-            e.Handled = True
-        End If
-
-    End Sub
 
     Private Sub txtmname_KeyDown(sender As Object, e As KeyEventArgs) Handles txtmname.KeyDown
 
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
             e.SuppressKeyPress = True
+        End If
+
+        If e.KeyCode = Keys.Back Then
+
+            isBackspacing = True
         End If
 
     End Sub
@@ -759,6 +759,67 @@ Public Class Users
 
     Private Sub PictureBox2_MouseLeave(sender As Object, e As EventArgs) Handles PictureBox2.MouseLeave
         Cursor = Cursors.Default
+    End Sub
+
+
+    Private Sub txtmname_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtmname.KeyPress
+
+        If Char.IsControl(e.KeyChar) Then
+            e.Handled = False
+            Return
+        End If
+
+        If Not Char.IsLetter(e.KeyChar) Then
+            e.Handled = True
+            Return
+        End If
+
+        If txtmname.Text.Replace(".", "").Length >= 1 Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtmname_TextChanged(sender As Object, e As EventArgs) Handles txtmname.TextChanged
+        Static isFormatting As Boolean = False
+
+        If isFormatting Then
+            Return
+        End If
+
+        Dim currentText As String = txtmname.Text
+
+        If String.IsNullOrWhiteSpace(currentText) Then
+            Return
+        End If
+
+        isFormatting = True
+
+        Dim initial As String = currentText.Replace(".", "").Trim()
+
+        If initial.Length = 1 AndAlso currentText.Length = 1 Then
+            isFormatting = False
+            txtmname.SelectionStart = txtmname.Text.Length
+            Return
+        End If
+
+        If initial.Length > 0 Then
+            Dim formattedInitial As String = initial.Substring(0, 1).ToUpper() & "."
+
+            If txtmname.Text <> formattedInitial Then
+                txtmname.Text = formattedInitial
+                txtmname.SelectionStart = txtmname.Text.Length
+            Else
+                txtmname.SelectionStart = txtmname.Text.Length
+            End If
+
+        Else
+            If currentText.Length > 0 Then
+                txtmname.Text = ""
+            End If
+        End If
+
+        isFormatting = False
     End Sub
 
 End Class

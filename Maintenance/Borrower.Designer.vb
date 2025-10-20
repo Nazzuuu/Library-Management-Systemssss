@@ -667,9 +667,9 @@ Partial Class Borrower
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label2.Location = New Point(306, 69)
         Label2.Name = "Label2"
-        Label2.Size = New Size(92, 16)
+        Label2.Size = New Size(93, 16)
         Label2.TabIndex = 55
-        Label2.Text = "Middle Name:"
+        Label2.Text = "Middle Initial:"
         ' 
         ' txtmname
         ' 

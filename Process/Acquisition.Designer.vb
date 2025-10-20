@@ -25,6 +25,8 @@ Partial Class Acquisition
         components = New ComponentModel.Container()
         Dim CustomizableEdges33 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Acquisition))
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -60,10 +62,9 @@ Partial Class Acquisition
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges32 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_acquisition = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
         btnsupplieradd = New Guna.UI2.WinForms.Guna2Button()
         rbbarcode = New RadioButton()
         rbisbn = New RadioButton()
@@ -92,7 +93,8 @@ Partial Class Acquisition
         Label1 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         suppliernametooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
-        DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
+        Label12 = New Label()
+        Label13 = New Label()
         panel_acquisition.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(NumericUpDown1, ComponentModel.ISupportInitialize).BeginInit()
@@ -116,6 +118,8 @@ Partial Class Acquisition
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label12)
+        Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(DateTimePicker1)
         Guna2GroupBox1.Controls.Add(btnsupplieradd)
         Guna2GroupBox1.Controls.Add(rbbarcode)
@@ -152,6 +156,28 @@ Partial Class Acquisition
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' DateTimePicker1
+        ' 
+        DateTimePicker1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DateTimePicker1.BorderRadius = 8
+        DateTimePicker1.BorderThickness = 1
+        DateTimePicker1.Checked = True
+        DateTimePicker1.CustomFormat = "MMMM-dd-yyyy"
+        DateTimePicker1.CustomizableEdges = CustomizableEdges1
+        DateTimePicker1.Enabled = False
+        DateTimePicker1.FillColor = Color.White
+        DateTimePicker1.Font = New Font("Segoe UI", 9F)
+        DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DateTimePicker1.Format = DateTimePickerFormat.Custom
+        DateTimePicker1.Location = New Point(1151, 92)
+        DateTimePicker1.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
+        DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
+        DateTimePicker1.Name = "DateTimePicker1"
+        DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        DateTimePicker1.Size = New Size(157, 36)
+        DateTimePicker1.TabIndex = 95
+        DateTimePicker1.Value = New Date(2025, 10, 2, 0, 0, 0, 0)
         ' 
         ' btnsupplieradd
         ' 
@@ -630,27 +656,27 @@ Partial Class Acquisition
         suppliernametooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         suppliernametooltip.MaximumSize = New Size(0, 0)
         ' 
-        ' DateTimePicker1
+        ' Label12
         ' 
-        DateTimePicker1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DateTimePicker1.BorderRadius = 8
-        DateTimePicker1.BorderThickness = 1
-        DateTimePicker1.Checked = True
-        DateTimePicker1.CustomFormat = "MMMM-dd-yyyy"
-        DateTimePicker1.CustomizableEdges = CustomizableEdges1
-        DateTimePicker1.Enabled = False
-        DateTimePicker1.FillColor = Color.White
-        DateTimePicker1.Font = New Font("Segoe UI", 9F)
-        DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DateTimePicker1.Format = DateTimePickerFormat.Custom
-        DateTimePicker1.Location = New Point(1151, 92)
-        DateTimePicker1.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
-        DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
-        DateTimePicker1.Name = "DateTimePicker1"
-        DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        DateTimePicker1.Size = New Size(157, 36)
-        DateTimePicker1.TabIndex = 95
-        DateTimePicker1.Value = New Date(2025, 10, 2, 0, 0, 0, 0)
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(609, 233)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 106
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(657, 234)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(155, 16)
+        Label13.TabIndex = 105
+        Label13.Text = "Select Barcode or ISBN"
         ' 
         ' Acquisition
         ' 
@@ -702,4 +728,6 @@ Partial Class Acquisition
     Friend WithEvents btnsupplieradd As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents suppliernametooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
     Friend WithEvents DateTimePicker1 As Guna.UI2.WinForms.Guna2DateTimePicker
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class

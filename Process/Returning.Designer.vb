@@ -804,7 +804,7 @@ Partial Class Returning
         ' cbbooks
         ' 
         cbbooks.FormattingEnabled = True
-        cbbooks.Location = New Point(146, 105)
+        cbbooks.Location = New Point(146, 122)
         cbbooks.Name = "cbbooks"
         cbbooks.Size = New Size(224, 23)
         cbbooks.TabIndex = 59

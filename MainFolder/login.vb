@@ -77,12 +77,11 @@ Public Class login
 
                     MainForm.AcquisitionToolStripMenuItem.Visible = False
                     MainForm.AccessionToolStripMenuItem.Visible = False
-                    MainForm.UserMaintenanceToolStripMenuItem.Visible = False
+
                     MainForm.Audit_Trail.Visible = False
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
-
                     MainForm.Audit_Trail.Visible = False
                     MainForm.PenaltyToolStripMenuItem.Visible = False
                     MainForm.PenaltyManagementToolStripMenuItem.Visible = False
@@ -107,7 +106,6 @@ Public Class login
 
                     MainForm.Refresh()
 
-                    MainForm.UserMaintenanceToolStripMenuItem.Visible = False
                     MainForm.Audit_Trail.Visible = False
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
@@ -119,8 +117,6 @@ Public Class login
                     MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
                     MainForm.lbl_currentuser.Text = "Asst. Librarian"
-
-
 
 
                     MainForm.lblgmail.Text = userEmail

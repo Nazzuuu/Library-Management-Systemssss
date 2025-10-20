@@ -126,9 +126,6 @@ Public Class BorrowerLoginForm
 
                 MainForm.lbl_currentuser.Text = borrowerType
                 MainForm.lblgmail.Text = userEmail
-                ' Ang lblform.Text ay papalitan sa huli
-                ' MainForm.lblform.Text = "BORROWING FORM" 
-
 
                 If MainForm.MaintenanceToolStripMenuItem IsNot Nothing Then
                     MainForm.MaintenanceToolStripMenuItem.Visible = False

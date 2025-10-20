@@ -78,6 +78,7 @@ Partial Class Accession
         Label2 = New Label()
         Label1 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        rbforlibraryonly = New RadioButton()
         Label12 = New Label()
         Label13 = New Label()
         btnshelf = New Guna.UI2.WinForms.Guna2Button()
@@ -86,7 +87,6 @@ Partial Class Accession
         btnview = New Guna.UI2.WinForms.Guna2Button()
         CheckBox1 = New CheckBox()
         Panel1 = New Panel()
-        rbforlibraryonly = New RadioButton()
         Label5 = New Label()
         rbborrowable = New RadioButton()
         btndeleteall = New Guna.UI2.WinForms.Guna2Button()
@@ -416,6 +416,20 @@ Partial Class Accession
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' rbforlibraryonly
+        ' 
+        rbforlibraryonly.AutoSize = True
+        rbforlibraryonly.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        rbforlibraryonly.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        rbforlibraryonly.Location = New Point(1051, 27)
+        rbforlibraryonly.Name = "rbforlibraryonly"
+        rbforlibraryonly.Size = New Size(173, 20)
+        rbforlibraryonly.TabIndex = 82
+        rbforlibraryonly.TabStop = True
+        rbforlibraryonly.Text = "For In-Library Use Only"
+        rbforlibraryonly.UseVisualStyleBackColor = True
+        rbforlibraryonly.Visible = False
+        ' 
         ' Label12
         ' 
         Label12.AutoSize = True
@@ -495,7 +509,7 @@ Partial Class Accession
         btnview.FillColor = Color.Empty
         btnview.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnview.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnview.Location = New Point(1075, 243)
+        btnview.Location = New Point(1075, 245)
         btnview.Name = "btnview"
         btnview.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         btnview.Size = New Size(133, 27)
@@ -507,7 +521,7 @@ Partial Class Accession
         CheckBox1.AutoSize = True
         CheckBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         CheckBox1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CheckBox1.Location = New Point(1054, 217)
+        CheckBox1.Location = New Point(1054, 219)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(170, 20)
         CheckBox1.TabIndex = 95
@@ -518,31 +532,17 @@ Partial Class Accession
         ' 
         Panel1.Controls.Add(Label5)
         Panel1.Controls.Add(rbborrowable)
-        Panel1.Location = New Point(936, 175)
+        Panel1.Location = New Point(821, 215)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(256, 36)
+        Panel1.Size = New Size(228, 25)
         Panel1.TabIndex = 94
-        ' 
-        ' rbforlibraryonly
-        ' 
-        rbforlibraryonly.AutoSize = True
-        rbforlibraryonly.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        rbforlibraryonly.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbforlibraryonly.Location = New Point(1051, 27)
-        rbforlibraryonly.Name = "rbforlibraryonly"
-        rbforlibraryonly.Size = New Size(173, 20)
-        rbforlibraryonly.TabIndex = 82
-        rbforlibraryonly.TabStop = True
-        rbforlibraryonly.Text = "For In-Library Use Only"
-        rbforlibraryonly.UseVisualStyleBackColor = True
-        rbforlibraryonly.Visible = False
         ' 
         ' Label5
         ' 
         Label5.AutoSize = True
         Label5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(10, 8)
+        Label5.Location = New Point(22, 4)
         Label5.Name = "Label5"
         Label5.Size = New Size(90, 16)
         Label5.TabIndex = 81
@@ -553,7 +553,7 @@ Partial Class Accession
         rbborrowable.AutoSize = True
         rbborrowable.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbborrowable.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbborrowable.Location = New Point(117, 8)
+        rbborrowable.Location = New Point(117, 3)
         rbborrowable.Name = "rbborrowable"
         rbborrowable.Size = New Size(99, 20)
         rbborrowable.TabIndex = 80
