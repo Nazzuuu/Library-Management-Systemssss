@@ -119,9 +119,13 @@ Public Class AvailableBooks
 
             Try
                 Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
-                Dim brwr As String = row.Cells("AccessionID").Value.ToString()
 
-                Borrowing.txtaccessionid.Text = brwr
+                Dim accessionID As String = row.Cells("AccessionID").Value.ToString()
+                Dim bookTitle As String = row.Cells("BookTitle").Value.ToString()
+
+
+                Borrowing.txtaccessionid.Text = accessionID
+                Borrowing.txtsus.Text = bookTitle.Trim()
 
                 Me.Close()
 

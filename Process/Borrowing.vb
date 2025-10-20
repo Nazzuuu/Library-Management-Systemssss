@@ -186,7 +186,7 @@ Public Class Borrowing
 
 
         txtname.Enabled = False
-        txtbooktitle.Enabled = False
+        txtsus.Enabled = False
         txtisbn.Enabled = False
         txtbarcode.Enabled = False
         txtshelf.Enabled = False
@@ -197,7 +197,7 @@ Public Class Borrowing
         txtemployee.Text = ""
         txtisbn.Text = ""
         txtname.Text = ""
-        txtbooktitle.Text = ""
+        txtsus.Text = ""
         txtbarcode.Text = ""
         txtaccessionid.Text = ""
         txtshelf.Text = ""
@@ -214,14 +214,14 @@ Public Class Borrowing
 
 
 
-        txtbooktitle.Text = ""
+        txtsus.Text = ""
         txtisbn.Text = ""
         txtbarcode.Text = ""
         txtaccessionid.Text = ""
         txtshelf.Text = ""
 
         txtname.Enabled = False
-        txtbooktitle.Enabled = False
+        txtsus.Enabled = False
         txtisbn.Enabled = False
         txtbarcode.Enabled = False
         txtshelf.Enabled = False
@@ -474,7 +474,7 @@ Public Class Borrowing
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) Then
 
-            txtbooktitle.Text = ""
+            txtsus.Text = ""
             txtisbn.Text = ""
             txtbarcode.Text = ""
             txtshelf.Text = ""
@@ -500,7 +500,7 @@ Public Class Borrowing
 
                         If status.Equals("Available", StringComparison.OrdinalIgnoreCase) Then
 
-                            txtbooktitle.Text = reader("BookTitle").ToString()
+                            txtsus.Text = reader("BookTitle").ToString()
                             txtisbn.Text = reader("ISBN").ToString()
                             txtbarcode.Text = reader("Barcode").ToString()
                             txtshelf.Text = reader("Shelf").ToString()
@@ -509,14 +509,14 @@ Public Class Borrowing
                             MessageBox.Show("WARNING: This book has a status of '" & status & "'. Only 'Available' books can be borrowed.", "Book Not Available", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
 
-                            txtbooktitle.Text = ""
+                            txtsus.Text = ""
                             txtisbn.Text = ""
                             txtbarcode.Text = ""
                             txtshelf.Text = ""
                         End If
                     Else
 
-                        txtbooktitle.Text = ""
+                        txtsus.Text = ""
                         txtisbn.Text = ""
                         txtbarcode.Text = ""
                         txtshelf.Text = ""
@@ -676,7 +676,7 @@ Public Class Borrowing
         End If
 
 
-        Dim booktitleee As String = txtbooktitle.Text.Trim
+        Dim booktitleee As String = txtsus.Text.Trim
         Dim identifierValue As String = If(borrower = "Student", txtlrn.Text, txtemployee.Text)
         Dim identifierColumn As String = If(borrower = "Student", "LRN", "EmployeeNo")
 
@@ -738,7 +738,7 @@ Public Class Borrowing
                 comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text))
                 comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text))
                 comsi.Parameters.AddWithValue("@Name", txtname.Text)
-                comsi.Parameters.AddWithValue("@Title", txtbooktitle.Text)
+                comsi.Parameters.AddWithValue("@Title", txtsus.Text)
                 comsi.Parameters.AddWithValue("@ISBN", txtisbn.Text)
                 comsi.Parameters.AddWithValue("@Barcode", txtbarcode.Text)
                 comsi.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
@@ -833,7 +833,7 @@ Public Class Borrowing
             End If
 
             txtname.Text = row.Cells("Name").Value.ToString()
-            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString()
+            txtsus.Text = row.Cells("BookTitle").Value.ToString()
             txtisbn.Text = row.Cells("ISBN").Value.ToString()
             txtbarcode.Text = row.Cells("Barcode").Value.ToString()
 

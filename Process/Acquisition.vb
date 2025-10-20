@@ -1,7 +1,10 @@
 ﻿Imports MySql.Data.MySqlClient
-Imports Mysqlx.XDevAPI.Relational
+Imports System.Data
 
 Public Class Acquisition
+
+    Private isShowingWarning As Boolean = False
+
 
     Private Sub Acquisition_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -21,6 +24,7 @@ Public Class Acquisition
         jineret()
         cbsupplierr()
         clear()
+        NumericUpDown2.Focus()
 
     End Sub
 
@@ -115,17 +119,75 @@ Public Class Acquisition
         txttransactionno.Text = "T-" & newTransactionNo.ToString("D5")
     End Sub
 
+
+    Private Sub ClearBookEntryFields()
+        txtisbn.Clear()
+        txtbarcodes.Clear()
+        txtbooktitle.Clear()
+        NumericUpDown1.Value = 0
+        txtbookprice.Clear()
+        txttotalcost.Clear()
+
+    End Sub
+
+
+    Private Sub CompleteAndStartNewTransaction()
+
+        NumericUpDown2.Value = 0
+        txtbookprice.Text = ""
+        txtisbn.Text = ""
+        txtbarcodes.Text = ""
+        txtbooktitle.Text = ""
+        txttotalcost.Text = "0"
+        cbsuppliername.SelectedIndex = -1
+        NumericUpDown1.Value = 0
+
+        txtisbn.Enabled = False
+        txtbarcodes.Enabled = False
+        txtbooktitle.Enabled = False
+        txttotalcost.Enabled = False
+        txttransactionno.Enabled = False
+
+        rbbarcode.Checked = False
+        rbisbn.Checked = False
+
+        rbbarcode.Enabled = True
+        rbisbn.Enabled = True
+
+        DateTimePicker1.Value = DateTime.Now
+        DateTimePicker1.Enabled = True
+        DataGridView1.ClearSelection()
+
+        txttransactionno.ReadOnly = False
+        NumericUpDown2.Enabled = True
+
+        jineret()
+        ClearBookEntryFields()
+
+        NumericUpDown2.Focus()
+
+    End Sub
+
+
+
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
 
+        If Not IsTransactionQuantityValid() Then
+            Return
+        End If
+
+
         Dim con As New MySqlConnection(connectionString)
+
+
         If String.IsNullOrWhiteSpace(txtbooktitle.Text) OrElse String.IsNullOrWhiteSpace(txtbookprice.Text) Then
-            MessageBox.Show("Please fill the required fields.", "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Please fill the required fields (Book Title, Book Price).", "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
         If NumericUpDown1.Value <= 0 Then
-            MessageBox.Show("Quantity cannot be 0 or less.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Quantity of this book cannot be 0 or less.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
@@ -143,31 +205,35 @@ Public Class Acquisition
 
         Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
 
+
+        Dim nudTransactionQty As Decimal = NumericUpDown2.Value
+
+        If nudTransactionQty <= 0 Then
+            MessageBox.Show("The Transaction Quantity for this transaction is already complete. Please set a new quantity or clear the form.", "Transaction Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+
         Try
             con.Open()
 
-            If Not String.IsNullOrWhiteSpace(txttransactionno.Text) Then
-                Dim coms As String = "SELECT COUNT(*) FROM acquisition_tbl WHERE TransactionNo = @TransactionNo"
-                Dim counts As New MySqlCommand(coms, con)
-                counts.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
-                Dim bilang As Integer = CInt(counts.ExecuteScalar())
-                If bilang > 0 Then
-                    MessageBox.Show("This Transaction Number already exists.", "Duplication Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    jineret()
+
+            Dim isbnorbarcode As String = If(rbisbn.Checked, txtisbn.Text, txtbarcodes.Text)
+            Dim fieldToCheck As String = If(rbisbn.Checked, "ISBN", "Barcode")
+
+            If Not String.IsNullOrWhiteSpace(isbnorbarcode) Then
+                Dim checkCurrentTrans As String = $"SELECT COUNT(*) FROM acquisition_tbl WHERE TransactionNo = @TransactionNo AND {fieldToCheck} = @ValueToCheck"
+                Dim checkCmd As New MySqlCommand(checkCurrentTrans, con)
+                checkCmd.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
+                checkCmd.Parameters.AddWithValue("@ValueToCheck", isbnorbarcode)
+
+                If CInt(checkCmd.ExecuteScalar()) > 0 Then
+                    MessageBox.Show($"This {fieldToCheck} has already been added in the current transaction ({txttransactionno.Text}).", "Duplication Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     Return
                 End If
             End If
 
-            If Not String.IsNullOrWhiteSpace(txtbarcodes.Text) Then
-                Dim comsis As String = "SELECT COUNT(*) FROM acquisition_tbl WHERE Barcode = @Barcode"
-                Dim kownts As New MySqlCommand(comsis, con)
-                kownts.Parameters.AddWithValue("@Barcode", txtbarcodes.Text)
-                Dim sotired As Integer = CInt(kownts.ExecuteScalar())
-                If sotired > 0 Then
-                    MessageBox.Show("This Barcode already exists.", "Duplication Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    Return
-                End If
-            End If
+
 
             Dim com As String = "INSERT INTO acquisition_tbl (`ISBN`, `Barcode`, `BookTitle`, `SupplierName`, `Quantity`, `BookPrice`, `TotalCost`, `TransactionNo`, `DateAcquired`) " &
                                 "VALUES (@ISBN, @Barcode, @BookTitle, @SupplierName, @Quantity, @BookPrice, @TotalCost, @TransactionNo, @DateAcquired)"
@@ -184,10 +250,23 @@ Public Class Acquisition
                 comsu.Parameters.AddWithValue("@DateAcquired", purmatdeyt)
 
                 comsu.ExecuteNonQuery()
-                MessageBox.Show("Successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show("Successfully added book entry to transaction!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                NumericUpDown2.Enabled = False
+
+                NumericUpDown2.Value = NumericUpDown2.Value - 1
 
 
-                Acquisition_Load_1(sender, e)
+                If NumericUpDown2.Value = 0 Then
+                    MessageBox.Show($"Transaction {txttransactionno.Text} is now complete!.", "Transaction Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+                    CompleteAndStartNewTransaction()
+                Else
+
+                    ClearBookEntryFields()
+                End If
+                refreshData()
             End Using
 
         Catch ex As Exception
@@ -208,14 +287,19 @@ Public Class Acquisition
         End If
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+
+
         Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
         Dim old As Integer = CInt(selectedRow.Cells("Quantity").Value)
         Dim neww As Integer = CInt(NumericUpDown1.Value)
 
+
+        Dim transactionNo As String = selectedRow.Cells("TransactionNo").Value.ToString()
+        Dim bookTitle As String = selectedRow.Cells("BookTitle").Value.ToString().Trim()
+
         Dim originalTotalCost As Double = CDbl(selectedRow.Cells("TotalCost").Value)
 
         Dim con As New MySqlConnection(connectionString)
-        Dim originalShelf As Object = DBNull.Value
 
         Dim deyts As DateTime = DateTimePicker1.Value
         If deyts.Date > DateTime.Today.Date Then
@@ -227,20 +311,20 @@ Public Class Acquisition
         Try
             con.Open()
 
-            Dim transactionNo As String = selectedRow.Cells("TransactionNo").Value.ToString()
 
             If neww < old Then
 
 
-                Dim notavail As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND `Status` != 'Available'"
+                Dim notavail As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle AND `Status` != 'Available'"
                 Dim koms As New MySqlCommand(notavail, con)
                 koms.Parameters.AddWithValue("@TransactionNo", transactionNo)
+                koms.Parameters.AddWithValue("@BookTitle", bookTitle)
 
                 Dim kownts As Integer = CInt(koms.ExecuteScalar())
 
                 If neww < kownts Then
 
-                    MessageBox.Show("WARNING: Cannot reduce quantity to " & neww & ". There are " & kownts & " copies with a status other than 'Available'.", "Cannot Update Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    MessageBox.Show("WARNING: Cannot reduce quantity to " & neww & ". There are " & kownts & " copies of '" & bookTitle & "' with a status other than 'Available'.", "Cannot Update Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
                     NumericUpDown1.Value = old
                     txttotalcost.Text = originalTotalCost.ToString("F2")
@@ -249,16 +333,16 @@ Public Class Acquisition
 
                 Dim recordsdelete As Integer = old - neww
 
-
-                Dim deleteAcs As String = "DELETE FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND Status = 'Available' ORDER BY AccessionID DESC LIMIT @limit"
+                Dim deleteAcs As String = "DELETE FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle AND Status = 'Available' ORDER BY AccessionID DESC LIMIT @limit"
                 Dim deleyt As New MySqlCommand(deleteAcs, con)
                 deleyt.Parameters.AddWithValue("@TransactionNo", transactionNo)
+                deleyt.Parameters.AddWithValue("@BookTitle", bookTitle)
                 deleyt.Parameters.AddWithValue("@limit", recordsdelete)
                 deleyt.ExecuteNonQuery()
 
 
-            ElseIf neww > old Then
 
+            ElseIf neww > old Then
 
                 Dim recordsadd As Integer = neww - old
 
@@ -268,14 +352,14 @@ Public Class Acquisition
                 Dim shelf As String = ""
 
 
-                Dim getShelfQuery As String = "SELECT Shelf FROM `acession_tbl` WHERE TransactionNo = @TransactionNo LIMIT 1"
+                Dim getShelfQuery As String = "SELECT Shelf FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle LIMIT 1"
                 Dim getShelfCommand As New MySqlCommand(getShelfQuery, con)
                 getShelfCommand.Parameters.AddWithValue("@TransactionNo", transactionNo)
+                getShelfCommand.Parameters.AddWithValue("@BookTitle", bookTitle)
                 Dim shelfResult As Object = getShelfCommand.ExecuteScalar()
                 If shelfResult IsNot Nothing AndAlso shelfResult IsNot DBNull.Value Then
                     shelf = shelfResult.ToString()
                 End If
-
 
                 For i As Integer = 1 To recordsadd
                     isUnique = False
@@ -292,6 +376,7 @@ Public Class Acquisition
                         End If
                     End While
 
+
                     Dim insertAcs As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
                                          "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
 
@@ -300,7 +385,7 @@ Public Class Acquisition
                         insertAcession.Parameters.AddWithValue("@AccessionID", newAccessionID)
                         insertAcession.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
                         insertAcession.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
-                        insertAcession.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                        insertAcession.Parameters.AddWithValue("@BookTitle", bookTitle)
                         insertAcession.Parameters.AddWithValue("@Shelf", shelf)
                         insertAcession.Parameters.AddWithValue("@SupplierName", cbsuppliername.Text)
                         insertAcession.Parameters.AddWithValue("@Status", "Available")
@@ -309,14 +394,16 @@ Public Class Acquisition
                 Next
 
 
+
                 Dim syncInsertSql As String = "INSERT IGNORE INTO available_tbl (AccessionID, ISBN, Barcode, BookTitle, Shelf, Status) " &
-                                         "SELECT ac.AccessionID, ac.ISBN, ac.Barcode, ac.BookTitle, ac.Shelf, ac.Status " &
-                                         "FROM acession_tbl ac " &
-                                         "LEFT JOIN available_tbl av ON ac.AccessionID = av.AccessionID " &
-                                         "WHERE ac.TransactionNo = @TransactionNo AND ac.Status = 'Available' AND av.AccessionID IS NULL"
+                                          "SELECT ac.AccessionID, ac.ISBN, ac.Barcode, ac.BookTitle, ac.Shelf, ac.Status " &
+                                          "FROM acession_tbl ac " &
+                                          "LEFT JOIN available_tbl av ON ac.AccessionID = av.AccessionID " &
+                                          "WHERE ac.TransactionNo = @TransactionNo AND ac.BookTitle = @BookTitle AND ac.Status = 'Available' AND av.AccessionID IS NULL"
 
                 Using syncInsertCmd As New MySqlCommand(syncInsertSql, con)
                     syncInsertCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+                    syncInsertCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
                     syncInsertCmd.ExecuteNonQuery()
                 End Using
 
@@ -324,20 +411,20 @@ Public Class Acquisition
 
 
             Dim updates As String = "UPDATE `acquisition_tbl` SET " &
-                               "`ISBN` = @ISBN, " &
-                               "`Barcode` = @Barcode, " &
-                               "`BookTitle` = @BookTitle, " &
-                               "`SupplierName` = @SupplierName, " &
-                               "`Quantity` = @Quantity, " &
-                               "`BookPrice` = @BookPrice, " &
-                               "`TotalCost` = @TotalCost, " &
-                               "`DateAcquired` = @DateAcquired " &
-                               "WHERE `ID` = @ID"
+                                "`ISBN` = @ISBN, " &
+                                "`Barcode` = @Barcode, " &
+                                "`BookTitle` = @BookTitle, " &
+                                "`SupplierName` = @SupplierName, " &
+                                "`Quantity` = @Quantity, " &
+                                "`BookPrice` = @BookPrice, " &
+                                "`TotalCost` = @TotalCost, " &
+                                "`DateAcquired` = @DateAcquired " &
+                                "WHERE `ID` = @ID"
 
             Using Updateacqt As New MySqlCommand(updates, con)
                 Updateacqt.Parameters.AddWithValue("@ISBN", txtisbn.Text)
                 Updateacqt.Parameters.AddWithValue("@Barcode", txtbarcodes.Text)
-                Updateacqt.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                Updateacqt.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text.Trim())
                 Updateacqt.Parameters.AddWithValue("@SupplierName", cbsuppliername.Text)
                 Updateacqt.Parameters.AddWithValue("@Quantity", neww)
                 Updateacqt.Parameters.AddWithValue("@BookPrice", CDbl(txtbookprice.Text))
@@ -346,6 +433,7 @@ Public Class Acquisition
                 Updateacqt.Parameters.AddWithValue("@ID", ID)
                 Updateacqt.ExecuteNonQuery()
             End Using
+
 
 
             For Each form In Application.OpenForms
@@ -358,10 +446,8 @@ Public Class Acquisition
 
             MessageBox.Show("Record updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-
             Acquisition_Load_1(sender, e)
             clear()
-
 
             For Each form As Form In Application.OpenForms
                 If TypeOf form Is Accession Then
@@ -456,7 +542,16 @@ Public Class Acquisition
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
 
+
         clear()
+        jineret()
+        NumericUpDown2.Value = 0
+
+
+        txttransactionno.ReadOnly = False
+        NumericUpDown2.Enabled = True
+
+        NumericUpDown2.Focus()
 
     End Sub
 
@@ -571,7 +666,42 @@ Public Class Acquisition
         End Try
     End Sub
 
+    Private Function IsTransactionQuantityValid() As Boolean
 
+        If NumericUpDown2.Enabled = False Then
+            Return True
+        End If
+
+        If NumericUpDown2.Value <= 0 Then
+            If isShowingWarning Then
+                Return False
+            End If
+
+            isShowingWarning = True
+
+            MessageBox.Show("Please set the 'Expected Book Types for Transaction No' before entering book details.", "Transaction Quantity Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            NumericUpDown2.Focus()
+
+            isShowingWarning = False
+
+
+            Application.DoEvents()
+
+            Return False
+        End If
+
+        Return True
+    End Function
+
+    Private Sub InputControl_GotFocus(sender As Object, e As EventArgs) Handles txtisbn.GotFocus, txtbarcodes.GotFocus,
+                                                                        txtbooktitle.GotFocus, txtbookprice.GotFocus,
+                                                                        cbsuppliername.GotFocus, NumericUpDown1.GotFocus,
+                                                                        rbisbn.GotFocus, rbbarcode.GotFocus
+        If Not IsTransactionQuantityValid() Then
+
+        End If
+    End Sub
     Public Sub clear()
 
         txtbookprice.Text = ""
@@ -595,7 +725,7 @@ Public Class Acquisition
         rbisbn.Enabled = True
 
         DateTimePicker1.Value = DateTime.Now
-        DateTimePicker1.Enabled = true
+        DateTimePicker1.Enabled = True
         DataGridView1.ClearSelection()
     End Sub
 

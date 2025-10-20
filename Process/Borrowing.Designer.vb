@@ -61,6 +61,7 @@ Partial Class Borrowing
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_borrowing = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        txtsus = New Guna.UI2.WinForms.Guna2TextBox()
         Label3 = New Label()
         lbltransac = New Label()
         Label1 = New Label()
@@ -79,7 +80,6 @@ Partial Class Borrowing
         txtname = New Guna.UI2.WinForms.Guna2TextBox()
         Label7 = New Label()
         Label9 = New Label()
-        txtbooktitle = New Guna.UI2.WinForms.Guna2TextBox()
         DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Label8 = New Label()
         txtlrn = New Guna.UI2.WinForms.Guna2TextBox()
@@ -122,6 +122,7 @@ Partial Class Borrowing
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(txtsus)
         Guna2GroupBox1.Controls.Add(Label3)
         Guna2GroupBox1.Controls.Add(lbltransac)
         Guna2GroupBox1.Controls.Add(Label1)
@@ -137,7 +138,6 @@ Partial Class Borrowing
         Guna2GroupBox1.Controls.Add(txtname)
         Guna2GroupBox1.Controls.Add(Label7)
         Guna2GroupBox1.Controls.Add(Label9)
-        Guna2GroupBox1.Controls.Add(txtbooktitle)
         Guna2GroupBox1.Controls.Add(DateTimePicker1)
         Guna2GroupBox1.Controls.Add(Label8)
         Guna2GroupBox1.Controls.Add(txtlrn)
@@ -157,13 +157,35 @@ Partial Class Borrowing
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
         Guna2GroupBox1.CustomizableEdges = CustomizableEdges31
         Guna2GroupBox1.FillColor = Color.Transparent
-        Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
+        Guna2GroupBox1.Font = New Font("Segoe UI", 9.0F)
         Guna2GroupBox1.ForeColor = SystemColors.Control
         Guna2GroupBox1.Location = New Point(12, 13)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges32
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' txtsus
+        ' 
+        txtsus.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtsus.BorderRadius = 12
+        txtsus.CustomizableEdges = CustomizableEdges1
+        txtsus.DefaultText = ""
+        txtsus.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtsus.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtsus.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtsus.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtsus.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtsus.Font = New Font("Segoe UI", 9.0F)
+        txtsus.ForeColor = Color.Black
+        txtsus.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtsus.Location = New Point(837, 97)
+        txtsus.Name = "txtsus"
+        txtsus.PlaceholderText = ""
+        txtsus.SelectedText = ""
+        txtsus.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtsus.Size = New Size(232, 36)
+        txtsus.TabIndex = 108
         ' 
         ' Label3
         ' 
@@ -235,7 +257,7 @@ Partial Class Borrowing
         btnview.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnview.BorderRadius = 9
         btnview.BorderThickness = 1
-        btnview.CustomizableEdges = CustomizableEdges1
+        btnview.CustomizableEdges = CustomizableEdges3
         btnview.DisabledState.BorderColor = Color.DarkGray
         btnview.DisabledState.CustomBorderColor = Color.DarkGray
         btnview.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -245,7 +267,7 @@ Partial Class Borrowing
         btnview.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnview.Location = New Point(1124, 28)
         btnview.Name = "btnview"
-        btnview.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        btnview.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnview.Size = New Size(176, 27)
         btnview.TabIndex = 100
         btnview.Text = "AVAILABLE BOOKS"
@@ -255,7 +277,7 @@ Partial Class Borrowing
         btntimein.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btntimein.BorderRadius = 9
         btntimein.BorderThickness = 1
-        btntimein.CustomizableEdges = CustomizableEdges3
+        btntimein.CustomizableEdges = CustomizableEdges5
         btntimein.DisabledState.BorderColor = Color.DarkGray
         btntimein.DisabledState.CustomBorderColor = Color.DarkGray
         btntimein.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -265,7 +287,7 @@ Partial Class Borrowing
         btntimein.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btntimein.Location = New Point(319, 249)
         btntimein.Name = "btntimein"
-        btntimein.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        btntimein.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btntimein.Size = New Size(110, 27)
         btntimein.TabIndex = 99
         btntimein.Text = "Time-in"
@@ -275,21 +297,21 @@ Partial Class Borrowing
         ' 
         txtshelf.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtshelf.BorderRadius = 12
-        txtshelf.CustomizableEdges = CustomizableEdges5
+        txtshelf.CustomizableEdges = CustomizableEdges7
         txtshelf.DefaultText = ""
         txtshelf.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtshelf.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
         txtshelf.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtshelf.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtshelf.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtshelf.Font = New Font("Segoe UI", 9F)
+        txtshelf.Font = New Font("Segoe UI", 9.0F)
         txtshelf.ForeColor = Color.Black
         txtshelf.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtshelf.Location = New Point(1119, 168)
         txtshelf.Name = "txtshelf"
         txtshelf.PlaceholderText = ""
         txtshelf.SelectedText = ""
-        txtshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        txtshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         txtshelf.Size = New Size(185, 36)
         txtshelf.TabIndex = 98
         ' 
@@ -355,21 +377,21 @@ Partial Class Borrowing
         ' 
         txtaccessionid.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtaccessionid.BorderRadius = 12
-        txtaccessionid.CustomizableEdges = CustomizableEdges7
+        txtaccessionid.CustomizableEdges = CustomizableEdges9
         txtaccessionid.DefaultText = ""
         txtaccessionid.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtaccessionid.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
         txtaccessionid.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtaccessionid.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtaccessionid.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtaccessionid.Font = New Font("Segoe UI", 9F)
+        txtaccessionid.Font = New Font("Segoe UI", 9.0F)
         txtaccessionid.ForeColor = Color.Black
         txtaccessionid.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaccessionid.Location = New Point(1119, 97)
         txtaccessionid.Name = "txtaccessionid"
         txtaccessionid.PlaceholderText = ""
         txtaccessionid.SelectedText = ""
-        txtaccessionid.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        txtaccessionid.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         txtaccessionid.Size = New Size(185, 36)
         txtaccessionid.TabIndex = 95
         ' 
@@ -377,21 +399,21 @@ Partial Class Borrowing
         ' 
         txtname.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtname.BorderRadius = 12
-        txtname.CustomizableEdges = CustomizableEdges9
+        txtname.CustomizableEdges = CustomizableEdges11
         txtname.DefaultText = ""
         txtname.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtname.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
         txtname.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtname.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtname.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtname.Font = New Font("Segoe UI", 9F)
+        txtname.Font = New Font("Segoe UI", 9.0F)
         txtname.ForeColor = Color.Black
         txtname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtname.Location = New Point(298, 168)
         txtname.Name = "txtname"
         txtname.PlaceholderText = ""
         txtname.SelectedText = ""
-        txtname.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        txtname.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         txtname.Size = New Size(232, 36)
         txtname.TabIndex = 93
         ' 
@@ -417,28 +439,6 @@ Partial Class Borrowing
         Label9.TabIndex = 92
         Label9.Text = "Book Title:"
         ' 
-        ' txtbooktitle
-        ' 
-        txtbooktitle.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtbooktitle.BorderRadius = 12
-        txtbooktitle.CustomizableEdges = CustomizableEdges11
-        txtbooktitle.DefaultText = ""
-        txtbooktitle.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
-        txtbooktitle.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
-        txtbooktitle.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtbooktitle.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtbooktitle.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbooktitle.Font = New Font("Segoe UI", 9F)
-        txtbooktitle.ForeColor = Color.Black
-        txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbooktitle.Location = New Point(837, 97)
-        txtbooktitle.Name = "txtbooktitle"
-        txtbooktitle.PlaceholderText = ""
-        txtbooktitle.SelectedText = ""
-        txtbooktitle.ShadowDecoration.CustomizableEdges = CustomizableEdges12
-        txtbooktitle.Size = New Size(232, 36)
-        txtbooktitle.TabIndex = 91
-        ' 
         ' DateTimePicker1
         ' 
         DateTimePicker1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -449,7 +449,7 @@ Partial Class Borrowing
         DateTimePicker1.CustomizableEdges = CustomizableEdges13
         DateTimePicker1.Enabled = False
         DateTimePicker1.FillColor = Color.White
-        DateTimePicker1.Font = New Font("Segoe UI", 9F)
+        DateTimePicker1.Font = New Font("Segoe UI", 9.0F)
         DateTimePicker1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         DateTimePicker1.Format = DateTimePickerFormat.Custom
         DateTimePicker1.Location = New Point(567, 168)
@@ -483,7 +483,7 @@ Partial Class Borrowing
         txtlrn.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlrn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtlrn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlrn.Font = New Font("Segoe UI", 9F)
+        txtlrn.Font = New Font("Segoe UI", 9.0F)
         txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlrn.Location = New Point(30, 168)
@@ -527,7 +527,7 @@ Partial Class Borrowing
         txtisbn.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtisbn.Font = New Font("Segoe UI", 9F)
+        txtisbn.Font = New Font("Segoe UI", 9.0F)
         txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Location = New Point(298, 97)
@@ -571,7 +571,7 @@ Partial Class Borrowing
         txtemployee.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtemployee.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtemployee.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemployee.Font = New Font("Segoe UI", 9F)
+        txtemployee.Font = New Font("Segoe UI", 9.0F)
         txtemployee.ForeColor = Color.Black
         txtemployee.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemployee.Location = New Point(30, 97)
@@ -604,7 +604,7 @@ Partial Class Borrowing
         txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
@@ -670,7 +670,7 @@ Partial Class Borrowing
         DataGridView1.Cursor = Cursors.Hand
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
-        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9.0F)
         DataGridViewCellStyle2.ForeColor = SystemColors.Control
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
@@ -682,7 +682,7 @@ Partial Class Borrowing
         DataGridView1.ReadOnly = True
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle3.BackColor = SystemColors.Control
-        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9.0F)
         DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
         DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
@@ -691,7 +691,7 @@ Partial Class Borrowing
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
         DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle4.Font = New Font("Tahoma", 9.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
@@ -740,7 +740,7 @@ Partial Class Borrowing
         txtbarcode.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbarcode.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbarcode.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbarcode.Font = New Font("Segoe UI", 9F)
+        txtbarcode.Font = New Font("Segoe UI", 9.0F)
         txtbarcode.ForeColor = Color.Black
         txtbarcode.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbarcode.Location = New Point(567, 97)
@@ -797,7 +797,7 @@ Partial Class Borrowing
     Friend WithEvents Label8 As Label
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents Label9 As Label
-    Friend WithEvents txtbooktitle As Guna.UI2.WinForms.Guna2TextBox
+
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents txtaccessionid As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents txtname As Guna.UI2.WinForms.Guna2TextBox
@@ -816,4 +816,5 @@ Partial Class Borrowing
     Friend WithEvents Label1 As Label
     Friend WithEvents picbarcode As PictureBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents txtsus As Guna.UI2.WinForms.Guna2TextBox
 End Class

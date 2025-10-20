@@ -19,7 +19,7 @@ Public Class Accession
         End If
 
 
-        com &= " ORDER BY TransactionNo, AccessionID"
+        com &= " ORDER BY TransactionNo, BookTitle, AccessionID"
 
         Dim comsu As New MySqlCommand(com, con)
 
@@ -360,9 +360,18 @@ Public Class Accession
     End Sub
 
     Private Sub btntransaction_Click(sender As Object, e As EventArgs) Handles btntransaction.Click
+
         TransactionNumber.ShowDialog()
-        TransactionNumber.ludtransaksyun()
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is TransactionNumber Then
+                Dim load = DirectCast(form, TransactionNumber)
+                load.LoadTransactions()
+            End If
+        Next
     End Sub
+
+
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
@@ -373,6 +382,8 @@ Public Class Accession
 
         Dim con As New MySqlConnection(connectionString)
 
+        Dim cleanedBookTitle As String = txtbooktitle.Text.Trim()
+
         Try
             con.Open()
 
@@ -381,16 +392,6 @@ Public Class Accession
                 Return
             End If
 
-            Dim kowm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo"
-            Dim gogo As New MySqlCommand(kowm, con)
-            gogo.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
-            Dim count As Integer = CInt(gogo.ExecuteScalar())
-
-            If count > 0 Then
-                MessageBox.Show("This Transaction Number has already been used. Cannot add records with this number again.", "Duplicate Transaction", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-                clearlahat()
-                Return
-            End If
 
 
             Dim statusValue As String = ""
@@ -424,14 +425,15 @@ Public Class Accession
                     End Using
 
                     Dim com As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                        "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
+                                    "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
 
                     Using comsu As New MySqlCommand(com, con)
                         comsu.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
                         comsu.Parameters.AddWithValue("@AccessionID", acss)
                         comsu.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
                         comsu.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
-                        comsu.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+
+                        comsu.Parameters.AddWithValue("@BookTitle", cleanedBookTitle)
                         comsu.Parameters.AddWithValue("@Shelf", cbshelf.Text)
                         comsu.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
 
@@ -441,13 +443,14 @@ Public Class Accession
 
                     If isAvailable Then
                         Dim availableInsertSql As String = "INSERT INTO available_tbl (`ID`, `ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
-                                                         "VALUES (NULL, @ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
+                                                     "VALUES (NULL, @ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
 
                         Using availableCmd As New MySqlCommand(availableInsertSql, con)
                             availableCmd.Parameters.AddWithValue("@AccessionID", acss)
                             availableCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
                             availableCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
-                            availableCmd.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+
+                            availableCmd.Parameters.AddWithValue("@BookTitle", cleanedBookTitle)
                             availableCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
                             availableCmd.Parameters.AddWithValue("@Status", statusValue)
                             availableCmd.ExecuteNonQuery()
@@ -463,6 +466,14 @@ Public Class Accession
                     Dim avail = DirectCast(form, AvailableBooks)
                     avail.refreshavail()
                     avail.counts()
+                End If
+            Next
+
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is TransactionNumber Then
+                    Dim load = DirectCast(form, TransactionNumber)
+                    load.LoadTransactions()
                 End If
             Next
 

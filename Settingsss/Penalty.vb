@@ -1,6 +1,7 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports System.Data
 Imports System.Drawing
+Imports System.Collections.Generic
 
 Public Class Penalty
 
@@ -18,10 +19,8 @@ Public Class Penalty
         Dim com As String
 
         If String.IsNullOrWhiteSpace(searchText) Then
-
             com = "SELECT * FROM `penalty_tbl` ORDER BY ID DESC"
         Else
-
             com = "SELECT * FROM `penalty_tbl` WHERE `FullName` LIKE @search OR `LRN` LIKE @search OR `EmployeeNo` LIKE @search OR `TransactionReceipt` LIKE @search ORDER BY ID DESC"
         End If
 
@@ -29,35 +28,28 @@ Public Class Penalty
             con.Open()
             Using adap As New MySqlDataAdapter(com, con)
                 If Not String.IsNullOrWhiteSpace(searchText) Then
-
                     adap.SelectCommand.Parameters.AddWithValue("@search", searchText & "%")
                 End If
 
                 adap.Fill(ds, "INFO")
                 DataGridView1.DataSource = ds.Tables("INFO")
 
-
-
                 If DataGridView1.Rows.Count > 0 Then
                     If Not String.IsNullOrWhiteSpace(searchText) Then
-
                         DataGridView1.MultiSelect = True
                         DataGridView1.SelectAll()
                         DataGridView1.FirstDisplayedScrollingRowIndex = 0
 
                         LoadDetailsFromSelectedRow(DataGridView1.Rows(0))
                     Else
-
                         DataGridView1.ClearSelection()
                         DataGridView1.MultiSelect = False
                     End If
                 Else
-
                     DataGridView1.ClearSelection()
                     DataGridView1.MultiSelect = False
                     ClearAllDetails()
                 End If
-
 
                 DataGridView1.Columns("ID").Visible = False
                 DataGridView1.Columns("Grade").Visible = False
@@ -79,19 +71,46 @@ Public Class Penalty
             If con.State = ConnectionState.Open Then con.Close()
         End Try
     End Sub
-    Private Function GetAccessionIDsByTransaction(ByVal transactionNo As String) As String
+
+
+    Private Function GetAccessionIDsByTransaction(ByVal transactionNo As String, ByVal bookTitles As List(Of String)) As String
+        If String.IsNullOrWhiteSpace(transactionNo) OrElse bookTitles Is Nothing OrElse bookTitles.Count = 0 Then Return String.Empty
+
         Dim con As New MySqlConnection(connectionString)
         Dim accessionIDs As New List(Of String)
+        Dim conditionParts As New List(Of String)
+        Dim i As Integer = 0
 
-        Dim query As String = "SELECT `AccessionID` FROM `borrowinghistory_tbl` WHERE `TransactionReceipt` = @transNo"
+        For Each title In bookTitles
+            conditionParts.Add($"`BookTitle` LIKE @title{i}")
+            i += 1
+        Next
+
+        Dim query As String = $"SELECT DISTINCT `AccessionID` 
+                                FROM `borrowinghistory_tbl` 
+                                WHERE TRIM(`TransactionReceipt`) = @transNo 
+                                AND ({String.Join(" OR ", conditionParts)}) 
+                                AND `AccessionID` IS NOT NULL 
+                                AND `AccessionID` != ''"
 
         Try
             con.Open()
             Using cmd As New MySqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@transNo", transactionNo)
+                cmd.Parameters.AddWithValue("@transNo", transactionNo.Trim())
+
+                i = 0
+                For Each title In bookTitles
+
+                    cmd.Parameters.AddWithValue($"@title{i}", "%" & title.Trim() & "%")
+                    i += 1
+                Next
+
                 Using reader As MySqlDataReader = cmd.ExecuteReader()
                     While reader.Read()
-                        accessionIDs.Add(reader("AccessionID").ToString())
+                        Dim accessID As String = reader("AccessionID").ToString().Trim()
+                        If Not String.IsNullOrWhiteSpace(accessID) Then
+                            accessionIDs.Add(accessID)
+                        End If
                     End While
                 End Using
             End Using
@@ -102,8 +121,9 @@ Public Class Penalty
             If con.State = ConnectionState.Open Then con.Close()
         End Try
 
-        Return String.Join(Environment.NewLine, accessionIDs)
+        Return String.Join(Environment.NewLine, New HashSet(Of String)(accessionIDs))
     End Function
+
 
     Private Function GetBookPriceByBookTitle(ByVal bookTitle As String) As Decimal
         If String.IsNullOrWhiteSpace(bookTitle) Then Return 0.00
@@ -111,13 +131,19 @@ Public Class Penalty
         Dim con As New MySqlConnection(connectionString)
         Dim price As Decimal = 0.00
 
-        Dim priceQuery As String = "SELECT `BookPrice` FROM `acquisition_tbl` WHERE `BookTitle` = @title LIMIT 1"
+        Dim trimmedTitle As String = bookTitle.Trim()
+
+
+        Dim priceQuery As String = "SELECT `BookPrice` FROM `acquisition_tbl` WHERE `BookTitle` LIKE @titleWildcard LIMIT 1"
 
         Try
             con.Open()
             Using cmd As New MySqlCommand(priceQuery, con)
-                cmd.Parameters.AddWithValue("@title", bookTitle)
+
+                cmd.Parameters.AddWithValue("@titleWildcard", trimmedTitle & "%")
+
                 Dim priceResult As Object = cmd.ExecuteScalar()
+
                 If priceResult IsNot Nothing AndAlso priceResult IsNot DBNull.Value Then
                     If Decimal.TryParse(priceResult.ToString(), price) Then
                         Return price
@@ -175,25 +201,28 @@ Public Class Penalty
                     While reader.Read()
                         Dim bookStatus As String = reader("Status").ToString()
                         Dim bookCount As Integer = CInt(reader("BookTotal"))
-                        Dim bookTitleForPrice As String = reader("ReturnedBook").ToString()
+                        Dim bookTitleForPrice As String = reader("ReturnedBook").ToString().Trim()
                         Dim currentFee As Decimal = 0.00
 
                         If bookStatus.StartsWith("Overdue") Then
-                            currentFee = GetFixedPenaltyFeeByStatus("Overdue")
+                            currentFee = GetFixedPenaltyFeeByStatus("Overdue") * bookCount
 
                         ElseIf bookStatus.Contains("Damaged (Minor)") Then
-                            currentFee = GetFixedPenaltyFeeByStatus("Damaged Book - Minor")
+                            currentFee = GetFixedPenaltyFeeByStatus("Damaged Book - Minor") * bookCount
 
                         ElseIf bookStatus.Contains("Damaged (Major)") Then
-                            currentFee = GetFixedPenaltyFeeByStatus("Damaged Book - Major")
+                            currentFee = GetFixedPenaltyFeeByStatus("Damaged Book - Major") * bookCount
+
 
                         ElseIf bookStatus.Contains("Damaged (Irreparable)") OrElse bookStatus.StartsWith("Lost") Then
 
-                            currentFee = GetBookPriceByBookTitle(bookTitleForPrice)
+                            Dim bookPrice As Decimal = GetBookPriceByBookTitle(bookTitleForPrice)
+
+                            currentFee = bookPrice * bookCount
 
                         End If
 
-                        totalFee += (currentFee * bookCount)
+                        totalFee += currentFee
 
                     End While
                 End Using
@@ -256,9 +285,10 @@ Public Class Penalty
         txtfee.Text = String.Empty
     End Sub
 
-    Private Function GetAggregatedBookDetails(ByVal transactionNo As String) As Tuple(Of String, Integer)
+
+    Private Function GetAggregatedBookDetails(ByVal transactionNo As String) As Tuple(Of String, Integer, List(Of String))
         Dim con As New MySqlConnection(connectionString)
-        Dim titles As New HashSet(Of String)
+        Dim titles As New List(Of String)
         Dim totalCount As Integer = 0
         Dim query As String = "SELECT `ReturnedBook`, `BookTotal` FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
 
@@ -268,21 +298,30 @@ Public Class Penalty
                 cmd.Parameters.AddWithValue("@transNo", transactionNo)
                 Using reader As MySqlDataReader = cmd.ExecuteReader()
                     While reader.Read()
-                        titles.Add(reader("ReturnedBook").ToString())
+                        Dim returnedBookString As String = reader("ReturnedBook").ToString()
                         totalCount += CInt(reader("BookTotal"))
+
+
+                        Dim bookTitles() As String = returnedBookString.Split(New Char() {"|"c}, StringSplitOptions.RemoveEmptyEntries)
+
+                        For Each title As String In bookTitles
+                            titles.Add(title.Trim())
+                        Next
                     End While
                 End Using
             End Using
 
         Catch ex As Exception
             MessageBox.Show("Error aggregating book details: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return New Tuple(Of String, Integer)("Error", 0)
+            Return New Tuple(Of String, Integer, List(Of String))("Error", 0, New List(Of String))
         Finally
             If con.State = ConnectionState.Open Then con.Close()
         End Try
 
-        Return New Tuple(Of String, Integer)(String.Join(Environment.NewLine, titles.ToArray()), totalCount)
+        Dim uniqueTitles As New HashSet(Of String)(titles)
+        Return New Tuple(Of String, Integer, List(Of String))(String.Join(Environment.NewLine, uniqueTitles.ToArray()), totalCount, uniqueTitles.ToList())
     End Function
+
 
     Private Sub LoadDetailsFromSelectedRow(ByVal row As DataGridViewRow)
         If row Is Nothing Then Return
@@ -306,7 +345,9 @@ Public Class Penalty
             lblborroweddate.Text = row.Cells("BorrowedDate").Value.ToString()
             lblduedate.Text = row.Cells("DueDate").Value.ToString()
 
-            Dim aggregatedDetails As Tuple(Of String, Integer) = GetAggregatedBookDetails(transNo)
+
+            Dim aggregatedDetails As Tuple(Of String, Integer, List(Of String)) = GetAggregatedBookDetails(transNo)
+            Dim uniqueBookTitles As List(Of String) = aggregatedDetails.Item3
 
             lblbooktotal.Text = aggregatedDetails.Item2.ToString()
             lblbooktitle.Text = aggregatedDetails.Item1
@@ -317,7 +358,8 @@ Public Class Penalty
             Dim calculatedFee As Decimal = CalculateTotalPenaltyFee(transNo)
             txtfee.Text = calculatedFee.ToString("N2")
 
-            lblaccessionid.Text = GetAccessionIDsByTransaction(transNo)
+
+            lblaccessionid.Text = GetAccessionIDsByTransaction(transNo, uniqueBookTitles)
 
         Catch ex As Exception
             MessageBox.Show("Error loading details: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)

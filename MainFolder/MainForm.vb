@@ -217,6 +217,7 @@ Public Class MainForm
                 load.lbllostcount()
                 load.lbloverduecount()
                 load.lblreturncount()
+                load.lblresercopies()
             End If
         Next
 
@@ -262,6 +263,7 @@ Public Class MainForm
                 load.lbllostcount()
                 load.lbloverduecount()
                 load.lblreturncount()
+                load.lblresercopies()
             End If
         Next
 
