@@ -17,9 +17,9 @@ Public Class login
         Dim con As New MySqlConnection(connectionString)
 
 
-        Dim comsus As String = "SELECT Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
-            "UNION " &
-            "SELECT Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
+        Dim comsus As String = "SELECT 0 AS ID, Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
+        "UNION " &
+        "SELECT ID, Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
 
         Dim com As New MySqlCommand(comsus, con)
         com.Parameters.AddWithValue("@username", User)
@@ -33,9 +33,12 @@ Public Class login
                 Dim role As String = lahatngrole("Role").ToString()
                 Dim userEmail As String = lahatngrole("Email").ToString()
 
+                Dim employeeID As String = lahatngrole("ID").ToString()
+
 
                 GlobalRole = role
                 GlobalUsername = userEmail
+                GlobalVarsModule.CurrentEmployeeID = employeeID
 
 
                 MainForm.AcquisitionToolStripMenuItem.Visible = True
@@ -64,6 +67,13 @@ Public Class login
                     MainForm.lblform.Text = "MAIN FORM"
 
 
+                    For Each formInApp As Form In Application.OpenForms
+                        If TypeOf formInApp Is Users Then
+                            Dim Users As Users = CType(formInApp, Users)
+                            Users.LoadUserData()
+                        End If
+                    Next
+
                     MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
 
@@ -82,12 +92,20 @@ Public Class login
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
+
                     MainForm.Audit_Trail.Visible = False
                     MainForm.PenaltyToolStripMenuItem.Visible = False
                     MainForm.PenaltyManagementToolStripMenuItem.Visible = False
 
                     MainForm.EditsToolStripMenuItem1.Visible = False
 
+
+                    For Each formInApp As Form In Application.OpenForms
+                        If TypeOf formInApp Is Users Then
+                            Dim Users As Users = CType(formInApp, Users)
+                            Users.LoadUserData()
+                        End If
+                    Next
 
                     MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
@@ -113,6 +131,13 @@ Public Class login
 
                     MainForm.EditsToolStripMenuItem1.Visible = False
 
+
+                    For Each formInApp As Form In Application.OpenForms
+                        If TypeOf formInApp Is Users Then
+                            Dim Users As Users = CType(formInApp, Users)
+                            Users.LoadUserData()
+                        End If
+                    Next
 
                     MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()

@@ -18,6 +18,8 @@ Public Class MainForm
         lbloverduecount()
         lblresercopies()
         btnexit.Visible = False
+
+
     End Sub
 
     Private Sub Form1_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
@@ -77,6 +79,7 @@ Public Class MainForm
 
 
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
+
 
         Dim dialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
@@ -450,6 +453,13 @@ Public Class MainForm
     End Sub
 
     Private Sub UserMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles UserMaintenanceToolStripMenuItem.Click
+
+        For Each formInApp As Form In Application.OpenForms
+            If TypeOf formInApp Is Users Then
+                Dim Users As Users = CType(formInApp, Users)
+                Users.LoadUserData()
+            End If
+        Next
 
         Panel_dash.Controls.Clear()
 
@@ -1154,4 +1164,6 @@ Public Class MainForm
         lblform.Text = "PENALTY FORM"
 
     End Sub
+
+
 End Class

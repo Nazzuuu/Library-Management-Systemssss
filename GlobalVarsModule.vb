@@ -12,6 +12,7 @@ Module GlobalVarsModule
 
     Public GlobalUsername As String = ""
     Public GlobalRole As String = ""
+    Public CurrentEmployeeID As String = ""
 
     Public Function GetCleanCurrentBorrowerID() As String
         Dim idTrimmed As String = CurrentBorrowerID.Trim()

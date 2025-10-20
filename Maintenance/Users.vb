@@ -37,6 +37,8 @@ Public Class Users
                 con.Close()
             End If
         End Try
+
+        LoadUserData()
     End Sub
 
     Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -46,10 +48,87 @@ Public Class Users
         PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
 
         LoadStaffData()
+        LoadUserData()
 
         AddHandler DataGridView1.CellFormatting, AddressOf Me.DataGridView1_CellFormatting
 
         lblpassword.Visible = False
+
+
+    End Sub
+
+    Private Sub User_staff(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
+
+    Public Sub LoadUserData()
+
+
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim SQLQuery As String = "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role FROM user_staff_tbl"
+
+
+        If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
+            SQLQuery &= " WHERE ID = @EmployeeID"
+            uidisplay()
+        Else
+            uireset()
+        End If
+
+        Using cmd As New MySqlCommand(SQLQuery, con)
+            If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
+                cmd.Parameters.AddWithValue("@EmployeeID", GlobalVarsModule.CurrentEmployeeID)
+            End If
+
+            Try
+                con.Open()
+
+
+                Dim da As New MySqlDataAdapter(cmd)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+
+                DataGridView1.DataSource = dt
+
+
+            Catch ex As Exception
+                MessageBox.Show("Error loading user data: " & ex.Message)
+            Finally
+                If con.State = ConnectionState.Open Then con.Close()
+            End Try
+        End Using
+
+    End Sub
+
+    Public Sub uidisplay()
+
+        btnedit.Location = New Point(30, 227)
+        btnclear.Location = New Point(158, 227)
+        btnadd.Visible = False
+        btndelete.Visible = False
+
+        rbassistant.Visible = False
+        rbstaff.Visible = False
+
+        lblrolesu.Visible = False
+
+    End Sub
+
+    Public Sub uireset()
+
+        btnclear.Location = New Point(417, 227)
+        btnedit.Location = New Point(158, 227)
+
+        btnadd.Visible = True
+        btndelete.Visible = True
+
+        rbassistant.Visible = True
+        rbstaff.Visible = True
+
+        lblrolesu.Visible = True
 
     End Sub
 
@@ -821,5 +900,6 @@ Public Class Users
 
         isFormatting = False
     End Sub
+
 
 End Class
