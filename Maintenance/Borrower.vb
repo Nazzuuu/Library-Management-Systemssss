@@ -561,8 +561,8 @@ Public Class Borrower
 
     End Sub
 
-    Private Sub btndelete_Click(sender As Object, e As EventArgs)
 
+    Private Sub btndelete_Click_1(sender As Object, e As EventArgs) Handles btndelete.Click
 
         If DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a borrower to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -643,8 +643,8 @@ Public Class Borrower
                 End If
             End Try
         End If
-    End Sub
 
+    End Sub
 
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
@@ -1290,5 +1290,6 @@ Public Class Borrower
 
         isFormatting = False
     End Sub
+
 
 End Class
