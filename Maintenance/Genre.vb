@@ -139,7 +139,8 @@ Public Class Genre
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             End Try
-
+        Else
+            MsgBox("Please select a row to edit.", vbExclamation)
         End If
     End Sub
 

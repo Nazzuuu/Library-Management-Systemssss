@@ -170,6 +170,8 @@ Public Class Department
                 MessageBox.Show("Invalid input. Please enter 'Elementary' or 'Junior High School' or 'Senior High School' only.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 txtdepartment.Text = ""
             End If
+        Else
+            MsgBox("Please select a row to edit.", vbExclamation)
         End If
 
     End Sub
