@@ -1,4 +1,5 @@
 ﻿Imports MySql.Data.MySqlClient
+Imports System.Data
 
 Public Class Supplier
     Private Sub Supplier_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -6,18 +7,22 @@ Public Class Supplier
         TopMost = True
         Me.Refresh()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `supplier_tbl`"
         Dim adp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
 
-        adp.Fill(dt, "INFO")
-        DataGridView1.DataSource = dt.Tables("INFO")
+        Try
+            adp.Fill(dt, "INFO")
+            DataGridView1.DataSource = dt.Tables("INFO")
 
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-        DataGridView1.ClearSelection()
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.ClearSelection()
+        Catch ex As Exception
+            MsgBox($"Error loading data: {ex.Message}", vbCritical)
+        End Try
 
     End Sub
 
@@ -28,6 +33,12 @@ Public Class Supplier
     End Sub
     Private Sub Supplier_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
 
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
 
@@ -43,11 +54,12 @@ Public Class Supplier
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Dim supp = txtsupplier.Text.Trim
         Dim address = txtaddress.Text.Trim
         Dim contact = txtcontact.Text.Trim
+        Dim newID As Integer = 0
 
         If String.IsNullOrWhiteSpace(supp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -55,7 +67,7 @@ Public Class Supplier
         End If
 
         Try
-            con.Open
+            con.Open()
 
             Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl` WHERE `SupplierName` = @supplier", con)
             comsu.Parameters.AddWithValue("@supplier", supp)
@@ -66,17 +78,30 @@ Public Class Supplier
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `supplier_tbl`(`SupplierName`, `Address`, `ContactNumber`) VALUES (@supplier, @address, @contact)", con)
+            Dim com As New MySqlCommand("INSERT INTO `supplier_tbl`(`SupplierName`, `Address`, `ContactNumber`) VALUES (@supplier, @address, @contact); SELECT LAST_INSERT_ID();", con)
 
             com.Parameters.AddWithValue("@supplier", supp)
             com.Parameters.AddWithValue("@address", address)
             com.Parameters.AddWithValue("@contact", contact)
-            com.ExecuteNonQuery
+            newID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="SUPPLIER FORM",
+                description:=$"Added new supplier: {supp}",
+                recordID:=newID.ToString()
+            )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Acquisition Then
                     Dim acq = DirectCast(form, Acquisition)
-                    acq.cbsupplierr
+                    acq.cbsupplierr()
                 End If
             Next
 
@@ -86,7 +111,8 @@ Public Class Supplier
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         Finally
-            clear
+            If con.State = ConnectionState.Open Then con.Close()
+            clear()
         End Try
 
     End Sub
@@ -95,18 +121,29 @@ Public Class Supplier
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim selectedRow = DataGridView1.SelectedRows(0)
 
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            Dim oldSupp As String = selectedRow.Cells("SupplierName").Value.ToString()
-            Dim newSupp As String = txtsupplier.Text.Trim
-            Dim address As String = txtaddress.Text.Trim
-            Dim contact As String = txtcontact.Text.Trim
+            Dim oldSupp As String = selectedRow.Cells("SupplierName").Value.ToString().Trim()
+            Dim oldAddress As String = selectedRow.Cells("Address").Value.ToString().Trim()
+            Dim oldContact As String = selectedRow.Cells("ContactNumber").Value.ToString().Trim()
 
-            If String.IsNullOrWhiteSpace(newSupp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
+            Dim newSupp As String = txtsupplier.Text.Trim
+            Dim newAddress As String = txtaddress.Text.Trim
+            Dim newContact As String = txtcontact.Text.Trim
+
+            If String.IsNullOrWhiteSpace(newSupp) OrElse String.IsNullOrWhiteSpace(newAddress) OrElse String.IsNullOrWhiteSpace(newContact) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+
+            If oldSupp.Equals(newSupp, StringComparison.OrdinalIgnoreCase) AndAlso
+               oldAddress.Equals(newAddress, StringComparison.OrdinalIgnoreCase) AndAlso
+               oldContact.Equals(newContact, StringComparison.OrdinalIgnoreCase) Then
+
+                MsgBox("No changes were made.", vbInformation)
                 Exit Sub
             End If
 
@@ -124,8 +161,8 @@ Public Class Supplier
 
                 Dim com As New MySqlCommand("UPDATE `supplier_tbl` SET `SupplierName` = @supplier, `Address` = @address, `ContactNumber` = @contact WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@supplier", newSupp)
-                com.Parameters.AddWithValue("@address", address)
-                com.Parameters.AddWithValue("@contact", contact)
+                com.Parameters.AddWithValue("@address", newAddress)
+                com.Parameters.AddWithValue("@contact", newContact)
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
@@ -138,6 +175,21 @@ Public Class Supplier
                 comsuss.Parameters.AddWithValue("@newSupplier", newSupp)
                 comsuss.Parameters.AddWithValue("@oldSupplier", oldSupp)
                 comsuss.ExecuteNonQuery()
+
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="SUPPLIER FORM",
+                    description:=$"Updated supplier ID {ID} from '{oldSupp}' to '{newSupp}'",
+                    recordID:=ID.ToString(),
+                    oldValue:=$"{oldSupp}|{oldAddress}|{oldContact}",
+                    newValue:=$"{newSupp}|{newAddress}|{newContact}"
+                )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Acquisition Then
@@ -155,6 +207,13 @@ Public Class Supplier
                     End If
                 Next
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+                        Dim load = DirectCast(form, MainForm)
+                        load.loadsu()
+                    End If
+
+                Next
                 MsgBox("Updated successfully", vbInformation)
                 Supplier_Load(sender, e)
             Catch ex As Exception
@@ -179,13 +238,15 @@ Public Class Supplier
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = selectedRow.Cells("ID").Value
                 Dim supplierName = selectedRow.Cells("SupplierName").Value.ToString.Trim
+                Dim address = selectedRow.Cells("Address").Value.ToString.Trim
+                Dim contact = selectedRow.Cells("ContactNumber").Value.ToString.Trim
 
                 Try
-                    con.Open
+                    con.Open()
 
 
                     Dim acquisitionCom As New MySqlCommand("SELECT COUNT(*) FROM `acquisition_tbl` WHERE SupplierName = @supplier", con)
@@ -199,29 +260,44 @@ Public Class Supplier
 
                     Dim delete As New MySqlCommand("DELETE FROM `supplier_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery
+                    delete.ExecuteNonQuery()
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="SUPPLIER FORM",
+                        description:=$"Deleted supplier: {supplierName}",
+                        recordID:=ID.ToString()
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Acquisition Then
                             Dim acq = DirectCast(form, Acquisition)
-                            acq.cbsupplierr
+                            acq.cbsupplierr()
                         End If
                     Next
 
                     MsgBox("Supplier deleted successfully.", vbInformation)
                     Supplier_Load(sender, e)
-                    clear
+                    clear()
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `supplier_tbl`", con)
                     Dim rowCount As Long = count.ExecuteScalar()
 
                     If rowCount = 0 Then
                         Dim reset As New MySqlCommand("ALTER TABLE `supplier_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery
+                        reset.ExecuteNonQuery()
                     End If
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then con.Close()
                 End Try
             End If
         End If
@@ -333,7 +409,7 @@ Public Class Supplier
         Else
 
             If oreyjeynal.Length > 0 Then
-                txtcontact.Clear
+                txtcontact.Clear()
                 txtcontact.Text = "09"
                 txtcontact.SelectionStart = 2
             End If

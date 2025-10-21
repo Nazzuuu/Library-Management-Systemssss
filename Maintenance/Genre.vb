@@ -5,7 +5,7 @@ Public Class Genre
         TopMost = True
         Me.Refresh()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `genre_tbl`"
         Dim adp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
@@ -29,9 +29,17 @@ Public Class Genre
 
         DataGridView1.ClearSelection()
 
+
     End Sub
 
     Private Sub Genre_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
 
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtgenre.Text = ""
@@ -41,8 +49,9 @@ Public Class Genre
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
-        Dim genre As String = txtgenre.Text.Trim
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim genre As String = txtgenre.Text.Trim()
+        Dim insertedID As Integer = 0
 
         If String.IsNullOrWhiteSpace(genre) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -55,21 +64,35 @@ Public Class Genre
 
             Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @genre ", con)
             coms.Parameters.AddWithValue("@genre", genre)
-            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar())
 
             If count > 0 Then
                 MsgBox("Genre already exists.", vbExclamation, "Duplication is not allowed.")
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `genre_tbl`(`Genre`) VALUES (@genre)", con)
+            Dim com As New MySqlCommand("INSERT INTO `genre_tbl`(`Genre`) VALUES (@genre); SELECT LAST_INSERT_ID()", con)
             com.Parameters.AddWithValue("@genre", genre)
-            com.ExecuteNonQuery()
+            insertedID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="GENRE FORM",
+                description:=$"Added new Genre: {genre}",
+                recordID:=insertedID.ToString()
+            )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Book Then
                     Dim book = DirectCast(form, Book)
                     book.cbgenree()
+                End If
+            Next
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    Dim load = DirectCast(form, AuditTrail)
+                    load.refreshaudit()
                 End If
             Next
 
@@ -88,57 +111,83 @@ Public Class Genre
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
-
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            Dim genree As String = txtgenre.Text.Trim
+            Dim oldGenre As String = selectedRow.Cells("Genre").Value.ToString().Trim()
+            Dim newGenre As String = txtgenre.Text.Trim()
 
-            If String.IsNullOrWhiteSpace(genree) Then
+            If String.IsNullOrWhiteSpace(newGenre) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
 
-            Dim old As String = selectedRow.Cells("Genre").Value.ToString()
-            Dim neww As String = txtgenre.Text.Trim()
+            If String.Equals(oldGenre, newGenre, StringComparison.OrdinalIgnoreCase) Then
+                MsgBox("The genre name is the same as the current one.", vbInformation)
+                Exit Sub
+            End If
 
-            Try
-                con.Open()
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                Try
+                    con.Open()
 
 
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @genre ", con)
-                coms.Parameters.AddWithValue("@genre", genree)
-                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+                    Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @newGenre AND ID <> @id", con)
+                    coms.Parameters.AddWithValue("@newGenre", newGenre)
+                    coms.Parameters.AddWithValue("@id", ID)
+                    Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar())
 
-                If count > 0 Then
-                    MsgBox("Genre already exists.", vbExclamation, "Duplication is not allowed.")
-                    Exit Sub
-                End If
-
-                Dim com As New MySqlCommand("UPDATE `genre_tbl` SET `Genre` = @new WHERE `Genre` = @old", con)
-                com.Parameters.AddWithValue("@new", neww)
-                com.Parameters.AddWithValue("@old", old)
-                com.ExecuteNonQuery()
-
-                Dim comsis As New MySqlCommand("UPDATE `book_tbl` SET `Genre` = @new WHERE `Genre` = @old", con)
-                comsis.Parameters.AddWithValue("@new", neww)
-                comsis.Parameters.AddWithValue("@old", old)
-                comsis.ExecuteNonQuery()
-
-                For Each form In Application.OpenForms
-                    If TypeOf form Is Book Then
-                        Dim book = DirectCast(form, Book)
-                        book.cbgenree()
+                    If count > 0 Then
+                        MsgBox("Genre already exists.", vbExclamation, "Duplication is not allowed.")
+                        Exit Sub
                     End If
-                Next
 
-                MsgBox("Updated successfully!", vbInformation)
-                Genre_Load(sender, e)
-                txtgenre.Clear()
-            Catch ex As Exception
-                MsgBox(ex.Message, vbCritical)
-            End Try
+
+                    Dim com As New MySqlCommand("UPDATE `genre_tbl` SET `Genre` = @newGenre WHERE `ID` = @id", con)
+                    com.Parameters.AddWithValue("@newGenre", newGenre)
+                    com.Parameters.AddWithValue("@id", ID)
+                    com.ExecuteNonQuery()
+
+
+                    Dim comsis As New MySqlCommand("UPDATE `book_tbl` SET `Genre` = @newGenre WHERE `Genre` = @oldGenre", con)
+                    comsis.Parameters.AddWithValue("@newGenre", newGenre)
+                    comsis.Parameters.AddWithValue("@oldGenre", oldGenre)
+                    comsis.ExecuteNonQuery()
+
+
+                    GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="GENRE FORM",
+                    description:=$"Updated Genre Name from '{oldGenre}' to '{newGenre}'.",
+                    recordID:=ID.ToString(),
+                    oldValue:=oldGenre,
+                    newValue:=newGenre
+                )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Book Then
+
+                            DirectCast(form, Book).cbgenree()
+                        End If
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                        If TypeOf form Is MainForm Then
+                            DirectCast(form, MainForm).loadsu()
+                        End If
+                    Next
+
+                    MsgBox("Updated successfully!", vbInformation)
+
+
+                    Me.Genre_Load(sender, e)
+                    txtgenre.Clear()
+
+                Catch ex As Exception
+                    MsgBox(ex.Message, vbCritical)
+                End Try
+            End Using
+
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
         End If
@@ -152,7 +201,7 @@ Public Class Genre
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim genreName As String = selectedRow.Cells("Genre").Value.ToString().Trim()
@@ -175,10 +224,24 @@ Public Class Genre
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="GENRE FORM",
+                        description:=$"Deleted Genre: {genreName}",
+                        recordID:=ID.ToString()
+                    )
+
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then
                             Dim book = DirectCast(form, Book)
                             book.cbgenree()
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            Dim load = DirectCast(form, AuditTrail)
+                            load.refreshaudit()
                         End If
                     Next
 
@@ -224,7 +287,7 @@ Public Class Genre
         If e.RowIndex >= 0 Then
 
             Dim row = DataGridView1.Rows(e.RowIndex)
-            txtgenre.Text = row.Cells("Genre").Value.ToString
+            txtgenre.Text = row.Cells("Genre").Value.ToString()
 
         End If
 

@@ -6,7 +6,7 @@ Public Class Category
         TopMost = True
         Me.Refresh()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `category_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
@@ -32,6 +32,12 @@ Public Class Category
 
     Private Sub Category_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
 
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtcategory.Text = ""
@@ -40,8 +46,9 @@ Public Class Category
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim category As String = txtcategory.Text.Trim
+        Dim newID As Integer = 0
 
         If String.IsNullOrWhiteSpace(category) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -60,9 +67,22 @@ Public Class Category
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `category_tbl`(`Category`) VALUES (@category) ", con)
+            Dim com As New MySqlCommand("INSERT INTO `category_tbl`(`Category`) VALUES (@category); SELECT LAST_INSERT_ID();", con)
             com.Parameters.AddWithValue("@category", category)
-            com.ExecuteNonQuery()
+            newID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="CATEGORY FORM",
+                description:=$"Added new category: {category}",
+                recordID:=newID.ToString()
+            )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Book Then
@@ -77,6 +97,9 @@ Public Class Category
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
             txtcategory.Clear()
         End Try
     End Sub
@@ -85,7 +108,7 @@ Public Class Category
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
@@ -100,11 +123,17 @@ Public Class Category
             Dim oldcats As String = selectedRow.Cells("Category").Value.ToString()
             Dim newcats As String = txtcategory.Text.Trim()
 
+            If oldcats.ToUpper() = newcats.ToUpper() Then
+                MsgBox("No changes were made.", vbExclamation, "No Update")
+                Exit Sub
+            End If
+
             Try
                 con.Open()
 
-                Dim comss As New MySqlCommand("SELECT COUNT(*) FROM `category_tbl` WHERE `Category` = @category", con)
+                Dim comss As New MySqlCommand("SELECT COUNT(*) FROM `category_tbl` WHERE `Category` = @category AND `ID` <> @ID", con)
                 comss.Parameters.AddWithValue("@category", cat)
+                comss.Parameters.AddWithValue("@ID", ID)
                 Dim count As Integer = Convert.ToInt32(comss.ExecuteScalar)
 
                 If count > 0 Then
@@ -114,9 +143,9 @@ Public Class Category
 
 
 
-                Dim com As New MySqlCommand("UPDATE `category_tbl` SET `Category` = @newCat WHERE `Category` = @oldCat", con)
+                Dim com As New MySqlCommand("UPDATE `category_tbl` SET `Category` = @newCat WHERE `ID` = @ID", con)
                 com.Parameters.AddWithValue("@newCat", newcats)
-                com.Parameters.AddWithValue("@oldCat", oldcats)
+                com.Parameters.AddWithValue("@ID", ID)
                 com.ExecuteNonQuery()
 
 
@@ -125,10 +154,32 @@ Public Class Category
                 comsus.Parameters.AddWithValue("@oldCat", oldcats)
                 comsus.ExecuteNonQuery()
 
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="CATEGORY FORM",
+                    description:=$"Updated category ID {ID} from '{oldcats}' to '{newcats}'",
+                    recordID:=ID.ToString(),
+                    oldValue:=$"Category: {oldcats}",
+                    newValue:=$"Category: {newcats}"
+                )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then
                         Dim book = DirectCast(form, Book)
                         book.cbcategoryy()
+                    End If
+                Next
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+                        Dim load = DirectCast(form, MainForm)
+                        load.loadsu()
                     End If
                 Next
 
@@ -137,6 +188,10 @@ Public Class Category
                 txtcategory.Clear()
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
+            Finally
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
             End Try
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
@@ -152,7 +207,7 @@ Public Class Category
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim categoryName As String = selectedRow.Cells("Category").Value.ToString().Trim()
@@ -175,6 +230,19 @@ Public Class Category
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="CATEGORY FORM",
+                        description:=$"Deleted category: {categoryName}",
+                        recordID:=ID.ToString()
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
+
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then
                             Dim book = DirectCast(form, Book)
@@ -196,6 +264,10 @@ Public Class Category
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
                 End Try
             End If
         End If

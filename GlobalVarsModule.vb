@@ -14,6 +14,8 @@ Module GlobalVarsModule
     Public GlobalRole As String = ""
     Public CurrentEmployeeID As String = ""
 
+    Public GlobalEmail As String = ""
+
     Public Function GetCleanCurrentBorrowerID() As String
         Dim idTrimmed As String = CurrentBorrowerID.Trim()
         Dim tempID As Long
@@ -35,9 +37,9 @@ Module GlobalVarsModule
                 con.Open()
 
                 Dim checkCom As String = "SELECT COUNT(*) FROM `oras_tbl` " &
-                                     "WHERE (LRN = @ID OR EmployeeNo = @ID) " &
-                                     "AND DATE(TimeIn) = DATE(NOW()) " &
-                                     "AND TimeOut IS NULL"
+                                         "WHERE (LRN = @ID OR EmployeeNo = @ID) " &
+                                         "AND DATE(TimeIn) = DATE(NOW()) " &
+                                         "AND TimeOut IS NULL"
 
                 Using checkCmd As New MySqlCommand(checkCom, con)
                     checkCmd.Parameters.AddWithValue("@ID", borrowerID)
@@ -107,5 +109,62 @@ Module GlobalVarsModule
         End Using
         Return success
     End Function
+
+
+    Public Sub LogAudit(ByVal actionType As String, ByVal formName As String, ByVal description As String, Optional ByVal recordID As String = "", Optional ByVal oldValue As String = "", Optional ByVal newValue As String = "")
+
+
+        If String.IsNullOrWhiteSpace(GlobalEmail) Then Return
+
+
+        Dim allowedRoles As New List(Of String) From {"Librarian", "Assistant Librarian", "Staff"}
+        If Not allowedRoles.Contains(GlobalRole, StringComparer.OrdinalIgnoreCase) Then Return
+
+
+        Dim formattedDateTime As String = DateTime.Now.ToString("MM/dd/yy-h:mm tt")
+
+        Dim con As New MySqlConnection(connectionString)
+
+
+        Dim query As String = "INSERT INTO `audit_trail_tbl` (`Role`, `Email`, `ActionType`, `FormName`, `Description`, `DateTime`) " &
+                              "VALUES (@role, @email, @action, @formName, @description, @formattedDateTime)"
+
+        Try
+            con.Open()
+            Using cmd As New MySqlCommand(query, con)
+
+                cmd.Parameters.AddWithValue("@role", GlobalRole)
+
+                cmd.Parameters.AddWithValue("@email", GlobalEmail)
+                cmd.Parameters.AddWithValue("@action", actionType)
+                cmd.Parameters.AddWithValue("@formName", formName)
+                cmd.Parameters.AddWithValue("@formattedDateTime", formattedDateTime)
+
+                Dim fullDescription As String = description
+
+
+                If Not String.IsNullOrWhiteSpace(oldValue) Or Not String.IsNullOrWhiteSpace(newValue) Then
+
+                    fullDescription &= $" [Change: {oldValue} -> {newValue}]"
+
+
+                ElseIf Not String.IsNullOrWhiteSpace(recordID) Then
+
+                    fullDescription &= $" [Record ID: {recordID}]"
+                End If
+
+
+                cmd.Parameters.AddWithValue("@description", fullDescription)
+
+                cmd.ExecuteNonQuery()
+
+            End Using
+        Catch ex As Exception
+
+            MessageBox.Show("AUDIT LOG FAILED! Database Error: " & ex.Message & vbCrLf & "CHECK: Is the column name 'Email' and 'Action' in audit_trail_tbl?", "Audit Trail Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then con.Close()
+        End Try
+    End Sub
 
 End Module

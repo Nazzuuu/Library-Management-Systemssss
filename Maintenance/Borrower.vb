@@ -239,7 +239,7 @@ Public Class Borrower
     Private Sub btnadd_Click_1(sender As Object, e As EventArgs) Handles btnadd.Click
 
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim borrowerType As String = ""
 
         Dim middleInitial As String = txtmname.Text.Trim()
@@ -248,6 +248,8 @@ Public Class Borrower
         Dim contactNumber As String = txtcontactnumber.Text.Trim()
         Dim firstName As String = txtfname.Text.Trim()
         Dim lastName As String = txtlname.Text.Trim()
+        Dim newID As Integer = 0
+        Dim fullName As String = $"{lastName}, {firstName}"
 
         If rbstudent.Checked Then
             borrowerType = "Student"
@@ -257,6 +259,10 @@ Public Class Borrower
 
         If rbnone.Checked Then
             middleInitial = "N/A"
+        End If
+
+        If middleInitial.ToUpper() <> "N/A" AndAlso Not String.IsNullOrWhiteSpace(middleInitial) Then
+            fullName = $"{lastName}, {firstName} {middleInitial}"
         End If
 
 
@@ -299,7 +305,7 @@ Public Class Borrower
             End If
 
 
-            Dim com As New MySqlCommand("INSERT INTO `borrower_tbl`(`Borrower`, `FirstName`, `LastName`, `MiddleInitial`, `LRN`, `EmployeeNo`, `ContactNumber`, `Department`, `Grade`, `Section`, `Strand`) VALUES (@Borrower, @FirstName, @LastName, @MiddleInitial, @LRN, @EmployeeNo, @ContactNumber, @Department, @Grade, @Section, @Strand)", con)
+            Dim com As New MySqlCommand("INSERT INTO `borrower_tbl`(`Borrower`, `FirstName`, `LastName`, `MiddleInitial`, `LRN`, `EmployeeNo`, `ContactNumber`, `Department`, `Grade`, `Section`, `Strand`) VALUES (@Borrower, @FirstName, @LastName, @MiddleInitial, @LRN, @EmployeeNo, @ContactNumber, @Department, @Grade, @Section, @Strand); SELECT LAST_INSERT_ID();", con)
 
             com.Parameters.AddWithValue("@Borrower", borrowerType)
             com.Parameters.AddWithValue("@FirstName", firstName)
@@ -313,7 +319,20 @@ Public Class Borrower
             com.Parameters.AddWithValue("@Section", cbsection.Text.Trim())
             com.Parameters.AddWithValue("@Strand", cbstrand.Text.Trim())
 
-            com.ExecuteNonQuery()
+            newID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+            actionType:="ADD",
+            formName:="BORROWER FORM",
+            description:=$"Added new {borrowerType}: {fullName}",
+            recordID:=newID.ToString()
+        )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             MsgBox("Borrower added successfully!", vbInformation)
             Borrower_Load(sender, e)
@@ -340,7 +359,6 @@ Public Class Borrower
     End Sub
 
 
-
     Private Sub btnedit_Click_1(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.SelectedRows.Count > 0 Then
@@ -350,7 +368,7 @@ Public Class Borrower
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = Convert.ToInt32(selectedRow.Cells("ID").Value)
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
             Dim originalBorrowerType As String = selectedRow.Cells("Borrower").Value.ToString().Trim()
 
@@ -358,6 +376,9 @@ Public Class Borrower
             Dim oldLastName As String = selectedRow.Cells("LastName").Value.ToString().Trim()
             Dim oldMiddleInitialValue As Object = selectedRow.Cells("MiddleInitial").Value
             Dim oldMiddleInitial As String = If(oldMiddleInitialValue Is DBNull.Value OrElse oldMiddleInitialValue Is Nothing, "", oldMiddleInitialValue.ToString().Trim())
+            Dim oldLRN As Object = selectedRow.Cells("LRN").Value
+            Dim oldEmployeeNo As Object = selectedRow.Cells("EmployeeNo").Value
+            Dim oldContactNumber As String = selectedRow.Cells("ContactNumber").Value.ToString().Trim()
 
             Dim oldFullNameInGrid As String = $"{oldLastName}, {oldFirstName}"
             If oldMiddleInitial.ToUpper() <> "N/A" AndAlso Not String.IsNullOrWhiteSpace(oldMiddleInitial) Then
@@ -424,13 +445,17 @@ Public Class Borrower
                     Dim keyColumn As String = ""
 
                     If originalBorrowerType = "Student" Then
-                        Dim oldlrn As String = selectedRow.Cells("LRN").Value.ToString().Trim()
-                        checkKey = oldlrn
-                        keyColumn = "LRN"
+                        Dim oldlrnCell As Object = selectedRow.Cells("LRN").Value
+                        If oldlrnCell IsNot DBNull.Value AndAlso oldlrnCell IsNot Nothing Then
+                            checkKey = oldlrnCell.ToString().Trim()
+                            keyColumn = "LRN"
+                        End If
                     ElseIf originalBorrowerType = "Teacher" Then
-                        Dim oldemployeeno As String = selectedRow.Cells("EmployeeNo").Value.ToString().Trim()
-                        checkKey = oldemployeeno
-                        keyColumn = "EmployeeNo"
+                        Dim oldemployeenoCell As Object = selectedRow.Cells("EmployeeNo").Value
+                        If oldemployeenoCell IsNot DBNull.Value AndAlso oldemployeenoCell IsNot Nothing Then
+                            checkKey = oldemployeenoCell.ToString().Trim()
+                            keyColumn = "EmployeeNo"
+                        End If
                     End If
 
                     If Not String.IsNullOrWhiteSpace(checkKey) Then
@@ -475,6 +500,26 @@ Public Class Borrower
                 com.Parameters.AddWithValue("@Strand", cbstrand.Text.Trim())
                 com.Parameters.AddWithValue("@ID", ID)
                 com.ExecuteNonQuery()
+
+                Dim auditDescription As String = $"Updated {originalBorrowerType} details for {oldFullNameInGrid}. New Name: {newFullName}"
+
+                Dim oldValueLog As String = $"Name: {oldFullNameInGrid}, Type: {originalBorrowerType}, LRN: {If(oldLRN Is DBNull.Value, "N/A", oldLRN)}, EmployeeNo: {If(oldEmployeeNo Is DBNull.Value, "N/A", oldEmployeeNo)}, Contact: {oldContactNumber}"
+                Dim newValueLog As String = $"Name: {newFullName}, Type: {borrowerType}, LRN: {If(lrn Is DBNull.Value, "N/A", lrn)}, EmployeeNo: {If(employeeNo Is DBNull.Value, "N/A", employeeNo)}, Contact: {contactNumber}"
+
+                GlobalVarsModule.LogAudit(
+                actionType:="UPDATE",
+                formName:="BORROWER FORM",
+                description:=auditDescription,
+                recordID:=ID.ToString(),
+                oldValue:=oldValueLog,
+                newValue:=newValueLog
+            )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
 
 
                 Dim timeInOutRecordUpdateCom As String = "UPDATE `timeinoutrecord_tbl` SET `FullName` = @NewFullName WHERE `FullName` = @OldFullName AND `Borrower` = @Type"
@@ -570,11 +615,22 @@ Public Class Borrower
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
         Dim hasAccount As Integer = 0
-
+        Dim fullNameToDelete As String = ""
+        Dim borrowerTypeToDelete As String = ""
 
         Try
 
             Dim cellValue As Object = selectedRow.Cells.Item("HasAccount").Value
+            Dim firstName As String = selectedRow.Cells("FirstName").Value.ToString().Trim()
+            Dim lastName As String = selectedRow.Cells("LastName").Value.ToString().Trim()
+            Dim middleInitialValue As Object = selectedRow.Cells("MiddleInitial").Value
+            Dim middleInitial As String = If(middleInitialValue Is DBNull.Value OrElse middleInitialValue Is Nothing, "", middleInitialValue.ToString().Trim())
+
+            borrowerTypeToDelete = selectedRow.Cells("Borrower").Value.ToString().Trim()
+            fullNameToDelete = $"{lastName}, {firstName}"
+            If middleInitial.ToUpper() <> "N/A" AndAlso Not String.IsNullOrWhiteSpace(middleInitial) Then
+                fullNameToDelete = $"{lastName}, {firstName} {middleInitial}"
+            End If
 
             If cellValue IsNot DBNull.Value AndAlso cellValue IsNot Nothing Then
 
@@ -596,7 +652,7 @@ Public Class Borrower
 
         If dialogResult = DialogResult.Yes Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
@@ -607,6 +663,19 @@ Public Class Borrower
                 Dim delete As New MySqlCommand("DELETE FROM `borrower_tbl` WHERE `ID` = @id", con)
                 delete.Parameters.AddWithValue("@id", ID)
                 delete.ExecuteNonQuery()
+
+                GlobalVarsModule.LogAudit(
+                actionType:="DELETE",
+                formName:="BORROWER FORM",
+                description:=$"Deleted {borrowerTypeToDelete}: {fullNameToDelete}",
+                recordID:=ID.ToString()
+            )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
 
                 MessageBox.Show("Borrower deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 

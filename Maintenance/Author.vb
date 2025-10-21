@@ -10,7 +10,7 @@ Public Class Author
         Me.Refresh()
 
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim comm As String = "SELECT * FROM `author_tbl`"
         Dim adap As New MySqlDataAdapter(comm, con)
         Dim ds As New DataSet
@@ -43,6 +43,12 @@ Public Class Author
 
     Private Sub Author_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
 
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtauthor.Text = ""
@@ -53,8 +59,9 @@ Public Class Author
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
-        Dim author As String = txtauthor.Text.Trim
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim author As String = txtauthor.Text.Trim()
+        Dim insertedID As Integer = 0
 
         If String.IsNullOrWhiteSpace(author) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -74,18 +81,30 @@ Public Class Author
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `author_tbl`(`AuthorName`) VALUES (@author)", con)
+            Dim com As New MySqlCommand("INSERT INTO `author_tbl`(`AuthorName`) VALUES (@author); SELECT LAST_INSERT_ID()", con)
             com.Parameters.AddWithValue("@author", author)
 
-            com.ExecuteNonQuery()
+            insertedID = Convert.ToInt32(com.ExecuteScalar())
 
-
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="AUTHOR FORM",
+                description:=$"Added new Author: {author}",
+                recordID:=insertedID.ToString()
+            )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Book Then
                     Dim book = DirectCast(form, Book)
                     book.cbauthorr()
                     Exit For
+                End If
+            Next
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    Dim load = DirectCast(form, AuditTrail)
+                    load.refreshaudit()
                 End If
             Next
 
@@ -103,26 +122,32 @@ Public Class Author
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            Dim author As String = txtauthor.Text.Trim
+            Dim author As String = txtauthor.Text.Trim()
 
             If String.IsNullOrWhiteSpace(author) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
 
-            Dim oldawtor As String = selectedRow.Cells("AuthorName").Value.ToString()
+            Dim oldawtor As String = selectedRow.Cells("AuthorName").Value.ToString().Trim()
             Dim newawtor As String = txtauthor.Text.Trim()
+
+            If String.Equals(oldawtor, newawtor, StringComparison.OrdinalIgnoreCase) Then
+                MsgBox("The author name is the same as the current one.", vbInformation)
+                Exit Sub
+            End If
 
             Try
                 con.Open()
 
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl` WHERE `AuthorName` = @author", con)
+                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl` WHERE `AuthorName` = @author AND ID <> @id", con)
                 comsu.Parameters.AddWithValue("@author", author)
+                comsu.Parameters.AddWithValue("@id", ID)
                 Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar())
 
                 If count > 0 Then
@@ -130,9 +155,9 @@ Public Class Author
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `author_tbl` SET `AuthorName` = @newawtor WHERE `AuthorName` = @oldawtor", con)
+                Dim com As New MySqlCommand("UPDATE `author_tbl` SET `AuthorName` = @newawtor WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@newawtor", newawtor)
-                com.Parameters.AddWithValue("@oldawtor", oldawtor)
+                com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
 
@@ -141,11 +166,34 @@ Public Class Author
                 comsus.Parameters.AddWithValue("@oldawtor", oldawtor)
                 comsus.ExecuteNonQuery()
 
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="AUTHOR FORM",
+                    description:=$"Updated Author Name.",
+                    recordID:=ID.ToString(),
+                    oldValue:=oldawtor,
+                    newValue:=newawtor
+                )
+
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then
                         Dim book = DirectCast(form, Book)
                         book.cbauthorr()
                         Exit For
+                    End If
+                Next
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        Dim load = DirectCast(form, AuditTrail)
+                        load.refreshaudit()
+                    End If
+                Next
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+                        Dim load = DirectCast(form, MainForm)
+                        load.loadsu()
                     End If
                 Next
 
@@ -168,7 +216,7 @@ Public Class Author
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim authorName As String = selectedRow.Cells("AuthorName").Value.ToString().Trim()
@@ -191,11 +239,25 @@ Public Class Author
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="AUTHOR FORM",
+                        description:=$"Deleted Author: {authorName}",
+                        recordID:=ID.ToString()
+                    )
+
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then
                             Dim book = DirectCast(form, Book)
                             book.cbauthorr()
                             Exit For
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            Dim load = DirectCast(form, AuditTrail)
+                            load.refreshaudit()
                         End If
                     Next
 
@@ -383,11 +445,5 @@ Public Class Author
             e.Cancel = False
         End If
     End Sub
-
-
-
-
-
-    'heck nooo'
 
 End Class

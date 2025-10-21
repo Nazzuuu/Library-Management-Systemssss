@@ -36,8 +36,14 @@ Public Class Book
 
 
     Private Sub Book_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        refreshbook()
 
-        If String.IsNullOrEmpty(connectionString) Then
+    End Sub
+
+
+    Public Sub refreshbook()
+
+        If String.IsNullOrEmpty(GlobalVarsModule.connectionString) Then
             MessageBox.Show("Connection string is not set.", "Configuration Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
@@ -64,8 +70,8 @@ Public Class Book
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
         DateTimePicker1.Value = DateTime.Now
-    End Sub
 
+    End Sub
 
     Private Sub LoadBookData()
         Dim con As New MySqlConnection(connectionString)
@@ -164,63 +170,7 @@ Public Class Book
     End Sub
 
 
-    Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
 
-
-        BarcodeList.Clear()
-        BarcodeIndex = 0
-
-
-        For Each row As DataGridViewRow In DataGridView1.Rows
-            If Not row.IsNewRow Then
-                Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
-                Dim bookTitleValue As String = If(IsDBNull(row.Cells("BookTitle").Value), "(No Title)", CStr(row.Cells("BookTitle").Value))
-
-
-                If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
-                    BarcodeList.Add(New BarcodeInfo With {.Barcode = barcodeValue, .Title = bookTitleValue})
-                End If
-            End If
-        Next
-
-        If BarcodeList.Count = 0 Then
-            MessageBox.Show("No barcode's found.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Exit Sub
-        End If
-
-
-        Try
-
-            Using pdlg As New PrintDialog With {.Document = printDoc}
-                printDoc.DefaultPageSettings.Landscape = False
-
-
-                If pdlg.ShowDialog() = DialogResult.OK Then
-
-                    printDoc.PrinterSettings = pdlg.PrinterSettings
-
-
-                    printDoc.Print()
-
-                    Dim selectedPrinterName As String = printDoc.PrinterSettings.PrinterName
-                    MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{selectedPrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Else
-
-                    Exit Sub
-                End If
-            End Using
-
-        Catch ex As System.Drawing.Printing.InvalidPrinterException
-
-            Dim currentPrinterName As String = If(printDoc.PrinterSettings Is Nothing, "Selected Printer", printDoc.PrinterSettings.PrinterName)
-            MessageBox.Show($"Warning: The selected printer ('{currentPrinterName}') is not connected or ready. Please check the printer connection.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        Catch ex As Exception
-            MessageBox.Show("An unexpected error occurred during the print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            BarcodeIndex = 0
-        End Try
-
-    End Sub
 
     Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
 
@@ -400,11 +350,12 @@ Public Class Book
     End Function
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim isbn As Object = Nothing
         Dim barcode As Object = Nothing
         Dim booktitle As String = txtbooktitle.Text.Trim()
         Dim deyts As DateTime = DateTimePicker1.Value
+        Dim bookID As Integer = 0
 
         If rbgenerate.Checked Then
             isbn = DBNull.Value
@@ -473,7 +424,7 @@ Public Class Book
         Try
             con.Open()
 
-            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`Barcode`,`ISBN`, `BookTitle`, `Author`, `Genre`, `Category`, `Publisher`, `Language`, `YearPublished`) VALUES (@barcode, @isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished)", con)
+            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`Barcode`,`ISBN`, `BookTitle`, `Author`, `Genre`, `Category`, `Publisher`, `Language`, `YearPublished`) VALUES (@barcode, @isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished); SELECT LAST_INSERT_ID()", con)
 
             com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcode), DBNull.Value, barcode))
             com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbn), DBNull.Value, isbn))
@@ -484,7 +435,22 @@ Public Class Book
             com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
             com.Parameters.AddWithValue("@language", cblanguage.Text)
             com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
-            com.ExecuteNonQuery()
+
+            bookID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+            actionType:="ADD",
+            formName:="BOOK FORM",
+            description:=$"Added new Book: {booktitle}",
+            recordID:=bookID.ToString()
+        )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    Dim load = DirectCast(form, AuditTrail)
+                    load.refreshaudit()
+                End If
+            Next
 
             MsgBox("Book added successfully", vbInformation)
             clear()
@@ -503,8 +469,6 @@ Public Class Book
         If DataGridView1.SelectedRows.Count > 0 Then
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
-
-
             Dim oldBookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
             Dim newBookTitle As String = txtbooktitle.Text.Trim()
 
@@ -514,7 +478,7 @@ Public Class Book
             End If
 
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim deyts As DateTime = DateTimePicker1.Value
 
             Dim isbnValue As Object
@@ -579,7 +543,6 @@ Public Class Book
             Try
                 con.Open()
 
-
                 Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcodeValue), DBNull.Value, barcodeValue))
                 com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbnValue), DBNull.Value, isbnValue))
@@ -593,6 +556,14 @@ Public Class Book
                 com.Parameters.AddWithValue("@id", bookID)
                 com.ExecuteNonQuery()
 
+                GlobalVarsModule.LogAudit(
+                actionType:="UPDATE",
+                formName:="BOOK FORM",
+                description:=$"Updated Book Title from '{oldBookTitle}' to '{newBookTitle}' (ID: {bookID})",
+                recordID:=bookID.ToString(),
+                oldValue:=oldBookTitle,
+                newValue:=newBookTitle
+            )
 
                 Dim comAcquisition As New MySqlCommand("UPDATE `acquisition_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
                 comAcquisition.Parameters.AddWithValue("@newBookTitle", newBookTitle)
@@ -632,6 +603,11 @@ Public Class Book
                     If TypeOf form Is Borrowing Then
                         DirectCast(form, Borrowing).refreshborrowingsu()
                     End If
+
+                    If TypeOf form Is AuditTrail Then
+                        Dim load = DirectCast(form, AuditTrail)
+                        load.refreshaudit()
+                    End If
                 Next
 
                 MsgBox("Book updated successfully", vbInformation)
@@ -658,10 +634,11 @@ Public Class Book
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
 
                 Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim bookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
 
                 Dim bookISBN As String = selectedRow.Cells("ISBN").Value.ToString()
                 Dim bookBarcode As String = selectedRow.Cells("Barcode").Value.ToString()
@@ -682,7 +659,6 @@ Public Class Book
                     End If
 
 
-
                     Dim acx As New MySqlCommand("SELECT COUNT(*) FROM `acquisition_tbl` WHERE `ISBN` = @ISBN OR `Barcode` = @Barcode", con)
                     acx.Parameters.AddWithValue("@ISBN", bookISBN)
                     acx.Parameters.AddWithValue("@Barcode", bookBarcode)
@@ -697,6 +673,20 @@ Public Class Book
                     Dim delete As New MySqlCommand("DELETE FROM `book_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", bookID)
                     delete.ExecuteNonQuery()
+
+                    GlobalVarsModule.LogAudit(
+                    actionType:="DELETE",
+                    formName:="BOOK FORM",
+                    description:=$"Deleted Book: {bookTitle}",
+                    recordID:=bookID.ToString()
+                )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            Dim load = DirectCast(form, AuditTrail)
+                            load.refreshaudit()
+                        End If
+                    Next
 
                     MsgBox("Book deleted successfully.", vbInformation)
 
@@ -724,6 +714,66 @@ Public Class Book
             MsgBox("Please select a row to delete.", vbExclamation)
         End If
     End Sub
+
+    Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
+
+
+        BarcodeList.Clear()
+        BarcodeIndex = 0
+
+
+        For Each row As DataGridViewRow In DataGridView1.Rows
+            If Not row.IsNewRow Then
+                Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
+                Dim bookTitleValue As String = If(IsDBNull(row.Cells("BookTitle").Value), "(No Title)", CStr(row.Cells("BookTitle").Value))
+
+
+                If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
+                    BarcodeList.Add(New BarcodeInfo With {.Barcode = barcodeValue, .Title = bookTitleValue})
+                End If
+            End If
+        Next
+
+        If BarcodeList.Count = 0 Then
+            MessageBox.Show("No barcode's found.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+
+        Try
+
+            Using pdlg As New PrintDialog With {.Document = printDoc}
+                printDoc.DefaultPageSettings.Landscape = False
+
+
+                If pdlg.ShowDialog() = DialogResult.OK Then
+
+                    printDoc.PrinterSettings = pdlg.PrinterSettings
+
+
+                    printDoc.Print()
+
+                    Dim selectedPrinterName As String = printDoc.PrinterSettings.PrinterName
+                    MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{selectedPrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Else
+
+                    Exit Sub
+                End If
+            End Using
+
+        Catch ex As System.Drawing.Printing.InvalidPrinterException
+
+            Dim currentPrinterName As String = If(printDoc.PrinterSettings Is Nothing, "Selected Printer", printDoc.PrinterSettings.PrinterName)
+            MessageBox.Show($"Warning: The selected printer ('{currentPrinterName}') is not connected or ready. Please check the printer connection.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        Catch ex As Exception
+            MessageBox.Show("An unexpected error occurred during the print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            BarcodeIndex = 0
+        End Try
+
+    End Sub
+
+
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
         clear()

@@ -7,10 +7,14 @@ Public Class Penalty
 
     Private connectionString As String = GlobalVarsModule.connectionString
     Private AccessionID As String = String.Empty
+    Private originalCalculatedFee As Decimal = 0.00
+    Private Const ABSOLUTE_MIN_FEE As Decimal = 50.0
 
     Private Sub Penalty_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ClearAllDetails()
         refreshpenalty()
+
+        lblborrowerstatus.Text = "NOT PENALIZED"
     End Sub
 
     Public Sub refreshpenalty(Optional searchText As String = "")
@@ -87,11 +91,11 @@ Public Class Penalty
         Next
 
         Dim query As String = $"SELECT DISTINCT `AccessionID` 
-                                FROM `borrowinghistory_tbl` 
-                                WHERE TRIM(`TransactionReceipt`) = @transNo 
-                                AND ({String.Join(" OR ", conditionParts)}) 
-                                AND `AccessionID` IS NOT NULL 
-                                AND `AccessionID` != ''"
+                                 FROM `borrowinghistory_tbl` 
+                                 WHERE TRIM(`TransactionReceipt`) = @transNo 
+                                 AND ({String.Join(" OR ", conditionParts)}) 
+                                 AND `AccessionID` IS NOT NULL 
+                                 AND `AccessionID` != ''"
 
         Try
             con.Open()
@@ -100,7 +104,6 @@ Public Class Penalty
 
                 i = 0
                 For Each title In bookTitles
-
                     cmd.Parameters.AddWithValue($"@title{i}", "%" & title.Trim() & "%")
                     i += 1
                 Next
@@ -264,25 +267,38 @@ Public Class Penalty
     End Function
 
     Private Sub ClearAllDetails()
+
         lbltransactionreceipt.Text = ".."
+
+
         lblborrowertype.Text = ".."
         lbllrn.Text = ".."
         lblemployeeno.Text = ".."
         lblfullname.Text = ".."
-        lbldepartment.Text = ".."
+
+
         lblgrade.Text = ".."
         lblsection.Text = ".."
         lblstrand.Text = ".."
+        lbldepartment.Text = ".."
+
 
         lblborroweddate.Text = ".."
         lblduedate.Text = ".."
         lblbooktotal.Text = ".."
         lblaccessionid.Text = ".."
-
         lblbooktitle.Text = ".."
         lblbookstatus.Text = ".."
+
+
         lblborrowerstatus.Text = ".."
         txtfee.Text = String.Empty
+        chkdisregard.Checked = False
+        originalCalculatedFee = 0.00
+        txtfee.ReadOnly = True
+
+        chkdisregard.Enabled = False
+
     End Sub
 
 
@@ -327,9 +343,11 @@ Public Class Penalty
         If row Is Nothing Then Return
 
         Me.AccessionID = String.Empty
+        originalCalculatedFee = 0.00
 
         Try
             Dim transNo As String = row.Cells("TransactionReceipt").Value.ToString()
+            chkdisregard.Checked = False
 
             lbltransactionreceipt.Text = transNo
             lblborrowertype.Text = row.Cells("Borrower").Value.ToString()
@@ -345,7 +363,6 @@ Public Class Penalty
             lblborroweddate.Text = row.Cells("BorrowedDate").Value.ToString()
             lblduedate.Text = row.Cells("DueDate").Value.ToString()
 
-
             Dim aggregatedDetails As Tuple(Of String, Integer, List(Of String)) = GetAggregatedBookDetails(transNo)
             Dim uniqueBookTitles As List(Of String) = aggregatedDetails.Item3
 
@@ -353,14 +370,22 @@ Public Class Penalty
             lblbooktitle.Text = aggregatedDetails.Item1
 
             lblbookstatus.Text = GetAllUniqueStatuses(transNo)
-            lblborrowerstatus.Text = "NOT PENALIZED"
 
-            Dim calculatedFee As Decimal = CalculateTotalPenaltyFee(transNo)
-            txtfee.Text = calculatedFee.ToString("N2")
+            Dim borrowerStatusValue As Object = row.Cells("BorrowerStatus").Value
+            Dim currentStatus As String = "NOT PENALIZED"
+            If borrowerStatusValue IsNot DBNull.Value AndAlso borrowerStatusValue IsNot Nothing Then
+                currentStatus = borrowerStatusValue.ToString().ToUpper()
+            End If
 
+            lblborrowerstatus.Text = currentStatus
+
+            originalCalculatedFee = CalculateTotalPenaltyFee(transNo)
+            txtfee.Text = originalCalculatedFee.ToString("N2")
+
+            txtfee.ReadOnly = True
 
             lblaccessionid.Text = GetAccessionIDsByTransaction(transNo, uniqueBookTitles)
-
+            chkdisregard.Enabled = True
         Catch ex As Exception
             MessageBox.Show("Error loading details: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
@@ -368,30 +393,38 @@ Public Class Penalty
 
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
-
         Dim searchText As String = txtsearch.Text.Trim()
 
         If String.IsNullOrWhiteSpace(searchText) Then
+
+            If DataGridView1.SelectedRows.Count > 0 Then
+                DataGridView1.ClearSelection()
+            End If
+
+
             ClearAllDetails()
             refreshpenalty()
-        End If
 
+        End If
     End Sub
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
         If e.KeyCode = Keys.Enter Then
             Dim searchText As String = txtsearch.Text.Trim()
 
-
             refreshpenalty(searchText)
 
             If String.IsNullOrWhiteSpace(searchText) Then
+
                 ClearAllDetails()
 
-                refreshpenalty()
+                DataGridView1.ClearSelection()
+
             ElseIf DataGridView1.Rows.Count > 0 Then
+
                 LoadDetailsFromSelectedRow(DataGridView1.Rows(0))
             Else
+
                 ClearAllDetails()
             End If
 
@@ -400,10 +433,87 @@ Public Class Penalty
         End If
     End Sub
 
+    Private Sub chkdisregard_CheckedChanged(sender As Object, e As EventArgs) Handles chkdisregard.CheckedChanged
+        If chkdisregard.Checked Then
+            txtfee.Text = String.Empty
+            txtfee.ReadOnly = False
+            txtfee.Focus()
+        Else
+            txtfee.Text = originalCalculatedFee.ToString("N2")
+            txtfee.ReadOnly = True
+        End If
+    End Sub
 
     Private Sub btnpenalized_Click(sender As Object, e As EventArgs) Handles btnpenalized.Click
 
-    End Sub
+        If lbltransactionreceipt.Text = ".." Then
+            MessageBox.Show("Please select a transaction first.", "Missing Details", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
 
+        If lblborrowerstatus.Text = "PENALIZED" Then
+            MessageBox.Show("This transaction is already penalized.", "Already Paid", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            ClearAllDetails()
+            Return
+        End If
+
+        Dim enteredFee As Decimal
+        If Not Decimal.TryParse(txtfee.Text.Replace(",", ""), enteredFee) Then
+            MessageBox.Show("Invalid amount entered for Penalty Fee.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            txtfee.Focus()
+            Return
+        End If
+
+        If enteredFee < ABSOLUTE_MIN_FEE Then
+            MessageBox.Show($"The entered fee must not be less than {ABSOLUTE_MIN_FEE.ToString("N2")}.", "Fee Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            txtfee.Focus()
+            Return
+        End If
+
+        Dim transNo As String = lbltransactionreceipt.Text
+
+        Using con As New MySqlConnection(connectionString)
+            Dim updateQuery As String = "UPDATE `penalty_tbl` SET `BorrowerStatus` = 'PENALIZED' WHERE `TransactionReceipt` = @transNo"
+
+            Try
+                con.Open()
+                Using cmd As New MySqlCommand(updateQuery, con)
+                    cmd.Parameters.AddWithValue("@transNo", transNo)
+                    cmd.ExecuteNonQuery()
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Database Update Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            Finally
+                If con.State = ConnectionState.Open Then con.Close()
+            End Try
+        End Using
+
+
+        Dim oldFeeStatus As String = If(chkdisregard.Checked, $"Disregarded Fee: {enteredFee.ToString("N2")}", $"Calculated Fee: {originalCalculatedFee.ToString("N2")}")
+
+        GlobalVarsModule.LogAudit(
+            actionType:="UPDATE",
+            formName:="PENALTY PAYMENT",
+            description:=$"Transaction {transNo} marked as PENALIZED.",
+            recordID:=transNo,
+            oldValue:=$"Status: NOT PENALIZED | Fee: {oldFeeStatus}",
+            newValue:=$"Status: PENALIZED | Paid Amount: {enteredFee.ToString("N2")}"
+        )
+        For Each form In Application.OpenForms
+            If TypeOf form Is AuditTrail Then
+                DirectCast(form, AuditTrail).refreshaudit()
+            End If
+        Next
+
+
+        MessageBox.Show($"Penalty of {enteredFee.ToString("N2")} for Transaction: {transNo} has been marked as PENALIZED.", "Penalty Applied", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        lblborrowerstatus.Text = "PENALIZED"
+
+        ClearAllDetails()
+        refreshpenalty()
+
+    End Sub
 
 End Class

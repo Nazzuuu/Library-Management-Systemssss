@@ -5,7 +5,7 @@ Imports System.Drawing
 Public Class Accession
 
 
-    Private Const connectionString As String = "server=localhost;userid=root;database=laybsis_dbs;"
+    Private ReadOnly connectionString As String = GlobalVarsModule.connectionString
 
 
 
@@ -381,14 +381,19 @@ Public Class Accession
         End If
 
         Dim con As New MySqlConnection(connectionString)
+        Dim transaction As MySqlTransaction = Nothing
 
         Dim cleanedBookTitle As String = txtbooktitle.Text.Trim()
+        Dim insertedAccessionIDs As New List(Of String)()
+        Dim allSucceeded As Boolean = True
 
         Try
             con.Open()
+            transaction = con.BeginTransaction()
 
             If String.IsNullOrWhiteSpace(txttransactionno.Text) OrElse String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse cbshelf.SelectedIndex = -1 Then
                 MessageBox.Show("Please fill all required fields.", "Required Fields", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                transaction.Rollback()
                 Return
             End If
 
@@ -403,6 +408,7 @@ Public Class Accession
                 statusValue = "For In-Library Use Only"
             Else
                 MsgBox("Please select a Book Status.", vbExclamation, "Missing Information")
+                transaction.Rollback()
                 Exit Sub
             End If
 
@@ -416,18 +422,19 @@ Public Class Accession
                 If Not String.IsNullOrWhiteSpace(acss) Then
 
                     Dim ckacs As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE AccessionID = @AccessionID"
-                    Using comsx As New MySqlCommand(ckacs, con)
+                    Using comsx As New MySqlCommand(ckacs, con, transaction)
                         comsx.Parameters.AddWithValue("@AccessionID", acss)
                         If CInt(comsx.ExecuteScalar()) > 0 Then
-                            MessageBox.Show("Accession ID '" & acss & "' already exists. Please use a unique Accession ID.", "Duplicate Accession ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                            MessageBox.Show("Accession ID '" & acss & "' already exists. Please use a unique Accession ID. This record will be skipped.", "Duplicate Accession ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                            allSucceeded = False
                             Continue For
                         End If
                     End Using
 
                     Dim com As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                    "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
+                                   "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
 
-                    Using comsu As New MySqlCommand(com, con)
+                    Using comsu As New MySqlCommand(com, con, transaction)
                         comsu.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
                         comsu.Parameters.AddWithValue("@AccessionID", acss)
                         comsu.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
@@ -443,23 +450,42 @@ Public Class Accession
 
                     If isAvailable Then
                         Dim availableInsertSql As String = "INSERT INTO available_tbl (`ID`, `ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
-                                                     "VALUES (NULL, @ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
+                                                     "VALUES (NULL, @ISBN_Avail, @Barcode_Avail, @AccessionID_Avail, @BookTitle_Avail, @Shelf_Avail, @Status_Avail)"
 
-                        Using availableCmd As New MySqlCommand(availableInsertSql, con)
-                            availableCmd.Parameters.AddWithValue("@AccessionID", acss)
-                            availableCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
-                            availableCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                        Using availableCmd As New MySqlCommand(availableInsertSql, con, transaction)
+                            availableCmd.Parameters.AddWithValue("@AccessionID_Avail", acss)
+                            availableCmd.Parameters.AddWithValue("@ISBN_Avail", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                            availableCmd.Parameters.AddWithValue("@Barcode_Avail", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
 
-                            availableCmd.Parameters.AddWithValue("@BookTitle", cleanedBookTitle)
-                            availableCmd.Parameters.AddWithValue("@Shelf", cbshelf.Text)
-                            availableCmd.Parameters.AddWithValue("@Status", statusValue)
+                            availableCmd.Parameters.AddWithValue("@BookTitle_Avail", cleanedBookTitle)
+                            availableCmd.Parameters.AddWithValue("@Shelf_Avail", cbshelf.Text)
+                            availableCmd.Parameters.AddWithValue("@Status_Avail", statusValue)
                             availableCmd.ExecuteNonQuery()
                         End Using
                     End If
 
+                    insertedAccessionIDs.Add(acss)
                 End If
             Next
 
+            transaction.Commit()
+
+            If insertedAccessionIDs.Count > 0 Then
+                Dim insertedList As String = String.Join(", ", insertedAccessionIDs)
+                GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="ACCESSION FORM",
+                description:=$"Added new Accession records: {insertedList}. Title: {cleanedBookTitle}",
+                recordID:=txttransactionno.Text,
+                oldValue:="N/A",
+                newValue:=$"Status: {statusValue}, IDs: {insertedList}"
+            )
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+            End If
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AvailableBooks Then
@@ -477,13 +503,23 @@ Public Class Accession
                 End If
             Next
 
-            MessageBox.Show("Successfully added all accession records!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            If allSucceeded Then
+                MessageBox.Show("Successfully added all accession records!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Else
+                MessageBox.Show($"Finished processing. Successfully added: {insertedAccessionIDs.Count} records. Some accession IDs were skipped due to duplicates.", "Partial Success", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            End If
 
 
             Acession_Load(sender, e)
             clearlahat()
 
         Catch ex As Exception
+            If transaction IsNot Nothing Then
+                Try
+                    transaction.Rollback()
+                Catch rollEx As Exception
+                End Try
+            End If
             MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
@@ -506,8 +542,20 @@ Public Class Accession
         End If
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-        Dim currentStatus As String = selectedRow.Cells("Status").Value.ToString().Trim()
-        Dim oldAccessionID As String = selectedRow.Cells("AccessionID").Value.ToString().Trim()
+
+        Dim oldValues As New Dictionary(Of String, Object)
+        oldValues.Add("TransactionNo", selectedRow.Cells("TransactionNo").Value)
+        oldValues.Add("AccessionID", selectedRow.Cells("AccessionID").Value)
+        oldValues.Add("ISBN", selectedRow.Cells("ISBN").Value)
+        oldValues.Add("Barcode", selectedRow.Cells("Barcode").Value)
+        oldValues.Add("BookTitle", selectedRow.Cells("BookTitle").Value)
+        oldValues.Add("Shelf", selectedRow.Cells("Shelf").Value)
+        oldValues.Add("SupplierName", selectedRow.Cells("SupplierName").Value)
+        oldValues.Add("Status", selectedRow.Cells("Status").Value)
+
+
+        Dim currentStatus As String = oldValues("Status").ToString().Trim()
+        Dim oldAccessionID As String = oldValues("AccessionID").ToString().Trim()
         Dim abeyl As Boolean = currentStatus.Equals("Available", StringComparison.OrdinalIgnoreCase)
         Dim libraryonleh As Boolean = currentStatus.Equals("For In-Library Use Only", StringComparison.OrdinalIgnoreCase)
 
@@ -605,7 +653,7 @@ Public Class Accession
 
             ElseIf libraryonleh AndAlso avail Then
                 Dim kowms As String = "INSERT INTO available_tbl (`ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
-                                     "VALUES (@ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
+                                 "VALUES (@ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
 
                 Using commandsu As New MySqlCommand(kowms, con)
                     commandsu.Parameters.AddWithValue("@AccessionID", newAccessionID)
@@ -633,6 +681,46 @@ Public Class Accession
 
             End If
 
+            Dim newValuesList As New List(Of String)()
+            Dim oldValueList As New List(Of String)()
+            Dim changesMade As Boolean = False
+
+            Dim newValues As New Dictionary(Of String, Object)
+            newValues.Add("TransactionNo", txttransactionno.Text)
+            newValues.Add("AccessionID", newAccessionID)
+            newValues.Add("ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), "NULL", txtisbn.Text))
+            newValues.Add("Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), "NULL", txtbarcodes.Text))
+            newValues.Add("BookTitle", txtbooktitle.Text)
+            newValues.Add("Shelf", cbshelf.Text)
+            newValues.Add("SupplierName", txtsuppliername.Text)
+            newValues.Add("Status", newStatusValue)
+
+            For Each kvp In newValues
+                Dim oldValueStr As String = If(oldValues(kvp.Key) Is DBNull.Value, "NULL", oldValues(kvp.Key).ToString())
+                Dim newValueStr As String = kvp.Value.ToString()
+
+                If Not oldValueStr.Equals(newValueStr, StringComparison.OrdinalIgnoreCase) Then
+                    oldValueList.Add($"{kvp.Key}: {oldValueStr}")
+                    newValuesList.Add($"{kvp.Key}: {newValueStr}")
+                    changesMade = True
+                End If
+            Next
+
+            If changesMade Then
+                GlobalVarsModule.LogAudit(
+                actionType:="UPDATE",
+                formName:="ACCESSION FORM",
+                description:=$"Updated Accession ID {oldAccessionID} (New ID: {newAccessionID}). Title: {txtbooktitle.Text}",
+                recordID:=newAccessionID,
+                oldValue:=String.Join("; ", oldValueList),
+                newValue:=String.Join("; ", newValuesList)
+            )
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+            End If
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AvailableBooks Then
@@ -671,49 +759,87 @@ Public Class Accession
 
             If secondDialogResult = DialogResult.Yes Then
                 Dim con As New MySqlConnection(connectionString)
+                Dim transaction As MySqlTransaction = Nothing
+                Dim accessionCount As Integer = 0
+                Dim transactionCount As Integer = 0
 
                 Try
                     con.Open()
+                    transaction = con.BeginTransaction()
 
                     Dim comm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE `Status` IN ('Pending', 'Lost', 'Damage')"
-                    Dim comssu As New MySqlCommand(comm, con)
+                    Dim comssu As New MySqlCommand(comm, con, transaction)
                     Dim count As Integer = CInt(comssu.ExecuteScalar())
 
                     If count > 0 Then
                         MessageBox.Show("Cannot delete all accession records. There are currently " & count.ToString() & " record(s) with 'Pending', 'Lost', or 'Damage' status.", "Deletion Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        transaction.Rollback()
                         Return
                     End If
 
                     Dim com As String = "SELECT COUNT(*) FROM `borrowing_tbl`"
-                    Dim kapagod As New MySqlCommand(com, con)
+                    Dim kapagod As New MySqlCommand(com, con, transaction)
                     Dim borrowedCount As Integer = CInt(kapagod.ExecuteScalar())
 
                     If borrowedCount > 0 Then
                         MessageBox.Show("Cannot delete all accession records. Some records are currently borrowed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        transaction.Rollback()
                         Return
                     End If
 
-                    Dim reserveCheckSql As String = "SELECT COUNT(a.TransactionNo) FROM `acession_tbl` a JOIN `reservecopiess_tbl` r ON a.TransactionNo = r.TransactionNo LIMIT 1"
-
-                    Dim reserveCmd As New MySqlCommand(reserveCheckSql, con)
+                    Dim reserveCheckSql As String = "SELECT COUNT(*) FROM `reservecopiess_tbl`"
+                    Dim reserveCmd As New MySqlCommand(reserveCheckSql, con, transaction)
                     Dim reservedCount As Integer = CInt(reserveCmd.ExecuteScalar())
 
                     If reservedCount > 0 Then
                         MessageBox.Show("Cannot delete all accession records. Kindly pushback all transaction before deleting.", "Deletion Restricted - Reserved Books", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        transaction.Rollback()
+                        Return
+                    End If
+
+                    Dim countBeforeDeleteSql As String = "SELECT COUNT(*), COUNT(DISTINCT TransactionNo) FROM `acession_tbl`"
+                    Using countCmd As New MySqlCommand(countBeforeDeleteSql, con, transaction)
+                        Using reader As MySqlDataReader = countCmd.ExecuteReader()
+                            If reader.Read() Then
+                                accessionCount = reader.GetInt32(0)
+                                transactionCount = reader.GetInt32(1)
+                            End If
+                        End Using
+                    End Using
+
+                    If accessionCount = 0 Then
+                        MessageBox.Show("No accession records found to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        transaction.Rollback()
                         Return
                     End If
 
                     Dim coms As String = "DELETE FROM `acession_tbl`"
-                    Dim comsuus As New MySqlCommand(coms, con)
+                    Dim comsuus As New MySqlCommand(coms, con, transaction)
                     comsuus.ExecuteNonQuery()
 
                     Dim comsAvail As String = "DELETE FROM `available_tbl`"
-                    Dim comsuusAvail As New MySqlCommand(comsAvail, con)
+                    Dim comsuusAvail As New MySqlCommand(comsAvail, con, transaction)
                     comsuusAvail.ExecuteNonQuery()
 
                     Dim resett As String = "ALTER TABLE `acession_tbl` AUTO_INCREMENT = 1"
-                    Dim incrementsu As New MySqlCommand(resett, con)
+                    Dim incrementsu As New MySqlCommand(resett, con, transaction)
                     incrementsu.ExecuteNonQuery()
+
+                    transaction.Commit()
+
+                    GlobalVarsModule.LogAudit(
+                    actionType:="DELETE ALL",
+                    formName:="ACCESSION FORM",
+                    description:=$"Permanently deleted ALL accession records ({accessionCount} copies, {transactionCount} transactions).",
+                    recordID:="ALL",
+                    oldValue:="ALL ACCESSION RECORDS",
+                    newValue:="N/A (All deleted)"
+                )
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
 
                     MessageBox.Show("All accession records have been successfully deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
@@ -736,6 +862,12 @@ Public Class Accession
                     clearlahat()
 
                 Catch ex As Exception
+                    If transaction IsNot Nothing Then
+                        Try
+                            transaction.Rollback()
+                        Catch rollEx As Exception
+                        End Try
+                    End If
                     MessageBox.Show("Error deleting all records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Finally
                     If con.State = ConnectionState.Open Then

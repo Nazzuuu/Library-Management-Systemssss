@@ -86,6 +86,7 @@ Partial Class Penalty
         lblbooktotal = New Label()
         Label7 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        chkdisregard = New CheckBox()
         Guna2GroupBox3.SuspendLayout()
         Guna2GroupBox4.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -474,6 +475,7 @@ Partial Class Penalty
         Guna2GroupBox2.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox2.BorderRadius = 8
         Guna2GroupBox2.BorderThickness = 2
+        Guna2GroupBox2.Controls.Add(chkdisregard)
         Guna2GroupBox2.Controls.Add(lblbookstatus)
         Guna2GroupBox2.Controls.Add(Label21)
         Guna2GroupBox2.Controls.Add(lbldetails)
@@ -716,6 +718,18 @@ Partial Class Penalty
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
+        ' chkdisregard
+        ' 
+        chkdisregard.AutoSize = True
+        chkdisregard.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        chkdisregard.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        chkdisregard.Location = New Point(173, 239)
+        chkdisregard.Name = "chkdisregard"
+        chkdisregard.Size = New Size(158, 20)
+        chkdisregard.TabIndex = 106
+        chkdisregard.Text = "Disregard (New Fee)"
+        chkdisregard.UseVisualStyleBackColor = True
+        ' 
         ' Penalty
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -787,4 +801,5 @@ Partial Class Penalty
     Friend WithEvents Label21 As Label
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
+    Friend WithEvents chkdisregard As CheckBox
 End Class

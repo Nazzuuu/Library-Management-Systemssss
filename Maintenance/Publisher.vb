@@ -1,4 +1,5 @@
 ﻿Imports MySql.Data.MySqlClient
+Imports System.Data
 
 Public Class Publisher
     Private Sub Publisher_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -6,7 +7,7 @@ Public Class Publisher
         TopMost = True
         Me.Refresh()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `publisher_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
@@ -18,6 +19,7 @@ Public Class Publisher
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
+        DataGridView1.Columns("ID").Visible = False
 
     End Sub
 
@@ -29,6 +31,12 @@ Public Class Publisher
 
     Private Sub Publisher_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
 
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
 
@@ -48,7 +56,8 @@ Public Class Publisher
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim newID As Integer = 0
 
         Dim publisher As String = txtpublisher.Text.Trim
         Dim address As String = txtaddress.Text.Trim
@@ -71,12 +80,25 @@ Public Class Publisher
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `publisher_tbl`(`PublisherName`, `Address`, `ContactNumber`) VALUES (@publisher, @address, @contact)", con)
+            Dim com As New MySqlCommand("INSERT INTO `publisher_tbl`(`PublisherName`, `Address`, `ContactNumber`) VALUES (@publisher, @address, @contact); SELECT LAST_INSERT_ID();", con)
 
             com.Parameters.AddWithValue("@publisher", publisher)
             com.Parameters.AddWithValue("@address", address)
             com.Parameters.AddWithValue("@contact", contact)
-            com.ExecuteNonQuery()
+            newID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="PUBLISHER FORM",
+                description:=$"Added new publisher: {publisher}",
+                recordID:=newID.ToString()
+            )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             For Each form In Application.OpenForms
 
@@ -93,6 +115,7 @@ Public Class Publisher
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         Finally
+            If con.State = ConnectionState.Open Then con.Close()
             clear()
         End Try
     End Sub
@@ -101,25 +124,35 @@ Public Class Publisher
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
 
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            Dim old As String = selectedRow.Cells("PublisherName").Value.ToString()
-            Dim pub As String = txtpublisher.Text.Trim
+            Dim oldPub As String = selectedRow.Cells("PublisherName").Value.ToString().Trim()
+            Dim oldAddress As String = selectedRow.Cells("Address").Value.ToString().Trim()
+            Dim oldContact As String = selectedRow.Cells("ContactNumber").Value.ToString().Trim()
 
-            Dim address As String = txtaddress.Text.Trim
-            Dim contact As String = txtcontact.Text.Trim
-            If String.IsNullOrWhiteSpace(pub) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
+            Dim newPub As String = txtpublisher.Text.Trim
+            Dim newAddress As String = txtaddress.Text.Trim
+            Dim newContact As String = txtcontact.Text.Trim
+
+            If String.IsNullOrWhiteSpace(newPub) OrElse String.IsNullOrWhiteSpace(newAddress) OrElse String.IsNullOrWhiteSpace(newContact) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
+
+
+            If oldPub.Equals(newPub) And oldAddress.Equals(newAddress) And oldContact.Equals(newContact) Then
+                MsgBox("No changes were made.", vbExclamation, "No Update")
+                Exit Sub
+            End If
+
             Try
                 con.Open()
 
                 Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `publisher_tbl` WHERE `PublisherName` = @publisher AND `ID` <> @id", con)
-                comsu.Parameters.AddWithValue("@publisher", pub)
+                comsu.Parameters.AddWithValue("@publisher", newPub)
                 comsu.Parameters.AddWithValue("@id", ID)
                 Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
                 If count > 0 Then
@@ -128,17 +161,33 @@ Public Class Publisher
                 End If
 
                 Dim com As New MySqlCommand("UPDATE `publisher_tbl` SET `PublisherName` = @publisher, `Address` = @address, `ContactNumber` = @contact WHERE `ID` = @id", con)
-                com.Parameters.AddWithValue("@publisher", pub)
-                com.Parameters.AddWithValue("@address", address)
-                com.Parameters.AddWithValue("@contact", contact)
+                com.Parameters.AddWithValue("@publisher", newPub)
+                com.Parameters.AddWithValue("@address", newAddress)
+                com.Parameters.AddWithValue("@contact", newContact)
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
                 Dim comsus As New MySqlCommand("UPDATE `book_tbl` SET `Publisher` = @newPublisher WHERE `Publisher` = @oldPublisher", con)
-                comsus.Parameters.AddWithValue("@newPublisher", pub)
-                comsus.Parameters.AddWithValue("@oldPublisher", old)
+                comsus.Parameters.AddWithValue("@newPublisher", newPub)
+                comsus.Parameters.AddWithValue("@oldPublisher", oldPub)
 
                 comsus.ExecuteNonQuery()
+
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="PUBLISHER FORM",
+                    description:=$"Updated publisher ID {ID} from '{oldPub}' to '{newPub}'",
+                    recordID:=ID.ToString(),
+                    oldValue:=$"Pub: {oldPub}, Address: {oldAddress}, Contact: {oldContact}",
+                    newValue:=$"Pub: {newPub}, Address: {newAddress}, Contact: {newContact}"
+                )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then
                         Dim book = DirectCast(form, Book)
@@ -146,12 +195,20 @@ Public Class Publisher
                     End If
                 Next
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+                        Dim load = DirectCast(form, MainForm)
+                        load.loadsu()
+                    End If
+
+                Next
                 MsgBox("Updated successfully", vbInformation)
                 Publisher_Load(sender, e)
 
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             Finally
+                If con.State = ConnectionState.Open Then con.Close()
                 clear()
             End Try
         Else
@@ -168,7 +225,7 @@ Public Class Publisher
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim publisherName As String = selectedRow.Cells("PublisherName").Value.ToString().Trim()
@@ -191,6 +248,19 @@ Public Class Publisher
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="PUBLISHER FORM",
+                        description:=$"Deleted publisher: {publisherName}",
+                        recordID:=ID.ToString()
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
+
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then
                             Dim book = DirectCast(form, Book)
@@ -212,6 +282,8 @@ Public Class Publisher
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then con.Close()
                 End Try
             End If
         End If

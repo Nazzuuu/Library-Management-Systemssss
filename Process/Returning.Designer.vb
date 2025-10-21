@@ -96,6 +96,10 @@ Partial Class Returning
         lblbooktotal = New Label()
         cbbooks = New ComboBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        Label4 = New Label()
+        Label19 = New Label()
+        Panel3 = New Panel()
+        Panel2 = New Panel()
         Guna2GroupBox1.SuspendLayout()
         Guna2GroupBox3.SuspendLayout()
         Panel1.SuspendLayout()
@@ -110,7 +114,7 @@ Partial Class Returning
         Label7.AutoSize = True
         Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(40, 9)
+        Label7.Location = New Point(40, 6)
         Label7.Name = "Label7"
         Label7.Size = New Size(141, 16)
         Label7.TabIndex = 43
@@ -130,7 +134,7 @@ Partial Class Returning
         txttransactionreceipt.Font = New Font("Segoe UI", 9F)
         txttransactionreceipt.ForeColor = Color.Black
         txttransactionreceipt.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txttransactionreceipt.Location = New Point(38, 28)
+        txttransactionreceipt.Location = New Point(38, 25)
         txttransactionreceipt.Name = "txttransactionreceipt"
         txttransactionreceipt.PlaceholderText = ""
         txttransactionreceipt.SelectedText = ""
@@ -242,14 +246,18 @@ Partial Class Returning
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 8
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label4)
         Guna2GroupBox1.Controls.Add(lblstrand)
         Guna2GroupBox1.Controls.Add(lblsection)
         Guna2GroupBox1.Controls.Add(lblgrade)
+        Guna2GroupBox1.Controls.Add(Label19)
         Guna2GroupBox1.Controls.Add(lbldepartment)
         Guna2GroupBox1.Controls.Add(Label15)
         Guna2GroupBox1.Controls.Add(Label14)
+        Guna2GroupBox1.Controls.Add(Panel3)
         Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(Label12)
+        Guna2GroupBox1.Controls.Add(Panel2)
         Guna2GroupBox1.Controls.Add(Label5)
         Guna2GroupBox1.Controls.Add(Label2)
         Guna2GroupBox1.Controls.Add(Label3)
@@ -814,6 +822,44 @@ Partial Class Returning
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label4.ForeColor = Color.Green
+        Label4.Location = New Point(398, 39)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(72, 16)
+        Label4.TabIndex = 116
+        Label4.Text = "Penalized."
+        ' 
+        ' Label19
+        ' 
+        Label19.AutoSize = True
+        Label19.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label19.ForeColor = Color.Maroon
+        Label19.Location = New Point(398, 15)
+        Label19.Name = "Label19"
+        Label19.Size = New Size(98, 16)
+        Label19.TabIndex = 115
+        Label19.Text = "Not Penalized."
+        ' 
+        ' Panel3
+        ' 
+        Panel3.BackColor = Color.DarkGreen
+        Panel3.Location = New Point(349, 38)
+        Panel3.Name = "Panel3"
+        Panel3.Size = New Size(40, 17)
+        Panel3.TabIndex = 114
+        ' 
+        ' Panel2
+        ' 
+        Panel2.BackColor = Color.Maroon
+        Panel2.Location = New Point(349, 14)
+        Panel2.Name = "Panel2"
+        Panel2.Size = New Size(40, 17)
+        Panel2.TabIndex = 113
+        ' 
         ' Returning
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -893,4 +939,8 @@ Partial Class Returning
     Friend WithEvents lblaccessionid As Label
     Friend WithEvents Label18 As Label
     Friend WithEvents btnedit As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents Label4 As Label
+    Friend WithEvents Label19 As Label
+    Friend WithEvents Panel3 As Panel
+    Friend WithEvents Panel2 As Panel
 End Class

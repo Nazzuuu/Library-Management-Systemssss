@@ -8,7 +8,7 @@ Public Class Department
 
         TopMost = True
         Me.Refresh()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `department_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
@@ -32,6 +32,13 @@ Public Class Department
 
     Private Sub Department_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
+
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtdepartment.Text = ""
@@ -41,8 +48,9 @@ Public Class Department
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim deps As String = txtdepartment.Text.Trim()
+        Dim newID As Integer = 0
 
         If String.IsNullOrWhiteSpace(deps) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -63,9 +71,22 @@ Public Class Department
                     Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("INSERT INTO `department_tbl`(`Department`) VALUES (@department)", con)
+                Dim com As New MySqlCommand("INSERT INTO `department_tbl`(`Department`) VALUES (@department); SELECT LAST_INSERT_ID();", con)
                 com.Parameters.AddWithValue("@department", deps)
-                com.ExecuteNonQuery()
+                newID = Convert.ToInt32(com.ExecuteScalar())
+
+                GlobalVarsModule.LogAudit(
+                    actionType:="ADD",
+                    formName:="DEPARTMENT FORM",
+                    description:=$"Added new department: {deps}",
+                    recordID:=newID.ToString()
+                )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Borrower Then
@@ -101,7 +122,7 @@ Public Class Department
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
@@ -110,6 +131,11 @@ Public Class Department
 
             If String.IsNullOrWhiteSpace(dept) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                Exit Sub
+            End If
+
+            If oldDept.ToUpper() = dept.ToUpper() Then
+                MsgBox("No changes were made.", vbExclamation, "No Update")
                 Exit Sub
             End If
 
@@ -142,6 +168,20 @@ Public Class Department
                     comsuss.Parameters.AddWithValue("@oldDept", oldDept)
                     comsuss.ExecuteNonQuery()
 
+                    GlobalVarsModule.LogAudit(
+                        actionType:="UPDATE",
+                        formName:="DEPARTMENT FORM",
+                        description:=$"Updated department ID {ID} from '{oldDept}' to '{dept}'",
+                        recordID:=ID.ToString(),
+                        oldValue:=$"Department: {oldDept}",
+                        newValue:=$"Department: {dept}"
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Borrower Then
@@ -152,6 +192,13 @@ Public Class Department
                         If TypeOf form Is Section Then
                             Dim depsu = DirectCast(form, Section)
                             depsu.cbdeptss()
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is MainForm Then
+                            Dim load = DirectCast(form, MainForm)
+                            load.loadsu()
                         End If
                     Next
 
@@ -184,7 +231,7 @@ Public Class Department
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim departmentName As String = selectedRow.Cells("Department").Value.ToString().Trim()
@@ -218,6 +265,18 @@ Public Class Department
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="DEPARTMENT FORM",
+                        description:=$"Deleted department: {departmentName}",
+                        recordID:=ID.ToString()
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Borrower Then

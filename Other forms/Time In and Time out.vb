@@ -74,15 +74,16 @@ Public Class oras
         Timer1.Start()
 
 
-        Dim isBorrower As Boolean = (GlobalVarsModule.CurrentUserRole = "Borrower" OrElse GlobalVarsModule.CurrentUserRole = "Student" OrElse GlobalVarsModule.CurrentUserRole = "Teacher")
+        Dim isBorrowerRole As Boolean = (GlobalVarsModule.CurrentUserRole = "Borrower" OrElse GlobalVarsModule.CurrentUserRole = "Student" OrElse GlobalVarsModule.CurrentUserRole = "Teacher")
 
-        If isBorrower Then
+        If isBorrowerRole Then
 
 
             btnregisterview.Visible = False
             btnedit.Enabled = True
             btnclear.Enabled = True
-            btnview.Location = New Point(398, 274)
+            btnview.Location = New Point(398, 274) ' Adjusted location for single button
+            txtsearch.Enabled = False ' Assuming Borrower cannot search other's records
 
         Else
 
@@ -260,6 +261,30 @@ Public Class oras
             End If
         End If
 
+
+        Dim oldTimeIn As String = ""
+        Dim borrowerIdentifier As String = ""
+        Dim borrowerType As String = ""
+
+        Using conCheck As New MySqlConnection(connectionString)
+            Try
+                conCheck.Open()
+                Dim checkCmd As New MySqlCommand("SELECT TimeIn, Borrower, LRN, EmployeeNo FROM `oras_tbl` WHERE ID = @ID", conCheck)
+                checkCmd.Parameters.AddWithValue("@ID", selectedID)
+                Using reader As MySqlDataReader = checkCmd.ExecuteReader()
+                    If reader.Read() Then
+                        oldTimeIn = reader("TimeIn").ToString()
+                        borrowerType = reader("Borrower").ToString()
+                        borrowerIdentifier = If(Not reader.IsDBNull(reader.GetOrdinal("LRN")), reader("LRN").ToString(), reader("EmployeeNo").ToString())
+                    End If
+                End Using
+            Catch ex As Exception
+
+                Console.WriteLine("Error retrieving old TimeIn for audit: " & ex.Message)
+            End Try
+        End Using
+
+
         Using con As New MySqlConnection(connectionString)
 
             Dim com As String = "UPDATE `oras_tbl` SET `TimeOut` = NOW() WHERE `ID` = @ID"
@@ -270,6 +295,26 @@ Public Class oras
                 Try
                     con.Open()
                     cmd.ExecuteNonQuery()
+
+
+                    Dim timeOutTime As String = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    Dim logDescription As String = $"Time-Out recorded for {borrowerType} ID {borrowerIdentifier}. Time In: {oldTimeIn}"
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="UPDATE",
+                        formName:="TIME-IN/OUT FORM",
+                        description:=logDescription,
+                        recordID:=selectedID.ToString(),
+                        oldValue:=$"Time In: {oldTimeIn}, Time Out: NULL",
+                        newValue:=$"Time In: {oldTimeIn}, Time Out: {timeOutTime}"
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
+
 
 
                     Dim stayLogoutFormInstance As StayLogoutFormm = Application.OpenForms.OfType(Of StayLogoutFormm)().FirstOrDefault()

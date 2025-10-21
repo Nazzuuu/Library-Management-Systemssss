@@ -7,7 +7,7 @@ Public Class Language
         TopMost = True
         Me.Refresh()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `language_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
@@ -32,6 +32,12 @@ Public Class Language
 
     Private Sub Language_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
 
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtlanguage.Text = ""
@@ -41,8 +47,9 @@ Public Class Language
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim lang As String = txtlanguage.Text.Trim
+        Dim newID As Integer = 0
 
         If String.IsNullOrWhiteSpace(lang) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -61,9 +68,22 @@ Public Class Language
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `language_tbl`(`Language`) VALUES (@language)", con)
+            Dim com As New MySqlCommand("INSERT INTO `language_tbl`(`Language`) VALUES (@language); SELECT LAST_INSERT_ID();", con)
             com.Parameters.AddWithValue("@language", lang)
-            com.ExecuteNonQuery()
+            newID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="LANGUAGE FORM",
+                description:=$"Added new language: {lang}",
+                recordID:=newID.ToString()
+            )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Book Then
@@ -79,6 +99,9 @@ Public Class Language
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
             txtlanguage.Clear()
         End Try
 
@@ -88,7 +111,7 @@ Public Class Language
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
@@ -99,6 +122,12 @@ Public Class Language
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
+
+            If oldLang.ToUpper() = lang.ToUpper() Then
+                MsgBox("No changes were made.", vbExclamation, "No Update")
+                Exit Sub
+            End If
+
             Try
                 con.Open()
 
@@ -123,10 +152,32 @@ Public Class Language
                 comss.Parameters.AddWithValue("@oldLanguage", oldLang)
                 comss.ExecuteNonQuery()
 
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="LANGUAGE FORM",
+                    description:=$"Updated language ID {ID} from '{oldLang}' to '{lang}'",
+                    recordID:=ID.ToString(),
+                    oldValue:=$"Language: {oldLang}",
+                    newValue:=$"Language: {lang}"
+                )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+
                 For Each form In Application.OpenForms
                     If TypeOf form Is Book Then
                         Dim book = DirectCast(form, Book)
                         book.cblang()
+                    End If
+                Next
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+                        Dim load = DirectCast(form, MainForm)
+                        load.loadsu()
                     End If
                 Next
 
@@ -136,6 +187,10 @@ Public Class Language
 
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
+            Finally
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
             End Try
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
@@ -151,7 +206,7 @@ Public Class Language
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim languageName As String = selectedRow.Cells("Language").Value.ToString().Trim()
@@ -173,6 +228,19 @@ Public Class Language
                     Dim delete As New MySqlCommand("DELETE FROM `language_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="LANGUAGE FORM",
+                        description:=$"Deleted language: {languageName}",
+                        recordID:=ID.ToString()
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then
@@ -196,6 +264,10 @@ Public Class Language
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
                 End Try
             End If
         End If

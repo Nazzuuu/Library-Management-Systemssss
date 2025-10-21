@@ -152,6 +152,7 @@ Public Class Users
         Dim email As String = txtemail.Text.Trim()
         Dim contact As String = txtcontactnumber.Text.Trim()
         Dim address As String = txtaddress.Text.Trim()
+        Dim newID As Integer = 0
 
         If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
             MsgBox("Please fill in all the required fields (including Address).", vbExclamation, "Missing Information")
@@ -193,7 +194,7 @@ Public Class Users
         End If
 
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Try
             con.Open()
 
@@ -207,7 +208,7 @@ Public Class Users
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleInitial`, `Username`, `Password`, `Email`, `ContactNumber`, `Address`, `Gender`, `Role`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @address, @gender, @role)", con)
+            Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleInitial`, `Username`, `Password`, `Email`, `ContactNumber`, `Address`, `Gender`, `Role`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @address, @gender, @role); SELECT LAST_INSERT_ID();", con)
             com.Parameters.AddWithValue("@firstName", firstName)
             com.Parameters.AddWithValue("@lastName", lastName)
             com.Parameters.AddWithValue("@middleName", middleName)
@@ -218,7 +219,20 @@ Public Class Users
             com.Parameters.AddWithValue("@address", address)
             com.Parameters.AddWithValue("@gender", gender)
             com.Parameters.AddWithValue("@role", role)
-            com.ExecuteNonQuery()
+            newID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+            actionType:="ADD",
+            formName:="USER STAFF FORM",
+            description:=$"Added new staff: {lastName}, {firstName} ({role})",
+            recordID:=newID.ToString()
+        )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             MsgBox("User added successfully!", vbInformation)
             LoadStaffData()
@@ -240,17 +254,33 @@ Public Class Users
             Exit Sub
         End If
 
-        Dim ID As Integer = CInt(DataGridView1.CurrentRow.Cells("ID").Value)
+        Dim selectedRow = DataGridView1.CurrentRow
+        Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+
+
+        Dim oldFirstName As String = selectedRow.Cells("FirstName").Value.ToString.Trim()
+        Dim oldLastName As String = selectedRow.Cells("LastName").Value.ToString.Trim()
+        Dim oldMiddleName As String = selectedRow.Cells("MiddleInitial").Value.ToString.Trim()
+        Dim oldUsername As String = selectedRow.Cells("Username").Value.ToString.Trim()
+        Dim oldPassword As String = selectedRow.Cells("Password").Value.ToString.Trim()
+        Dim oldEmail As String = selectedRow.Cells("Email").Value.ToString.Trim()
+        Dim oldContact As String = selectedRow.Cells("ContactNumber").Value.ToString.Trim()
+        Dim oldAddress As String = selectedRow.Cells("Address").Value.ToString.Trim()
+        Dim oldGender As String = selectedRow.Cells("Gender").Value.ToString.Trim()
+        Dim oldRole As String = selectedRow.Cells("Role").Value.ToString.Trim()
+
+
         Dim firstName As String = txtfname.Text.Trim()
         Dim lastName As String = txtlname.Text.Trim()
         Dim user As String = txtusername.Text.Trim()
         Dim pass As String = txtpassword.Text.Trim()
         Dim email As String = txtemail.Text.Trim()
         Dim contact As String = txtcontactnumber.Text.Trim()
+        Dim address As String = txtaddress.Text.Trim()
 
         Dim gender As String = ""
 
-        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
             MsgBox("Please fill in all the required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
@@ -288,8 +318,7 @@ Public Class Users
             middleName = txtmname.Text.Trim()
         End If
 
-
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
             con.Open()
@@ -313,12 +342,29 @@ Public Class Users
             Coms.Parameters.AddWithValue("@password", pass)
             Coms.Parameters.AddWithValue("@email", email)
             Coms.Parameters.AddWithValue("@contact", contact)
-            Coms.Parameters.AddWithValue("@address", txtaddress.Text.ToString)
+            Coms.Parameters.AddWithValue("@address", address)
             Coms.Parameters.AddWithValue("@gender", gender)
             Coms.Parameters.AddWithValue("@role", role)
             Coms.Parameters.AddWithValue("@id", ID)
             Coms.ExecuteNonQuery()
 
+            Dim oldValueString As String = $"{oldFirstName}|{oldLastName}|{oldMiddleName}|{oldUsername}|{oldPassword}|{oldEmail}|{oldContact}|{oldAddress}|{oldGender}|{oldRole}"
+            Dim newValueString As String = $"{firstName}|{lastName}|{middleName}|{user}|{pass}|{email}|{contact}|{address}|{gender}|{role}"
+
+            GlobalVarsModule.LogAudit(
+            actionType:="UPDATE",
+            formName:="USER STAFF FORM",
+            description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
+            recordID:=ID.ToString(),
+            oldValue:=oldValueString,
+            newValue:=newValueString
+        )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             If MainForm.lblgmail.Text = DataGridView1.CurrentRow.Cells("Email").Value.ToString Then
                 MainForm.lblgmail.Text = txtemail.Text.Trim
@@ -345,15 +391,29 @@ Public Class Users
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+                Dim staffName As String = $"{selectedRow.Cells("LastName").Value}, {selectedRow.Cells("FirstName").Value} ({selectedRow.Cells("Role").Value})"
 
                 Try
                     con.Open()
                     Dim delete As New MySqlCommand("DELETE FROM `user_staff_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    GlobalVarsModule.LogAudit(
+                    actionType:="DELETE",
+                    formName:="USER STAFF FORM",
+                    description:=$"Deleted staff member: {staffName}",
+                    recordID:=ID.ToString()
+                )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
 
                     MsgBox("User deleted successfully.", vbInformation)
                     LoadStaffData()

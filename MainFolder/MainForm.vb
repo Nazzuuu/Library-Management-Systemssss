@@ -22,6 +22,41 @@ Public Class MainForm
 
     End Sub
 
+    Public Sub loadsu()
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+                load.lblreturncount()
+                load.lblresercopies()
+            End If
+        Next
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is Penalty Then
+                Dim load = DirectCast(form, Penalty)
+                load.refreshpenalty()
+            End If
+        Next
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is Returning Then
+                Dim load = DirectCast(form, Returning)
+                load.RefreshReturningData()
+            End If
+        Next
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is Book Then
+                Dim load = DirectCast(form, Book)
+                load.refreshbook()
+            End If
+        Next
+    End Sub
+
     Private Sub Form1_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
         sizelocation()
     End Sub
@@ -80,13 +115,30 @@ Public Class MainForm
 
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
 
-
         Dim dialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
         If dialogResult = DialogResult.Yes Then
 
-            Dim previousRole As String = GlobalVarsModule.CurrentUserRole
+            Dim previousRole As String = GlobalVarsModule.GlobalRole
+            Dim userEmail As String = GlobalVarsModule.GlobalEmail
+            Dim userName As String = GlobalVarsModule.GlobalUsername
 
+            If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+           previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+           previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
+
+                GlobalVarsModule.LogAudit(
+                actionType:="LOGOUT SUCCESS",
+                formName:="MAIN FORM",
+                description:=$"User '{userName}' ({previousRole}) successfully logged out.",
+                recordID:="N/A"
+            )
+
+            End If
+
+            GlobalVarsModule.GlobalRole = "Guest"
+            GlobalVarsModule.GlobalEmail = ""
+            GlobalVarsModule.GlobalUsername = ""
 
             GlobalVarsModule.CurrentUserRole = "Guest"
             GlobalVarsModule.CurrentBorrowerType = ""
@@ -99,12 +151,9 @@ Public Class MainForm
 
             Me.Hide()
 
-
             If previousRole <> "Borrower" AndAlso Not String.IsNullOrWhiteSpace(previousRole) Then
-
                 login.Show()
             Else
-
                 BorrowerLoginForm.Show()
             End If
 
@@ -113,18 +162,27 @@ Public Class MainForm
     End Sub
 
 
+    Public Sub ResetToMainDashboard()
+
+        Panel_dash.BringToFront()
+        lblform.Text = "MAIN FORM"
+
+
+        Dim lumabasna As Boolean = False
+        If lumabasna = False Then
+
+            Me.Panel_dash.Controls.Add(dshboard)
+            Me.Panel_dash.Controls.Add(Panel_User)
+            Me.Panel_dash.Controls.Add(Panel_welcome)
+            Me.Panel_dash.Controls.Add(Guna2Button1)
+            lumabasna = True
+        End If
+
+    End Sub
+
     Private Sub MaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MaintenanceToolStripMenuItem.Click
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.lbldamagecount()
-                load.lbllostcount()
-                load.lbloverduecount()
-                load.lblreturncount()
-                load.lblresercopies()
-            End If
-        Next
+        loadsu()
 
         MaintenanceToolStripMenuItem.ForeColor = Color.DarkGray
 
@@ -143,6 +201,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(BorrowingHistory)
         Panel_dash.Controls.Remove(Penalty)
         Panel_dash.Controls.Remove(Returning)
+        Panel_dash.Controls.Remove(AuditTrail)
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -163,16 +222,7 @@ Public Class MainForm
 
     Private Sub ToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles SettingsStripMenuItem.Click
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.lbldamagecount()
-                load.lbllostcount()
-                load.lbloverduecount()
-                load.lblreturncount()
-                load.lblresercopies()
-            End If
-        Next
+        loadsu()
 
         SettingsStripMenuItem.ForeColor = Color.DarkGray
 
@@ -192,6 +242,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Penalty)
         Panel_dash.Controls.Remove(BookBorrowingConfirmation)
         Panel_dash.Controls.Remove(Returning)
+        Panel_dash.Controls.Remove(AuditTrail)
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -210,17 +261,7 @@ Public Class MainForm
 
     Private Sub ActiveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles Audit_Trail.Click
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.lbldamagecount()
-                load.lbllostcount()
-                load.lbloverduecount()
-                load.lblreturncount()
-                load.lblresercopies()
-            End If
-        Next
-
+        loadsu()
         SettingsStripMenuItem.ForeColor = Color.White
 
         Dim lumabasna As Boolean = False
@@ -248,6 +289,23 @@ Public Class MainForm
             lumabasna = True
         End If
 
+
+        Panel_dash.Controls.Clear()
+
+        With AuditTrail
+            .TopLevel = False
+            .TopMost = True
+            .BringToFront()
+            Panel_dash.Controls.Add(AuditTrail)
+
+            .Show()
+
+            Book.DataGridView1.ClearSelection()
+            Book.DataGridView1.CurrentCell = Nothing
+        End With
+
+        lblform.Text = "AUDIT-TRAIL FORM"
+
     End Sub
 
     Private Sub ToolStripMenuItem1_DropDownClosed(sender As Object, e As EventArgs) Handles ProcessStripMenuItem.DropDownClosed
@@ -256,16 +314,7 @@ Public Class MainForm
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ProcessStripMenuItem.Click
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.lbldamagecount()
-                load.lbllostcount()
-                load.lbloverduecount()
-                load.lblreturncount()
-                load.lblresercopies()
-            End If
-        Next
+        loadsu()
 
         ProcessStripMenuItem.ShowDropDown()
 
@@ -287,6 +336,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Penalty)
         Panel_dash.Controls.Remove(BookBorrowingConfirmation)
         Panel_dash.Controls.Remove(Returning)
+        Panel_dash.Controls.Remove(AuditTrail)
         Panel_User.Show()
 
 

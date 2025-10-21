@@ -6,7 +6,7 @@ Public Class Returning
 
     Private IsLoadingTransaction As Boolean = False
 
-    Private Sub RefreshReturningData()
+    Public Sub RefreshReturningData()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `returning_tbl` ORDER BY ID DESC"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -23,9 +23,15 @@ Public Class Returning
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        clear_details_only()
     End Sub
 
     Private Sub clear_details_only()
+
+        If DataGridView1.SelectedRows.Count > 0 Then
+            DataGridView1.ClearSelection()
+        End If
+
 
         lblborrowertype.Text = ""
         lbllrn.Text = ""
@@ -42,10 +48,12 @@ Public Class Returning
         cbbooks.Text = ""
         lblduedate.Text = ""
 
+
         cbbooks.Items.Clear()
         chkSelectAll.Checked = False
         cbbooks.Enabled = True
         chkSelectAll.Enabled = True
+
 
         rboverdue.Checked = False
         rbdamage.Checked = False
@@ -135,6 +143,7 @@ Public Class Returning
         Dim booksToReturn As New List(Of String)
         Dim bookStatus As String = "Normal"
         Dim newAccessionStatus As String = "Available"
+        Dim bookStatusDescription As String = String.Empty ' Para sa Audit Log
 
         If rboverdue.Checked Then
             Dim dueDateString As String = lblduedate.Text
@@ -153,6 +162,7 @@ Public Class Returning
 
             bookStatus = "Overdue"
             newAccessionStatus = "Available"
+            bookStatusDescription = "Overdue" ' Para sa Audit Log
 
         ElseIf rbdamage.Checked Then
             If cbdamage.SelectedItem Is Nothing Then
@@ -161,14 +171,17 @@ Public Class Returning
             End If
             bookStatus = "Damaged (" & cbdamage.SelectedItem.ToString() & ")"
             newAccessionStatus = "Damaged"
+            bookStatusDescription = "Damaged" ' Para sa Audit Log
 
         ElseIf rblost.Checked Then
             bookStatus = "Lost"
             newAccessionStatus = "Lost"
+            bookStatusDescription = "Lost" ' Para sa Audit Log
 
         Else
             bookStatus = "Normal"
             newAccessionStatus = "Available"
+            bookStatusDescription = "Normal Return" ' Para sa Audit Log
         End If
 
 
@@ -201,7 +214,7 @@ Public Class Returning
 
 
             Dim insert_com As String = "INSERT INTO `returning_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
-                                 "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+                                    "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
 
@@ -297,6 +310,22 @@ Public Class Returning
             trans.Commit()
 
 
+            GlobalVarsModule.LogAudit(
+            actionType:="ADD",
+            formName:="BOOK RETURN",
+            description:=$"Returned {booksToReturn.Count} book(s) for transaction {TransactionNo}. Status: {bookStatusDescription}.",
+            recordID:=TransactionNo,
+            oldValue:=$"Borrower: {lblfullname.Text}",
+            newValue:=$"Returned Books: {returnedBookTitles}"
+        )
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
+
+
+
             For Each form In Application.OpenForms
                 If TypeOf form Is Accession Then DirectCast(form, Accession).RefreshAccessionData()
                 If TypeOf form Is MainForm Then DirectCast(form, MainForm).lblborrowcount()
@@ -327,17 +356,51 @@ Public Class Returning
             Return
         End If
 
+        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+        Dim transacReceipt As String = txttransactionreceipt.Text
+
+
+        Dim penaltyStatus As String = GetPenaltyStatus(transacReceipt)
+        If penaltyStatus = "PENALIZED" Then
+            MessageBox.Show("Cannot edit status. The borrower has already been penalized (paid) for this transaction.", "Operation Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            clear_details_only()
+            Return
+        End If
+
+
         If cbbooks.SelectedItem Is Nothing Then
             MessageBox.Show("Please select the specific book from the list (dropdown) to change its status.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
-        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+
         Dim bookToSplitTitle As String = cbbooks.SelectedItem.ToString()
-        Dim transacReceipt As String = txttransactionreceipt.Text
         Dim originalID As Integer = Convert.ToInt32(selectedRow.Cells("ID").Value)
         Dim originalBookTotal As Integer = Convert.ToInt32(selectedRow.Cells("BookTotal").Value)
         Dim currentStatus As String = selectedRow.Cells("Status").Value?.ToString()
+
+
+        Dim oldAccessionStatus As String = String.Empty
+        Dim tempCon As New MySqlConnection(GlobalVarsModule.connectionString)
+        Try
+            tempCon.Open()
+            Dim get_old_accession_status_com As String = "SELECT T1.Status FROM acession_tbl T1 JOIN borrowinghistory_tbl T2 ON T1.AccessionID = T2.AccessionID WHERE T2.TransactionReceipt = @transNo AND T2.BookTitle = @bookTitle LIMIT 1"
+            Using get_old_accession_status_cmd As New MySqlCommand(get_old_accession_status_com, tempCon)
+                get_old_accession_status_cmd.Parameters.AddWithValue("@transNo", transacReceipt)
+                get_old_accession_status_cmd.Parameters.AddWithValue("@bookTitle", bookToSplitTitle)
+                Dim result As Object = get_old_accession_status_cmd.ExecuteScalar()
+                If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
+                    oldAccessionStatus = result.ToString()
+                Else
+                    oldAccessionStatus = "N/A or Missing in Accession Table"
+                End If
+            End Using
+        Catch ex As Exception
+            oldAccessionStatus = "Error Fetching Status"
+        Finally
+            If tempCon.State = ConnectionState.Open Then tempCon.Close()
+        End Try
+
 
         Dim accessionID As String = String.Empty
 
@@ -349,6 +412,7 @@ Public Class Returning
 
             Dim bookStatus As String = "Normal"
             Dim newAccessionStatus As String = "Available"
+            Dim bookStatusDescription As String = "Normal"
 
             If rbdamage.Checked Then
                 If cbdamage.SelectedItem Is Nothing Then
@@ -357,9 +421,11 @@ Public Class Returning
                 End If
                 bookStatus = "Damaged (" & cbdamage.SelectedItem.ToString() & ")"
                 newAccessionStatus = "Damaged"
+                bookStatusDescription = "Damaged"
             ElseIf rblost.Checked Then
                 bookStatus = "Lost"
                 newAccessionStatus = "Lost"
+                bookStatusDescription = "Lost"
             ElseIf rboverdue.Checked Then
                 Dim dueDateString As String = selectedRow.Cells("DueDate").Value?.ToString()
                 Dim dueDate As Date
@@ -377,6 +443,7 @@ Public Class Returning
 
                 bookStatus = "Overdue"
                 newAccessionStatus = "Available"
+                bookStatusDescription = "Overdue"
             Else
 
                 If currentStatus IsNot Nothing AndAlso currentStatus.ToLower().Contains("normal") Then
@@ -415,7 +482,7 @@ Public Class Returning
             End Using
 
             Dim insert_com As String = "INSERT INTO `returning_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
-          "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, 1, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+        "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, 1, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
                 insert_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
@@ -451,7 +518,7 @@ Public Class Returning
             If newBookTotal > 0 Then
 
                 Dim update_com As String = "UPDATE `returning_tbl` SET `ReturnedBook` = @newReturnedBook, `BookTotal` = @newBookTotal " &
-                                      "WHERE `ID` = @originalID"
+                                     "WHERE `ID` = @originalID"
 
                 Using update_cmd As New MySqlCommand(update_com, con, trans)
                     update_cmd.Parameters.AddWithValue("@newReturnedBook", newReturnedBookList)
@@ -498,6 +565,21 @@ Public Class Returning
             Next
 
             trans.Commit()
+
+            GlobalVarsModule.LogAudit(
+            actionType:="UPDATE",
+            formName:="RETURN FORM",
+            description:=$"Edited status of book '{bookToSplitTitle}' in transaction {transacReceipt}.",
+            recordID:=transacReceipt,
+            oldValue:=$"Book: {bookToSplitTitle}, Old Status: {currentStatus}, Old Accession: {oldAccessionStatus}",
+            newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
+        )
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
+
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Accession Then DirectCast(form, Accession).RefreshAccessionData()
@@ -951,4 +1033,60 @@ Public Class Returning
 
     End Sub
 
+    Private Function GetPenaltyStatus(ByVal transactionNo As String) As String
+        Dim status As String = "NOT PENALIZED"
+        Dim con As New MySqlConnection(connectionString)
+
+        Dim query As String = "SELECT BorrowerStatus FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"
+
+        Try
+            con.Open()
+            Using cmd As New MySqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@transNo", transactionNo)
+                Dim result As Object = cmd.ExecuteScalar()
+
+                If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
+
+                    status = result.ToString().ToUpper().Trim()
+                End If
+            End Using
+        Catch ex As Exception
+
+            Return "NOT PENALIZED"
+        Finally
+            If con.State = ConnectionState.Open Then con.Close()
+        End Try
+
+        Return status
+    End Function
+
+
+    Private Sub DataGridView1_RowPrePaint(sender As Object, e As DataGridViewRowPrePaintEventArgs) Handles DataGridView1.RowPrePaint
+        If e.RowIndex >= 0 AndAlso e.RowIndex < DataGridView1.Rows.Count Then
+            Try
+
+                Dim transNo As String = DataGridView1.Rows(e.RowIndex).Cells("TransactionReceipt").Value.ToString().Trim()
+
+
+                Dim penaltyStatus As String = GetPenaltyStatus(transNo)
+
+                If penaltyStatus = "PENALIZED" Then
+
+                    DataGridView1.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.DarkSeaGreen
+                    DataGridView1.Rows(e.RowIndex).DefaultCellStyle.SelectionBackColor = Color.LightGreen
+                Else
+
+                    DataGridView1.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.LightCoral
+                    DataGridView1.Rows(e.RowIndex).DefaultCellStyle.SelectionBackColor = Color.Red
+                End If
+
+
+                DataGridView1.Rows(e.RowIndex).DefaultCellStyle.ForeColor = Color.Black
+
+            Catch ex As Exception
+
+                DataGridView1.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.White
+            End Try
+        End If
+    End Sub
 End Class

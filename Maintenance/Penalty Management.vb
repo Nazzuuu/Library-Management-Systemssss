@@ -4,11 +4,11 @@ Imports System.Drawing
 
 Public Class Penalty_Management
 
-    Dim connectionString As String = GlobalVarsModule.connectionString ' Assuming this comes from your GlobalVarsModule
+    ' Gumagamit na ng GlobalVarsModule.connectionString kaya tinanggal ang Dim connectionString
     Dim selectrow As Integer
 
     Private Function IsPenaltyTypeExist(ByVal penaltyType As String, Optional ByVal excludeId As Integer = 0) As Boolean
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim query As String = "SELECT COUNT(*) FROM `penalty_management_tbl` WHERE `PenaltyType` = @type AND `ID` <> @id"
         Dim count As Integer = 0
 
@@ -41,7 +41,7 @@ Public Class Penalty_Management
         TopMost = True
         Me.Refresh()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `penalty_management_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim ds As New DataSet
@@ -161,9 +161,10 @@ Public Class Penalty_Management
 
         Dim amount = Decimal.Parse(txtamount.Text)
         Dim description = txtdescription.Text
+        Dim newID As Integer = 0
 
-        Dim con As New MySqlConnection(connectionString)
-        Dim com = "INSERT INTO `penalty_management_tbl` (`PenaltyType`, `Amount`, `Description`) VALUES (@type, @amount, @desc)"
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim com = "INSERT INTO `penalty_management_tbl` (`PenaltyType`, `Amount`, `Description`) VALUES (@type, @amount, @desc); SELECT LAST_INSERT_ID();"
         Dim cmd As New MySqlCommand(com, con)
 
         cmd.Parameters.AddWithValue("@type", penaltyType)
@@ -172,7 +173,21 @@ Public Class Penalty_Management
 
         Try
             con.Open()
-            cmd.ExecuteNonQuery()
+            newID = Convert.ToInt32(cmd.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="PENALTY MANAGEMENT",
+                description:=$"Added new penalty: {penaltyType}",
+                recordID:=newID.ToString()
+            )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
+
             MessageBox.Show("Penalty added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Penalty_Management_Load(sender, e)
             clearlahat()
@@ -211,7 +226,21 @@ Public Class Penalty_Management
         Dim amount = Decimal.Parse(txtamount.Text)
         Dim description = txtdescription.Text
 
-        Dim con As New MySqlConnection(connectionString)
+        ' Get old values for logging
+        Dim oldRow As DataGridViewRow = DataGridView1.Rows.Cast(Of DataGridViewRow)().
+            Where(Function(r) Convert.ToInt32(r.Cells("ID").Value) = selectrow).FirstOrDefault()
+
+        Dim oldPenaltyType As String = oldRow.Cells("PenaltyType").Value.ToString()
+        Dim oldAmount As Decimal = Convert.ToDecimal(oldRow.Cells("Amount").Value)
+        Dim oldDescription As String = oldRow.Cells("Description").Value.ToString()
+
+        ' Check if there are actual changes
+        If oldPenaltyType.Equals(penaltyType) And oldAmount.Equals(amount) And oldDescription.Equals(description) Then
+            MessageBox.Show("No changes were made.", "No Update", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com = "UPDATE `penalty_management_tbl` SET `PenaltyType` = @type, `Amount` = @amount, `Description` = @desc WHERE `ID` = @id"
         Dim cmd As New MySqlCommand(com, con)
 
@@ -223,6 +252,22 @@ Public Class Penalty_Management
         Try
             con.Open()
             cmd.ExecuteNonQuery()
+
+            GlobalVarsModule.LogAudit(
+                actionType:="UPDATE",
+                formName:="PENALTY MANAGEMENT",
+                description:=$"Updated penalty ID {selectrow} from '{oldPenaltyType}' to '{penaltyType}'",
+                recordID:=selectrow.ToString(),
+                oldValue:=$"Type: {oldPenaltyType}, Amount: {oldAmount}, Description: {oldDescription}",
+                newValue:=$"Type: {penaltyType}, Amount: {amount}, Description: {description}"
+            )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
+
             MessageBox.Show("Penalty updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Penalty_Management_Load(sender, e)
             clearlahat()

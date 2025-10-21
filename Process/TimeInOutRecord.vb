@@ -19,18 +19,18 @@ Public Class TimeInOutRecord
         DataGridView1.Columns.Clear()
 
         Dim com As String = "SELECT " &
-                        "o.`ID`, " &
-                        "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
-                        "b.`Borrower`, " &
-                        "CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
-                        "IF(b.`MiddleInitial` IS NULL OR b.`MiddleInitial` = '' OR UPPER(b.`MiddleInitial`) = 'N/A', '', CONCAT(' ', b.`MiddleInitial`))" &
-                        ") AS `FullName`, " &
-                        "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
-                        "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
-                        "FROM `oras_tbl` o " &
-                        "LEFT JOIN `borrower_tbl` b " &
-                        "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
-                        "ORDER BY o.`TimeIn` DESC"
+                            "o.`ID`, " &
+                            "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
+                            "b.`Borrower`, " &
+                            "CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
+                            "IF(b.`MiddleInitial` IS NULL OR b.`MiddleInitial` = '' OR UPPER(b.`MiddleInitial`) = 'N/A', '', CONCAT(' ', b.`MiddleInitial`))" &
+                            ") AS `FullName`, " &
+                            "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
+                            "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
+                            "FROM `oras_tbl` o " &
+                            "LEFT JOIN `borrower_tbl` b " &
+                            "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
+                            "ORDER BY o.`TimeIn` DESC"
 
         Using con As New MySqlConnection(connectionString)
             Try
@@ -159,6 +159,7 @@ Public Class TimeInOutRecord
         Dim recordsToValidate As New List(Of DataGridViewRow)
         Dim recordIDsToDelete As New List(Of Integer)
         Dim selectionMode As String = ""
+        Dim deletedRecordDetails As New List(Of String)
 
 
         If isSelectAllChecked Then
@@ -195,6 +196,12 @@ Public Class TimeInOutRecord
                 Dim idInt As Integer
                 If idValue IsNot DBNull.Value AndAlso Integer.TryParse(idValue.ToString(), idInt) Then
                     recordIDsToDelete.Add(idInt)
+
+                    Dim dateValue As String = row.Cells("Date").Value.ToString()
+                    Dim fullName As String = row.Cells("FullName").Value.ToString()
+                    Dim timeIn As String = row.Cells("TimeIn").Value.ToString()
+                    Dim timeOut As String = row.Cells("TimeOut").Value.ToString()
+                    deletedRecordDetails.Add($"ID: {idInt}, Name: {fullName}, Date: {dateValue}, In: {timeIn}, Out: {timeOut}")
                 End If
             End If
         Next
@@ -270,6 +277,23 @@ Public Class TimeInOutRecord
         If successCount > 0 Then
             MessageBox.Show($"{successCount} record(s) deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             chkSelectAll.Checked = False
+
+
+            GlobalVarsModule.LogAudit(
+                actionType:="DELETE",
+                formName:="TIME IN/OUT RECORD",
+                description:=$"Deleted {successCount} Time In/Out record(s).",
+                recordID:=$"IDs: {idList}",
+                oldValue:=String.Join(" | ", deletedRecordDetails),
+                newValue:="DELETED"
+            )
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
+
+
             refreshtimeoutrecrod()
         Else
             MessageBox.Show("Deletion failed or no valid records were deleted.", "Deletion Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)

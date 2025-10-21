@@ -59,6 +59,8 @@ Public Class PrintReceiptForm
 
         Dim selectedRow As DataGridViewRow = Me.DataGridView1.SelectedRows(0)
         Dim transacReceiptID As String = selectedRow.Cells("TransactionReceipt").Value?.ToString()
+        Dim borrowerName As String = selectedRow.Cells("Name").Value?.ToString()
+        Dim oldIsPrintedValue As String = selectedRow.Cells("IsPrinted").Value?.ToString()
 
         If MainForm IsNot Nothing AndAlso MainForm.lbl_currentuser IsNot Nothing Then
             PrintingUserRole = MainForm.lbl_currentuser.Text
@@ -83,6 +85,21 @@ Public Class PrintReceiptForm
 
 
             UpdatePrintedStatus(transacReceiptID)
+
+            GlobalVarsModule.LogAudit(
+                actionType:="UPDATE",
+                formName:="PRINT RECEIPT",
+                description:=$"Printed receipt for transaction {transacReceiptID}.",
+                recordID:=transacReceiptID,
+                oldValue:=$"IsPrinted={oldIsPrintedValue} (Borrower: {borrowerName})",
+                newValue:=$"IsPrinted=1 (Printed by: {GlobalUsername})"
+            )
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
+
             refreshreceipt()
             MessageBox.Show($"Receipt for Transaction No. {transacReceiptID} successfully sent to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
@@ -97,6 +114,21 @@ Public Class PrintReceiptForm
                     printDoc.Print()
 
                     UpdatePrintedStatus(transacReceiptID)
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="UPDATE",
+                        formName:="PRINT RECEIPT",
+                        description:=$"Printed receipt for transaction {transacReceiptID} using fallback printer.",
+                        recordID:=transacReceiptID,
+                        oldValue:=$"IsPrinted={oldIsPrintedValue} (Borrower: {borrowerName})",
+                        newValue:=$"IsPrinted=1 (Printed by: {GlobalUsername})"
+                    )
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
+
                     refreshreceipt()
                     MessageBox.Show($"Receipt for Transaction No. {transacReceiptID} successfully sent to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success (Fallback)", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End If
@@ -114,6 +146,21 @@ Public Class PrintReceiptForm
                     printDoc.Print()
 
                     UpdatePrintedStatus(transacReceiptID)
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="UPDATE",
+                        formName:="PRINT RECEIPT",
+                        description:=$"Printed receipt for transaction {transacReceiptID} after print error.",
+                        recordID:=transacReceiptID,
+                        oldValue:=$"IsPrinted={oldIsPrintedValue} (Borrower: {borrowerName})",
+                        newValue:=$"IsPrinted=1 (Printed by: {GlobalUsername})"
+                    )
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
+
                     refreshreceipt()
                     MessageBox.Show($"Receipt for Transaction No. {transacReceiptID} successfully sent to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success (Fallback)", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End If

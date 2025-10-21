@@ -4,8 +4,6 @@ Imports System.Drawing
 
 Public Class ReserveCopies
 
-    Private Const connectionString As String = "server=localhost;userid=root;database=laybsis_dbs;"
-
     Private Sub ReserveCopies_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         reserveload()
@@ -22,7 +20,7 @@ Public Class ReserveCopies
 
     Public Sub reserveload()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Dim com As String = "SELECT ID, TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Status FROM `reservecopiess_tbl` WHERE Status = 'Reserved'"
 
@@ -52,7 +50,7 @@ Public Class ReserveCopies
 
     Public Sub counts()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
             con.Open()
@@ -122,7 +120,7 @@ Public Class ReserveCopies
 
         If dialogResult = DialogResult.Yes Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim transaction As MySqlTransaction = Nothing
 
             Try
@@ -164,6 +162,23 @@ Public Class ReserveCopies
                 com.ExecuteNonQuery()
 
                 transaction.Commit()
+
+                ' --- Audit Log ---
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="RESERVE COPIES FORM",
+                    description:=$"Pushed reserved copy (Acc. ID: {accID}, Title: {bookTitle}) back to Available status.",
+                    recordID:=accID,
+                    oldValue:="Reserved",
+                    newValue:="Available"
+                )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+                ' --- End Audit Log ---
 
                 MessageBox.Show($"Accession ID {accID} has been successfully pushed back to the accession form and is now Available.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 reserveload()
@@ -226,6 +241,13 @@ Public Class ReserveCopies
     End Sub
 
     Private Sub ReserveCopies_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
 
         Accession.CheckBox1.Checked = False
         Accession.btnview.Visible = True

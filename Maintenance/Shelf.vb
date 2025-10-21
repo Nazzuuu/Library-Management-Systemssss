@@ -1,33 +1,43 @@
 ﻿Imports System.Runtime.Serialization
 Imports MySql.Data.MySqlClient
+Imports System.Data
 
 Public Class Shelf
     Private Sub Shelf_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         TopMost = True
         Me.Refresh()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `shelf_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim ds As New DataSet
 
-        adap.Fill(ds, "INFO")
+        Try
+            adap.Fill(ds, "INFO")
+            DataGridView1.DataSource = ds.Tables("INFO")
 
-        DataGridView1.DataSource = ds.Tables("INFO")
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
-        DataGridView1.Columns("ID").Visible = False
-        DataGridView1.ClearSelection()
+            DataGridView1.Columns("ID").Visible = False
+            DataGridView1.ClearSelection()
+        Catch ex As Exception
+            MsgBox($"Error loading data: {ex.Message}", vbCritical)
+        End Try
 
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim shelf As String = txtshelf.Text.Trim
+        Dim newID As Integer = 0
+
+        If String.IsNullOrWhiteSpace(shelf) Then
+            MsgBox("Please fill in the required fields (Shelf Number).", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
 
         Try
             con.Open()
@@ -41,9 +51,22 @@ Public Class Shelf
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `shelf_tbl`(`Shelf`) VALUES (@shelf)", con)
+            Dim com As New MySqlCommand("INSERT INTO `shelf_tbl`(`Shelf`) VALUES (@shelf); SELECT LAST_INSERT_ID();", con)
             com.Parameters.AddWithValue("@shelf", shelf)
-            com.ExecuteNonQuery()
+            newID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="SHELF FORM",
+                description:=$"Added new shelf: {shelf}",
+                recordID:=newID.ToString()
+            )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Accession Then
@@ -57,6 +80,8 @@ Public Class Shelf
             txtshelf.Clear()
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
+        Finally
+            If con.State = ConnectionState.Open Then con.Close()
         End Try
     End Sub
 
@@ -64,46 +89,69 @@ Public Class Shelf
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
 
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
-            Dim old As String = selectedRow.Cells("Shelf").Value.ToString()
-            Dim shelf As String = txtshelf.Text.Trim
+            Dim oldShelf As String = selectedRow.Cells("Shelf").Value.ToString().Trim()
+            Dim newShelf As String = txtshelf.Text.Trim
 
-            If String.IsNullOrWhiteSpace(shelf) Then
+            If String.IsNullOrWhiteSpace(newShelf) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
+
+            If oldShelf.Equals(newShelf, StringComparison.OrdinalIgnoreCase) Then
+                MsgBox("No changes were made.", vbInformation)
+                Exit Sub
+            End If
+
             Try
                 con.Open()
 
                 Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `shelf_tbl` WHERE `Shelf` = @shelf AND `ID` <> @id", con)
-                comsu.Parameters.AddWithValue("@shelf", shelf)
+                comsu.Parameters.AddWithValue("@shelf", newShelf)
                 comsu.Parameters.AddWithValue("@id", ID)
 
                 Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
 
                 If count > 0 Then
-                    MsgBox("This shelf is already exists.", vbExclamation)
+                    MsgBox("This shelf already exists.", vbExclamation)
                     Exit Sub
                 End If
 
                 Dim com As New MySqlCommand("UPDATE `shelf_tbl` SET `Shelf` = @shelf WHERE `ID` = @id", con)
-                com.Parameters.AddWithValue("@shelf", shelf)
+                com.Parameters.AddWithValue("@shelf", newShelf)
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
+
                 Dim comss As New MySqlCommand("UPDATE `acession_tbl` SET `Shelf` = @newShelf WHERE `Shelf` = @oldShelf", con)
-                comss.Parameters.AddWithValue("@newShelf", shelf)
-                comss.Parameters.AddWithValue("@oldShelf", old)
+                comss.Parameters.AddWithValue("@newShelf", newShelf)
+                comss.Parameters.AddWithValue("@oldShelf", oldShelf)
                 comss.ExecuteNonQuery()
+
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="SHELF FORM",
+                    description:=$"Updated shelf ID {ID} from '{oldShelf}' to '{newShelf}'",
+                    recordID:=ID.ToString(),
+                    oldValue:=oldShelf,
+                    newValue:=newShelf
+                )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Accession Then
                         Dim acs = DirectCast(form, Accession)
                         acs.shelfsu()
+                        acs.RefreshAccessionData()
                     End If
                 Next
 
@@ -112,6 +160,8 @@ Public Class Shelf
                 Shelf_Load(sender, e)
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
+            Finally
+                If con.State = ConnectionState.Open Then con.Close()
             End Try
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
@@ -127,7 +177,7 @@ Public Class Shelf
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim shelf As String = selectedRow.Cells("Shelf").Value.ToString().Trim()
@@ -135,13 +185,12 @@ Public Class Shelf
                 Try
                     con.Open()
 
+                    Dim acsCountCmd As New MySqlCommand("SELECT COUNT(*) FROM `acession_tbl` WHERE Shelf = @shelf", con)
+                    acsCountCmd.Parameters.AddWithValue("@shelf", shelf)
+                    Dim accessionCount As Integer = CInt(acsCountCmd.ExecuteScalar())
 
-                    Dim acs As New MySqlCommand("SELECT COUNT(*) FROM `acession_tbl` WHERE Shelf = @shelf", con)
-                    acs.Parameters.AddWithValue("@shelf", shelf)
-                    Dim accession As Integer = CInt(acs.ExecuteScalar())
-
-                    If Accession > 0 Then
-                        MessageBox.Show("Cannot delete this shelf. They are assigned to " & accession & " accession(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    If accessionCount > 0 Then
+                        MessageBox.Show("Cannot delete this shelf. They are assigned to " & accessionCount & " accession(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                         Return
                     End If
 
@@ -149,6 +198,19 @@ Public Class Shelf
                     Dim delete As New MySqlCommand("DELETE FROM `shelf_tbl` WHERE `ID` = @id", con)
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="SHELF FORM",
+                        description:=$"Deleted shelf: {shelf}",
+                        recordID:=ID.ToString()
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Accession Then
@@ -171,6 +233,8 @@ Public Class Shelf
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then con.Close()
                 End Try
             End If
         End If
@@ -228,6 +292,13 @@ Public Class Shelf
 
     Private Sub Shelf_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
+
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtshelf.Text = ""
 
@@ -251,7 +322,7 @@ Public Class Shelf
         If Integer.TryParse(txtshelf.Text.Trim(), ShelfNumber) Then
 
             If ShelfNumber < 1 Then
-                MessageBox.Show("Shelf number must be 1 or higher. Zero.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                MessageBox.Show("Shelf number must be 1 or higher. Zero is not allowed.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 e.Cancel = True
             Else
                 e.Cancel = False

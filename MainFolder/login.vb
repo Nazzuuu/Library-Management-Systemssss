@@ -1,25 +1,31 @@
 ﻿Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 Imports MySql.Data.MySqlClient
+
 Public Class login
+
 
     Public Sub clear()
         txtpass.Text = ""
         txtuser.Text = ""
-
     End Sub
 
-
     Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
+
+        For i As Integer = Application.OpenForms.Count - 1 To 0 Step -1
+            Dim formInApp As Form = Application.OpenForms(i)
+            If formInApp IsNot Me AndAlso formInApp.Name <> "MainForm" Then
+                formInApp.Close()
+            End If
+        Next
 
         Dim User As String = txtuser.Text.Trim()
         Dim Pass As String = txtpass.Text.Trim()
 
-        Dim con As New MySqlConnection(connectionString)
-
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Dim comsus As String = "SELECT 0 AS ID, Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
-        "UNION " &
-        "SELECT ID, Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
+     "UNION " &
+     "SELECT ID, Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
 
         Dim com As New MySqlCommand(comsus, con)
         com.Parameters.AddWithValue("@username", User)
@@ -33,13 +39,24 @@ Public Class login
                 Dim role As String = lahatngrole("Role").ToString()
                 Dim userEmail As String = lahatngrole("Email").ToString()
 
+
                 Dim employeeID As String = lahatngrole("ID").ToString()
 
-
-                GlobalRole = role
-                GlobalUsername = userEmail
+                GlobalVarsModule.GlobalRole = role
+                GlobalVarsModule.GlobalUsername = User
+                GlobalVarsModule.GlobalEmail = userEmail
+                GlobalVarsModule.CurrentUserID = employeeID
                 GlobalVarsModule.CurrentEmployeeID = employeeID
 
+
+                lahatngrole.Close()
+
+                GlobalVarsModule.LogAudit(
+                 actionType:="LOGIN SUCCESS",
+                 formName:="LOGIN FORM",
+                 description:=$"User '{User}' ({role}) successfully logged in.",
+                 recordID:="N/A"
+             )
 
                 MainForm.AcquisitionToolStripMenuItem.Visible = True
                 MainForm.AccessionToolStripMenuItem.Visible = True
@@ -55,18 +72,11 @@ Public Class login
 
 
                 If role = "Librarian" Then
-
-
                     MainForm.Refresh()
-
-
-
-
                     MainForm.lbl_currentuser.Text = "Librarian"
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
 
-
                     For Each formInApp As Form In Application.OpenForms
                         If TypeOf formInApp Is Users Then
                             Dim Users As Users = CType(formInApp, Users)
@@ -74,31 +84,28 @@ Public Class login
                         End If
                     Next
 
+                    MainForm.ResetToMainDashboard()
+
                     MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
-
+                    MainForm.BringToFront()
                     Me.Hide()
                     clear()
 
-
                 ElseIf role = "Staff" Then
-
                     MainForm.Refresh()
+
 
                     MainForm.AcquisitionToolStripMenuItem.Visible = False
                     MainForm.AccessionToolStripMenuItem.Visible = False
-
                     MainForm.Audit_Trail.Visible = False
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
-
                     MainForm.Audit_Trail.Visible = False
                     MainForm.PenaltyToolStripMenuItem.Visible = False
                     MainForm.PenaltyManagementToolStripMenuItem.Visible = False
-
                     MainForm.EditsToolStripMenuItem1.Visible = False
-
 
                     For Each formInApp As Form In Application.OpenForms
                         If TypeOf formInApp Is Users Then
@@ -107,30 +114,24 @@ Public Class login
                         End If
                     Next
 
+                    MainForm.ResetToMainDashboard()
                     MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
+                    MainForm.BringToFront()
                     MainForm.lbl_currentuser.Text = "Staff"
-
-
-
-
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
                     Me.Hide()
                     clear()
 
                 ElseIf role = "Assistant Librarian" Then
-
-
                     MainForm.Refresh()
 
                     MainForm.Audit_Trail.Visible = False
                     MainForm.EditInfoToolStripMenuItem.Visible = False
                     MainForm.EditsToolStripMenuItem1.Visible = False
                     MainForm.BorrowToolStripMenuItem.Visible = False
-
                     MainForm.EditsToolStripMenuItem1.Visible = False
-
 
                     For Each formInApp As Form In Application.OpenForms
                         If TypeOf formInApp Is Users Then
@@ -139,23 +140,30 @@ Public Class login
                         End If
                     Next
 
+                    MainForm.ResetToMainDashboard()
                     MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     MainForm.Show()
+                    MainForm.BringToFront()
                     MainForm.lbl_currentuser.Text = "Asst. Librarian"
-
-
                     MainForm.lblgmail.Text = userEmail
                     MainForm.lblform.Text = "MAIN FORM"
                     Me.Hide()
                     clear()
 
                 Else
+
                     MessageBox.Show("Invalid role.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End If
+
             Else
 
-                GlobalRole = ""
-                GlobalUsername = ""
+                GlobalVarsModule.GlobalRole = ""
+                GlobalVarsModule.GlobalUsername = ""
+                GlobalVarsModule.GlobalEmail = ""
+                GlobalVarsModule.CurrentUserID = ""
+                GlobalVarsModule.CurrentEmployeeID = ""
+
+
                 MessageBox.Show("Invalid Credentials.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
 
@@ -171,15 +179,16 @@ Public Class login
 
     Private Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         TopMost = True
-        Koneksyon()
 
+        Koneksyon()
 
         MainForm.Refresh()
 
         txtpass.PasswordChar = "•"
+
         PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As New MySqlCommand("SELECT COUNT(*) FROM superadmin_tbl WHERE Role = 'Librarian'", con)
 
         Try
@@ -206,6 +215,7 @@ Public Class login
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
 
         If txtpass.PasswordChar = "•" Then
+
 
             PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\dilat.png")
             txtpass.PasswordChar = ""

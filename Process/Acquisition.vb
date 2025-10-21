@@ -8,7 +8,7 @@ Public Class Acquisition
 
     Private Sub Acquisition_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `acquisition_tbl`"
         Dim adp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
@@ -236,7 +236,7 @@ Public Class Acquisition
 
 
             Dim com As String = "INSERT INTO acquisition_tbl (`ISBN`, `Barcode`, `BookTitle`, `SupplierName`, `Quantity`, `BookPrice`, `TotalCost`, `TransactionNo`, `DateAcquired`) " &
-                                "VALUES (@ISBN, @Barcode, @BookTitle, @SupplierName, @Quantity, @BookPrice, @TotalCost, @TransactionNo, @DateAcquired)"
+                            "VALUES (@ISBN, @Barcode, @BookTitle, @SupplierName, @Quantity, @BookPrice, @TotalCost, @TransactionNo, @DateAcquired)"
 
             Using comsu As New MySqlCommand(com, con)
                 comsu.Parameters.AddWithValue("@ISBN", txtisbn.Text)
@@ -250,6 +250,22 @@ Public Class Acquisition
                 comsu.Parameters.AddWithValue("@DateAcquired", purmatdeyt)
 
                 comsu.ExecuteNonQuery()
+
+                GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="ACQUISITION FORM",
+                description:=$"Added book entry to transaction {txttransactionno.Text}. Title: {txtbooktitle.Text}, Qty: {NumericUpDown1.Value}.",
+                recordID:=txttransactionno.Text,
+                oldValue:="N/A",
+                newValue:=$"Title: {txtbooktitle.Text}, Qty: {NumericUpDown1.Value}, Price: {txtbookprice.Text}"
+            )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+
                 MessageBox.Show("Successfully added book entry to transaction!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
                 NumericUpDown2.Enabled = False
@@ -287,6 +303,17 @@ Public Class Acquisition
         End If
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+
+        Dim oldValues As New Dictionary(Of String, Object)
+        oldValues.Add("ISBN", selectedRow.Cells("ISBN").Value)
+        oldValues.Add("Barcode", selectedRow.Cells("Barcode").Value)
+        oldValues.Add("BookTitle", selectedRow.Cells("BookTitle").Value)
+        oldValues.Add("SupplierName", selectedRow.Cells("SupplierName").Value)
+        oldValues.Add("Quantity", selectedRow.Cells("Quantity").Value)
+        oldValues.Add("BookPrice", selectedRow.Cells("BookPrice").Value)
+        oldValues.Add("TotalCost", selectedRow.Cells("TotalCost").Value)
+        oldValues.Add("DateAcquired", selectedRow.Cells("DateAcquired").Value)
+
 
         Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
         Dim oldQuantity As Integer = CInt(selectedRow.Cells("Quantity").Value)
@@ -353,9 +380,9 @@ Public Class Acquisition
                 If newQuantity = 0 AndAlso totalExistingCopies > 0 Then
 
                     Dim warningMessage As String = "WARNING: Cannot reduce quantity to " & newQuantity & ". " & Environment.NewLine & Environment.NewLine &
-                                               "There are currently " & totalExistingCopies & " existing copies of '" & bookTitle & "' for Transaction No. " & transactionNo & ":" & Environment.NewLine &
-                                               "- " & totalAcessionCopies & " copies in the Acession Table." & Environment.NewLine &
-                                               "- " & reserveCount & " copies in the Reserve Copies Table."
+                                              "There are currently " & totalExistingCopies & " existing copies of '" & bookTitle & "' for Transaction No. " & transactionNo & ":" & Environment.NewLine &
+                                              "- " & totalAcessionCopies & " copies in the Acession Table." & Environment.NewLine &
+                                              "- " & reserveCount & " copies in the Reserve Copies Table."
 
                     MessageBox.Show(warningMessage, "Cannot Update Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
@@ -434,14 +461,14 @@ Public Class Acquisition
                     End Using
 
                     Dim insertAvailSql As String = "INSERT INTO available_tbl (AccessionID, ISBN, Barcode, BookTitle, Shelf, Status) " &
-                                               "VALUES (@AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @Status)"
+                                              "VALUES (@AccessionID_A, @ISBN_A, @Barcode_A, @BookTitle_A, @Shelf_A, @Status_A)"
                     Using insertAvailCmd As New MySqlCommand(insertAvailSql, con)
-                        insertAvailCmd.Parameters.AddWithValue("@AccessionID", newAccessionID)
-                        insertAvailCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
-                        insertAvailCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
-                        insertAvailCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
-                        insertAvailCmd.Parameters.AddWithValue("@Shelf", shelf)
-                        insertAvailCmd.Parameters.AddWithValue("@Status", "Available")
+                        insertAvailCmd.Parameters.AddWithValue("@AccessionID_A", newAccessionID)
+                        insertAvailCmd.Parameters.AddWithValue("@ISBN_A", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                        insertAvailCmd.Parameters.AddWithValue("@Barcode_A", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                        insertAvailCmd.Parameters.AddWithValue("@BookTitle_A", bookTitle)
+                        insertAvailCmd.Parameters.AddWithValue("@Shelf_A", shelf)
+                        insertAvailCmd.Parameters.AddWithValue("@Status_A", "Available")
                         insertAvailCmd.ExecuteNonQuery()
                     End Using
                 Next
@@ -473,6 +500,23 @@ Public Class Acquisition
                 Updateacqt.Parameters.AddWithValue("@ID", ID)
                 Updateacqt.ExecuteNonQuery()
             End Using
+
+            Dim oldValueStr As String = $"ISBN: {oldValues("ISBN")}, Barcode: {oldValues("Barcode")}, Title: {oldValues("BookTitle")}, Qty: {oldValues("Quantity")}, Price: {oldValues("BookPrice")}, Cost: {oldValues("TotalCost")}"
+            Dim newValueStr As String = $"ISBN: {txtisbn.Text}, Barcode: {txtbarcodes.Text}, Title: {txtbooktitle.Text}, Qty: {newQuantity}, Price: {currentBookPrice}, Cost: {newTotalCost}"
+
+            GlobalVarsModule.LogAudit(
+            actionType:="UPDATE",
+            formName:="ACQUISITION FORM",
+            description:=$"Updated acquisition record for Book ID {ID} in transaction {transactionNo}. Title: {txtbooktitle.Text}",
+            recordID:=transactionNo,
+            oldValue:=oldValueStr,
+            newValue:=newValueStr
+        )
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AvailableBooks Then
@@ -514,9 +558,11 @@ Public Class Acquisition
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
         Dim acquisitionID As Integer = CInt(selectedRow.Cells("ID").Value)
-
+        Dim transactionNo As String = selectedRow.Cells("TransactionNo").Value.ToString()
+        Dim bookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
         Dim bookISBN As String = selectedRow.Cells("ISBN").Value.ToString().Trim()
         Dim bookBarcode As String = selectedRow.Cells("Barcode").Value.ToString()
+        Dim oldQuantity As Integer = CInt(selectedRow.Cells("Quantity").Value)
 
         Dim con As New MySqlConnection(connectionString)
         Dim hasAccessions As Boolean = False
@@ -564,6 +610,21 @@ Public Class Acquisition
                 Dim resett As String = "ALTER TABLE `acession_tbl` AUTO_INCREMENT = 1"
                 Dim incrementsu As New MySqlCommand(resett, con)
                 incrementsu.ExecuteNonQuery()
+
+                GlobalVarsModule.LogAudit(
+                actionType:="DELETE",
+                formName:="ACQUISITION FORM",
+                description:=$"Deleted acquisition record from transaction {transactionNo}. Title: {bookTitle}, Qty: {oldQuantity}.",
+                recordID:=transactionNo,
+                oldValue:=$"Book ID: {acquisitionID}, Title: {bookTitle}, Qty: {oldQuantity}",
+                newValue:="N/A (Deleted)"
+            )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
 
                 MessageBox.Show("Record deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 

@@ -5,7 +5,7 @@ Public Class Grade
 
         TopMost = True
         Me.Refresh()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `grade_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
@@ -30,6 +30,13 @@ Public Class Grade
 
     Private Sub Grade_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.loadsu()
+            End If
+        Next
+
         MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtgrade.Text = ""
@@ -38,8 +45,9 @@ Public Class Grade
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim grds As String = txtgrade.Text.Trim
+        Dim newID As Integer = 0
 
         If String.IsNullOrWhiteSpace(grds) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
@@ -71,9 +79,22 @@ Public Class Grade
                 Exit Sub
             End If
 
-            Dim com As New MySqlCommand("INSERT INTO `grade_tbl`(`Grade`) VALUES (@grade)", con)
+            Dim com As New MySqlCommand("INSERT INTO `grade_tbl`(`Grade`) VALUES (@grade); SELECT LAST_INSERT_ID();", con)
             com.Parameters.AddWithValue("@grade", grds)
-            com.ExecuteNonQuery()
+            newID = Convert.ToInt32(com.ExecuteScalar())
+
+            GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="GRADE FORM",
+                description:=$"Added new grade level: {grds}",
+                recordID:=newID.ToString()
+            )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Borrower Then
@@ -98,6 +119,9 @@ Public Class Grade
         Catch ex As Exception
             MsgBox(ex.Message, vbCritical)
         Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
             txtgrade.Clear()
         End Try
 
@@ -107,7 +131,7 @@ Public Class Grade
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(connectionString)
+            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
             Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
 
@@ -118,6 +142,12 @@ Public Class Grade
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
+
+            If oldGrade = grd Then
+                MsgBox("No changes were made.", vbExclamation, "No Update")
+                Exit Sub
+            End If
+
 
             Dim grade As Integer
             If Not Integer.TryParse(grd, grade) Then
@@ -159,6 +189,20 @@ Public Class Grade
                 comsiss.Parameters.AddWithValue("@oldGrade", oldGrade)
                 comsiss.ExecuteNonQuery()
 
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="GRADE FORM",
+                    description:=$"Updated grade level ID {ID} from '{oldGrade}' to '{grd}'",
+                    recordID:=ID.ToString(),
+                    oldValue:=$"Grade Level: {oldGrade}",
+                    newValue:=$"Grade Level: {grd}"
+                )
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is Borrower Then
@@ -172,11 +216,22 @@ Public Class Grade
                     End If
                 Next
 
+                For Each form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+                        Dim load = DirectCast(form, MainForm)
+                        load.loadsu()
+                    End If
+                Next
+
                 MsgBox("Updated successfully!", vbInformation)
                 Grade_Load(sender, e)
                 txtgrade.Clear()
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
+            Finally
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
             End Try
         Else
             MsgBox("Please select a row to edit.", vbExclamation)
@@ -192,7 +247,7 @@ Public Class Grade
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                 Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
                 Dim gradeLevel As String = selectedRow.Cells("Grade").Value.ToString().Trim()
@@ -211,7 +266,7 @@ Public Class Grade
                     End If
 
 
-                    Dim borrowerCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE Grade = @grade", con)
+                    Dim borrowerCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE GradeLevel = @grade", con)
                     borrowerCom.Parameters.AddWithValue("@grade", gradeLevel)
                     Dim borrowerCount As Integer = CInt(borrowerCom.ExecuteScalar())
 
@@ -225,6 +280,18 @@ Public Class Grade
                     delete.Parameters.AddWithValue("@id", ID)
                     delete.ExecuteNonQuery()
 
+                    GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="GRADE FORM",
+                        description:=$"Deleted grade level: {gradeLevel}",
+                        recordID:=ID.ToString()
+                    )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Borrower Then
@@ -249,6 +316,10 @@ Public Class Grade
 
                 Catch ex As Exception
                     MsgBox(ex.Message, vbCritical)
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
                 End Try
             End If
         End If
@@ -286,7 +357,10 @@ Public Class Grade
             e.SuppressKeyPress = True
         End If
 
-
+        ' Removed the Enter key to call btnadd_Click here as the previous
+        ' implementation didn't have it, but for better user experience,
+        ' I'll re-add it if you want to allow adding by pressing Enter.
+        ' For now, I'll stick to the provided code structure.
 
     End Sub
 

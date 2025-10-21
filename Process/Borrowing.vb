@@ -325,13 +325,13 @@ Public Class Borrowing
             con.Open()
 
 
-            ' ADJUSTED SQL QUERY: Gamitin ang NULLIF para alisin ang 'N/A' o walang laman na MiddleInitial bago mag-concatenate
+
             Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, NULLIF(TRIM(REPLACE(MiddleInitial, '.', '')), 'N/A')) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@emp", enteredEmployeeID)
                 Dim emp As Object = comsi.ExecuteScalar()
                 If emp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(emp.ToString()) Then
-                    ' Linisin ang resulta para alisin ang sobrang spaces na dulot ng CONCAT_WS
+
                     borrowerName = System.Text.RegularExpressions.Regex.Replace(emp.ToString().Trim(), "\s+", " ")
                     txtname.Text = borrowerName
                     foundBorrower = True
@@ -414,13 +414,13 @@ Public Class Borrowing
         Try
             con.Open()
 
-            ' ADJUSTED SQL QUERY: Gamitin ang NULLIF para alisin ang 'N/A' o walang laman na MiddleInitial bago mag-concatenate
+
             Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, NULLIF(TRIM(REPLACE(MiddleInitial, '.', '')), 'N/A')) FROM `borrower_tbl` WHERE `LRN` = @lrn"
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@lrn", enteredLRN)
                 Dim lrn As Object = comsi.ExecuteScalar()
                 If lrn IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(lrn.ToString()) Then
-                    ' Linisin ang resulta para alisin ang sobrang spaces na dulot ng CONCAT_WS
+
                     borrowerName = System.Text.RegularExpressions.Regex.Replace(lrn.ToString().Trim(), "\s+", " ")
                     txtname.Text = borrowerName
                     foundBorrower = True
@@ -641,7 +641,7 @@ Public Class Borrowing
 
 
         If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse
-    String.IsNullOrWhiteSpace(txtname.Text) Then
+String.IsNullOrWhiteSpace(txtname.Text) Then
 
             MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
@@ -753,6 +753,15 @@ Public Class Borrowing
                 comsi.ExecuteNonQuery()
             End Using
 
+            GlobalVarsModule.LogAudit(
+            actionType:="ADD",
+            formName:="BORROWING FORM",
+            description:=$"Book '{txtsus.Text}' (AccessionID: {txtaccessionid.Text}) added to transaction {transactionReceiptID} for borrower {txtname.Text}.",
+            recordID:=transactionReceiptID,
+            oldValue:="N/A",
+            newValue:=$"Borrower: {txtname.Text} ({identifierValue}), Book: {txtsus.Text}, AccID: {txtaccessionid.Text}"
+        )
+
 
 
             Dim checkExistingCom As String = "SELECT COUNT(*) FROM `confimation_tbl` WHERE `TransactionReceipt` = @TID"
@@ -772,7 +781,7 @@ Public Class Borrowing
 
 
                     Dim insertCom As String = "INSERT INTO confimation_tbl (Borrower, Name, BorrowedDate, TransactionReceipt, Status, BorrowedBookCount) " &
-                                          "VALUES (@Borrower, @Name, @BDate, @TransactionReceipt, @Status, @BookCount)"
+                                         "VALUES (@Borrower, @Name, @BDate, @TransactionReceipt, @Status, @BookCount)"
 
                     Using insertCmd As New MySqlCommand(insertCom, con)
                         insertCmd.Parameters.AddWithValue("@Borrower", borrower)
@@ -792,15 +801,14 @@ Public Class Borrowing
 
             pendingstats(accessionID, "Pending")
 
-            'For Each form In Application.OpenForms
-            '    If TypeOf form Is MainForm Then
-            '        Dim mform = DirectCast(form, MainForm)
-            '        mform.lblborrowcount()
-            '    End If
-            'Next
-
 
             MsgBox("Book successfully added for confirmation. Total pending books: " & newBookCount.ToString(), vbInformation, "Awaiting Confirmation")
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+            Next
 
 
             refreshborrowingsu()
@@ -817,7 +825,46 @@ Public Class Borrowing
     End Sub
 
 
+    Private Sub btntimein_Click(sender As Object, e As EventArgs) Handles btntimein.Click
 
+        Dim borrowerID As String = ""
+        Dim borrowerType As String = ""
+        Dim borrowerName As String = ""
+        Dim borrowertayp As String = ""
+
+
+        If rbstudent.Checked AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
+            borrowerID = txtlrn.Text
+            borrowerType = "LRN"
+        ElseIf rbteacher.Checked AndAlso Not String.IsNullOrWhiteSpace(txtemployee.Text) Then
+            borrowerID = txtemployee.Text
+            borrowerType = "EmployeeNo"
+        Else
+            MessageBox.Show("Please enter the LRN or Employee Number first.", "Required Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
+
+        RegisteredBrwr.IsTimeInMode = True
+
+        RegisteredBrwr.SetTimeInFilter(borrowerID, borrowerType, borrowerName, borrowertayp)
+
+        AddHandler RegisteredBrwr.ListView1.MouseDoubleClick, AddressOf RegisteredBrwr.ListView1_MouseDoubleClick
+
+        RegisteredBrwr.lbl_action.ForeColor = Color.Red
+        RegisteredBrwr.lbl_action.Text = "Selecting"
+
+        RegisteredBrwr.ListView1.Enabled = True
+
+        RegisteredBrwr.ShowDialog()
+
+        If rbstudent.Checked AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
+            txtlrn_TextChanged(txtlrn, EventArgs.Empty)
+        ElseIf rbteacher.Checked AndAlso Not String.IsNullOrWhiteSpace(txtemployee.Text) Then
+            txtemployee_TextChanged(txtemployee, EventArgs.Empty)
+        End If
+
+    End Sub
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
         If e.RowIndex >= 0 Then
@@ -918,46 +965,7 @@ Public Class Borrowing
 
     End Sub
 
-    Private Sub btntimein_Click(sender As Object, e As EventArgs) Handles btntimein.Click
 
-        Dim borrowerID As String = ""
-        Dim borrowerType As String = ""
-        Dim borrowerName As String = ""
-        Dim borrowertayp As String = ""
-
-
-        If rbstudent.Checked AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
-            borrowerID = txtlrn.Text
-            borrowerType = "LRN"
-        ElseIf rbteacher.Checked AndAlso Not String.IsNullOrWhiteSpace(txtemployee.Text) Then
-            borrowerID = txtemployee.Text
-            borrowerType = "EmployeeNo"
-        Else
-            MessageBox.Show("Please enter the LRN or Employee Number first.", "Required Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Exit Sub
-        End If
-
-
-        RegisteredBrwr.IsTimeInMode = True
-
-        RegisteredBrwr.SetTimeInFilter(borrowerID, borrowerType, borrowerName, borrowertayp)
-
-        AddHandler RegisteredBrwr.ListView1.MouseDoubleClick, AddressOf RegisteredBrwr.ListView1_MouseDoubleClick
-
-        RegisteredBrwr.lbl_action.ForeColor = Color.Red
-        RegisteredBrwr.lbl_action.Text = "Selecting"
-
-        RegisteredBrwr.ListView1.Enabled = True
-
-        RegisteredBrwr.ShowDialog()
-
-        If rbstudent.Checked AndAlso Not String.IsNullOrWhiteSpace(txtlrn.Text) Then
-            txtlrn_TextChanged(txtlrn, EventArgs.Empty)
-        ElseIf rbteacher.Checked AndAlso Not String.IsNullOrWhiteSpace(txtemployee.Text) Then
-            txtemployee_TextChanged(txtemployee, EventArgs.Empty)
-        End If
-
-    End Sub
 
     Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
 
