@@ -509,7 +509,7 @@ Partial Class Accession
         btnview.FillColor = Color.Empty
         btnview.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnview.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnview.Location = New Point(1075, 245)
+        btnview.Location = New Point(1035, 245)
         btnview.Name = "btnview"
         btnview.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         btnview.Size = New Size(133, 27)
@@ -521,7 +521,7 @@ Partial Class Accession
         CheckBox1.AutoSize = True
         CheckBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         CheckBox1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        CheckBox1.Location = New Point(1054, 219)
+        CheckBox1.Location = New Point(1014, 219)
         CheckBox1.Name = "CheckBox1"
         CheckBox1.Size = New Size(170, 20)
         CheckBox1.TabIndex = 95
@@ -532,7 +532,7 @@ Partial Class Accession
         ' 
         Panel1.Controls.Add(Label5)
         Panel1.Controls.Add(rbborrowable)
-        Panel1.Location = New Point(821, 215)
+        Panel1.Location = New Point(980, 188)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(228, 25)
         Panel1.TabIndex = 94

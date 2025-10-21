@@ -305,7 +305,6 @@ Public Class Borrowing
         If isLoadingData Then Exit Sub
 
         If String.IsNullOrWhiteSpace(txtemployee.Text) Then
-
             txtname.Text = ""
             btntimein.Visible = False
             Exit Sub
@@ -326,12 +325,14 @@ Public Class Borrowing
             con.Open()
 
 
-            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, MiddleInitial) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
+            ' ADJUSTED SQL QUERY: Gamitin ang NULLIF para alisin ang 'N/A' o walang laman na MiddleInitial bago mag-concatenate
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, NULLIF(TRIM(REPLACE(MiddleInitial, '.', '')), 'N/A')) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@emp", enteredEmployeeID)
                 Dim emp As Object = comsi.ExecuteScalar()
                 If emp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(emp.ToString()) Then
-                    borrowerName = emp.ToString()
+                    ' Linisin ang resulta para alisin ang sobrang spaces na dulot ng CONCAT_WS
+                    borrowerName = System.Text.RegularExpressions.Regex.Replace(emp.ToString().Trim(), "\s+", " ")
                     txtname.Text = borrowerName
                     foundBorrower = True
                 Else
@@ -378,7 +379,6 @@ Public Class Borrowing
     End Sub
 
 
-
     Private Sub txtlrn_TextChanged(sender As Object, e As EventArgs) Handles txtlrn.TextChanged
 
 
@@ -414,12 +414,14 @@ Public Class Borrowing
         Try
             con.Open()
 
-            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`,MiddleInitial) FROM `borrower_tbl` WHERE `LRN` = @lrn"
+            ' ADJUSTED SQL QUERY: Gamitin ang NULLIF para alisin ang 'N/A' o walang laman na MiddleInitial bago mag-concatenate
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, NULLIF(TRIM(REPLACE(MiddleInitial, '.', '')), 'N/A')) FROM `borrower_tbl` WHERE `LRN` = @lrn"
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@lrn", enteredLRN)
                 Dim lrn As Object = comsi.ExecuteScalar()
                 If lrn IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(lrn.ToString()) Then
-                    borrowerName = lrn.ToString()
+                    ' Linisin ang resulta para alisin ang sobrang spaces na dulot ng CONCAT_WS
+                    borrowerName = System.Text.RegularExpressions.Regex.Replace(lrn.ToString().Trim(), "\s+", " ")
                     txtname.Text = borrowerName
                     foundBorrower = True
                 Else
@@ -466,6 +468,7 @@ Public Class Borrowing
         End If
 
     End Sub
+
     Private Sub txtaccessionid_TextChanged(sender As Object, e As EventArgs) Handles txtaccessionid.TextChanged
 
         If isLoadingData Then

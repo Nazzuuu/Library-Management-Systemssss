@@ -667,8 +667,6 @@ Public Class Accession
         Dim firstDialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete ALL accession records? This action cannot be undone.", "Confirm Delete All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 
         If firstDialogResult = DialogResult.Yes Then
-
-
             Dim secondDialogResult As DialogResult = MessageBox.Show("This will permanently delete all accession records. Are you absolutely sure?", "Final Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
             If secondDialogResult = DialogResult.Yes Then
@@ -676,7 +674,6 @@ Public Class Accession
 
                 Try
                     con.Open()
-
 
                     Dim comm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE `Status` IN ('Pending', 'Lost', 'Damage')"
                     Dim comssu As New MySqlCommand(comm, con)
@@ -687,8 +684,6 @@ Public Class Accession
                         Return
                     End If
 
-
-
                     Dim com As String = "SELECT COUNT(*) FROM `borrowing_tbl`"
                     Dim kapagod As New MySqlCommand(com, con)
                     Dim borrowedCount As Integer = CInt(kapagod.ExecuteScalar())
@@ -698,6 +693,15 @@ Public Class Accession
                         Return
                     End If
 
+                    Dim reserveCheckSql As String = "SELECT COUNT(a.TransactionNo) FROM `acession_tbl` a JOIN `reservecopiess_tbl` r ON a.TransactionNo = r.TransactionNo LIMIT 1"
+
+                    Dim reserveCmd As New MySqlCommand(reserveCheckSql, con)
+                    Dim reservedCount As Integer = CInt(reserveCmd.ExecuteScalar())
+
+                    If reservedCount > 0 Then
+                        MessageBox.Show("Cannot delete all accession records. Kindly pushback all transaction before deleting.", "Deletion Restricted - Reserved Books", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
 
                     Dim coms As String = "DELETE FROM `acession_tbl`"
                     Dim comsuus As New MySqlCommand(coms, con)
@@ -706,7 +710,6 @@ Public Class Accession
                     Dim comsAvail As String = "DELETE FROM `available_tbl`"
                     Dim comsuusAvail As New MySqlCommand(comsAvail, con)
                     comsuusAvail.ExecuteNonQuery()
-
 
                     Dim resett As String = "ALTER TABLE `acession_tbl` AUTO_INCREMENT = 1"
                     Dim incrementsu As New MySqlCommand(resett, con)
@@ -722,6 +725,13 @@ Public Class Accession
                         End If
                     Next
 
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is TransactionNumber Then
+                            Dim load = DirectCast(form, TransactionNumber)
+                            load.LoadTransactions()
+
+                        End If
+                    Next
                     Acession_Load(sender, e)
                     clearlahat()
 

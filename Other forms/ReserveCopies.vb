@@ -93,6 +93,13 @@ Public Class ReserveCopies
 
     Private Sub btnpush_Click(sender As Object, e As EventArgs) Handles btnpush.Click
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is TransactionNumber Then
+                Dim load = DirectCast(form, TransactionNumber)
+                load.LoadTransactions()
+
+            End If
+        Next
         If DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a reserved copy to push back to Accession.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
@@ -178,6 +185,8 @@ Public Class ReserveCopies
                         accessionForm.CheckBox1.Checked = False
                     End If
                 Next
+
+
 
 
 

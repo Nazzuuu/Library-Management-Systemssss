@@ -22,10 +22,10 @@ Partial Class TransactionNumber
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         ListView1 = New ListView()
         txttransactionno = New ColumnHeader()
@@ -48,13 +48,13 @@ Partial Class TransactionNumber
         Guna2GroupBox1.BorderThickness = 2
         Guna2GroupBox1.Controls.Add(ListView1)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges5
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges1
         Guna2GroupBox1.FillColor = SystemColors.Control
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.Transparent
         Guna2GroupBox1.Location = New Point(37, 154)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         Guna2GroupBox1.Size = New Size(494, 322)
         Guna2GroupBox1.TabIndex = 90
         ' 
@@ -84,7 +84,7 @@ Partial Class TransactionNumber
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges7
+        txtsearch.CustomizableEdges = CustomizableEdges3
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -99,7 +99,7 @@ Partial Class TransactionNumber
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Transaction Number"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtsearch.Size = New Size(504, 30)
         txtsearch.TabIndex = 89
         ' 

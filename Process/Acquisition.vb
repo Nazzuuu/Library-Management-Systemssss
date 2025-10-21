@@ -288,16 +288,32 @@ Public Class Acquisition
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
 
-
         Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-        Dim old As Integer = CInt(selectedRow.Cells("Quantity").Value)
-        Dim neww As Integer = CInt(NumericUpDown1.Value)
-
+        Dim oldQuantity As Integer = CInt(selectedRow.Cells("Quantity").Value)
+        Dim newQuantity As Integer = CInt(NumericUpDown1.Value)
 
         Dim transactionNo As String = selectedRow.Cells("TransactionNo").Value.ToString()
         Dim bookTitle As String = selectedRow.Cells("BookTitle").Value.ToString().Trim()
 
         Dim originalTotalCost As Double = CDbl(selectedRow.Cells("TotalCost").Value)
+        Dim currentBookPrice As Double = 0.0
+
+        If String.IsNullOrWhiteSpace(txtbookprice.Text) Then
+            MessageBox.Show("Book Price cannot be empty.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
+
+        If Not Double.TryParse(txtbookprice.Text, currentBookPrice) Then
+            MessageBox.Show("Invalid format for Book Price. Please enter a numerical value.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
+
+        If currentBookPrice < 0 Then
+            MessageBox.Show("Book Price cannot be negative.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
+
+        Dim newTotalCost As Double = newQuantity * currentBookPrice
 
         Dim con As New MySqlConnection(connectionString)
 
@@ -311,46 +327,69 @@ Public Class Acquisition
         Try
             con.Open()
 
+            If newQuantity < oldQuantity Then
 
-            If neww < old Then
+                Dim accessionCountSql As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle"
+                Dim accessionCmd As New MySqlCommand(accessionCountSql, con)
+                accessionCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+                accessionCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+                Dim totalAcessionCopies As Integer = CInt(accessionCmd.ExecuteScalar())
+
+                Dim reserveCountSql As String = "SELECT COUNT(*) FROM `reservecopiess_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle"
+                Dim reserveCmd As New MySqlCommand(reserveCountSql, con)
+                reserveCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+                reserveCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+                Dim reserveCount As Integer = CInt(reserveCmd.ExecuteScalar())
+
+                Dim totalExistingCopies As Integer = totalAcessionCopies + reserveCount
+
+                Dim nonAvailableCountSql As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle AND Status <> 'Available'"
+                Dim nonAvailableCmd As New MySqlCommand(nonAvailableCountSql, con)
+                nonAvailableCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+                nonAvailableCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+                Dim totalNonAvailableCopies As Integer = CInt(nonAvailableCmd.ExecuteScalar())
 
 
-                Dim notavail As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle AND `Status` != 'Available'"
-                Dim koms As New MySqlCommand(notavail, con)
-                koms.Parameters.AddWithValue("@TransactionNo", transactionNo)
-                koms.Parameters.AddWithValue("@BookTitle", bookTitle)
+                If newQuantity = 0 AndAlso totalExistingCopies > 0 Then
 
-                Dim kownts As Integer = CInt(koms.ExecuteScalar())
+                    Dim warningMessage As String = "WARNING: Cannot reduce quantity to " & newQuantity & ". " & Environment.NewLine & Environment.NewLine &
+                                               "There are currently " & totalExistingCopies & " existing copies of '" & bookTitle & "' for Transaction No. " & transactionNo & ":" & Environment.NewLine &
+                                               "- " & totalAcessionCopies & " copies in the Acession Table." & Environment.NewLine &
+                                               "- " & reserveCount & " copies in the Reserve Copies Table."
 
-                If neww < kownts Then
+                    MessageBox.Show(warningMessage, "Cannot Update Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
-                    MessageBox.Show("WARNING: Cannot reduce quantity to " & neww & ". There are " & kownts & " copies of '" & bookTitle & "' with a status other than 'Available'.", "Cannot Update Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
-                    NumericUpDown1.Value = old
+                    NumericUpDown1.Value = oldQuantity
                     txttotalcost.Text = originalTotalCost.ToString("F2")
                     Return
                 End If
 
-                Dim recordsdelete As Integer = old - neww
+                If newQuantity < totalNonAvailableCopies Then
+                    Dim warningMessage As String = "CRITICAL WARNING: The new quantity (" & newQuantity & ") is less than the total number of copies currently in use or non-Available (" & totalNonAvailableCopies & "). Please check Borrowed/Reserved/Damaged records."
 
+                    MessageBox.Show(warningMessage, "Safety Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+                    NumericUpDown1.Value = oldQuantity
+                    txttotalcost.Text = originalTotalCost.ToString("F2")
+                    Return
+                End If
+
+                Dim recordsToDelete As Integer = oldQuantity - newQuantity
                 Dim deleteAcs As String = "DELETE FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle AND Status = 'Available' ORDER BY AccessionID DESC LIMIT @limit"
                 Dim deleyt As New MySqlCommand(deleteAcs, con)
                 deleyt.Parameters.AddWithValue("@TransactionNo", transactionNo)
                 deleyt.Parameters.AddWithValue("@BookTitle", bookTitle)
-                deleyt.Parameters.AddWithValue("@limit", recordsdelete)
+                deleyt.Parameters.AddWithValue("@limit", recordsToDelete)
                 deleyt.ExecuteNonQuery()
 
+            ElseIf newQuantity > oldQuantity Then
 
-
-            ElseIf neww > old Then
-
-                Dim recordsadd As Integer = neww - old
+                Dim recordsToAdd As Integer = newQuantity - oldQuantity
 
                 Dim rand As New Random()
                 Dim newAccessionID As String = ""
                 Dim isUnique As Boolean = False
                 Dim shelf As String = ""
-
 
                 Dim getShelfQuery As String = "SELECT Shelf FROM `acession_tbl` WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle LIMIT 1"
                 Dim getShelfCommand As New MySqlCommand(getShelfQuery, con)
@@ -361,7 +400,10 @@ Public Class Acquisition
                     shelf = shelfResult.ToString()
                 End If
 
-                For i As Integer = 1 To recordsadd
+                If String.IsNullOrWhiteSpace(shelf) Then
+                End If
+
+                For i As Integer = 1 To recordsToAdd
                     isUnique = False
                     While Not isUnique
                         newAccessionID = rand.Next(10000, 99999).ToString()
@@ -375,7 +417,6 @@ Public Class Acquisition
                             isUnique = True
                         End If
                     End While
-
 
                     Dim insertAcs As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
                                          "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
@@ -391,24 +432,23 @@ Public Class Acquisition
                         insertAcession.Parameters.AddWithValue("@Status", "Available")
                         insertAcession.ExecuteNonQuery()
                     End Using
+
+                    Dim insertAvailSql As String = "INSERT INTO available_tbl (AccessionID, ISBN, Barcode, BookTitle, Shelf, Status) " &
+                                               "VALUES (@AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @Status)"
+                    Using insertAvailCmd As New MySqlCommand(insertAvailSql, con)
+                        insertAvailCmd.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                        insertAvailCmd.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                        insertAvailCmd.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                        insertAvailCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+                        insertAvailCmd.Parameters.AddWithValue("@Shelf", shelf)
+                        insertAvailCmd.Parameters.AddWithValue("@Status", "Available")
+                        insertAvailCmd.ExecuteNonQuery()
+                    End Using
                 Next
-
-
-
-                Dim syncInsertSql As String = "INSERT IGNORE INTO available_tbl (AccessionID, ISBN, Barcode, BookTitle, Shelf, Status) " &
-                                          "SELECT ac.AccessionID, ac.ISBN, ac.Barcode, ac.BookTitle, ac.Shelf, ac.Status " &
-                                          "FROM acession_tbl ac " &
-                                          "LEFT JOIN available_tbl av ON ac.AccessionID = av.AccessionID " &
-                                          "WHERE ac.TransactionNo = @TransactionNo AND ac.BookTitle = @BookTitle AND ac.Status = 'Available' AND av.AccessionID IS NULL"
-
-                Using syncInsertCmd As New MySqlCommand(syncInsertSql, con)
-                    syncInsertCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
-                    syncInsertCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
-                    syncInsertCmd.ExecuteNonQuery()
-                End Using
 
             End If
 
+            txttotalcost.Text = newTotalCost.ToString("F2")
 
             Dim updates As String = "UPDATE `acquisition_tbl` SET " &
                                 "`ISBN` = @ISBN, " &
@@ -426,15 +466,13 @@ Public Class Acquisition
                 Updateacqt.Parameters.AddWithValue("@Barcode", txtbarcodes.Text)
                 Updateacqt.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text.Trim())
                 Updateacqt.Parameters.AddWithValue("@SupplierName", cbsuppliername.Text)
-                Updateacqt.Parameters.AddWithValue("@Quantity", neww)
-                Updateacqt.Parameters.AddWithValue("@BookPrice", CDbl(txtbookprice.Text))
-                Updateacqt.Parameters.AddWithValue("@TotalCost", CDbl(txttotalcost.Text))
+                Updateacqt.Parameters.AddWithValue("@Quantity", newQuantity)
+                Updateacqt.Parameters.AddWithValue("@BookPrice", currentBookPrice)
+                Updateacqt.Parameters.AddWithValue("@TotalCost", newTotalCost)
                 Updateacqt.Parameters.AddWithValue("@DateAcquired", purmatdeyt)
                 Updateacqt.Parameters.AddWithValue("@ID", ID)
                 Updateacqt.ExecuteNonQuery()
             End Using
-
-
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AvailableBooks Then
@@ -457,7 +495,6 @@ Public Class Acquisition
                 End If
             Next
 
-
         Catch ex As Exception
             MessageBox.Show("Error updating record: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
@@ -467,7 +504,6 @@ Public Class Acquisition
         End Try
 
     End Sub
-
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
@@ -524,6 +560,10 @@ Public Class Acquisition
                 Dim deleteCmd As New MySqlCommand("DELETE FROM `acquisition_tbl` WHERE `ID` = @id", con)
                 deleteCmd.Parameters.AddWithValue("@id", acquisitionID)
                 deleteCmd.ExecuteNonQuery()
+
+                Dim resett As String = "ALTER TABLE `acession_tbl` AUTO_INCREMENT = 1"
+                Dim incrementsu As New MySqlCommand(resett, con)
+                incrementsu.ExecuteNonQuery()
 
                 MessageBox.Show("Record deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 

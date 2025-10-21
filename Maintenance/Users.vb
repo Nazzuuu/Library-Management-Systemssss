@@ -843,18 +843,43 @@ Public Class Users
 
     Private Sub txtmname_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtmname.KeyPress
 
+
         If Char.IsControl(e.KeyChar) Then
             e.Handled = False
             Return
         End If
 
-        If Not Char.IsLetter(e.KeyChar) Then
+        Dim currentText As String = txtmname.Text
+        Dim currentLengthWithoutPeriod As Integer = currentText.Replace(".", "").Length
+
+
+        If Not Char.IsLetter(e.KeyChar) AndAlso e.KeyChar <> "."c Then
             e.Handled = True
             Return
         End If
 
-        If txtmname.Text.Replace(".", "").Length >= 1 Then
+
+        If e.KeyChar = "."c AndAlso currentText.Contains(".") Then
             e.Handled = True
+            Return
+        End If
+
+
+        If Char.IsLetter(e.KeyChar) AndAlso currentLengthWithoutPeriod >= 1 Then
+            e.Handled = True
+            Return
+        End If
+
+
+        If currentText.Length >= 2 AndAlso currentText.EndsWith(".") Then
+            e.Handled = True
+            Return
+        End If
+
+
+        If Char.IsLetter(e.KeyChar) AndAlso currentText.Contains(".") Then
+            e.Handled = True
+            Return
         End If
 
     End Sub
@@ -862,43 +887,41 @@ Public Class Users
     Private Sub txtmname_TextChanged(sender As Object, e As EventArgs) Handles txtmname.TextChanged
         Static isFormatting As Boolean = False
 
-        If isFormatting Then
-            Return
-        End If
+        If isFormatting Then Return
 
         Dim currentText As String = txtmname.Text
 
-        If String.IsNullOrWhiteSpace(currentText) Then
-            Return
-        End If
 
-        isFormatting = True
+        Dim initial As String = ""
+        For Each c As Char In currentText
+            If Char.IsLetter(c) Then
+                If initial.Length < 1 Then initial &= c
+            ElseIf c = "."c AndAlso Not initial.Contains(".") Then
+                initial &= c
+            End If
+        Next
 
-        Dim initial As String = currentText.Replace(".", "").Trim()
+        If initial.Length > 0 AndAlso Char.IsLetter(initial(0)) Then
+            Dim letterPart As String = initial(0).ToString().ToUpper()
+            Dim formattedText As String = letterPart
 
-        If initial.Length = 1 AndAlso currentText.Length = 1 Then
+            If initial.Length > 1 AndAlso initial.EndsWith(".") Then
+                formattedText &= "."
+            End If
+
+            isFormatting = True
+            If txtmname.Text <> formattedText Then
+                txtmname.Text = formattedText
+                txtmname.SelectionStart = txtmname.Text.Length
+            End If
             isFormatting = False
-            txtmname.SelectionStart = txtmname.Text.Length
-            Return
+        ElseIf currentText.Length > 0 AndAlso Not Char.IsLetter(currentText(0)) Then
+
+            isFormatting = True
+            txtmname.Text = ""
+            isFormatting = False
         End If
 
-        If initial.Length > 0 Then
-            Dim formattedInitial As String = initial.Substring(0, 1).ToUpper() & "."
-
-            If txtmname.Text <> formattedInitial Then
-                txtmname.Text = formattedInitial
-                txtmname.SelectionStart = txtmname.Text.Length
-            Else
-                txtmname.SelectionStart = txtmname.Text.Length
-            End If
-
-        Else
-            If currentText.Length > 0 Then
-                txtmname.Text = ""
-            End If
-        End If
-
-        isFormatting = False
     End Sub
 
 

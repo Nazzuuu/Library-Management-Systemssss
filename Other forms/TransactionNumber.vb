@@ -8,17 +8,36 @@ Public Class TransactionNumber
     Private Const connectionString As String = "server=localhost;userid=root;database=laybsis_dbs;"
 
     Public Sub LoadTransactions()
+        SearchTransactions(Nothing)
+    End Sub
+
+
+    Public Sub SearchTransactions(ByVal searchText As String)
         ListView1.Items.Clear()
         ListView1.View = View.Details
 
         Dim con As New MySqlConnection(connectionString)
+        Dim com As String
+        Dim isSearching As Boolean = Not String.IsNullOrEmpty(searchText)
 
-        Dim com As String = "SELECT TransactionNo, BookTitle FROM acquisition_tbl ORDER BY TransactionNo, BookTitle"
+        If isSearching Then
+
+            com = "SELECT TransactionNo, BookTitle FROM acquisition_tbl WHERE TransactionNo LIKE @SearchText OR BookTitle LIKE @SearchText ORDER BY TransactionNo, BookTitle"
+        Else
+
+            com = "SELECT TransactionNo, BookTitle FROM acquisition_tbl ORDER BY TransactionNo, BookTitle"
+        End If
 
         Try
             con.Open()
 
             Dim comsi As New MySqlCommand(com, con)
+
+            If isSearching Then
+
+                comsi.Parameters.AddWithValue("@SearchText", "%" & searchText.Trim() & "%")
+            End If
+
             Dim reader As MySqlDataReader = comsi.ExecuteReader()
 
             If ListView1.Columns.Count = 0 OrElse ListView1.Columns.Count < 2 Then
@@ -58,6 +77,7 @@ Public Class TransactionNumber
     End Sub
 
     Public Function CheckIfAccessionIsComplete(ByVal tranNo As String, ByVal bookTitle As String) As Boolean
+
         Dim con As New MySqlConnection(connectionString)
         Dim totalRequiredQuantity As Integer = 0
         Dim totalCopiesFound As Integer = 0
@@ -213,6 +233,7 @@ Public Class TransactionNumber
     End Sub
 
     Private Sub ListView1_DrawColumnHeader(sender As Object, e As DrawListViewColumnHeaderEventArgs) Handles ListView1.DrawColumnHeader
+
         Dim colorniheader As New SolidBrush(Color.FromArgb(207, 58, 109))
         e.Graphics.FillRectangle(colorniheader, e.Bounds)
 
@@ -230,6 +251,7 @@ Public Class TransactionNumber
     End Sub
 
     Private Sub ListView1_DrawSubItem(sender As Object, e As DrawListViewSubItemEventArgs) Handles ListView1.DrawSubItem
+
         e.DrawBackground()
 
         If e.Item.Selected AndAlso e.Item.ListView.Focused Then
@@ -249,4 +271,8 @@ Public Class TransactionNumber
         End If
     End Sub
 
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        SearchTransactions(txtsearch.Text)
+    End Sub
 End Class
