@@ -3,6 +3,7 @@ Imports MySql.Data.MySqlClient
 
 Public Class login
 
+    'shettt, kapagoddddddd'''''
 
     Public Sub clear()
         txtpass.Text = ""
