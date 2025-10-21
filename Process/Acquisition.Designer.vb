@@ -99,6 +99,7 @@ Partial Class Acquisition
         Label1 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         suppliernametooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
+        Label9 = New Label()
         panel_acquisition.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(NumericUpDown2, ComponentModel.ISupportInitialize).BeginInit()
@@ -123,6 +124,7 @@ Partial Class Acquisition
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label9)
         Guna2GroupBox1.Controls.Add(NumericUpDown2)
         Guna2GroupBox1.Controls.Add(Label6)
         Guna2GroupBox1.Controls.Add(Label12)
@@ -194,22 +196,22 @@ Partial Class Acquisition
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(609, 260)
+        Label12.Location = New Point(607, 253)
         Label12.Name = "Label12"
-        Label12.Size = New Size(42, 16)
+        Label12.Size = New Size(49, 16)
         Label12.TabIndex = 106
-        Label12.Text = "Note:"
+        Label12.Text = "Notes:"
         ' 
         ' Label13
         ' 
         Label13.AutoSize = True
         Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label13.ForeColor = Color.Red
-        Label13.Location = New Point(657, 261)
+        Label13.Location = New Point(656, 261)
         Label13.Name = "Label13"
-        Label13.Size = New Size(155, 16)
+        Label13.Size = New Size(175, 16)
         Label13.TabIndex = 105
-        Label13.Text = "Select Barcode or ISBN"
+        Label13.Text = "2. Select Barcode or ISBN."
         ' 
         ' DateTimePicker1
         ' 
@@ -710,6 +712,17 @@ Partial Class Acquisition
         suppliernametooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         suppliernametooltip.MaximumSize = New Size(0, 0)
         ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label9.ForeColor = Color.Red
+        Label9.Location = New Point(656, 245)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(189, 16)
+        Label9.TabIndex = 109
+        Label9.Text = "1. Set Expected Book Types."
+        ' 
         ' Acquisition
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -765,4 +778,5 @@ Partial Class Acquisition
     Friend WithEvents Label13 As Label
     Friend WithEvents NumericUpDown2 As Guna.UI2.WinForms.Guna2NumericUpDown
     Friend WithEvents Label6 As Label
+    Friend WithEvents Label9 As Label
 End Class

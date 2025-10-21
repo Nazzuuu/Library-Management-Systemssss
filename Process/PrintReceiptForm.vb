@@ -51,6 +51,7 @@ Public Class PrintReceiptForm
 
 
     Private Sub btnprint_Click(sender As Object, e As EventArgs) Handles btnprint.Click
+
         If Me.DataGridView1.RowCount = 0 OrElse Me.DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a borrowing record to print.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Exit Sub
@@ -58,7 +59,6 @@ Public Class PrintReceiptForm
 
         Dim selectedRow As DataGridViewRow = Me.DataGridView1.SelectedRows(0)
         Dim transacReceiptID As String = selectedRow.Cells("TransactionReceipt").Value?.ToString()
-
 
         If MainForm IsNot Nothing AndAlso MainForm.lbl_currentuser IsNot Nothing Then
             PrintingUserRole = MainForm.lbl_currentuser.Text
@@ -81,31 +81,38 @@ Public Class PrintReceiptForm
 
             printDoc.Print()
 
+
             UpdatePrintedStatus(transacReceiptID)
             refreshreceipt()
-
             MessageBox.Show($"Receipt for Transaction No. {transacReceiptID} successfully sent to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         Catch ex As System.Drawing.Printing.InvalidPrinterException
 
-            MessageBox.Show($"Warning: The selected printer ('{printDoc.PrinterSettings.PrinterName}') is not connected or ready. Please choose a different printer.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            MessageBox.Show($"Warning: The default printer ('{printDoc.PrinterSettings.PrinterName}') is not connected or ready. Please choose your Thermal Printer.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
             Using pdlg As New PrintDialog With {.Document = printDoc}
                 If pdlg.ShowDialog() = DialogResult.OK Then
                     printDoc.PrinterSettings = pdlg.PrinterSettings
                     printDoc.Print()
+
                     UpdatePrintedStatus(transacReceiptID)
                     refreshreceipt()
                     MessageBox.Show($"Receipt for Transaction No. {transacReceiptID} successfully sent to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success (Fallback)", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End If
             End Using
+
         Catch ex As Exception
 
-            MessageBox.Show("An unexpected error occurred during the print job. Opening Print Dialog to choose a different printer.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+            MessageBox.Show("An unexpected error occurred during the print job. You may need to choose a different printer.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+
             Using pdlg As New PrintDialog With {.Document = printDoc}
                 If pdlg.ShowDialog() = DialogResult.OK Then
                     printDoc.PrinterSettings = pdlg.PrinterSettings
                     printDoc.Print()
+
                     UpdatePrintedStatus(transacReceiptID)
                     refreshreceipt()
                     MessageBox.Show($"Receipt for Transaction No. {transacReceiptID} successfully sent to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success (Fallback)", MessageBoxButtons.OK, MessageBoxIcon.Information)

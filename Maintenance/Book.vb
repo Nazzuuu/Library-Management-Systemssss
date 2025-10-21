@@ -166,17 +166,18 @@ Public Class Book
 
     Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
 
+
         BarcodeList.Clear()
         BarcodeIndex = 0
+
 
         For Each row As DataGridViewRow In DataGridView1.Rows
             If Not row.IsNewRow Then
                 Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
-
                 Dim bookTitleValue As String = If(IsDBNull(row.Cells("BookTitle").Value), "(No Title)", CStr(row.Cells("BookTitle").Value))
 
-                If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
 
+                If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
                     BarcodeList.Add(New BarcodeInfo With {.Barcode = barcodeValue, .Title = bookTitleValue})
                 End If
             End If
@@ -188,42 +189,31 @@ Public Class Book
         End If
 
 
-        Dim defaultPrinterName As String = printDoc.PrinterSettings.PrinterName
-
-
-        If String.IsNullOrEmpty(defaultPrinterName) OrElse defaultPrinterName.ToLower().Contains("pdf") OrElse defaultPrinterName.ToLower().Contains("xps") OrElse defaultPrinterName.ToLower().Contains("onenote") Then
-
-            MessageBox.Show("No valid physical printer found. Please select your A4/Label printer.", "Printer Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
-            Try
-                Using pdlg As New PrintDialog With {.Document = printDoc}
-                    printDoc.DefaultPageSettings.Landscape = False
-                    If pdlg.ShowDialog() = DialogResult.OK Then
-                        printDoc.PrinterSettings = pdlg.PrinterSettings
-                        printDoc.Print()
-                        MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    End If
-                End Using
-            Catch ex As Exception
-                MessageBox.Show("Error selecting or starting print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Finally
-                BarcodeIndex = 0
-            End Try
-
-            Exit Sub
-        End If
-
-
         Try
 
-            printDoc.DefaultPageSettings.Landscape = False
-            printDoc.Print()
+            Using pdlg As New PrintDialog With {.Document = printDoc}
+                printDoc.DefaultPageSettings.Landscape = False
 
-            MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{defaultPrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                If pdlg.ShowDialog() = DialogResult.OK Then
+
+                    printDoc.PrinterSettings = pdlg.PrinterSettings
+
+
+                    printDoc.Print()
+
+                    Dim selectedPrinterName As String = printDoc.PrinterSettings.PrinterName
+                    MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{selectedPrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Else
+
+                    Exit Sub
+                End If
+            End Using
 
         Catch ex As System.Drawing.Printing.InvalidPrinterException
 
-            MessageBox.Show($"Warning: The default printer ('{defaultPrinterName}') is not connected or ready. Please check the printer connection.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Dim currentPrinterName As String = If(printDoc.PrinterSettings Is Nothing, "Selected Printer", printDoc.PrinterSettings.PrinterName)
+            MessageBox.Show($"Warning: The selected printer ('{currentPrinterName}') is not connected or ready. Please check the printer connection.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         Catch ex As Exception
             MessageBox.Show("An unexpected error occurred during the print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
@@ -231,7 +221,6 @@ Public Class Book
         End Try
 
     End Sub
-
 
     Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
 
