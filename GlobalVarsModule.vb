@@ -2,7 +2,7 @@
 
 Module GlobalVarsModule
 
-    Public connectionString As String = "Server=localhost;Database=laybsis_dbs;Uid=root;Pwd="
+    Public connectionString As String = "Server=localhost;Database=laybsisu_dbs;Uid=root;Pwd="
 
     Public CurrentUserID As String = ""
     Public CurrentUserRole As String = "Guest"
