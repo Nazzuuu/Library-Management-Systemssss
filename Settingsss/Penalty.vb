@@ -6,7 +6,6 @@ Imports System.Collections.Generic
 Public Class Penalty
 
     Private connectionString As String = GlobalVarsModule.connectionString
-    Private AccessionID As String = String.Empty
     Private originalCalculatedFee As Decimal = 0.00
     Private Const ABSOLUTE_MIN_FEE As Decimal = 50.0
 
@@ -76,7 +75,6 @@ Public Class Penalty
         End Try
     End Sub
 
-
     Private Function GetAccessionIDsByTransaction(ByVal transactionNo As String, ByVal bookTitles As List(Of String)) As String
         If String.IsNullOrWhiteSpace(transactionNo) OrElse bookTitles Is Nothing OrElse bookTitles.Count = 0 Then Return String.Empty
 
@@ -128,22 +126,21 @@ Public Class Penalty
     End Function
 
 
-    Private Function GetBookPriceByBookTitle(ByVal bookTitle As String) As Decimal
-        If String.IsNullOrWhiteSpace(bookTitle) Then Return 0.00
+    Private Function GetBookPriceByAccessionID(ByVal accessID As String) As Decimal
+        If String.IsNullOrWhiteSpace(accessID) Then Return 0.00
 
         Dim con As New MySqlConnection(connectionString)
         Dim price As Decimal = 0.00
-
-        Dim trimmedTitle As String = bookTitle.Trim()
-
-
-        Dim priceQuery As String = "SELECT `BookPrice` FROM `acquisition_tbl` WHERE `BookTitle` LIKE @titleWildcard LIMIT 1"
+        Dim priceQuery As String = "SELECT T2.`BookPrice` " &
+                                   "FROM `acession_tbl` T1 " &
+                                   "INNER JOIN `acquisition_tbl` T2 ON T1.`TransactionNo` = T2.`TransactionNo` " &
+                                   "WHERE T1.`AccessionID` = @accessID LIMIT 1"
 
         Try
             con.Open()
             Using cmd As New MySqlCommand(priceQuery, con)
 
-                cmd.Parameters.AddWithValue("@titleWildcard", trimmedTitle & "%")
+                cmd.Parameters.AddWithValue("@accessID", accessID.Trim())
 
                 Dim priceResult As Object = cmd.ExecuteScalar()
 
@@ -154,7 +151,39 @@ Public Class Penalty
                 End If
             End Using
         Catch ex As Exception
-            MessageBox.Show("Error retrieving book price by title: " & ex.Message, "Price Retrieval Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error retrieving book price by Accession ID (JOIN failed). Check if 'TransactionID' is the correct join key: " & ex.Message, "Price Retrieval Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then con.Close()
+        End Try
+
+        Return 0.00
+    End Function
+
+
+    Private Function GetBookPriceByBookTitle(ByVal bookTitle As String) As Decimal
+        If String.IsNullOrWhiteSpace(bookTitle) Then Return 0.00
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim price As Decimal = 0.00
+        Dim trimmedTitle As String = bookTitle.Trim()
+        Dim priceQuery As String = "SELECT `BookPrice` FROM `acquisition_tbl` WHERE `BookTitle` LIKE @titleWildcard LIMIT 1"
+
+        Try
+            con.Open()
+            Using cmd As New MySqlCommand(priceQuery, con)
+
+                cmd.Parameters.AddWithValue("@titleWildcard", "%" & trimmedTitle & "%")
+
+                Dim priceResult As Object = cmd.ExecuteScalar()
+
+                If priceResult IsNot Nothing AndAlso priceResult IsNot DBNull.Value Then
+                    If Decimal.TryParse(priceResult.ToString(), price) Then
+                        Return price
+                    End If
+                End If
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error retrieving book price by Title: " & ex.Message, "Price Retrieval Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then con.Close()
         End Try
@@ -190,11 +219,14 @@ Public Class Penalty
         Return 0.00
     End Function
 
-    Private Function CalculateTotalPenaltyFee(ByVal transactionNo As String) As Decimal
+
+    Private Function CalculateTotalPenaltyFee(ByVal transactionNo As String, ByVal allAccessionIDs As List(Of String)) As Decimal
         Dim totalFee As Decimal = 0.00
         Dim con As New MySqlConnection(connectionString)
 
         Dim query As String = "SELECT `Status`, `BookTotal`, `ReturnedBook` FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
+
+        Dim accessIDIndex As Integer = 0
 
         Try
             con.Open()
@@ -204,7 +236,6 @@ Public Class Penalty
                     While reader.Read()
                         Dim bookStatus As String = reader("Status").ToString()
                         Dim bookCount As Integer = CInt(reader("BookTotal"))
-                        Dim bookTitleForPrice As String = reader("ReturnedBook").ToString().Trim()
                         Dim currentFee As Decimal = 0.00
 
                         If bookStatus.StartsWith("Overdue") Then
@@ -216,13 +247,24 @@ Public Class Penalty
                         ElseIf bookStatus.Contains("Damaged (Major)") Then
                             currentFee = GetFixedPenaltyFeeByStatus("Damaged Book - Major") * bookCount
 
-
                         ElseIf bookStatus.Contains("Damaged (Irreparable)") OrElse bookStatus.StartsWith("Lost") Then
 
-                            Dim bookPrice As Decimal = GetBookPriceByBookTitle(bookTitleForPrice)
+                            For i As Integer = 1 To bookCount
+                                If allAccessionIDs IsNot Nothing AndAlso allAccessionIDs.Count > accessIDIndex Then
+                                    Dim currentAccessionID As String = allAccessionIDs(accessIDIndex)
 
-                            currentFee = bookPrice * bookCount
 
+                                    Dim bookPrice As Decimal = GetBookPriceByAccessionID(currentAccessionID)
+
+                                    currentFee += bookPrice
+                                    accessIDIndex += 1
+                                Else
+
+                                    Dim bookTitleForPrice As String = reader("ReturnedBook").ToString().Trim()
+                                    Dim bookPrice As Decimal = GetBookPriceByBookTitle(bookTitleForPrice)
+                                    currentFee += bookPrice
+                                End If
+                            Next
                         End If
 
                         totalFee += currentFee
@@ -269,38 +311,28 @@ Public Class Penalty
     Private Sub ClearAllDetails()
 
         lbltransactionreceipt.Text = ".."
-
-
         lblborrowertype.Text = ".."
         lbllrn.Text = ".."
         lblemployeeno.Text = ".."
         lblfullname.Text = ".."
-
-
         lblgrade.Text = ".."
         lblsection.Text = ".."
         lblstrand.Text = ".."
         lbldepartment.Text = ".."
-
-
         lblborroweddate.Text = ".."
         lblduedate.Text = ".."
         lblbooktotal.Text = ".."
         lblaccessionid.Text = ".."
         lblbooktitle.Text = ".."
         lblbookstatus.Text = ".."
-
-
         lblborrowerstatus.Text = ".."
         txtfee.Text = String.Empty
         chkdisregard.Checked = False
         originalCalculatedFee = 0.00
         txtfee.ReadOnly = True
-
         chkdisregard.Enabled = False
 
     End Sub
-
 
     Private Function GetAggregatedBookDetails(ByVal transactionNo As String) As Tuple(Of String, Integer, List(Of String))
         Dim con As New MySqlConnection(connectionString)
@@ -316,7 +348,6 @@ Public Class Penalty
                     While reader.Read()
                         Dim returnedBookString As String = reader("ReturnedBook").ToString()
                         totalCount += CInt(reader("BookTotal"))
-
 
                         Dim bookTitles() As String = returnedBookString.Split(New Char() {"|"c}, StringSplitOptions.RemoveEmptyEntries)
 
@@ -338,11 +369,9 @@ Public Class Penalty
         Return New Tuple(Of String, Integer, List(Of String))(String.Join(Environment.NewLine, uniqueTitles.ToArray()), totalCount, uniqueTitles.ToList())
     End Function
 
-
     Private Sub LoadDetailsFromSelectedRow(ByVal row As DataGridViewRow)
         If row Is Nothing Then Return
 
-        Me.AccessionID = String.Empty
         originalCalculatedFee = 0.00
 
         Try
@@ -379,18 +408,26 @@ Public Class Penalty
 
             lblborrowerstatus.Text = currentStatus
 
-            originalCalculatedFee = CalculateTotalPenaltyFee(transNo)
+
+            Dim accessionIDsString As String = GetAccessionIDsByTransaction(transNo, uniqueBookTitles)
+            lblaccessionid.Text = accessionIDsString
+
+            Dim allAccessionIDs As New List(Of String)
+            If Not String.IsNullOrWhiteSpace(accessionIDsString) Then
+                allAccessionIDs = accessionIDsString.Split(New String() {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList()
+            End If
+
+
+            originalCalculatedFee = CalculateTotalPenaltyFee(transNo, allAccessionIDs)
             txtfee.Text = originalCalculatedFee.ToString("N2")
 
             txtfee.ReadOnly = True
 
-            lblaccessionid.Text = GetAccessionIDsByTransaction(transNo, uniqueBookTitles)
             chkdisregard.Enabled = True
         Catch ex As Exception
             MessageBox.Show("Error loading details: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
-
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
         Dim searchText As String = txtsearch.Text.Trim()
@@ -400,7 +437,6 @@ Public Class Penalty
             If DataGridView1.SelectedRows.Count > 0 Then
                 DataGridView1.ClearSelection()
             End If
-
 
             ClearAllDetails()
             refreshpenalty()
@@ -417,7 +453,6 @@ Public Class Penalty
             If String.IsNullOrWhiteSpace(searchText) Then
 
                 ClearAllDetails()
-
                 DataGridView1.ClearSelection()
 
             ElseIf DataGridView1.Rows.Count > 0 Then
@@ -489,7 +524,6 @@ Public Class Penalty
             End Try
         End Using
 
-
         Dim oldFeeStatus As String = If(chkdisregard.Checked, $"Disregarded Fee: {enteredFee.ToString("N2")}", $"Calculated Fee: {originalCalculatedFee.ToString("N2")}")
 
         GlobalVarsModule.LogAudit(
@@ -506,7 +540,6 @@ Public Class Penalty
             End If
         Next
 
-
         MessageBox.Show($"Penalty of {enteredFee.ToString("N2")} for Transaction: {transNo} has been marked as PENALIZED.", "Penalty Applied", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         lblborrowerstatus.Text = "PENALIZED"
@@ -516,4 +549,9 @@ Public Class Penalty
 
     End Sub
 
+    Private Sub penalty_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
 End Class

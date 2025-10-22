@@ -143,7 +143,7 @@ Public Class Returning
         Dim booksToReturn As New List(Of String)
         Dim bookStatus As String = "Normal"
         Dim newAccessionStatus As String = "Available"
-        Dim bookStatusDescription As String = String.Empty ' Para sa Audit Log
+        Dim bookStatusDescription As String = String.Empty
 
         If rboverdue.Checked Then
             Dim dueDateString As String = lblduedate.Text
@@ -162,7 +162,7 @@ Public Class Returning
 
             bookStatus = "Overdue"
             newAccessionStatus = "Available"
-            bookStatusDescription = "Overdue" ' Para sa Audit Log
+            bookStatusDescription = "Overdue"
 
         ElseIf rbdamage.Checked Then
             If cbdamage.SelectedItem Is Nothing Then
@@ -171,17 +171,17 @@ Public Class Returning
             End If
             bookStatus = "Damaged (" & cbdamage.SelectedItem.ToString() & ")"
             newAccessionStatus = "Damaged"
-            bookStatusDescription = "Damaged" ' Para sa Audit Log
+            bookStatusDescription = "Damaged"
 
         ElseIf rblost.Checked Then
             bookStatus = "Lost"
             newAccessionStatus = "Lost"
-            bookStatusDescription = "Lost" ' Para sa Audit Log
+            bookStatusDescription = "Lost"
 
         Else
             bookStatus = "Normal"
             newAccessionStatus = "Available"
-            bookStatusDescription = "Normal Return" ' Para sa Audit Log
+            bookStatusDescription = "Normal Return"
         End If
 
 

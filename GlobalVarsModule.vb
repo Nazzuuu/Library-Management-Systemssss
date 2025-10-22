@@ -37,9 +37,9 @@ Module GlobalVarsModule
                 con.Open()
 
                 Dim checkCom As String = "SELECT COUNT(*) FROM `oras_tbl` " &
-                                         "WHERE (LRN = @ID OR EmployeeNo = @ID) " &
-                                         "AND DATE(TimeIn) = DATE(NOW()) " &
-                                         "AND TimeOut IS NULL"
+                                             "WHERE (LRN = @ID OR EmployeeNo = @ID) " &
+                                             "AND DATE(TimeIn) = DATE(NOW()) " &
+                                             "AND TimeOut IS NULL"
 
                 Using checkCmd As New MySqlCommand(checkCom, con)
                     checkCmd.Parameters.AddWithValue("@ID", borrowerID)
@@ -148,9 +148,6 @@ Module GlobalVarsModule
                     fullDescription &= $" [Change: {oldValue} -> {newValue}]"
 
 
-                ElseIf Not String.IsNullOrWhiteSpace(recordID) Then
-
-                    fullDescription &= $" [Record ID: {recordID}]"
                 End If
 
 

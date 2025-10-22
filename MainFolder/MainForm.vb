@@ -17,8 +17,10 @@ Public Class MainForm
         lbllostcount()
         lbloverduecount()
         lblresercopies()
+        lbltotalbookscount()
         btnexit.Visible = False
 
+        loadsu()
 
     End Sub
 
@@ -32,6 +34,7 @@ Public Class MainForm
                 load.lbloverduecount()
                 load.lblreturncount()
                 load.lblresercopies()
+                load.lbltotalbookscount()
             End If
         Next
 
@@ -1021,6 +1024,30 @@ Public Class MainForm
         End Try
     End Sub
 
+
+    Public Sub lbltotalbookscount()
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim cmd As New MySqlCommand("SELECT SUM(Quantity) FROM acquisition_tbl", con)
+        Dim count As Object = 0
+
+        Try
+            con.Open()
+            count = cmd.ExecuteScalar()
+
+            If IsDBNull(count) Or IsNothing(count) Then
+
+                lbltotalbooks.Text = "0"
+            Else
+
+                lbltotalbooks.Text = count.ToString()
+            End If
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical)
+        Finally
+            If con.State = ConnectionState.Open Then con.Close()
+        End Try
+    End Sub
+
     Private Sub PrintReceiptToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PrintReceiptToolStripMenuItem.Click
 
         Panel_dash.Controls.Clear()
@@ -1217,5 +1244,84 @@ Public Class MainForm
 
     End Sub
 
+    Private Sub btn_borrowed_Click(sender As Object, e As EventArgs) Handles btn_borrowed.Click
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is BorrowedView Then
+                Dim load = DirectCast(form, BorrowedView)
+                load.refreshbrw()
+            End If
+        Next
+
+        BorrowedView.ShowDialog()
+    End Sub
+
+    Private Sub btn_rtn_Click(sender As Object, e As EventArgs) Handles btn_rtn.Click
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is ReturnedView Then
+                Dim load = DirectCast(form, ReturnedView)
+                load.refreshreturned()
+            End If
+        Next
+
+        ReturnedView.ShowDialog()
+    End Sub
+
+    Private Sub btn_overdue_Click(sender As Object, e As EventArgs) Handles btn_overdue.Click
+        OverdueView.ShowDialog()
+    End Sub
+
+    Private Sub btn_dmg_Click(sender As Object, e As EventArgs) Handles btn_dmg.Click
+        For Each form In Application.OpenForms
+            If TypeOf form Is DamagedView Then
+                Dim load = DirectCast(form, DamagedView)
+                load.refreshdamage()
+            End If
+        Next
+        DamagedView.ShowDialog()
+    End Sub
+
+    Private Sub btn_lost_Click(sender As Object, e As EventArgs) Handles btn_lost.Click
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is LostView Then
+                Dim load = DirectCast(form, LostView)
+                load.refreshlost()
+            End If
+        Next
+
+        LostView.ShowDialog()
+    End Sub
+
+    Private Sub btn_reserve_Click(sender As Object, e As EventArgs) Handles btn_reserve.Click
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is ReserveCopiesView Then
+                Dim load = DirectCast(form, ReserveCopies)
+                load.reserveload()
+            End If
+        Next
+
+        ReserveCopiesView.ShowDialog()
+    End Sub
+
+    Private Sub btntotalbooks_Click(sender As Object, e As EventArgs) Handles btntotalbooks.Click
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is TotalBooksView Then
+                Dim load = DirectCast(form, TotalBooksView)
+                load.refreshtotalbooks()
+            End If
+        Next
+        TotalBooksView.ShowDialog()
+    End Sub
+
+    Private Sub btntotalbooks_MouseHover(sender As Object, e As EventArgs) Handles btntotalbooks.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btntotalbooks_MouseLeave(sender As Object, e As EventArgs) Handles btntotalbooks.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class

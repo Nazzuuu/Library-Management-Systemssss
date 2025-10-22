@@ -597,6 +597,11 @@ Public Class BookBorrowingConfirmation
 
     End Sub
 
+    Private Sub BShown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+        DataGridView1.ClearSelection()
+
+    End Sub
 
     Private Sub LoadBookList(transactionReceiptID As String)
         Dim con As New MySqlConnection(connectionString)
