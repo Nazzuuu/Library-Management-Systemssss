@@ -16,7 +16,7 @@ Public Class Book
         Public Title As String
     End Structure
 
-    Private Const connectionString As String = "Server=localhost;Database=laybsis_dbs;Uid=root;Pwd=;"
+    Private Const connectionString As String = "Server=localhost;Database=laybsisu_dbs;Uid=root;Pwd=;"
 
     Private isbarcode As Boolean = False
 

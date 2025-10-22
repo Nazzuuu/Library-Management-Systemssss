@@ -5,7 +5,7 @@ Imports System.Collections.Generic
 
 Public Class TransactionNumber
 
-    Private Const connectionString As String = "server=localhost;userid=root;database=laybsis_dbs;"
+    Private Const connectionString As String = "Server=localhost;Database=laybsisu_dbs;Uid=root;Pwd=;"
 
     Public Sub LoadTransactions()
         SearchTransactions(Nothing)

@@ -4,7 +4,7 @@ Imports System.Drawing
 
 Public Class Penalty_Management
 
-    ' Gumagamit na ng GlobalVarsModule.connectionString kaya tinanggal ang Dim connectionString
+
     Dim selectrow As Integer
 
     Private Function IsPenaltyTypeExist(ByVal penaltyType As String, Optional ByVal excludeId As Integer = 0) As Boolean

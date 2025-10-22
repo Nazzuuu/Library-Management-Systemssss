@@ -8,7 +8,7 @@ Public Class RegisteredBrwr
     Public IsInViewMode As Boolean = False
     Public IsTimeInMode As Boolean = False
     Private IsTimeInSuccessfulAndClosing As Boolean = False
-    Private con As New MySqlConnection(connectionString)
+    Private con As New MySqlConnection(GlobalVarsModule.connectionString)
 
 
 

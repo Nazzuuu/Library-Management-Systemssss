@@ -3,7 +3,7 @@ Imports System.Data
 
 Public Class AvailableBooks
 
-    Private Const connectionString As String = "server=localhost;userid=root;database=laybsis_dbs;"
+
 
     Private Sub AvailableBooks_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshavail()
@@ -12,7 +12,7 @@ Public Class AvailableBooks
 
     Public Sub refreshavail()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
             con.Open()
