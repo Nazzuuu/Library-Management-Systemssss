@@ -753,18 +753,6 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 comsi.ExecuteNonQuery()
             End Using
 
-            ' --------------------------------------------------------
-            ' SIMULA NG BAGONG CODE: I-update ang Quantity sa acquisition_tbl
-            ' --------------------------------------------------------
-            Dim updateAcquisitionSql As String = "UPDATE acquisition_tbl SET Quantity = Quantity - 1 WHERE BookTitle = @BookTitle AND Quantity > 0"
-
-            Using updateAcquisitionCmd As New MySqlCommand(updateAcquisitionSql, con)
-                updateAcquisitionCmd.Parameters.AddWithValue("@BookTitle", txtsus.Text)
-                updateAcquisitionCmd.ExecuteNonQuery()
-            End Using
-            ' --------------------------------------------------------
-            ' TAPOS NG BAGONG CODE
-            ' --------------------------------------------------------
 
 
             GlobalVarsModule.LogAudit(

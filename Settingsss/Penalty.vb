@@ -507,15 +507,24 @@ Public Class Penalty
 
         Dim transNo As String = lbltransactionreceipt.Text
 
+
         Using con As New MySqlConnection(connectionString)
-            Dim updateQuery As String = "UPDATE `penalty_tbl` SET `BorrowerStatus` = 'PENALIZED' WHERE `TransactionReceipt` = @transNo"
+            Dim updatePenaltyQuery As String = "UPDATE `penalty_tbl` SET `BorrowerStatus` = 'PENALIZED' WHERE `TransactionReceipt` = @transNo"
+            Dim updateReturningQuery As String = "UPDATE `returning_tbl` SET `BorrowerStatus` = 'PENALIZED' WHERE `TransactionReceipt` = @transNo"
 
             Try
                 con.Open()
-                Using cmd As New MySqlCommand(updateQuery, con)
-                    cmd.Parameters.AddWithValue("@transNo", transNo)
-                    cmd.ExecuteNonQuery()
+
+                Using cmdPenalty As New MySqlCommand(updatePenaltyQuery, con)
+                    cmdPenalty.Parameters.AddWithValue("@transNo", transNo)
+                    cmdPenalty.ExecuteNonQuery()
                 End Using
+
+                Using cmdReturning As New MySqlCommand(updateReturningQuery, con)
+                    cmdReturning.Parameters.AddWithValue("@transNo", transNo)
+                    cmdReturning.ExecuteNonQuery()
+                End Using
+
             Catch ex As Exception
                 MessageBox.Show("Database Update Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Return
@@ -527,13 +536,13 @@ Public Class Penalty
         Dim oldFeeStatus As String = If(chkdisregard.Checked, $"Disregarded Fee: {enteredFee.ToString("N2")}", $"Calculated Fee: {originalCalculatedFee.ToString("N2")}")
 
         GlobalVarsModule.LogAudit(
-            actionType:="UPDATE",
-            formName:="PENALTY PAYMENT",
-            description:=$"Transaction {transNo} marked as PENALIZED.",
-            recordID:=transNo,
-            oldValue:=$"Status: NOT PENALIZED | Fee: {oldFeeStatus}",
-            newValue:=$"Status: PENALIZED | Paid Amount: {enteredFee.ToString("N2")}"
-        )
+        actionType:="UPDATE",
+        formName:="PENALTY PAYMENT",
+        description:=$"Transaction {transNo} marked as PENALIZED in penalty_tbl and returning_tbl.",
+        recordID:=transNo,
+        oldValue:=$"Status: NOT PENALIZED | Fee: {oldFeeStatus}",
+        newValue:=$"Status: PENALIZED | Paid Amount: {enteredFee.ToString("N2")}"
+    )
         For Each form In Application.OpenForms
             If TypeOf form Is AuditTrail Then
                 DirectCast(form, AuditTrail).refreshaudit()

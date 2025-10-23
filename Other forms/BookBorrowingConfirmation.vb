@@ -130,7 +130,7 @@ Public Class BookBorrowingConfirmation
 
 
                         Dim insertHistoryCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, BorrowedDate, DueDate, TransactionReceipt, Status) " &
-                                                 "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @BDate, @DDate, @TransactionReceipt, @Status)"
+                                                   "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @BDate, @DDate, @TransactionReceipt, @Status)"
 
                         Using cmdHistory As New MySqlCommand(insertHistoryCom, con)
                             cmdHistory.Parameters.AddWithValue("@Borrower", borrowerType)
@@ -152,6 +152,14 @@ Public Class BookBorrowingConfirmation
                             pendingstats(finalAccessionID, "Borrowed")
 
                             totalBooksConfirmed += 1
+
+                            Dim updateAcquisitionSql As String = "UPDATE acquisition_tbl SET Quantity = Quantity - 1 WHERE BookTitle = @BookTitle AND Quantity > 0"
+                            Using updateAcquisitionCmd As New MySqlCommand(updateAcquisitionSql, con)
+
+                                updateAcquisitionCmd.Parameters.AddWithValue("@BookTitle", finalBookTitle)
+                                updateAcquisitionCmd.ExecuteNonQuery()
+                            End Using
+
                         End Using
                     End If
                 End Using
@@ -200,137 +208,6 @@ Public Class BookBorrowingConfirmation
         End Try
     End Sub
 
-    Private Sub btndecline_Click(sender As Object, e As EventArgs) Handles btndecline.Click
-        If DataGridView1.SelectedRows.Count = 0 Then
-            MsgBox("Please select a record to decline.", vbExclamation, "No Selection")
-            Exit Sub
-        End If
-
-        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-
-        If MsgBox("Are you sure you want to DECLINE this borrowing request? This action will cancel the entire pending transaction (Receipt: " & selectedRow.Cells("TransactionReceipt").Value.ToString & ") ", vbQuestion + vbYesNo, "Confirm Decline") = vbNo Then
-            Exit Sub
-        End If
-
-        Dim idToDecline As Integer = CInt(selectedRow.Cells("ID").Value)
-        Dim transactionReceiptID As String = selectedRow.Cells("TransactionReceipt").Value.ToString
-
-        Dim con As New MySqlConnection(connectionString)
-
-        Dim bookDetailsList As New List(Of Dictionary(Of String, String))
-
-        Dim borrowerType As String = selectedRow.Cells("Borrower").Value.ToString
-        Dim borrowerName As String = selectedRow.Cells("Name").Value.ToString
-        Dim borrowedDate As String = selectedRow.Cells("BorrowedDate").Value.ToString
-
-        Dim finalDueDate As String = selectedRow.Cells("DueDate").Value.ToString
-
-        Dim finalLRN As String = If(lbllrn.Text = "--", "", lbllrn.Text)
-        Dim finalEmpNo As String = If(lblemployeeno.Text = "--", "", lblemployeeno.Text)
-
-        Try
-            con.Open()
-
-            Dim comGetBooks As String = "SELECT AccessionID, BookTitle, ISBN, Barcode FROM `borrowing_tbl` WHERE `TransactionReceipt` = @TID AND AccessionID IS NOT NULL"
-            Using cmdGetBooks As New MySqlCommand(comGetBooks, con)
-                cmdGetBooks.Parameters.AddWithValue("@TID", transactionReceiptID)
-                Dim reader As MySqlDataReader = cmdGetBooks.ExecuteReader()
-                While reader.Read()
-                    Dim bookData As New Dictionary(Of String, String)
-                    bookData.Add("AccessionID", reader("AccessionID").ToString())
-                    bookData.Add("BookTitle", reader("BookTitle").ToString())
-                    bookData.Add("ISBN", reader("ISBN").ToString())
-                    bookData.Add("Barcode", reader("Barcode").ToString())
-                    bookDetailsList.Add(bookData)
-                End While
-                reader.Close()
-            End Using
-
-            If bookDetailsList.Count = 0 AndAlso lblaccessionid.Text <> "--" Then
-                Dim defaultBook As New Dictionary(Of String, String)
-                defaultBook.Add("AccessionID", lblaccessionid.Text)
-                defaultBook.Add("BookTitle", "Unknown")
-                defaultBook.Add("ISBN", "")
-                defaultBook.Add("Barcode", "")
-                bookDetailsList.Add(defaultBook)
-            End If
-
-            For Each bookData In bookDetailsList
-
-                Dim finalAccessionID As String = bookData("AccessionID")
-                Dim finalBookTitle As String = bookData("BookTitle")
-                Dim finalISBN As String = bookData("ISBN")
-                Dim finalBarcode As String = bookData("Barcode")
-
-                pendingstats(finalAccessionID, "Available")
-
-
-                Dim insertHistoryCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, BorrowedDate, DueDate, TransactionReceipt, Status) " &
-                                             "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @BDate, @DDate, @TransactionReceipt, @Status)"
-
-                Using cmdHistory As New MySqlCommand(insertHistoryCom, con)
-                    cmdHistory.Parameters.AddWithValue("@Borrower", borrowerType)
-                    cmdHistory.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(finalLRN), DBNull.Value, finalLRN))
-                    cmdHistory.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(finalEmpNo), DBNull.Value, finalEmpNo))
-                    cmdHistory.Parameters.AddWithValue("@Name", borrowerName)
-                    cmdHistory.Parameters.AddWithValue("@Title", finalBookTitle)
-                    cmdHistory.Parameters.AddWithValue("@ISBN", finalISBN)
-                    cmdHistory.Parameters.AddWithValue("@Barcode", finalBarcode)
-                    cmdHistory.Parameters.AddWithValue("@AccessionID", finalAccessionID)
-                    cmdHistory.Parameters.AddWithValue("@BDate", borrowedDate)
-
-
-                    cmdHistory.Parameters.AddWithValue("@DDate", finalDueDate)
-
-                    cmdHistory.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
-                    cmdHistory.Parameters.AddWithValue("@Status", "Declined")
-                    cmdHistory.ExecuteNonQuery()
-                End Using
-            Next
-
-            Dim deleteComConfirm As String = "DELETE FROM confimation_tbl WHERE ID = @ID"
-            Using cmdDeleteConfirm As New MySqlCommand(deleteComConfirm, con)
-                cmdDeleteConfirm.Parameters.AddWithValue("@ID", idToDecline)
-                cmdDeleteConfirm.ExecuteNonQuery()
-            End Using
-
-            Dim deleteComBorrowing As String = "DELETE FROM borrowing_tbl WHERE TransactionReceipt = @TID"
-            Using cmdDeleteBorrowing As New MySqlCommand(deleteComBorrowing, con)
-                cmdDeleteBorrowing.Parameters.AddWithValue("@TID", transactionReceiptID)
-                cmdDeleteBorrowing.ExecuteNonQuery()
-            End Using
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is Borrowing Then
-                    Dim brwr = DirectCast(form, Borrowing)
-                    brwr.refreshborrowingsu()
-                End If
-            Next
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is MainForm Then
-                    Dim lbllabel = DirectCast(form, MainForm)
-                    lbllabel.lblborrowcount()
-                End If
-            Next
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is BorrowingHistory Then
-                    Dim load = DirectCast(form, BorrowingHistory)
-                    load.refreshhistory()
-                End If
-            Next
-
-            MsgBox("Borrowing request successfully declined. Transaction: " & transactionReceiptID & "", vbInformation, "Declined")
-
-        Catch ex As Exception
-            MessageBox.Show("Error declining record: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            If con.State = ConnectionState.Open Then con.Close()
-            refreshconfirmation()
-            ClearDetails()
-        End Try
-    End Sub
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
         ClearDetails()
     End Sub
