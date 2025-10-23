@@ -4,7 +4,7 @@ Imports System.Data
 Public Class Acquisition
 
     Private isShowingWarning As Boolean = False
-
+    Private isEditing As Boolean = False
 
     Private Sub Acquisition_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -296,6 +296,8 @@ Public Class Acquisition
     End Sub
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+
+        isEditing = False
 
         If DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a record to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -643,6 +645,7 @@ Public Class Acquisition
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
 
+        isEditing = False
 
         clear()
         jineret()
@@ -659,6 +662,8 @@ Public Class Acquisition
     Private Sub dgv_acquisition_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
         If e.RowIndex >= 0 Then
+
+            isEditing = True
 
             txtisbn.Enabled = False
             txtbarcodes.Enabled = False
@@ -796,14 +801,19 @@ Public Class Acquisition
     End Function
 
     Private Sub InputControl_GotFocus(sender As Object, e As EventArgs) Handles txtisbn.GotFocus, txtbarcodes.GotFocus,
-                                                                        txtbooktitle.GotFocus, txtbookprice.GotFocus,
-                                                                        cbsuppliername.GotFocus, NumericUpDown1.GotFocus,
-                                                                        rbisbn.GotFocus, rbbarcode.GotFocus
-        If Not IsTransactionQuantityValid() Then
+                                                                    txtbooktitle.GotFocus, txtbookprice.GotFocus,
+                                                                    cbsuppliername.GotFocus, NumericUpDown1.GotFocus,
+                                                                    rbisbn.GotFocus, rbbarcode.GotFocus
 
+        If Not isEditing Then
+            If Not IsTransactionQuantityValid() Then
+
+            End If
         End If
     End Sub
     Public Sub clear()
+
+        isEditing = False
 
         txtbookprice.Text = ""
         txtisbn.Text = ""
