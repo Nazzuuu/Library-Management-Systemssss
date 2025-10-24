@@ -179,9 +179,9 @@ Public Class login
 
 
     Private Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        TopMost = True
+        'TopMost = True
 
-        Koneksyon()
+        'Koneksyon()
 
         MainForm.Refresh()
 
@@ -272,5 +272,9 @@ Public Class login
 
         Cursor = Cursors.Default
 
+    End Sub
+
+    Private Sub btndbs_Click(sender As Object, e As EventArgs) Handles btndbs.Click
+        ServerConnection.ShowDialog()
     End Sub
 End Class
