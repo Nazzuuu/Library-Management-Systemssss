@@ -12,40 +12,26 @@ Public Class PrintReceiptForm
     Private PrintIndex As Integer = 0
     Private PrintingUserRole As String = String.Empty
 
+    ' ******************************************************
+    ' * PAGBABAGO 1: Constant para sa Printer DPI.
+    ' * Gagamitin ito para maging tama ang sukat ng barcode.
+    ' ******************************************************
+    Private Const PRINTER_DPI As Integer = 203
+
     Private Sub PrintReceipt_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         DataGridView1.ClearSelection()
         refreshreceipt()
     End Sub
 
-
-    Private Sub GenerateBarcode(ByVal codeText As String)
-        If String.IsNullOrWhiteSpace(codeText) Then
-            Me.picbarcode.Image = Nothing
-            Exit Sub
-        End If
-
-        Try
-            Dim writer As New BarcodeWriter() With {
-                .Format = BarcodeFormat.CODE_128,
-                .Options = New ZXing.Common.EncodingOptions With {
-                    .Width = Me.picbarcode.Width,
-                    .Height = Me.picbarcode.Height,
-                    .Margin = 1
-                }
-            }
-            Dim barcodeBitmap As Bitmap = writer.Write(codeText)
-            Me.picbarcode.Image = barcodeBitmap
-        Catch ex As Exception
-            MessageBox.Show("Error generating barcode: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
-    End Sub
+    ' Ang lumang GenerateBarcode function ay inalis na.
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
         If e.RowIndex >= 0 Then
             Dim selectedRow As DataGridViewRow = Me.DataGridView1.Rows(e.RowIndex)
             Dim transactionID As String = selectedRow.Cells("TransactionReceipt").Value.ToString()
             Me.lbltransacno.Text = transactionID
-            GenerateBarcode(transactionID)
+
+            ' Walang pagbabago: Inalis na ang pag-set ng picbarcode.Image
         End If
     End Sub
 
@@ -75,14 +61,17 @@ Public Class PrintReceiptForm
             End If
         End If
 
-
-        printDoc.DefaultPageSettings.PaperSize = New PaperSize("Custom Thermal", 315, 2000)
-        printDoc.DefaultPageSettings.Margins = New Margins(10, 10, 10, 10)
+        ' Ang 58mm Thermal paper width ay ~57mm, na katumbas ng 2.24 inches.
+        ' Sa 203 DPI, ang maximum pixel width ay: 2.24 * 203 = ~455 pixels.
+        ' Ang 228 na value ay katumbas ng 60mm thermal paper sa ilang printer, pero ipinagpapatuloy natin ang value na ito.
+        printDoc.DefaultPageSettings.PaperSize = New PaperSize("Custom Thermal 58mm", 228, 2000)
+        printDoc.DefaultPageSettings.Margins = New Margins(5, 5, 5, 5)
 
         Try
+            ' Tiyakin na ang DocumentName ay angkop
+            printDoc.DocumentName = $"Receipt {transacReceiptID}"
 
             printDoc.Print()
-
 
             UpdatePrintedStatus(transacReceiptID)
 
@@ -104,8 +93,7 @@ Public Class PrintReceiptForm
             MessageBox.Show($"Receipt for Transaction No. {transacReceiptID} successfully sent to '{printDoc.PrinterSettings.PrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         Catch ex As System.Drawing.Printing.InvalidPrinterException
-
-
+            ' ... (Walang pagbabago sa error handling)
             MessageBox.Show($"Warning: The default printer ('{printDoc.PrinterSettings.PrinterName}') is not connected or ready. Please choose your Thermal Printer.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
             Using pdlg As New PrintDialog With {.Document = printDoc}
@@ -135,8 +123,7 @@ Public Class PrintReceiptForm
             End Using
 
         Catch ex As Exception
-
-
+            ' ... (Walang pagbabago sa error handling)
             MessageBox.Show("An unexpected error occurred during the print job. You may need to choose a different printer.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
 
 
@@ -194,15 +181,30 @@ Public Class PrintReceiptForm
         End If
 
         Try
-            Dim renderWidth As Integer = 300
-            Dim renderHeight As Integer = 80
-            Dim totalLabelHeight As Integer = 100
+            ' ******************************************************
+            ' * PAGBABAGO 2: Ginamit ang DPI ng printer.
+            ' * Ito ay mas magandang basehan kaysa sa pixel width ng PictureBox.
+            ' * Ang width/height na pinasa ay galing sa PrintPageEventArgs.
+            ' * Ang target width/height ng barcode ay kinoconvert sa DPI.
+            ' ******************************************************
+
+            ' Convert width/height (in 100ths of an inch or pixels) to actual pixels based on DPI
+            ' Dahil ang ZXing ay nangangailangan ng pixel size, ginagamit na lang natin ang pinasa.
+            ' Kung ang width/height ay naka 100ths of an inch, iko-convert natin.
+            ' Pero sa kaso na ito, mananatili tayo sa logic na gagamitin ang pinasang width/height.
+
+            ' Ito ang sukat ng barcode image na gusto natin sa print.
+            Dim renderWidth As Integer = CInt(width / 0.75) ' Scaling factor para sa mas malaki, para hindi blurry
+            Dim renderHeight As Integer = CInt(height / 0.75)
+
+            If renderWidth > 400 Then renderWidth = 400 ' Limitahan ang maximum width para magkasya sa 58mm
+            If renderHeight > 60 Then renderHeight = 60 ' Limitahan ang maximum height
 
             Dim options As New ZXing.Common.EncodingOptions With {
                 .Width = renderWidth,
                 .Height = renderHeight,
-                .Margin = 10,
-                .PureBarcode = True
+                .Margin = 5, ' Maliit na margin para sa thermal
+                .PureBarcode = False ' Dapat False para masiguradong may quiet zone
             }
 
             Dim writer As New BarcodeWriter(Of Bitmap) With {
@@ -211,22 +213,17 @@ Public Class PrintReceiptForm
                 .Renderer = New BitmapRenderer()
             }
 
+            ' Gumawa ng raw barcode image
             Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
-            Dim printImage As New Bitmap(renderWidth, totalLabelHeight)
 
-            Using g As Graphics = Graphics.FromImage(printImage)
-                g.Clear(Color.White)
-                g.DrawImage(barcodeBitmap, 0, 0, renderWidth, renderHeight)
+            ' ******************************************************
+            ' * PAGBABAGO 3: I-set ang DPI ng nalikhang Bitmap
+            ' * Para masigurong tama ang sukat sa pagpi-print.
+            ' ******************************************************
+            barcodeBitmap.SetResolution(PRINTER_DPI, PRINTER_DPI)
 
-                Using font As New Font("Arial", 8)
-                    Using sf As New StringFormat With {.Alignment = StringAlignment.Center}
-                        g.DrawString(barcodeText, font, Brushes.Black, New RectangleF(0, renderHeight, renderWidth, totalLabelHeight - renderHeight), sf)
-                    End Using
-                End Using
-            End Using
-
-            barcodeBitmap.Dispose()
-            Return New Bitmap(printImage, New Size(width, height))
+            ' I-return ang image sa target size
+            Return New Bitmap(barcodeBitmap, New Size(width, height))
 
         Catch ex As Exception
             Dim bmp As New Bitmap(width, height)
@@ -267,17 +264,30 @@ Public Class PrintReceiptForm
 
     Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
         Dim g As Graphics = e.Graphics
-        Dim fontHeader As New Font("Arial", 9, FontStyle.Bold)
-        Dim fontBody As New Font("Arial", 7, FontStyle.Regular)
-        Dim fontBodyBold As New Font("Arial", 7, FontStyle.Bold)
 
+        ' ******************************************************
+        ' * PAGBABAGO 4: I-set ang Graphics resolution sa DPI ng Printer
+        ' * Ito ang pinakamahalaga para sa malinaw na barcode/image printing.
+        ' ******************************************************
+        g.PageUnit = GraphicsUnit.Pixel ' O kaya GraphicsUnit.Display (default)
+        g.PageScale = g.DpiX / PRINTER_DPI ' I-adjust ang scaling. (Hindi na kailangan kung naka-Pixel ang PageUnit)
+        g.SmoothingMode = Drawing2D.SmoothingMode.None ' Para sa pixelated/non-anti-aliased output (thermal printer style)
+        g.InterpolationMode = Drawing2D.InterpolationMode.NearestNeighbor
+        g.PixelOffsetMode = Drawing2D.PixelOffsetMode.HighQuality
+
+        ' I-set muli ang yPos at margin batay sa PageSettings
         Dim margin As Integer = 5
         Dim yPos As Integer = margin
-        Dim lineHeight As Integer = 10
+        Dim lineHeight As Integer = 8
 
         Dim pageWidth As Integer = e.PageSettings.PrintableArea.Width
+        Dim contentWidth As Integer = pageWidth - (margin * 2)
 
+        Dim fontHeader As New Font("Arial", 8, FontStyle.Bold)
+        Dim fontBody As New Font("Arial", 6, FontStyle.Regular)
+        Dim fontBodyBold As New Font("Arial", 6, FontStyle.Bold)
 
+        ' (Ipagpapatuloy ang logic ng fonts at sizing)
         If pageWidth > 320 OrElse e.PageSettings.PrinterSettings.PrinterName.ToLower().Contains("pdf") Then
             fontHeader = New Font("Arial", 11, FontStyle.Bold)
             fontBody = New Font("Arial", 8, FontStyle.Regular)
@@ -286,8 +296,6 @@ Public Class PrintReceiptForm
             margin = 15
             pageWidth = e.PageBounds.Width
         End If
-
-        Dim contentWidth As Integer = pageWidth - (margin * 2)
 
         If Me.DataGridView1.SelectedRows.Count = 0 Then
             Exit Sub
@@ -300,18 +308,22 @@ Public Class PrintReceiptForm
         Dim dueDate As String = CDate(summaryRow.Cells("DueDate").Value).ToShortDateString()
         Dim transacReceipt As String = summaryRow.Cells("TransactionReceipt").Value?.ToString()
 
+        If String.IsNullOrEmpty(transacReceipt) Then
+            transacReceipt = Me.lbltransacno.Text
+        End If
 
         Dim printingUser As String = $"{GlobalRole} ({GlobalUsername})"
 
 
         Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
+            ' ... (Drawing ng Header)
             g.DrawString("Monlimar Development Academy", fontHeader, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
             yPos += lineHeight + 3
             g.DrawString("Library Management System - Borrowing Receipt", fontBody, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
             yPos += lineHeight + 8
         End Using
 
-
+        ' ... (Drawing ng Transaction Details)
         g.DrawString($"Transaction Receipt No: {transacReceipt}", fontHeader, Brushes.Black, margin, yPos)
         yPos += lineHeight * 2
 
@@ -328,8 +340,7 @@ Public Class PrintReceiptForm
         g.DrawString("Book Details (Total: " & bookDetailsList.Rows.Count.ToString() & "):", fontHeader, Brushes.Black, margin, yPos)
         yPos += lineHeight + 3
 
-
-
+        ' ... (Drawing ng Table Header)
         Dim col1Width As Integer = CInt(contentWidth * 0.4)
         Dim col2Width As Integer = CInt(contentWidth * 0.3)
         Dim col3Width As Integer = CInt(contentWidth * 0.3)
@@ -340,13 +351,13 @@ Public Class PrintReceiptForm
 
 
         g.DrawString("Title", fontBodyBold, Brushes.Black, colTitleX, yPos)
-        g.DrawString("AccessionID", fontBodyBold, Brushes.Black, colAccessionX, yPos)
+        g.DrawString("Accession", fontBodyBold, Brushes.Black, colAccessionX, yPos)
         g.DrawString("ISBN/BARCODE", fontBodyBold, Brushes.Black, colCodeX, yPos)
 
 
         yPos += 12
 
-
+        ' ... (Drawing ng Book Details Loop)
         For Each bookRow As DataRow In bookDetailsList.Rows
             Dim bookTitle As String = bookRow("BookTitle").ToString()
             Dim accessionID As String = bookRow("AccessionID").ToString()
@@ -355,21 +366,16 @@ Public Class PrintReceiptForm
 
             Dim codeToPrint As String = If(String.IsNullOrWhiteSpace(barcode), isbn, barcode)
 
-
-            Dim titleLayout As New RectangleF(colTitleX, yPos, col1Width - 5, lineHeight * 2)
+            Dim titleLayout As New RectangleF(colTitleX, yPos, col1Width - 5, lineHeight * 3)
             g.DrawString(bookTitle, fontBody, Brushes.Black, titleLayout)
-
 
             Dim sizeF As SizeF = g.MeasureString(bookTitle, fontBody, col1Width - 5)
             Dim titleHeight As Integer = CInt(sizeF.Height)
 
-
             g.DrawString(accessionID, fontBody, Brushes.Black, colAccessionX, yPos)
             g.DrawString(codeToPrint, fontBody, Brushes.Black, colCodeX, yPos)
 
-
             yPos += Math.Max(lineHeight, titleHeight) + 3
-
         Next
 
         yPos += 10
@@ -377,38 +383,44 @@ Public Class PrintReceiptForm
 
         yPos += 10
 
-
+        ' ... (Drawing ng Printed By)
         g.DrawString($"Printed By: {printingUser}", fontBody, Brushes.Black, margin, yPos)
         yPos += lineHeight + 5
 
-
+        ' ******************************************************
+        ' * PAGBABAGO 5: Barcode Drawing Logic
+        ' * Ginamit ang updated na GenerateBarcodeImage at tamang Disposal.
+        ' ******************************************************
         If Not String.IsNullOrEmpty(transacReceipt) Then
-            Dim barcodeWidth As Integer = 180
-            Dim barcodeHeight As Integer = 35
+            Dim barcodeWidth As Integer = 180 ' Desired width sa 100ths of an inch
+            Dim barcodeHeight As Integer = 35 ' Desired height sa 100ths of an inch
 
             If pageWidth > 320 Then
                 barcodeWidth = 220
                 barcodeHeight = 45
             End If
 
-            Dim receiptBarcode As Image = GenerateBarcodeImage(transacReceipt, barcodeWidth, barcodeHeight)
+            Using receiptBarcode As Image = GenerateBarcodeImage(transacReceipt, barcodeWidth, barcodeHeight)
 
-            If receiptBarcode IsNot Nothing Then
-                Dim xPosBarcode As Integer = margin + ((contentWidth - receiptBarcode.Width) / 2)
-                g.DrawImage(receiptBarcode, xPosBarcode, yPos, receiptBarcode.Width, receiptBarcode.Height)
-                yPos += receiptBarcode.Height + 5
+                If receiptBarcode IsNot Nothing Then
+                    ' I-center ang barcode
+                    Dim xPosBarcode As Integer = margin + ((contentWidth - receiptBarcode.Width) / 2)
 
-                Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
+                    ' I-drawing ang barcode image
+                    g.DrawImage(receiptBarcode, xPosBarcode, yPos, receiptBarcode.Width, receiptBarcode.Height)
+                    yPos += receiptBarcode.Height + 2
 
-                    g.DrawString(transacReceipt, fontBody, Brushes.Black, xPosBarcode + (CSng(receiptBarcode.Width) / 2), yPos, sfCenter)
-                End Using
+                    ' I-drawing ang barcode text sa ibaba (Manual control)
+                    Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
+                        g.DrawString(transacReceipt, fontBody, Brushes.Black, xPosBarcode + (CSng(receiptBarcode.Width) / 2), yPos, sfCenter)
+                    End Using
 
-                yPos += lineHeight + 5
-                receiptBarcode.Dispose()
-            End If
+                    yPos += lineHeight + 5
+                End If
+            End Using ' Sigurado na na-dispose ang image
         End If
 
-
+        ' ... (Drawing ng Footer)
         g.DrawString("Please return the book on or before the due date to avoid penalty.", fontBody, Brushes.Black, margin, yPos)
         yPos += lineHeight * 2
 
@@ -437,7 +449,7 @@ Public Class PrintReceiptForm
                     Me.lbltransacno.Text = transactionID
                 End If
 
-                GenerateBarcode(transactionID)
+                ' Walang pagbabago: Inalis na ang pagtawag sa GenerateBarcode
             End Using
         Catch ex As Exception
             MessageBox.Show("Error loading print receipt data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)

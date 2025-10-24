@@ -42,7 +42,6 @@ Partial Class PrintReceiptForm
         Label12 = New Label()
         lbltransacno = New Label()
         Label9 = New Label()
-        picbarcode = New PictureBox()
         btnprint = New Guna.UI2.WinForms.Guna2Button()
         Guna2GradientPanel2 = New Guna.UI2.WinForms.Guna2GradientPanel()
         DataGridView1 = New DataGridView()
@@ -51,7 +50,6 @@ Partial Class PrintReceiptForm
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         panel_book.SuspendLayout()
         Guna2GradientPanel1.SuspendLayout()
-        CType(picbarcode, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel2.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -79,7 +77,6 @@ Partial Class PrintReceiptForm
         Guna2GradientPanel1.Controls.Add(Label12)
         Guna2GradientPanel1.Controls.Add(lbltransacno)
         Guna2GradientPanel1.Controls.Add(Label9)
-        Guna2GradientPanel1.Controls.Add(picbarcode)
         Guna2GradientPanel1.Controls.Add(btnprint)
         Guna2GradientPanel1.Controls.Add(Guna2GradientPanel2)
         Guna2GradientPanel1.Controls.Add(PictureBox1)
@@ -118,32 +115,22 @@ Partial Class PrintReceiptForm
         lbltransacno.AutoSize = True
         lbltransacno.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lbltransacno.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbltransacno.Location = New Point(768, 83)
+        lbltransacno.Location = New Point(1102, 72)
         lbltransacno.Name = "lbltransacno"
-        lbltransacno.Size = New Size(165, 16)
+        lbltransacno.Size = New Size(164, 16)
         lbltransacno.TabIndex = 107
-        lbltransacno.Text = "Transaction No. Receipt:"
-        lbltransacno.Visible = False
+        lbltransacno.Text = "Transaction No. Receipt."
         ' 
         ' Label9
         ' 
         Label9.AutoSize = True
         Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label9.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label9.Location = New Point(1041, 26)
+        Label9.Location = New Point(939, 72)
         Label9.Name = "Label9"
         Label9.Size = New Size(165, 16)
         Label9.TabIndex = 106
         Label9.Text = "Transaction No. Receipt:"
-        ' 
-        ' picbarcode
-        ' 
-        picbarcode.BackColor = Color.White
-        picbarcode.Location = New Point(1041, 46)
-        picbarcode.Name = "picbarcode"
-        picbarcode.Size = New Size(188, 53)
-        picbarcode.TabIndex = 105
-        picbarcode.TabStop = False
         ' 
         ' btnprint
         ' 
@@ -281,7 +268,6 @@ Partial Class PrintReceiptForm
         panel_book.ResumeLayout(False)
         Guna2GradientPanel1.ResumeLayout(False)
         Guna2GradientPanel1.PerformLayout()
-        CType(picbarcode, ComponentModel.ISupportInitialize).EndInit()
         Guna2GradientPanel2.ResumeLayout(False)
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
@@ -297,7 +283,6 @@ Partial Class PrintReceiptForm
     Friend WithEvents Guna2GradientPanel2 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents btnprint As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents picbarcode As PictureBox
     Friend WithEvents Label9 As Label
     Friend WithEvents lbltransacno As Label
     Friend WithEvents Label14 As Label
