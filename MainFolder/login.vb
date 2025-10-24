@@ -12,12 +12,6 @@ Public Class login
 
     Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
 
-        For i As Integer = Application.OpenForms.Count - 1 To 0 Step -1
-            Dim formInApp As Form = Application.OpenForms(i)
-            If formInApp IsNot Me AndAlso formInApp.Name <> "MainForm" Then
-                formInApp.Close()
-            End If
-        Next
 
         Dim User As String = txtuser.Text.Trim()
         Dim Pass As String = txtpass.Text.Trim()
@@ -88,9 +82,19 @@ Public Class login
                     MainForm.ResetToMainDashboard()
 
                     MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    MainForm.Show()
-                    MainForm.BringToFront()
-                    Me.Hide()
+
+                    For i As Integer = Application.OpenForms.Count - 1 To 0 Step -1
+                        Dim formInApp As Form = Application.OpenForms(i)
+                        If formInApp IsNot Me AndAlso formInApp.Name <> "MainForm" Then
+                            MainForm.Show()
+                            MainForm.BringToFront()
+                            formInApp.Hide()
+
+                        End If
+                    Next
+
+
+
                     clear()
 
                 ElseIf role = "Staff" Then
