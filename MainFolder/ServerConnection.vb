@@ -7,6 +7,11 @@ Public Class ServerConnection
         txtusername.Text = My.Settings.Username
         txtpassword.Text = My.Settings.Password
         txtdatabase.Text = My.Settings.Database
+
+        txtpassword.PasswordChar = "•"
+
+        PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+
     End Sub
 
     Private Sub btnconnect_Click(sender As Object, e As EventArgs) Handles btnconnect.Click
@@ -50,6 +55,35 @@ Public Class ServerConnection
 
     Private Sub btncancel_Click(sender As Object, e As EventArgs) Handles btncancel.Click
         Me.Close()
+    End Sub
+
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+
+        If txtpassword.PasswordChar = "•" Then
+
+
+            PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\dilat.png")
+            txtpassword.PasswordChar = ""
+
+        Else
+
+            PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+
+            txtpassword.PasswordChar = "•"
+        End If
+
+    End Sub
+
+    Private Sub PictureBox1_MouseHover_1(sender As Object, e As EventArgs) Handles PictureBox1.MouseHover
+
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub PictureBox1_MouseLeave_1(sender As Object, e As EventArgs) Handles PictureBox1.MouseLeave
+
+        Cursor = Cursors.Default
+
     End Sub
 
 End Class

@@ -41,6 +41,8 @@ Partial Class ServerConnection
         Label3 = New Label()
         Label1 = New Label()
         txtdatabase = New Guna.UI2.WinForms.Guna2TextBox()
+        PictureBox1 = New PictureBox()
+        CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Label6
@@ -220,11 +222,23 @@ Partial Class ServerConnection
         txtdatabase.TabIndex = 129
         txtdatabase.Visible = False
         ' 
+        ' PictureBox1
+        ' 
+        PictureBox1.BackColor = Color.White
+        PictureBox1.BackgroundImageLayout = ImageLayout.Zoom
+        PictureBox1.Location = New Point(237, 229)
+        PictureBox1.Name = "PictureBox1"
+        PictureBox1.Size = New Size(28, 18)
+        PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
+        PictureBox1.TabIndex = 131
+        PictureBox1.TabStop = False
+        ' 
         ' ServerConnection
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(485, 314)
+        Controls.Add(PictureBox1)
         Controls.Add(Label1)
         Controls.Add(txtdatabase)
         Controls.Add(Label3)
@@ -244,6 +258,7 @@ Partial Class ServerConnection
         ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
         Text = "ServerConnection"
+        CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -259,4 +274,5 @@ Partial Class ServerConnection
     Friend WithEvents Label3 As Label
     Friend WithEvents Label1 As Label
     Friend WithEvents txtdatabase As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents PictureBox1 As PictureBox
 End Class

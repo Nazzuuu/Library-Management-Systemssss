@@ -259,7 +259,8 @@ Public Class login
     End Sub
 
     Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs) Handles Guna2ControlBox1.Click
-        Me.Close()
+        Me.Hide()
+        AdminBorower.Show()
     End Sub
 
     Private Sub PictureBox1_MouseHover_1(sender As Object, e As EventArgs) Handles PictureBox1.MouseHover
@@ -274,7 +275,6 @@ Public Class login
 
     End Sub
 
-    Private Sub btndbs_Click(sender As Object, e As EventArgs) Handles btndbs.Click
-        ServerConnection.ShowDialog()
-    End Sub
+
+
 End Class

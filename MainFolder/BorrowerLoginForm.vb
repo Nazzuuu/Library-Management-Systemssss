@@ -216,7 +216,8 @@ Public Class BorrowerLoginForm
     End Sub
 
     Private Sub btnclose_Click(sender As Object, e As EventArgs) Handles btnclose.Click
-        Application.Exit()
+        Me.Hide()
+        AdminBorower.Show()
 
     End Sub
 
@@ -243,5 +244,6 @@ Public Class BorrowerLoginForm
             e.Handled = True
         End If
     End Sub
+
 
 End Class

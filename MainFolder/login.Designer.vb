@@ -23,16 +23,16 @@ Partial Class login
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges22 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges23 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges24 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(login))
-        Dim CustomizableEdges25 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         txtuser = New Guna.UI2.WinForms.Guna2TextBox()
         txtpass = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
@@ -45,7 +45,6 @@ Partial Class login
         Panel_btnlogin = New Panel()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         PictureBox1 = New PictureBox()
-        btndbs = New Button()
         Panel1.SuspendLayout()
         CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Panel_btnlogin.SuspendLayout()
@@ -56,7 +55,7 @@ Partial Class login
         ' 
         txtuser.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtuser.BorderRadius = 14
-        txtuser.CustomizableEdges = CustomizableEdges19
+        txtuser.CustomizableEdges = CustomizableEdges1
         txtuser.DefaultText = ""
         txtuser.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtuser.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -71,7 +70,7 @@ Partial Class login
         txtuser.Name = "txtuser"
         txtuser.PlaceholderText = ""
         txtuser.SelectedText = ""
-        txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges20
+        txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtuser.Size = New Size(238, 28)
         txtuser.TabIndex = 0
         ' 
@@ -79,7 +78,7 @@ Partial Class login
         ' 
         txtpass.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtpass.BorderRadius = 14
-        txtpass.CustomizableEdges = CustomizableEdges21
+        txtpass.CustomizableEdges = CustomizableEdges3
         txtpass.DefaultText = ""
         txtpass.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtpass.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -94,7 +93,7 @@ Partial Class login
         txtpass.Name = "txtpass"
         txtpass.PlaceholderText = ""
         txtpass.SelectedText = ""
-        txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges22
+        txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtpass.Size = New Size(238, 28)
         txtpass.TabIndex = 1
         ' 
@@ -123,7 +122,7 @@ Partial Class login
         ' btnlogin
         ' 
         btnlogin.BorderRadius = 15
-        btnlogin.CustomizableEdges = CustomizableEdges23
+        btnlogin.CustomizableEdges = CustomizableEdges5
         btnlogin.DisabledState.BorderColor = Color.DarkGray
         btnlogin.DisabledState.CustomBorderColor = Color.DarkGray
         btnlogin.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -133,7 +132,7 @@ Partial Class login
         btnlogin.ForeColor = Color.White
         btnlogin.Location = New Point(21, 12)
         btnlogin.Name = "btnlogin"
-        btnlogin.ShadowDecoration.CustomizableEdges = CustomizableEdges24
+        btnlogin.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btnlogin.Size = New Size(155, 33)
         btnlogin.TabIndex = 4
         btnlogin.Text = "login"
@@ -157,7 +156,7 @@ Partial Class login
         Guna2CirclePictureBox1.ImageRotate = 0F
         Guna2CirclePictureBox1.Location = New Point(17, 4)
         Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
-        Guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges25
+        Guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges7
         Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Guna2CirclePictureBox1.Size = New Size(82, 53)
         Guna2CirclePictureBox1.SizeMode = PictureBoxSizeMode.StretchImage
@@ -167,12 +166,12 @@ Partial Class login
         ' Guna2ControlBox1
         ' 
         Guna2ControlBox1.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        Guna2ControlBox1.CustomizableEdges = CustomizableEdges26
+        Guna2ControlBox1.CustomizableEdges = CustomizableEdges8
         Guna2ControlBox1.FillColor = Color.Transparent
         Guna2ControlBox1.IconColor = Color.White
         Guna2ControlBox1.Location = New Point(444, 2)
         Guna2ControlBox1.Name = "Guna2ControlBox1"
-        Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges27
+        Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges9
         Guna2ControlBox1.Size = New Size(36, 30)
         Guna2ControlBox1.TabIndex = 2
         ' 
@@ -212,15 +211,6 @@ Partial Class login
         PictureBox1.TabIndex = 8
         PictureBox1.TabStop = False
         ' 
-        ' btndbs
-        ' 
-        btndbs.Location = New Point(320, 71)
-        btndbs.Name = "btndbs"
-        btndbs.Size = New Size(134, 24)
-        btndbs.TabIndex = 9
-        btndbs.Text = "Connect to Database"
-        btndbs.UseVisualStyleBackColor = True
-        ' 
         ' login
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -228,7 +218,6 @@ Partial Class login
         BackColor = Color.White
         ClientSize = New Size(482, 276)
         ControlBox = False
-        Controls.Add(btndbs)
         Controls.Add(PictureBox1)
         Controls.Add(Panel_btnlogin)
         Controls.Add(Panel1)
@@ -264,5 +253,4 @@ Partial Class login
     Friend WithEvents Guna2ControlBox1 As Guna.UI2.WinForms.Guna2ControlBox
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
-    Friend WithEvents btndbs As Button
 End Class
