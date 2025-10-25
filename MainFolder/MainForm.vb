@@ -2,8 +2,10 @@
 Imports System.Drawing
 Imports MySql.Data.MySqlClient
 Public Class MainForm
-    Public Shared BorrowerEditsInfoForm As Borrowereditsinfo
+    Public BorrowerEditsInfoForm As Borrowereditsinfo
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        GlobalVarsModule.ActiveMainForm = Me
 
         Me.WindowState = FormWindowState.Maximized
         sizelocation()
@@ -21,6 +23,9 @@ Public Class MainForm
         btnexit.Visible = False
 
         loadsu()
+
+
+
 
     End Sub
 

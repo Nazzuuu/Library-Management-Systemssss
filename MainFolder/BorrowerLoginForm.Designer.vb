@@ -52,6 +52,7 @@ Partial Class BorrowerLoginForm
         lblexample = New Label()
         Label4 = New Label()
         LinkLabel1 = New LinkLabel()
+        LinkLabel2 = New LinkLabel()
         Panel1.SuspendLayout()
         CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Panel_btnlogin.SuspendLayout()
@@ -276,12 +277,26 @@ Partial Class BorrowerLoginForm
         LinkLabel1.TabStop = True
         LinkLabel1.Text = "Sign in"
         ' 
+        ' LinkLabel2
+        ' 
+        LinkLabel2.ActiveLinkColor = Color.RosyBrown
+        LinkLabel2.AutoSize = True
+        LinkLabel2.Font = New Font("Baskerville Old Face", 11.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
+        LinkLabel2.LinkColor = Color.HotPink
+        LinkLabel2.Location = New Point(8, 65)
+        LinkLabel2.Name = "LinkLabel2"
+        LinkLabel2.Size = New Size(133, 17)
+        LinkLabel2.TabIndex = 76
+        LinkLabel2.TabStop = True
+        LinkLabel2.Text = "Connect to Database"
+        ' 
         ' BorrowerLoginForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(465, 330)
         ControlBox = False
+        Controls.Add(LinkLabel2)
         Controls.Add(LinkLabel1)
         Controls.Add(Label4)
         Controls.Add(lblexample)
@@ -324,4 +339,5 @@ Partial Class BorrowerLoginForm
     Friend WithEvents lblexample As Label
     Friend WithEvents Label4 As Label
     Friend WithEvents LinkLabel1 As LinkLabel
+    Friend WithEvents LinkLabel2 As LinkLabel
 End Class

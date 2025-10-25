@@ -1,4 +1,5 @@
 ﻿Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
+Imports Guna.UI2.WinForms
 Imports MySql.Data.MySqlClient
 
 Public Class login
@@ -12,6 +13,13 @@ Public Class login
 
     Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
 
+        For i As Integer = Application.OpenForms.Count - 1 To 0 Step -1
+            Dim formInApp As Form = Application.OpenForms(i)
+            If formInApp IsNot Me AndAlso formInApp.Name <> "MainForm" Then
+                formInApp.Hide()
+
+            End If
+        Next
 
         Dim User As String = txtuser.Text.Trim()
         Dim Pass As String = txtpass.Text.Trim()
@@ -82,19 +90,10 @@ Public Class login
                     MainForm.ResetToMainDashboard()
 
                     MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MainForm.Show()
+                    MainForm.BringToFront()
 
-                    For i As Integer = Application.OpenForms.Count - 1 To 0 Step -1
-                        Dim formInApp As Form = Application.OpenForms(i)
-                        If formInApp IsNot Me AndAlso formInApp.Name <> "MainForm" Then
-                            MainForm.Show()
-                            MainForm.BringToFront()
-                            formInApp.Hide()
-
-                        End If
-                    Next
-
-
-
+                    Me.Hide()
                     clear()
 
                 ElseIf role = "Staff" Then
@@ -142,6 +141,13 @@ Public Class login
                         If TypeOf formInApp Is Users Then
                             Dim Users As Users = CType(formInApp, Users)
                             Users.LoadUserData()
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Penalty Then
+                            Dim load = DirectCast(form, Penalty)
+                            load.refreshpenalty()
                         End If
                     Next
 
@@ -262,10 +268,6 @@ Public Class login
 
     End Sub
 
-    Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs) Handles Guna2ControlBox1.Click
-        Me.Hide()
-        AdminBorower.Show()
-    End Sub
 
     Private Sub PictureBox1_MouseHover_1(sender As Object, e As EventArgs) Handles PictureBox1.MouseHover
 
@@ -279,6 +281,13 @@ Public Class login
 
     End Sub
 
+    Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
+        ServerConnection.Show()
 
+    End Sub
 
+    Private Sub lblborrowerloginform_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles lblborrowerloginform.LinkClicked
+        Me.Hide()
+        BorrowerLoginForm.Show()
+    End Sub
 End Class

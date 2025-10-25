@@ -1,6 +1,10 @@
 ﻿Imports MySql.Data.MySqlClient
 
+
 Module GlobalVarsModule
+
+
+
 
     ' 🔹 Store latest connection string (can be refreshed anytime)
     Private _connectionString As String =
@@ -11,6 +15,7 @@ Module GlobalVarsModule
             Return _connectionString
         End Get
     End Property
+
 
     ' 🔹 Call this when settings are updated
     Public Sub RefreshConnectionString()
@@ -27,6 +32,8 @@ Module GlobalVarsModule
     Public GlobalRole As String = ""
     Public CurrentEmployeeID As String = ""
     Public GlobalEmail As String = ""
+    Public ActiveMainForm As MainForm = Nothing
+    Public ActiveBorrowerLoginForm As BorrowerLoginForm
 
     ' 🧩 Helper: Clean borrower ID
     Public Function GetCleanCurrentBorrowerID() As String
@@ -57,7 +64,7 @@ Module GlobalVarsModule
                 End Using
             Catch ex As Exception
                 MessageBox.Show("Database error during Time-In check: " & ex.Message,
-                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                 "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         End Using
 
@@ -102,7 +109,7 @@ Module GlobalVarsModule
                     If affectedRows > 0 Then success = True
                 Catch ex As Exception
                     MessageBox.Show($"Database Error during Auto Time-Out: {ex.Message}",
-                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End Try
             End Using
         End Using
@@ -120,7 +127,7 @@ Module GlobalVarsModule
         Dim formattedDateTime As String = DateTime.Now.ToString("MM/dd/yy-h:mm tt")
         Using con As New MySqlConnection(connectionString)
             Dim query As String = "INSERT INTO `audit_trail_tbl` (`Role`, `Email`, `ActionType`, `FormName`, `Description`, `DateTime`) " &
-                                  "VALUES (@role, @email, @action, @formName, @description, @formattedDateTime)"
+                                     "VALUES (@role, @email, @action, @formName, @description, @formattedDateTime)"
             Try
                 con.Open()
                 Using cmd As New MySqlCommand(query, con)
@@ -138,7 +145,7 @@ Module GlobalVarsModule
                 End Using
             Catch ex As Exception
                 MessageBox.Show("AUDIT LOG FAILED! Database Error: " & ex.Message,
-                                "Audit Trail Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                 "Audit Trail Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         End Using
     End Sub

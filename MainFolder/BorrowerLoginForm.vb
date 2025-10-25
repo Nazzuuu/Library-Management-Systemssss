@@ -11,7 +11,7 @@ Public Class BorrowerLoginForm
 
     Public Sub refreshbrwrlogin()
 
-        TopMost = True
+        'TopMost = True
         txtuser.Text = ""
         txtpass.Text = ""
 
@@ -25,6 +25,20 @@ Public Class BorrowerLoginForm
 
     Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
 
+
+        Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+
+        If activeMain Is Nothing Then
+            activeMain = Application.OpenForms.OfType(Of MainForm)().FirstOrDefault()
+            If activeMain Is Nothing Then
+                activeMain = New MainForm()
+                GlobalVarsModule.ActiveMainForm = activeMain
+                activeMain.Show()
+                activeMain.Hide()
+            End If
+        End If
+
+
         Dim Username As String = txtuser.Text.Trim()
         Dim Password As String = txtpass.Text
 
@@ -33,18 +47,17 @@ Public Class BorrowerLoginForm
             Return
         End If
 
-
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Dim com As String = "SELECT `Username`, `Password`, `Email`, " &
-                            "    CASE " &
-                            "        WHEN `LRN` IS NOT NULL AND `LRN` <> '0' AND `LRN` <> '' THEN 'Student' " &
-                            "        WHEN `EmployeeNo` IS NOT NULL AND `EmployeeNo` <> '0' AND `EmployeeNo` <> '' THEN 'Teacher' " &
-                            "        ELSE 'Unknown' " &
-                            "    END AS BorrowerType, " &
-                            "    IFNULL(`LRN`, `EmployeeNo`) AS BorrowerID " &
-                            "FROM `borroweredit_tbl` " &
-                            "WHERE `Username` = @User AND `Password` = @Pass LIMIT 1"
+                        "    CASE " &
+                        "        WHEN `LRN` IS NOT NULL AND `LRN` <> '0' AND `LRN` <> '' THEN 'Student' " &
+                        "        WHEN `EmployeeNo` IS NOT NULL AND `EmployeeNo` <> '0' AND `EmployeeNo` <> '' THEN 'Teacher' " &
+                        "        ELSE 'Unknown' " &
+                        "    END AS BorrowerType, " &
+                        "    IFNULL(`LRN`, `EmployeeNo`) AS BorrowerID " &
+                        "FROM `borroweredit_tbl` " &
+                        "WHERE `Username` = @User AND `Password` = @Pass LIMIT 1"
 
         Dim cmd As New MySqlCommand(com, con)
         cmd.Parameters.AddWithValue("@User", Username)
@@ -62,23 +75,20 @@ Public Class BorrowerLoginForm
                 Dim borrowerID As String = reader("BorrowerID").ToString()
                 Dim borrowerType As String = reader("BorrowerType").ToString()
 
-
                 GlobalVarsModule.CurrentUserRole = "Borrower"
                 GlobalVarsModule.CurrentBorrowerType = borrowerType
                 GlobalVarsModule.CurrentBorrowerID = borrowerID
                 GlobalVarsModule.CurrentUserID = borrowerID
+                GlobalVarsModule.GlobalRole = "Borrower"
+                GlobalVarsModule.GlobalEmail = userEmail
 
-
-                MainForm.SetupBorrowerUI(borrowerType)
+                activeMain.SetupBorrowerUI(borrowerType)
 
                 If borrowerType = "Unknown" Then
                     MessageBox.Show("Login successful, but borrower type (LRN or Employee No) is missing in the record. Please check your account details.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 End If
 
-
                 reader.Close()
-
-
 
                 If Not GlobalVarsModule.IsBorrowerStillTimedIn(borrowerID) Then
 
@@ -96,67 +106,59 @@ Public Class BorrowerLoginForm
                         MessageBox.Show($"Welcome, {Username}!", "Time In Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     End Using
                 Else
-
                     Dim reminderMessage As String = $"Welcome back!, {Username}. You are currently Timed In," & Environment.NewLine &
-                                                $"Kindly ensure that you (Time Out) before leaving the library premises."
+                                            $"Kindly ensure that you (Time Out) before leaving the library premises."
 
                     MessageBox.Show(reminderMessage, "Time Out Reminder 🔔", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End If
-
 
                 Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
                 If orasForm IsNot Nothing Then
                     orasForm.ludeyngoras()
                 End If
 
+                activeMain.PrintReceiptToolStripMenuItem.Visible = False
 
-                GlobalVarsModule.CurrentUserRole = "Borrower"
-                GlobalVarsModule.CurrentBorrowerType = borrowerType
-                GlobalVarsModule.CurrentBorrowerID = borrowerID
-                GlobalVarsModule.CurrentUserID = borrowerID
-
-                MainForm.PrintReceiptToolStripMenuItem.Visible = False
-                MainForm.SetupBorrowerUI(borrowerType)
-
-                If MainForm.BorrowerEditsInfoForm Is Nothing Then
-                    MainForm.BorrowerEditsInfoForm = New Borrowereditsinfo()
+                If activeMain.BorrowerEditsInfoForm Is Nothing Then
+                    activeMain.BorrowerEditsInfoForm = New Borrowereditsinfo()
                 End If
 
-                MainForm.BorrowerEditsInfoForm.visibilitysus(borrowerType)
+                activeMain.BorrowerEditsInfoForm.visibilitysus(borrowerType)
 
-                MainForm.lbl_currentuser.Text = borrowerType
-                MainForm.lblgmail.Text = userEmail
+                activeMain.lbl_currentuser.Text = borrowerType
+                activeMain.lblgmail.Text = userEmail
+                activeMain.SetupBorrowerUI(borrowerType)
 
-                If MainForm.MaintenanceToolStripMenuItem IsNot Nothing Then
-                    MainForm.MaintenanceToolStripMenuItem.Visible = False
-                    MainForm.btnlogoutt.Visible = False
+                If activeMain.MaintenanceToolStripMenuItem IsNot Nothing Then
+                    activeMain.MaintenanceToolStripMenuItem.Visible = False
+                    activeMain.btnlogoutt.Visible = False
                 End If
-                If MainForm.SettingsStripMenuItem IsNot Nothing Then
-                    MainForm.SettingsStripMenuItem.Visible = False
+                If activeMain.SettingsStripMenuItem IsNot Nothing Then
+                    activeMain.SettingsStripMenuItem.Visible = False
                 End If
 
-                If MainForm.ProcessStripMenuItem IsNot Nothing Then
-                    MainForm.ProcessStripMenuItem.Visible = True
+                If activeMain.ProcessStripMenuItem IsNot Nothing Then
+                    activeMain.ProcessStripMenuItem.Visible = True
 
-                    For Each item As ToolStripItem In MainForm.ProcessStripMenuItem.DropDownItems
+                    For Each item As ToolStripItem In activeMain.ProcessStripMenuItem.DropDownItems
                         item.Visible = False
                     Next
 
-                    If MainForm.StudentLogsToolStripMenuItem IsNot Nothing Then
-                        MainForm.StudentLogsToolStripMenuItem.Visible = True
-                        If MainForm.TimeInToolStripMenuItem IsNot Nothing Then
-                            MainForm.TimeInToolStripMenuItem.Visible = True
+                    If activeMain.StudentLogsToolStripMenuItem IsNot Nothing Then
+                        activeMain.StudentLogsToolStripMenuItem.Visible = True
+                        If activeMain.TimeInToolStripMenuItem IsNot Nothing Then
+                            activeMain.TimeInToolStripMenuItem.Visible = True
                         End If
                     End If
 
-                    If MainForm.EditsToolStripMenuItem1 IsNot Nothing Then
-                        MainForm.EditsToolStripMenuItem1.Visible = True
+                    If activeMain.EditsToolStripMenuItem1 IsNot Nothing Then
+                        activeMain.EditsToolStripMenuItem1.Visible = True
                     End If
 
-                    If MainForm.CirculationToolStripMenuItem IsNot Nothing Then
-                        MainForm.CirculationToolStripMenuItem.Visible = True
-                        For Each circItem As ToolStripItem In MainForm.CirculationToolStripMenuItem.DropDownItems
-                            If circItem Is MainForm.BorrowToolStripMenuItem Then
+                    If activeMain.CirculationToolStripMenuItem IsNot Nothing Then
+                        activeMain.CirculationToolStripMenuItem.Visible = True
+                        For Each circItem As ToolStripItem In activeMain.CirculationToolStripMenuItem.DropDownItems
+                            If circItem Is activeMain.BorrowToolStripMenuItem Then
                                 circItem.Visible = True
                             Else
                                 circItem.Visible = False
@@ -165,26 +167,20 @@ Public Class BorrowerLoginForm
                     End If
                 End If
 
+                activeMain.Panel_dash.Controls.Clear()
+                Dim borrowingForm As New Borrowing()
+                borrowingForm.TopLevel = False
+                borrowingForm.BringToFront()
+                activeMain.Panel_dash.Controls.Add(borrowingForm)
+                borrowingForm.SetupBorrowerFields()
+                borrowingForm.Show()
 
-                With Borrowing
-                    MainForm.Panel_dash.Controls.Clear()
-                    .TopMost = True
-                    .TopLevel = False
-
-                    .BringToFront()
-                    MainForm.Panel_dash.Controls.Add(Borrowing)
-                    .Show()
-
-                End With
-
-                MainForm.lblform.Text = "BORROWING FORM"
-
-                MainForm.Show()
+                activeMain.lblform.Text = "BORROWING FORM"
+                activeMain.Show()
                 Me.Hide()
                 refreshbrwrlogin()
 
             Else
-
                 MessageBox.Show("Invalid Username or Password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 txtpass.Clear()
             End If
@@ -198,7 +194,6 @@ Public Class BorrowerLoginForm
                 MessageBox.Show("An unexpected error occurred: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
         Finally
-
             If reader IsNot Nothing AndAlso Not reader.IsClosed Then
                 reader.Close()
             End If
@@ -211,13 +206,13 @@ Public Class BorrowerLoginForm
 
 
 
+
     Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
         BorrowerCreateAccount.Show()
     End Sub
 
     Private Sub btnclose_Click(sender As Object, e As EventArgs) Handles btnclose.Click
-        Me.Hide()
-        AdminBorower.Show()
+        Application.Exit()
 
     End Sub
 
@@ -244,6 +239,5 @@ Public Class BorrowerLoginForm
             e.Handled = True
         End If
     End Sub
-
 
 End Class
