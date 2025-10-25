@@ -288,6 +288,19 @@ Public Class login
 
     Private Sub lblborrowerloginform_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles lblborrowerloginform.LinkClicked
         Me.Hide()
-        BorrowerLoginForm.Show()
+
+        Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+        If activeMain IsNot Nothing Then
+            activeMain.Hide()
+        End If
+
+        Dim borrowerLogin As BorrowerLoginForm = Application.OpenForms.OfType(Of BorrowerLoginForm)().FirstOrDefault()
+        If borrowerLogin Is Nothing Then
+            borrowerLogin = New BorrowerLoginForm()
+            GlobalVarsModule.ActiveBorrowerLoginForm = borrowerLogin
+        End If
+
+        borrowerLogin.Show()
+
     End Sub
 End Class

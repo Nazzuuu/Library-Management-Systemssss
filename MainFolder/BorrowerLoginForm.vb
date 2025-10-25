@@ -209,6 +209,7 @@ Public Class BorrowerLoginForm
 
     Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
         BorrowerCreateAccount.Show()
+
     End Sub
 
     Private Sub btnclose_Click(sender As Object, e As EventArgs) Handles btnclose.Click
@@ -240,4 +241,21 @@ Public Class BorrowerLoginForm
         End If
     End Sub
 
+    Private Sub LinkLabel2_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel2.LinkClicked
+
+        Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+        If activeMain IsNot Nothing Then
+            activeMain.Hide()
+        End If
+
+        Dim dbs As ServerConnection = Application.OpenForms.OfType(Of ServerConnection)().FirstOrDefault()
+        If dbs Is Nothing Then
+            dbs = New ServerConnection()
+            GlobalVarsModule.connectdatabase = dbs
+        End If
+
+        dbs.Show()
+
+
+    End Sub
 End Class

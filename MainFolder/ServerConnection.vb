@@ -41,7 +41,6 @@ Public Class ServerConnection
         My.Settings.Database = txtdatabase.Text.Trim()
         My.Settings.Save()
 
-        ' 🔹 Refresh the global connection
         GlobalVarsModule.RefreshConnectionString()
 
         MessageBox.Show("✅ Settings saved successfully!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information)

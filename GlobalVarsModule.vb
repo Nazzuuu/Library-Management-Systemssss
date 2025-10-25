@@ -6,7 +6,7 @@ Module GlobalVarsModule
 
 
 
-    ' 🔹 Store latest connection string (can be refreshed anytime)
+
     Private _connectionString As String =
         $"Server={My.Settings.Server};Database={My.Settings.Database};Uid={My.Settings.Username};Pwd={My.Settings.Password};"
 
@@ -17,13 +17,12 @@ Module GlobalVarsModule
     End Property
 
 
-    ' 🔹 Call this when settings are updated
+
     Public Sub RefreshConnectionString()
         _connectionString =
             $"Server={My.Settings.Server};Database={My.Settings.Database};Uid={My.Settings.Username};Pwd={My.Settings.Password};"
     End Sub
 
-    ' 🧩 Global variables
     Public CurrentUserID As String = ""
     Public CurrentUserRole As String = "Guest"
     Public CurrentBorrowerID As String = ""
@@ -34,8 +33,8 @@ Module GlobalVarsModule
     Public GlobalEmail As String = ""
     Public ActiveMainForm As MainForm = Nothing
     Public ActiveBorrowerLoginForm As BorrowerLoginForm
+    Public connectdatabase As ServerConnection
 
-    ' 🧩 Helper: Clean borrower ID
     Public Function GetCleanCurrentBorrowerID() As String
         Dim idTrimmed As String = CurrentBorrowerID.Trim()
         Dim tempID As Long
@@ -46,7 +45,7 @@ Module GlobalVarsModule
         End If
     End Function
 
-    ' 🧩 Check if borrower still timed in
+
     Public Function IsBorrowerStillTimedIn(ByVal borrowerID As String) As Boolean
         Dim isTimedIn As Boolean = False
 
@@ -71,7 +70,7 @@ Module GlobalVarsModule
         Return isTimedIn
     End Function
 
-    ' 🧩 Get last time-in record
+
     Public Function GetLastTimeInRecordID(ByVal UserIDString As String) As Integer
         Dim recordID As Integer = 0
         If String.IsNullOrEmpty(UserIDString) Then Return 0
@@ -95,7 +94,7 @@ Module GlobalVarsModule
         Return recordID
     End Function
 
-    ' 🧩 Auto time-out
+
     Public Function AutomaticTimeOut(ByVal RecordID As Integer) As Boolean
         If RecordID = 0 Then Return False
         Dim success As Boolean = False
@@ -116,7 +115,7 @@ Module GlobalVarsModule
         Return success
     End Function
 
-    ' 🧩 Log audit trail
+
     Public Sub LogAudit(ByVal actionType As String, ByVal formName As String, ByVal description As String,
                         Optional ByVal recordID As String = "", Optional ByVal oldValue As String = "", Optional ByVal newValue As String = "")
         If String.IsNullOrWhiteSpace(GlobalEmail) Then Return
