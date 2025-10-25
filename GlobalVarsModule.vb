@@ -34,7 +34,7 @@ Module GlobalVarsModule
     Public ActiveMainForm As MainForm = Nothing
     Public ActiveBorrowerLoginForm As BorrowerLoginForm
     Public connectdatabase As ServerConnection
-
+    Public loginform As login
     Public Function GetCleanCurrentBorrowerID() As String
         Dim idTrimmed As String = CurrentBorrowerID.Trim()
         Dim tempID As Long

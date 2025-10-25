@@ -1,5 +1,6 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Data
+﻿Imports System.Data
+Imports System.IO
+Imports MySql.Data.MySqlClient
 
 Public Class BorrowerCreateAccount
 
@@ -59,7 +60,22 @@ Public Class BorrowerCreateAccount
     Public Sub refreshcreate()
         TopMost = True
         txtpass.PasswordChar = "•"
-        PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+
+        Try
+            Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
+            If File.Exists(filePath) Then
+
+                Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                    PictureBox1.Image = New Bitmap(fs)
+                End Using
+            Else
+                MessageBox.Show("Image file not found: pikit.png sa BorrowerCreateAccount.", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error loading pikit.png for BorrowerCreateAccount Form: " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
+
     End Sub
 
     Public Sub clear()
@@ -77,12 +93,37 @@ Public Class BorrowerCreateAccount
     Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
 
         If txtpass.PasswordChar = "•" Then
-            PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\dilat.png")
-            txtpass.PasswordChar = ""
+
+            Try
+                Dim filePath As String = Application.StartupPath & "\Resources\dilat.png"
+                If File.Exists(filePath) Then
+                    Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                        PictureBox1.Image = New Bitmap(fs)
+                    End Using
+                    txtpass.PasswordChar = ""
+                Else
+                    MessageBox.Show("Image file not found: dilat.png", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error loading 'dilat.png': " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
         Else
-            PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
-            txtpass.PasswordChar = "•"
+
+            Try
+                Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
+                If File.Exists(filePath) Then
+                    Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                        PictureBox1.Image = New Bitmap(fs)
+                    End Using
+                    txtpass.PasswordChar = "•"
+                Else
+                    MessageBox.Show("Image file not found: pikit.png", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error loading 'pikit.png': " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
         End If
+
     End Sub
 
 
@@ -119,7 +160,7 @@ Public Class BorrowerCreateAccount
         Return Score
     End Function
 
-    Private Sub txtpassword(sender As Object, e As EventArgs) Handles txtpass.TextChanged
+    Private Sub txtpasswords(sender As Object, e As EventArgs) Handles txtpass.TextChanged
         Dim Password As String = txtpass.Text
 
         If String.IsNullOrEmpty(Password) Then
@@ -319,4 +360,17 @@ Public Class BorrowerCreateAccount
         BorrowerLoginForm.Show()
         Me.Hide()
     End Sub
+
+    Private Sub PictureBox1_MouseHover_1(sender As Object, e As EventArgs) Handles PictureBox1.MouseHover
+
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub PictureBox1_MouseLeave_1(sender As Object, e As EventArgs) Handles PictureBox1.MouseLeave
+
+        Cursor = Cursors.Default
+
+    End Sub
+
 End Class

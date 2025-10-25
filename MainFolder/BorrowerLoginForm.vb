@@ -1,31 +1,41 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Data
+﻿Imports System.Data
 Imports System.Drawing
+Imports System.IO
+Imports MySql.Data.MySqlClient
 
 Public Class BorrowerLoginForm
-
     Private Sub BorrowerLoginForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshbrwrlogin()
     End Sub
 
-
     Public Sub refreshbrwrlogin()
 
-        'TopMost = True
         txtuser.Text = ""
         txtpass.Text = ""
 
         txtpass.PasswordChar = "•"
 
-        If System.IO.File.Exists(Application.StartupPath & "\Resources\pikit.png") Then
-            PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+        Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
+
+        If File.Exists(filePath) Then
+            Try
+
+                Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+
+                    PictureBox2.Image = New Bitmap(fs)
+                End Using
+            Catch ex As Exception
+
+                MessageBox.Show("Error loading pikit.png for Borrower Login: " & ex.Message,
+                                "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
         End If
     End Sub
 
 
     Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
 
-
+        TopMost = True
         Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
 
         If activeMain Is Nothing Then
@@ -212,27 +222,12 @@ Public Class BorrowerLoginForm
 
     End Sub
 
-    Private Sub btnclose_Click(sender As Object, e As EventArgs) Handles btnclose.Click
+    Private Sub btnclose_Click(sender As Object, e As EventArgs)
         Application.Exit()
 
     End Sub
 
 
-    Private Sub PictureBox2_Click(sender As Object, e As EventArgs) Handles PictureBox2.Click
-
-        If txtpass.PasswordChar = "•" Then
-            If System.IO.File.Exists(Application.StartupPath & "\Resources\dilat.png") Then
-                PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\dilat.png")
-            End If
-            txtpass.PasswordChar = ""
-
-        Else
-            If System.IO.File.Exists(Application.StartupPath & "\Resources\pikit.png") Then
-                PictureBox2.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
-            End If
-            txtpass.PasswordChar = "•"
-        End If
-    End Sub
 
     Private Sub txtpass_KeyDown(sender As Object, e As KeyEventArgs) Handles txtpass.KeyDown
         If e.KeyCode = Keys.Enter Then
@@ -258,4 +253,53 @@ Public Class BorrowerLoginForm
 
 
     End Sub
+
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox2.Click
+
+        If txtpass.PasswordChar = "•" Then
+
+            Try
+                Dim filePath As String = Application.StartupPath & "\Resources\dilat.png"
+                If File.Exists(filePath) Then
+                    Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                        PictureBox2.Image = New Bitmap(fs)
+                    End Using
+                    txtpass.PasswordChar = ""
+                Else
+                    MessageBox.Show("Image file not found: dilat.png", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error loading 'dilat.png': " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        Else
+
+            Try
+                Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
+                If File.Exists(filePath) Then
+                    Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                        PictureBox2.Image = New Bitmap(fs)
+                    End Using
+                    txtpass.PasswordChar = "•"
+                Else
+                    MessageBox.Show("Image file not found: pikit.png", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error loading 'pikit.png': " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+
+    End Sub
+
+    Private Sub PictureBox2_MouseHover_1(sender As Object, e As EventArgs) Handles PictureBox2.MouseHover
+
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub PictureBox2_MouseLeave_1(sender As Object, e As EventArgs) Handles PictureBox2.MouseLeave
+
+        Cursor = Cursors.Default
+
+    End Sub
+
 End Class

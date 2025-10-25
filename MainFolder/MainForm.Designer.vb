@@ -27,7 +27,6 @@ Partial Class MainForm
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -107,12 +106,10 @@ Partial Class MainForm
         Label1 = New Label()
         btnn_borrowed = New Guna.UI2.WinForms.Guna2Elipse(components)
         btn_borrowed = New Guna.UI2.WinForms.Guna2Button()
-        Guna2ContextMenuStrip1 = New Guna.UI2.WinForms.Guna2ContextMenuStrip()
         dshboard = New Guna.UI2.WinForms.Guna2GroupBox()
-        Panel2 = New Panel()
         btntotalbooks = New Guna.UI2.WinForms.Guna2Button()
-        Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         lbltotalbooks = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         tbl_paneldash = New TableLayoutPanel()
         Guna2GroupBox2 = New Guna.UI2.WinForms.Guna2GroupBox()
         btn_reserve = New Guna.UI2.WinForms.Guna2Button()
@@ -137,8 +134,6 @@ Partial Class MainForm
         Panel_welcome = New Panel()
         lblgmail = New Label()
         Label6 = New Label()
-        Label3 = New Label()
-        Label4 = New Label()
         Guna2Button1 = New Guna.UI2.WinForms.Guna2Button()
         Panel_dash = New Panel()
         Panel_maintenance.SuspendLayout()
@@ -153,7 +148,6 @@ Partial Class MainForm
         Panel_Header.SuspendLayout()
         CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         dshboard.SuspendLayout()
-        Panel2.SuspendLayout()
         tbl_paneldash.SuspendLayout()
         Guna2GroupBox2.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
@@ -545,7 +539,7 @@ Partial Class MainForm
         ' Guna2CirclePictureBox1
         ' 
         Guna2CirclePictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), Image)
+        Guna2CirclePictureBox1.Image = My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n1
         Guna2CirclePictureBox1.ImageRotate = 0F
         Guna2CirclePictureBox1.Location = New Point(92, 2)
         Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
@@ -593,28 +587,15 @@ Partial Class MainForm
         btn_borrowed.TabIndex = 19
         btn_borrowed.Text = "View"
         ' 
-        ' Guna2ContextMenuStrip1
-        ' 
-        Guna2ContextMenuStrip1.Name = "Guna2ContextMenuStrip1"
-        Guna2ContextMenuStrip1.RenderStyle.ArrowColor = Color.FromArgb(CByte(151), CByte(143), CByte(255))
-        Guna2ContextMenuStrip1.RenderStyle.BorderColor = Color.Gainsboro
-        Guna2ContextMenuStrip1.RenderStyle.ColorTable = Nothing
-        Guna2ContextMenuStrip1.RenderStyle.RoundedEdges = True
-        Guna2ContextMenuStrip1.RenderStyle.SelectionArrowColor = Color.White
-        Guna2ContextMenuStrip1.RenderStyle.SelectionBackColor = Color.FromArgb(CByte(100), CByte(88), CByte(255))
-        Guna2ContextMenuStrip1.RenderStyle.SelectionForeColor = Color.White
-        Guna2ContextMenuStrip1.RenderStyle.SeparatorColor = Color.Gainsboro
-        Guna2ContextMenuStrip1.RenderStyle.TextRenderingHint = Drawing.Text.TextRenderingHint.SystemDefault
-        Guna2ContextMenuStrip1.Size = New Size(61, 4)
-        ' 
         ' dshboard
         ' 
         dshboard.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         dshboard.BackColor = Color.Transparent
         dshboard.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         dshboard.BorderRadius = 12
-        dshboard.BorderThickness = 2
-        dshboard.Controls.Add(Panel2)
+        dshboard.Controls.Add(btntotalbooks)
+        dshboard.Controls.Add(lbltotalbooks)
+        dshboard.Controls.Add(Guna2HtmlLabel1)
         dshboard.Controls.Add(tbl_paneldash)
         dshboard.CustomBorderColor = Color.Transparent
         dshboard.CustomizableEdges = CustomizableEdges32
@@ -626,20 +607,10 @@ Partial Class MainForm
         dshboard.ShadowDecoration.CustomizableEdges = CustomizableEdges33
         dshboard.Size = New Size(930, 310)
         dshboard.TabIndex = 18
-        ' 
-        ' Panel2
-        ' 
-        Panel2.Controls.Add(btntotalbooks)
-        Panel2.Controls.Add(Guna2HtmlLabel1)
-        Panel2.Controls.Add(lbltotalbooks)
-        Panel2.Location = New Point(22, 11)
-        Panel2.Name = "Panel2"
-        Panel2.Size = New Size(284, 29)
-        Panel2.TabIndex = 1
+        dshboard.TextRenderingHint = Drawing.Text.TextRenderingHint.SystemDefault
         ' 
         ' btntotalbooks
         ' 
-        btntotalbooks.Anchor = AnchorStyles.Top Or AnchorStyles.Right
         btntotalbooks.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btntotalbooks.BorderRadius = 9
         btntotalbooks.BorderThickness = 2
@@ -651,36 +622,36 @@ Partial Class MainForm
         btntotalbooks.FillColor = Color.Transparent
         btntotalbooks.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         btntotalbooks.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btntotalbooks.Location = New Point(179, 8)
+        btntotalbooks.Location = New Point(184, 11)
         btntotalbooks.Name = "btntotalbooks"
         btntotalbooks.ShadowDecoration.CustomizableEdges = CustomizableEdges9
         btntotalbooks.Size = New Size(89, 20)
         btntotalbooks.TabIndex = 20
         btntotalbooks.Text = "View"
         ' 
-        ' Guna2HtmlLabel1
-        ' 
-        Guna2HtmlLabel1.BackColor = Color.Transparent
-        Guna2HtmlLabel1.Font = New Font("Baskerville Old Face", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Guna2HtmlLabel1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2HtmlLabel1.Location = New Point(9, 3)
-        Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
-        Guna2HtmlLabel1.Size = New Size(122, 26)
-        Guna2HtmlLabel1.TabIndex = 3
-        Guna2HtmlLabel1.Text = "Total Books:"
-        Guna2HtmlLabel1.TextAlignment = ContentAlignment.MiddleCenter
-        ' 
         ' lbltotalbooks
         ' 
         lbltotalbooks.BackColor = Color.Transparent
-        lbltotalbooks.Font = New Font("Baskerville Old Face", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lbltotalbooks.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lbltotalbooks.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbltotalbooks.Location = New Point(137, 5)
+        lbltotalbooks.Location = New Point(148, 11)
         lbltotalbooks.Name = "lbltotalbooks"
-        lbltotalbooks.Size = New Size(36, 26)
+        lbltotalbooks.Size = New Size(30, 20)
         lbltotalbooks.TabIndex = 2
         lbltotalbooks.Text = "000"
         lbltotalbooks.TextAlignment = ContentAlignment.MiddleCenter
+        ' 
+        ' Guna2HtmlLabel1
+        ' 
+        Guna2HtmlLabel1.BackColor = Color.Transparent
+        Guna2HtmlLabel1.Font = New Font("Baskerville Old Face", 14.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Guna2HtmlLabel1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2HtmlLabel1.Location = New Point(27, 7)
+        Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
+        Guna2HtmlLabel1.Size = New Size(115, 24)
+        Guna2HtmlLabel1.TabIndex = 3
+        Guna2HtmlLabel1.Text = "Total Books:"
+        Guna2HtmlLabel1.TextAlignment = ContentAlignment.MiddleCenter
         ' 
         ' tbl_paneldash
         ' 
@@ -1047,8 +1018,6 @@ Partial Class MainForm
         Panel_welcome.Anchor = AnchorStyles.Top Or AnchorStyles.Right
         Panel_welcome.Controls.Add(lblgmail)
         Panel_welcome.Controls.Add(Label6)
-        Panel_welcome.Controls.Add(Label3)
-        Panel_welcome.Controls.Add(Label4)
         Panel_welcome.Location = New Point(432, 1)
         Panel_welcome.Name = "Panel_welcome"
         Panel_welcome.Size = New Size(276, 39)
@@ -1077,30 +1046,6 @@ Partial Class MainForm
         Label6.Size = New Size(81, 18)
         Label6.TabIndex = 2
         Label6.Text = "Welcome:"
-        ' 
-        ' Label3
-        ' 
-        Label3.Anchor = AnchorStyles.None
-        Label3.AutoSize = True
-        Label3.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        Label3.ForeColor = Color.Gray
-        Label3.Location = New Point(191, -20)
-        Label3.Name = "Label3"
-        Label3.Size = New Size(77, 18)
-        Label3.TabIndex = 1
-        Label3.Text = "Librarian"
-        ' 
-        ' Label4
-        ' 
-        Label4.Anchor = AnchorStyles.None
-        Label4.AutoSize = True
-        Label4.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(84, -20)
-        Label4.Name = "Label4"
-        Label4.Size = New Size(109, 18)
-        Label4.TabIndex = 0
-        Label4.Text = "Current User:"
         ' 
         ' Guna2Button1
         ' 
@@ -1166,8 +1111,7 @@ Partial Class MainForm
         Panel_Header.PerformLayout()
         CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).EndInit()
         dshboard.ResumeLayout(False)
-        Panel2.ResumeLayout(False)
-        Panel2.PerformLayout()
+        dshboard.PerformLayout()
         tbl_paneldash.ResumeLayout(False)
         Guna2GroupBox2.ResumeLayout(False)
         Guna2GroupBox2.PerformLayout()
@@ -1232,7 +1176,6 @@ Partial Class MainForm
     Friend WithEvents EditsToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents PrintReceiptToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents btn_borrowed As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents Guna2ContextMenuStrip1 As Guna.UI2.WinForms.Guna2ContextMenuStrip
     Friend WithEvents dshboard As Guna.UI2.WinForms.Guna2GroupBox
     Friend WithEvents tbl_paneldash As TableLayoutPanel
     Friend WithEvents Guna2GroupBox2 As Guna.UI2.WinForms.Guna2GroupBox
@@ -1258,15 +1201,12 @@ Partial Class MainForm
     Friend WithEvents Panel_welcome As Panel
     Friend WithEvents lblgmail As Label
     Friend WithEvents Label6 As Label
-    Friend WithEvents Label3 As Label
-    Friend WithEvents Label4 As Label
     Friend WithEvents Guna2Button1 As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Panel_dash As Panel
     Friend WithEvents AttendanceRecordToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents btnexit As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents BorrowingHistoryToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents BorrowingConfirmationToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents Panel2 As Panel
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents lbltotalbooks As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btntotalbooks As Guna.UI2.WinForms.Guna2Button

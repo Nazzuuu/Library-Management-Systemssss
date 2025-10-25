@@ -31,17 +31,13 @@ Partial Class BorrowerLoginForm
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(BorrowerLoginForm))
         Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Label2 = New Label()
         Label1 = New Label()
         txtpass = New Guna.UI2.WinForms.Guna2TextBox()
         txtuser = New Guna.UI2.WinForms.Guna2TextBox()
         btnlogin = New Guna.UI2.WinForms.Guna2Button()
         Panel1 = New Panel()
-        btnclose = New Guna.UI2.WinForms.Guna2ControlBox()
         Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Guna2ControlBox1 = New Guna.UI2.WinForms.Guna2ControlBox()
         Label3 = New Label()
@@ -149,7 +145,6 @@ Partial Class BorrowerLoginForm
         ' Panel1
         ' 
         Panel1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Panel1.Controls.Add(btnclose)
         Panel1.Controls.Add(Guna2CirclePictureBox1)
         Panel1.Controls.Add(Guna2ControlBox1)
         Panel1.Controls.Add(Label3)
@@ -159,26 +154,14 @@ Partial Class BorrowerLoginForm
         Panel1.Size = New Size(465, 62)
         Panel1.TabIndex = 13
         ' 
-        ' btnclose
-        ' 
-        btnclose.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnclose.CustomizableEdges = CustomizableEdges7
-        btnclose.FillColor = Color.Transparent
-        btnclose.IconColor = Color.White
-        btnclose.Location = New Point(427, 1)
-        btnclose.Name = "btnclose"
-        btnclose.ShadowDecoration.CustomizableEdges = CustomizableEdges8
-        btnclose.Size = New Size(36, 30)
-        btnclose.TabIndex = 17
-        ' 
         ' Guna2CirclePictureBox1
         ' 
         Guna2CirclePictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), Image)
+        Guna2CirclePictureBox1.Image = My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n1
         Guna2CirclePictureBox1.ImageRotate = 0F
         Guna2CirclePictureBox1.Location = New Point(17, 4)
         Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
-        Guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges9
+        Guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges7
         Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Guna2CirclePictureBox1.Size = New Size(82, 53)
         Guna2CirclePictureBox1.SizeMode = PictureBoxSizeMode.StretchImage
@@ -188,12 +171,12 @@ Partial Class BorrowerLoginForm
         ' Guna2ControlBox1
         ' 
         Guna2ControlBox1.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        Guna2ControlBox1.CustomizableEdges = CustomizableEdges10
+        Guna2ControlBox1.CustomizableEdges = CustomizableEdges8
         Guna2ControlBox1.FillColor = Color.Transparent
         Guna2ControlBox1.IconColor = Color.White
         Guna2ControlBox1.Location = New Point(709, 2)
         Guna2ControlBox1.Name = "Guna2ControlBox1"
-        Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges11
+        Guna2ControlBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges9
         Guna2ControlBox1.Size = New Size(36, 30)
         Guna2ControlBox1.TabIndex = 2
         ' 
@@ -335,7 +318,6 @@ Partial Class BorrowerLoginForm
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents PictureBox2 As PictureBox
-    Friend WithEvents btnclose As Guna.UI2.WinForms.Guna2ControlBox
     Friend WithEvents lblexample As Label
     Friend WithEvents Label4 As Label
     Friend WithEvents LinkLabel1 As LinkLabel

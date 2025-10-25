@@ -25,7 +25,6 @@ Partial Class BorrowerCreateAccount
         components = New ComponentModel.Container()
         Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(BorrowerCreateAccount))
         Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -146,7 +145,7 @@ Partial Class BorrowerCreateAccount
         ' Guna2CirclePictureBox1
         ' 
         Guna2CirclePictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), Image)
+        Guna2CirclePictureBox1.Image = My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n1
         Guna2CirclePictureBox1.ImageRotate = 0F
         Guna2CirclePictureBox1.Location = New Point(17, 4)
         Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
@@ -322,7 +321,7 @@ Partial Class BorrowerCreateAccount
         ' Label5
         ' 
         Label5.AutoSize = True
-        Label5.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        Label5.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label5.Location = New Point(39, 128)
         Label5.Name = "Label5"
@@ -356,7 +355,7 @@ Partial Class BorrowerCreateAccount
         ' Label6
         ' 
         Label6.AutoSize = True
-        Label6.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        Label6.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label6.Location = New Point(39, 190)
         Label6.Name = "Label6"
@@ -412,7 +411,7 @@ Partial Class BorrowerCreateAccount
         ' Label7
         ' 
         Label7.AutoSize = True
-        Label7.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        Label7.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label7.Location = New Point(321, 128)
         Label7.Name = "Label7"

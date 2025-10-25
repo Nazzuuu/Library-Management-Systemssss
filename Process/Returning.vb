@@ -808,11 +808,10 @@ Public Class Returning
         End Try
     End Sub
 
+    Private scannedBarcodes As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
+
     Private Sub txttransactionreceipt_TextChanged(sender As Object, e As EventArgs) Handles txttransactionreceipt.TextChanged
-
-
         If IsLoadingTransaction Then Return
-
         Const MIN_LENGTH As Integer = 11
 
         clear_details_only()
@@ -823,6 +822,14 @@ Public Class Returning
         If String.IsNullOrWhiteSpace(TransactionNo) OrElse TransactionNo.Length < MIN_LENGTH Then
             Return
         End If
+
+        If scannedBarcodes.Contains(TransactionNo) Then
+            MessageBox.Show("This barcode has already been scanned.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txttransactionreceipt.Clear()
+            Return
+        End If
+
+        scannedBarcodes.Add(TransactionNo)
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
@@ -837,20 +844,13 @@ Public Class Returning
             Dim dueDateStr As String = ""
             Dim totalBooksCount As String = ""
 
-
-
-            Dim com_id As String = "SELECT `LRN`, `EmployeeNo`, `Name`, `Borrower` FROM `borrowing_tbl` " &
-                               "WHERE `TransactionReceipt` = @transNo LIMIT 1"
-
+            Dim com_id As String = "SELECT `LRN`, `EmployeeNo`, `Name`, `Borrower` FROM `borrowing_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"
             Using comsi_id As New MySqlCommand(com_id, con)
                 comsi_id.Parameters.AddWithValue("@transNo", TransactionNo)
-
                 Using reader_id As MySqlDataReader = comsi_id.ExecuteReader()
                     If reader_id.Read() Then
-
                         borrowerName = reader_id("Name").ToString()
                         borrowerType = reader_id("Borrower").ToString()
-
                         If borrowerType.ToLower() = "student" Then
                             borrowerIDValue = reader_id("LRN").ToString()
                             borrowerIDColumn = "LRN"
@@ -858,7 +858,6 @@ Public Class Returning
                             borrowerIDValue = reader_id("EmployeeNo").ToString()
                             borrowerIDColumn = "EmployeeNo"
                         End If
-
                         reader_id.Close()
                     Else
                         reader_id.Close()
@@ -866,33 +865,25 @@ Public Class Returning
                 End Using
             End Using
 
-
-            Dim com_header As String = "SELECT `Borrower`, `Name`, `BorrowedDate`, `DueDate`, `BorrowedBookCount` " &
-                                   "FROM `printreceipt_tbl` " &
-                                   "WHERE `TransactionReceipt` = @transNo LIMIT 1"
-
+            Dim com_header As String = "SELECT `Borrower`, `Name`, `BorrowedDate`, `DueDate`, `BorrowedBookCount` FROM `printreceipt_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"
             Using comsi_header As New MySqlCommand(com_header, con)
                 comsi_header.Parameters.AddWithValue("@transNo", TransactionNo)
-
                 Using reader_header As MySqlDataReader = comsi_header.ExecuteReader()
                     If reader_header.Read() Then
-
                         borrowerName = reader_header("Name").ToString()
                         borrowerType = reader_header("Borrower").ToString()
                         borrowedDateStr = Convert.ToDateTime(reader_header("BorrowedDate")).ToShortDateString()
                         dueDateStr = Convert.ToDateTime(reader_header("DueDate")).ToShortDateString()
                         totalBooksCount = reader_header("BorrowedBookCount").ToString()
-
                         reader_header.Close()
                     Else
                         reader_header.Close()
-
                         MessageBox.Show("Transaction record not found.", "Transaction Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        txttransactionreceipt.Clear()
                         Return
                     End If
                 End Using
             End Using
-
 
             lblfullname.Text = borrowerName
             lblborrowertype.Text = borrowerType
@@ -901,8 +892,7 @@ Public Class Returning
             lblbooktotal.Text = totalBooksCount & " (Total)"
 
             If String.IsNullOrWhiteSpace(borrowerIDValue) Then
-                Dim com_history_id As String = "SELECT `LRN`, `EmployeeNo`, `Borrower` FROM `borrowinghistory_tbl` " &
-                                          "WHERE `TransactionReceipt` = @transNo LIMIT 1"
+                Dim com_history_id As String = "SELECT `LRN`, `EmployeeNo`, `Borrower` FROM `borrowinghistory_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"
                 Using comsi_history_id As New MySqlCommand(com_history_id, con)
                     comsi_history_id.Parameters.AddWithValue("@transNo", TransactionNo)
                     Using reader_history_id As MySqlDataReader = comsi_history_id.ExecuteReader()
@@ -920,31 +910,23 @@ Public Class Returning
                 End Using
             End If
 
-
-
             If Not String.IsNullOrWhiteSpace(borrowerIDValue) Then
                 LoadBorrowerDetails(borrowerIDValue, borrowerIDColumn)
             End If
 
-
-
-            Dim com_items As String = "SELECT `BookTitle` FROM `borrowing_tbl` " &
-                                 "WHERE `TransactionReceipt` = @transNo"
-
+            Dim com_items As String = "SELECT `BookTitle` FROM `borrowing_tbl` WHERE `TransactionReceipt` = @transNo"
             Using comsi_items As New MySqlCommand(com_items, con)
                 comsi_items.Parameters.AddWithValue("@transNo", TransactionNo)
-
                 Using reader_items As MySqlDataReader = comsi_items.ExecuteReader()
                     While reader_items.Read()
                         cbbooks.Items.Add(reader_items("BookTitle").ToString())
                     End While
-
                     If cbbooks.Items.Count = 0 Then
                         reader_items.Close()
                         If Not IsLoadingTransaction Then
-
                             MessageBox.Show("This transaction is complete. All borrowed books have been returned.", "Transaction Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
                         End If
+                        txttransactionreceipt.Clear()
                         Return
                     Else
                         cbbooks.SelectedIndex = 0

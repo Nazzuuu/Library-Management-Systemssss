@@ -8,7 +8,7 @@ Public Class MainForm
         GlobalVarsModule.ActiveMainForm = Me
 
         Me.WindowState = FormWindowState.Maximized
-        sizelocation()
+
 
 
         GlobalVarsModule.CurrentUserRole = "Guest"
@@ -29,41 +29,59 @@ Public Class MainForm
 
     End Sub
 
-    Public Sub loadsu()
+    Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.lbldamagecount()
-                load.lbllostcount()
-                load.lbloverduecount()
-                load.lblreturncount()
-                load.lblresercopies()
-                load.lbltotalbookscount()
-            End If
-        Next
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is Penalty Then
-                Dim load = DirectCast(form, Penalty)
-                load.refreshpenalty()
-            End If
-        Next
+        sizelocation()
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is Returning Then
-                Dim load = DirectCast(form, Returning)
-                load.RefreshReturningData()
-            End If
-        Next
-
-        For Each form In Application.OpenForms
-            If TypeOf form Is Book Then
-                Dim load = DirectCast(form, Book)
-                load.refreshbook()
-            End If
-        Next
     End Sub
+    Public Sub loadsu()
+        ' 🔹 Load updates for MainForm
+        Dim main As MainForm = Application.OpenForms.OfType(Of MainForm)().FirstOrDefault()
+        If main IsNot Nothing AndAlso Not main.IsDisposed Then
+            Try
+                main.lbldamagecount()
+                main.lbllostcount()
+                main.lbloverduecount()
+                main.lblreturncount()
+                main.lblresercopies()
+                main.lbltotalbookscount()
+            Catch ex As Exception
+                MessageBox.Show("Error updating MainForm data: " & ex.Message, "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+
+        ' 🔹 Load updates for Penalty form
+        Dim penaltyForm As Penalty = Application.OpenForms.OfType(Of Penalty)().FirstOrDefault()
+        If penaltyForm IsNot Nothing AndAlso Not penaltyForm.IsDisposed Then
+            Try
+                penaltyForm.refreshpenalty()
+            Catch ex As Exception
+                MessageBox.Show("Error refreshing Penalty form: " & ex.Message, "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+
+        ' 🔹 Load updates for Returning form
+        Dim returningForm As Returning = Application.OpenForms.OfType(Of Returning)().FirstOrDefault()
+        If returningForm IsNot Nothing AndAlso Not returningForm.IsDisposed Then
+            Try
+                returningForm.RefreshReturningData()
+            Catch ex As Exception
+                MessageBox.Show("Error refreshing Returning form: " & ex.Message, "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+
+        ' 🔹 Load updates for Book form
+        Dim bookForm As Book = Application.OpenForms.OfType(Of Book)().FirstOrDefault()
+        If bookForm IsNot Nothing AndAlso Not bookForm.IsDisposed Then
+            Try
+                bookForm.refreshbook()
+            Catch ex As Exception
+                MessageBox.Show("Error refreshing Book form: " & ex.Message, "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+    End Sub
+
 
     Private Sub Form1_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
         sizelocation()
@@ -123,10 +141,12 @@ Public Class MainForm
 
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
 
-        Dim dialogResult = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        Dim dialogResult = MessageBox.Show("Are you sure you want to logout?",
+                                   "Confirmation",
+                                   MessageBoxButtons.YesNo,
+                                   MessageBoxIcon.Question)
 
         If dialogResult = DialogResult.Yes Then
-
             Dim previousRole As String = GlobalVarsModule.GlobalRole
             Dim userEmail As String = GlobalVarsModule.GlobalEmail
             Dim userName As String = GlobalVarsModule.GlobalUsername
@@ -141,33 +161,54 @@ Public Class MainForm
                 description:=$"User '{userName}' ({previousRole}) successfully logged out.",
                 recordID:="N/A"
             )
-
             End If
 
             GlobalVarsModule.GlobalRole = "Guest"
             GlobalVarsModule.GlobalEmail = ""
             GlobalVarsModule.GlobalUsername = ""
-
             GlobalVarsModule.CurrentUserRole = "Guest"
             GlobalVarsModule.CurrentBorrowerType = ""
             GlobalVarsModule.CurrentBorrowerID = ""
             GlobalVarsModule.CurrentUserID = ""
+            GlobalVarsModule.CurrentEmployeeID = ""
 
             If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then
                 Borrowing.Close()
             End If
 
-            Me.Hide()
+            If GlobalVarsModule.ActiveMainForm IsNot Nothing AndAlso Not GlobalVarsModule.ActiveMainForm.IsDisposed Then
+                Try
+                    GlobalVarsModule.ActiveMainForm.Close()
+                    GlobalVarsModule.ActiveMainForm.Dispose()
+                Catch
 
-            If previousRole <> "Borrower" AndAlso Not String.IsNullOrWhiteSpace(previousRole) Then
-                login.Show()
-            Else
-                BorrowerLoginForm.Show()
+                End Try
+                GlobalVarsModule.ActiveMainForm = Nothing
             End If
 
+
+            Me.Hide()
+
+
+            If GlobalVarsModule.loginform Is Nothing OrElse GlobalVarsModule.loginform.IsDisposed Then
+                GlobalVarsModule.loginform = New login()
+            End If
+
+
+            Try
+                GlobalVarsModule.loginform.txtuser.Clear()
+                GlobalVarsModule.loginform.txtpass.Clear()
+            Catch
+
+            End Try
+
+            GlobalVarsModule.loginform.Show()
+            GlobalVarsModule.loginform.BringToFront()
         End If
 
     End Sub
+
+
 
 
     Public Sub ResetToMainDashboard()

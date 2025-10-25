@@ -1,4 +1,5 @@
-﻿Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
+﻿Imports System.IO
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 Imports Guna.UI2.WinForms
 Imports MySql.Data.MySqlClient
 
@@ -17,187 +18,166 @@ Public Class login
             Dim formInApp As Form = Application.OpenForms(i)
             If formInApp IsNot Me AndAlso formInApp.Name <> "MainForm" Then
                 formInApp.Hide()
-
             End If
         Next
 
         Dim User As String = txtuser.Text.Trim()
         Dim Pass As String = txtpass.Text.Trim()
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        If User = "" OrElse Pass = "" Then
+            MessageBox.Show("Please enter both Username and Password.", "Login Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
 
-        Dim comsus As String = "SELECT 0 AS ID, Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
-     "UNION " &
-     "SELECT ID, Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Dim comsus As String =
+            "SELECT 0 AS ID, Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
+            "UNION " &
+            "SELECT ID, Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
 
-        Dim com As New MySqlCommand(comsus, con)
-        com.Parameters.AddWithValue("@username", User)
-        com.Parameters.AddWithValue("@password", Pass)
+            Using com As New MySqlCommand(comsus, con)
+                com.Parameters.AddWithValue("@username", User)
+                com.Parameters.AddWithValue("@password", Pass)
 
-        Try
-            con.Open()
-            Dim lahatngrole As MySqlDataReader = com.ExecuteReader()
-
-            If lahatngrole.Read() Then
-                Dim role As String = lahatngrole("Role").ToString()
-                Dim userEmail As String = lahatngrole("Email").ToString()
-
-
-                Dim employeeID As String = lahatngrole("ID").ToString()
-
-                GlobalVarsModule.GlobalRole = role
-                GlobalVarsModule.GlobalUsername = User
-                GlobalVarsModule.GlobalEmail = userEmail
-                GlobalVarsModule.CurrentUserID = employeeID
-                GlobalVarsModule.CurrentEmployeeID = employeeID
+                Try
+                    con.Open()
+                    Using lahatngrole As MySqlDataReader = com.ExecuteReader()
+                        If lahatngrole.Read() Then
+                            Dim role As String = lahatngrole("Role").ToString()
+                            Dim userEmail As String = lahatngrole("Email").ToString()
+                            Dim employeeID As String = lahatngrole("ID").ToString()
 
 
-                lahatngrole.Close()
-
-                GlobalVarsModule.LogAudit(
-                 actionType:="LOGIN SUCCESS",
-                 formName:="LOGIN FORM",
-                 description:=$"User '{User}' ({role}) successfully logged in.",
-                 recordID:="N/A"
-             )
-
-                MainForm.AcquisitionToolStripMenuItem.Visible = True
-                MainForm.AccessionToolStripMenuItem.Visible = True
-                MainForm.UserMaintenanceToolStripMenuItem.Visible = True
-                MainForm.Audit_Trail.Visible = True
-                MainForm.EditInfoToolStripMenuItem.Visible = True
-                MainForm.EditsToolStripMenuItem1.Visible = False
-                MainForm.BorrowToolStripMenuItem.Visible = True
-                MainForm.StudentLogsToolStripMenuItem.Visible = True
-                MainForm.Panel_Studentlogs.Visible = True
-                MainForm.PenaltyManagementToolStripMenuItem.Visible = True
-                MainForm.PenaltyToolStripMenuItem.Visible = True
+                            GlobalVarsModule.GlobalRole = role
+                            GlobalVarsModule.GlobalUsername = User
+                            GlobalVarsModule.GlobalEmail = userEmail
+                            GlobalVarsModule.CurrentUserID = employeeID
+                            GlobalVarsModule.CurrentEmployeeID = employeeID
 
 
-                If role = "Librarian" Then
-                    MainForm.Refresh()
-                    MainForm.lbl_currentuser.Text = "Librarian"
-                    MainForm.lblgmail.Text = userEmail
-                    MainForm.lblform.Text = "MAIN FORM"
+                            GlobalVarsModule.LogAudit(
+                            actionType:="LOGIN SUCCESS",
+                            formName:="LOGIN FORM",
+                            description:=$"User '{User}' ({role}) successfully logged in."
+                        )
 
-                    For Each formInApp As Form In Application.OpenForms
-                        If TypeOf formInApp Is Users Then
-                            Dim Users As Users = CType(formInApp, Users)
-                            Users.LoadUserData()
+
+                            MessageBox.Show($"Welcome, {User}! You are logged in as {role}.", "Login Successful", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                            Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+                            If activeMain Is Nothing OrElse activeMain.IsDisposed Then
+                                activeMain = New MainForm()
+                                GlobalVarsModule.ActiveMainForm = activeMain
+                                activeMain.Show()
+                            End If
+
+
+                            activeMain.ResetToMainDashboard()
+                            activeMain.lblgmail.Text = userEmail
+                            activeMain.lblform.Text = "MAIN FORM"
+
+
+                            Select Case role
+                                Case "Librarian"
+                                    activeMain.lbl_currentuser.Text = "Librarian"
+
+                                    activeMain.AcquisitionToolStripMenuItem.Visible = True
+                                    activeMain.AccessionToolStripMenuItem.Visible = True
+                                    activeMain.UserMaintenanceToolStripMenuItem.Visible = True
+                                    activeMain.Audit_Trail.Visible = True
+                                    activeMain.EditInfoToolStripMenuItem.Visible = True
+                                    activeMain.EditsToolStripMenuItem1.Visible = False
+                                    activeMain.BorrowToolStripMenuItem.Visible = True
+                                    activeMain.StudentLogsToolStripMenuItem.Visible = True
+                                    activeMain.Panel_Studentlogs.Visible = True
+                                    activeMain.PenaltyManagementToolStripMenuItem.Visible = True
+                                    activeMain.PenaltyToolStripMenuItem.Visible = True
+
+                                Case "Staff"
+                                    activeMain.lbl_currentuser.Text = "Staff"
+
+                                    activeMain.AcquisitionToolStripMenuItem.Visible = False
+                                    activeMain.AccessionToolStripMenuItem.Visible = False
+                                    activeMain.Audit_Trail.Visible = False
+                                    activeMain.EditInfoToolStripMenuItem.Visible = False
+                                    activeMain.EditsToolStripMenuItem1.Visible = False
+                                    activeMain.BorrowToolStripMenuItem.Visible = False
+                                    activeMain.PenaltyToolStripMenuItem.Visible = False
+                                    activeMain.PenaltyManagementToolStripMenuItem.Visible = False
+
+                                Case "Assistant Librarian"
+                                    activeMain.lbl_currentuser.Text = "Asst. Librarian"
+
+                                    activeMain.Audit_Trail.Visible = False
+                                    activeMain.EditInfoToolStripMenuItem.Visible = False
+                                    activeMain.EditsToolStripMenuItem1.Visible = False
+                                    activeMain.BorrowToolStripMenuItem.Visible = False
+                                    activeMain.AcquisitionToolStripMenuItem.Visible = False
+                                    activeMain.AccessionToolStripMenuItem.Visible = False
+
+                                    For Each form In Application.OpenForms
+                                        If TypeOf form Is Penalty Then
+                                            DirectCast(form, Penalty).refreshpenalty()
+                                        End If
+                                    Next
+                                Case Else
+                                    MessageBox.Show("Invalid role detected.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                    Exit Sub
+                            End Select
+
+
+                            For Each formInApp As Form In Application.OpenForms
+                                If TypeOf formInApp Is Users Then
+                                    DirectCast(formInApp, Users).LoadUserData()
+                                End If
+                            Next
+
+                            Me.Hide()
+                            clear()
+
+                        Else
+
+                            GlobalVarsModule.GlobalRole = ""
+                            GlobalVarsModule.GlobalUsername = ""
+                            GlobalVarsModule.GlobalEmail = ""
+                            GlobalVarsModule.CurrentUserID = ""
+                            GlobalVarsModule.CurrentEmployeeID = ""
+
+                            MessageBox.Show("Invalid Credentials.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
                         End If
-                    Next
-
-                    MainForm.ResetToMainDashboard()
-
-                    MessageBox.Show("Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    MainForm.Show()
-                    MainForm.BringToFront()
-
-                    Me.Hide()
-                    clear()
-
-                ElseIf role = "Staff" Then
-                    MainForm.Refresh()
-
-
-                    MainForm.AcquisitionToolStripMenuItem.Visible = False
-                    MainForm.AccessionToolStripMenuItem.Visible = False
-                    MainForm.Audit_Trail.Visible = False
-                    MainForm.EditInfoToolStripMenuItem.Visible = False
-                    MainForm.EditsToolStripMenuItem1.Visible = False
-                    MainForm.BorrowToolStripMenuItem.Visible = False
-                    MainForm.Audit_Trail.Visible = False
-                    MainForm.PenaltyToolStripMenuItem.Visible = False
-                    MainForm.PenaltyManagementToolStripMenuItem.Visible = False
-                    MainForm.EditsToolStripMenuItem1.Visible = False
-
-                    For Each formInApp As Form In Application.OpenForms
-                        If TypeOf formInApp Is Users Then
-                            Dim Users As Users = CType(formInApp, Users)
-                            Users.LoadUserData()
-                        End If
-                    Next
-
-                    MainForm.ResetToMainDashboard()
-                    MessageBox.Show("Staff successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    MainForm.Show()
-                    MainForm.BringToFront()
-                    MainForm.lbl_currentuser.Text = "Staff"
-                    MainForm.lblgmail.Text = userEmail
-                    MainForm.lblform.Text = "MAIN FORM"
-                    Me.Hide()
-                    clear()
-
-                ElseIf role = "Assistant Librarian" Then
-                    MainForm.Refresh()
-
-                    MainForm.Audit_Trail.Visible = False
-                    MainForm.EditInfoToolStripMenuItem.Visible = False
-                    MainForm.EditsToolStripMenuItem1.Visible = False
-                    MainForm.BorrowToolStripMenuItem.Visible = False
-                    MainForm.EditsToolStripMenuItem1.Visible = False
-
-                    For Each formInApp As Form In Application.OpenForms
-                        If TypeOf formInApp Is Users Then
-                            Dim Users As Users = CType(formInApp, Users)
-                            Users.LoadUserData()
-                        End If
-                    Next
-
-                    For Each form In Application.OpenForms
-                        If TypeOf form Is Penalty Then
-                            Dim load = DirectCast(form, Penalty)
-                            load.refreshpenalty()
-                        End If
-                    Next
-
-                    MainForm.ResetToMainDashboard()
-                    MessageBox.Show("Assistant Librarian successfully logged in.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    MainForm.Show()
-                    MainForm.BringToFront()
-                    MainForm.lbl_currentuser.Text = "Asst. Librarian"
-                    MainForm.lblgmail.Text = userEmail
-                    MainForm.lblform.Text = "MAIN FORM"
-                    Me.Hide()
-                    clear()
-
-                Else
-
-                    MessageBox.Show("Invalid role.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                End If
-
-            Else
-
-                GlobalVarsModule.GlobalRole = ""
-                GlobalVarsModule.GlobalUsername = ""
-                GlobalVarsModule.GlobalEmail = ""
-                GlobalVarsModule.CurrentUserID = ""
-                GlobalVarsModule.CurrentEmployeeID = ""
-
-
-                MessageBox.Show("Invalid Credentials.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End If
-
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Login Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+            End Using
+        End Using
     End Sub
 
 
+
     Private Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        'TopMost = True
 
-        'Koneksyon()
-
+        TopMost = True
         MainForm.Refresh()
 
         txtpass.PasswordChar = "•"
 
-        PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
+
+        Try
+
+            Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
+            If File.Exists(filePath) Then
+                Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                    PictureBox1.Image = New Bitmap(fs)
+                End Using
+            Else
+
+                MessageBox.Show("Image file not found: pikit.png", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error loading pikit.png: " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As New MySqlCommand("SELECT COUNT(*) FROM superadmin_tbl WHERE Role = 'Librarian'", con)
@@ -227,15 +207,34 @@ Public Class login
 
         If txtpass.PasswordChar = "•" Then
 
-
-            PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\dilat.png")
-            txtpass.PasswordChar = ""
-
+            Try
+                Dim filePath As String = Application.StartupPath & "\Resources\dilat.png"
+                If File.Exists(filePath) Then
+                    Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                        PictureBox1.Image = New Bitmap(fs)
+                    End Using
+                    txtpass.PasswordChar = ""
+                Else
+                    MessageBox.Show("Image file not found: dilat.png", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error loading 'dilat.png': " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
         Else
 
-            PictureBox1.Image = Image.FromFile(Application.StartupPath & "\Resources\pikit.png")
-
-            txtpass.PasswordChar = "•"
+            Try
+                Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
+                If File.Exists(filePath) Then
+                    Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                        PictureBox1.Image = New Bitmap(fs)
+                    End Using
+                    txtpass.PasswordChar = "•"
+                Else
+                    MessageBox.Show("Image file not found: pikit.png", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error loading 'pikit.png': " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
         End If
 
     End Sub
