@@ -1,6 +1,5 @@
 ﻿Imports MySql.Data.MySqlClient
 
-
 Module db_laybsis
     Public con As MySqlConnection
 
