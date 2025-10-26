@@ -47,8 +47,8 @@ Partial Class Language
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
-        Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
+        Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         Guna2GradientPanel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -198,10 +198,6 @@ Partial Class Language
         txtsearch.Size = New Size(420, 30)
         txtsearch.TabIndex = 21
         ' 
-        ' Guna2Elipse1
-        ' 
-        Guna2Elipse1.BorderRadius = 9
-        ' 
         ' DataGridView1
         ' 
         DataGridView1.AllowUserToAddRows = False
@@ -251,6 +247,11 @@ Partial Class Language
         DataGridView1.Size = New Size(420, 150)
         DataGridView1.TabIndex = 28
         ' 
+        ' Guna2Elipse1
+        ' 
+        Guna2Elipse1.BorderRadius = 9
+        Guna2Elipse1.TargetControl = DataGridView1
+        ' 
         ' Language
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -282,6 +283,6 @@ Partial Class Language
     Friend WithEvents btnadd As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
 End Class

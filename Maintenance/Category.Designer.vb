@@ -201,6 +201,7 @@ Partial Class Category
         ' Guna2Elipse1
         ' 
         Guna2Elipse1.BorderRadius = 9
+        Guna2Elipse1.TargetControl = DataGridView1
         ' 
         ' DataGridView1
         ' 

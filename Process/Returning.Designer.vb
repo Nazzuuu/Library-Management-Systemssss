@@ -57,14 +57,18 @@ Partial Class Returning
         lblemployeeno = New Label()
         lblfullname = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label4 = New Label()
         lblstrand = New Label()
         lblsection = New Label()
         lblgrade = New Label()
+        Label19 = New Label()
         lbldepartment = New Label()
         Label15 = New Label()
         Label14 = New Label()
+        Panel3 = New Panel()
         Label13 = New Label()
         Label12 = New Label()
+        Panel2 = New Panel()
         Guna2GroupBox3 = New Guna.UI2.WinForms.Guna2GroupBox()
         btnedit = New Guna.UI2.WinForms.Guna2Button()
         lbldamage = New Label()
@@ -96,10 +100,8 @@ Partial Class Returning
         lblbooktotal = New Label()
         cbbooks = New ComboBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Label4 = New Label()
-        Label19 = New Label()
-        Panel3 = New Panel()
-        Panel2 = New Panel()
+        Label20 = New Label()
+        Panel4 = New Panel()
         Guna2GroupBox1.SuspendLayout()
         Guna2GroupBox3.SuspendLayout()
         Panel1.SuspendLayout()
@@ -158,7 +160,7 @@ Partial Class Returning
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(22, 103)
+        Label2.Location = New Point(22, 119)
         Label2.Name = "Label2"
         Label2.Size = New Size(36, 16)
         Label2.TabIndex = 45
@@ -169,7 +171,7 @@ Partial Class Returning
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(22, 136)
+        Label3.Location = New Point(22, 152)
         Label3.Name = "Label3"
         Label3.Size = New Size(93, 16)
         Label3.TabIndex = 46
@@ -180,7 +182,7 @@ Partial Class Returning
         Label5.AutoSize = True
         Label5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(22, 72)
+        Label5.Location = New Point(22, 88)
         Label5.Name = "Label5"
         Label5.Size = New Size(73, 16)
         Label5.TabIndex = 48
@@ -191,7 +193,7 @@ Partial Class Returning
         Label10.AutoSize = True
         Label10.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label10.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label10.Location = New Point(22, 169)
+        Label10.Location = New Point(22, 185)
         Label10.Name = "Label10"
         Label10.Size = New Size(71, 16)
         Label10.TabIndex = 53
@@ -202,7 +204,7 @@ Partial Class Returning
         lblborrowertype.AutoSize = True
         lblborrowertype.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblborrowertype.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblborrowertype.Location = New Point(116, 74)
+        lblborrowertype.Location = New Point(116, 90)
         lblborrowertype.Name = "lblborrowertype"
         lblborrowertype.Size = New Size(15, 16)
         lblborrowertype.TabIndex = 54
@@ -213,7 +215,7 @@ Partial Class Returning
         lbllrn.AutoSize = True
         lbllrn.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lbllrn.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbllrn.Location = New Point(116, 104)
+        lbllrn.Location = New Point(116, 120)
         lbllrn.Name = "lbllrn"
         lbllrn.Size = New Size(15, 16)
         lbllrn.TabIndex = 55
@@ -224,7 +226,7 @@ Partial Class Returning
         lblemployeeno.AutoSize = True
         lblemployeeno.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblemployeeno.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblemployeeno.Location = New Point(116, 136)
+        lblemployeeno.Location = New Point(116, 152)
         lblemployeeno.Name = "lblemployeeno"
         lblemployeeno.Size = New Size(15, 16)
         lblemployeeno.TabIndex = 56
@@ -235,7 +237,7 @@ Partial Class Returning
         lblfullname.AutoSize = True
         lblfullname.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblfullname.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblfullname.Location = New Point(116, 169)
+        lblfullname.Location = New Point(116, 185)
         lblfullname.Name = "lblfullname"
         lblfullname.Size = New Size(15, 16)
         lblfullname.TabIndex = 57
@@ -246,6 +248,8 @@ Partial Class Returning
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 8
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label20)
+        Guna2GroupBox1.Controls.Add(Panel4)
         Guna2GroupBox1.Controls.Add(Label4)
         Guna2GroupBox1.Controls.Add(lblstrand)
         Guna2GroupBox1.Controls.Add(lblsection)
@@ -278,12 +282,23 @@ Partial Class Returning
         Guna2GroupBox1.Size = New Size(592, 218)
         Guna2GroupBox1.TabIndex = 91
         ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label4.ForeColor = Color.Green
+        Label4.Location = New Point(394, 37)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(72, 16)
+        Label4.TabIndex = 116
+        Label4.Text = "Penalized."
+        ' 
         ' lblstrand
         ' 
         lblstrand.AutoSize = True
         lblstrand.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblstrand.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblstrand.Location = New Point(436, 169)
+        lblstrand.Location = New Point(436, 185)
         lblstrand.Name = "lblstrand"
         lblstrand.Size = New Size(15, 16)
         lblstrand.TabIndex = 65
@@ -294,7 +309,7 @@ Partial Class Returning
         lblsection.AutoSize = True
         lblsection.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblsection.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblsection.Location = New Point(436, 136)
+        lblsection.Location = New Point(436, 152)
         lblsection.Name = "lblsection"
         lblsection.Size = New Size(15, 16)
         lblsection.TabIndex = 64
@@ -305,18 +320,29 @@ Partial Class Returning
         lblgrade.AutoSize = True
         lblgrade.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblgrade.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblgrade.Location = New Point(436, 103)
+        lblgrade.Location = New Point(436, 119)
         lblgrade.Name = "lblgrade"
         lblgrade.Size = New Size(15, 16)
         lblgrade.TabIndex = 63
         lblgrade.Text = ".."
+        ' 
+        ' Label19
+        ' 
+        Label19.AutoSize = True
+        Label19.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label19.ForeColor = Color.Maroon
+        Label19.Location = New Point(394, 13)
+        Label19.Name = "Label19"
+        Label19.Size = New Size(98, 16)
+        Label19.TabIndex = 115
+        Label19.Text = "Not Penalized."
         ' 
         ' lbldepartment
         ' 
         lbldepartment.AutoSize = True
         lbldepartment.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lbldepartment.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbldepartment.Location = New Point(436, 74)
+        lbldepartment.Location = New Point(436, 90)
         lbldepartment.Name = "lbldepartment"
         lbldepartment.Size = New Size(15, 16)
         lbldepartment.TabIndex = 62
@@ -327,7 +353,7 @@ Partial Class Returning
         Label15.AutoSize = True
         Label15.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label15.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label15.Location = New Point(345, 169)
+        Label15.Location = New Point(345, 185)
         Label15.Name = "Label15"
         Label15.Size = New Size(56, 16)
         Label15.TabIndex = 61
@@ -338,18 +364,26 @@ Partial Class Returning
         Label14.AutoSize = True
         Label14.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label14.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label14.Location = New Point(345, 136)
+        Label14.Location = New Point(345, 152)
         Label14.Name = "Label14"
         Label14.Size = New Size(60, 16)
         Label14.TabIndex = 60
         Label14.Text = "Section:"
+        ' 
+        ' Panel3
+        ' 
+        Panel3.BackColor = Color.DarkGreen
+        Panel3.Location = New Point(345, 36)
+        Panel3.Name = "Panel3"
+        Panel3.Size = New Size(40, 17)
+        Panel3.TabIndex = 114
         ' 
         ' Label13
         ' 
         Label13.AutoSize = True
         Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label13.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label13.Location = New Point(345, 72)
+        Label13.Location = New Point(345, 88)
         Label13.Name = "Label13"
         Label13.Size = New Size(90, 16)
         Label13.TabIndex = 59
@@ -360,11 +394,19 @@ Partial Class Returning
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label12.Location = New Point(345, 103)
+        Label12.Location = New Point(345, 119)
         Label12.Name = "Label12"
         Label12.Size = New Size(50, 16)
         Label12.TabIndex = 58
         Label12.Text = "Grade:"
+        ' 
+        ' Panel2
+        ' 
+        Panel2.BackColor = Color.Maroon
+        Panel2.Location = New Point(345, 12)
+        Panel2.Name = "Panel2"
+        Panel2.Size = New Size(40, 17)
+        Panel2.TabIndex = 113
         ' 
         ' Guna2GroupBox3
         ' 
@@ -822,43 +864,24 @@ Partial Class Returning
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
-        ' Label4
+        ' Label20
         ' 
-        Label4.AutoSize = True
-        Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label4.ForeColor = Color.Green
-        Label4.Location = New Point(398, 39)
-        Label4.Name = "Label4"
-        Label4.Size = New Size(72, 16)
-        Label4.TabIndex = 116
-        Label4.Text = "Penalized."
+        Label20.AutoSize = True
+        Label20.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label20.ForeColor = Color.SteelBlue
+        Label20.Location = New Point(394, 61)
+        Label20.Name = "Label20"
+        Label20.Size = New Size(55, 16)
+        Label20.TabIndex = 118
+        Label20.Text = "Normal."
         ' 
-        ' Label19
+        ' Panel4
         ' 
-        Label19.AutoSize = True
-        Label19.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label19.ForeColor = Color.Maroon
-        Label19.Location = New Point(398, 15)
-        Label19.Name = "Label19"
-        Label19.Size = New Size(98, 16)
-        Label19.TabIndex = 115
-        Label19.Text = "Not Penalized."
-        ' 
-        ' Panel3
-        ' 
-        Panel3.BackColor = Color.DarkGreen
-        Panel3.Location = New Point(349, 38)
-        Panel3.Name = "Panel3"
-        Panel3.Size = New Size(40, 17)
-        Panel3.TabIndex = 114
-        ' 
-        ' Panel2
-        ' 
-        Panel2.BackColor = Color.Maroon
-        Panel2.Location = New Point(349, 14)
-        Panel2.Name = "Panel2"
-        Panel2.Size = New Size(40, 17)
-        Panel2.TabIndex = 113
+        Panel4.BackColor = Color.SteelBlue
+        Panel4.Location = New Point(345, 60)
+        Panel4.Name = "Panel4"
+        Panel4.Size = New Size(40, 17)
+        Panel4.TabIndex = 117
         ' 
         ' Returning
         ' 
@@ -943,4 +966,6 @@ Partial Class Returning
     Friend WithEvents Label19 As Label
     Friend WithEvents Panel3 As Panel
     Friend WithEvents Panel2 As Panel
+    Friend WithEvents Label20 As Label
+    Friend WithEvents Panel4 As Panel
 End Class

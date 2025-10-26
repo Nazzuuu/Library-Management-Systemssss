@@ -12,10 +12,13 @@ Public Class OverdueView
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
+
         Dim com As String = "SELECT " &
-                                "AccessionID, " &
-                                "BookTitle " &
-                                "FROM acession_tbl " &
+                                "FullName, " &
+                                "ReturnedBook AS BookTitle, " &
+                                "TransactionReceipt, " &
+                                "DueDate " &
+                                "FROM returning_tbl " &
                                 "WHERE Status = 'Overdue'"
 
         Dim adap As New MySqlDataAdapter(com, con)
@@ -27,18 +30,24 @@ Public Class OverdueView
 
             DataGridView1.DataSource = ds.Tables("info")
 
-            Me.Text = $"Overdue Books ({ds.Tables("info").Rows.Count} Total Books)"
+            Me.Text = $"Overdue Books ({ds.Tables("info").Rows.Count} Total Transactions)"
 
             If DataGridView1.Columns.Count > 0 Then
                 DataGridView1.EnableHeadersVisualStyles = False
                 DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
                 DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
-                If DataGridView1.Columns.Contains("AccessionID") Then
-                    DataGridView1.Columns("AccessionID").HeaderText = "ACCESSION ID"
+                If DataGridView1.Columns.Contains("FullName") Then
+                    DataGridView1.Columns("FullName").HeaderText = "BORROWER NAME"
                 End If
                 If DataGridView1.Columns.Contains("BookTitle") Then
                     DataGridView1.Columns("BookTitle").HeaderText = "BOOK TITLE"
+                End If
+                If DataGridView1.Columns.Contains("TransactionReceipt") Then
+                    DataGridView1.Columns("TransactionReceipt").HeaderText = "TRANSACTION NO."
+                End If
+                If DataGridView1.Columns.Contains("DueDate") Then
+                    DataGridView1.Columns("DueDate").HeaderText = "DUE DATE"
                 End If
             End If
 
@@ -68,7 +77,7 @@ Public Class OverdueView
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
-                Dim filter As String = String.Format("BookTitle LIKE '*{0}*'", txtsearch.Text.Trim())
+                Dim filter As String = String.Format("BookTitle LIKE '*{0}*' OR FullName LIKE '%{0}%'", txtsearch.Text.Trim())
                 dt.DefaultView.RowFilter = filter
             Else
                 dt.DefaultView.RowFilter = ""

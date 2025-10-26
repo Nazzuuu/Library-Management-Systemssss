@@ -203,6 +203,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(TimeInOutRecord)
         Panel_dash.Controls.Remove(BorrowingHistory)
         Panel_dash.Controls.Remove(Penalty)
+        Panel_dash.Controls.Remove(BookBorrowingConfirmation)
         Panel_dash.Controls.Remove(Returning)
         Panel_dash.Controls.Remove(AuditTrail)
         Panel_User.Show()
@@ -969,18 +970,19 @@ Public Class MainForm
         Try
             con.Open()
 
-            Dim query As String = "SELECT COUNT(*) FROM acession_tbl WHERE Status = 'Overdue'"
+
+            Dim query As String = "SELECT SUM(BookTotal) FROM returning_tbl WHERE Status = 'Overdue'"
 
             Using cmd As New MySqlCommand(query, con)
                 Dim result As Object = cmd.ExecuteScalar()
 
                 If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+
                     count = Convert.ToInt32(result)
                 Else
                     count = 0
                 End If
             End Using
-
 
             lbl_overdue.Text = count.ToString("0")
 

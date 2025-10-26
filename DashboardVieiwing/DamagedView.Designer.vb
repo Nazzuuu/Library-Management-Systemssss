@@ -22,6 +22,7 @@ Partial Class DamagedView
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        components = New ComponentModel.Container()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
@@ -39,6 +40,7 @@ Partial Class DamagedView
         Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         Label13 = New Label()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
+        Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
@@ -179,6 +181,11 @@ Partial Class DamagedView
         txtsearch.Size = New Size(373, 30)
         txtsearch.TabIndex = 99
         ' 
+        ' Guna2Elipse1
+        ' 
+        Guna2Elipse1.BorderRadius = 9
+        Guna2Elipse1.TargetControl = DataGridView1
+        ' 
         ' DamagedView
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -209,4 +216,5 @@ Partial Class DamagedView
     Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents Label13 As Label
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
 End Class

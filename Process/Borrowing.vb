@@ -733,7 +733,7 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
 
             Dim newBookCount As Integer = currentBookCount + 1
             Dim comsx As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate,TransactionReceipt) " &
-                              "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @TransactionReceipt)"
+                                 "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @TransactionReceipt)"
 
             Using comsi As New MySqlCommand(comsx, con)
 
@@ -753,6 +753,20 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 comsi.ExecuteNonQuery()
             End Using
 
+            ' --------------------------------------------------------
+            ' SIMULA NG BAGONG CODE: I-update ang Quantity sa acquisition_tbl
+            ' --------------------------------------------------------
+            Dim updateAcquisitionSql As String = "UPDATE acquisition_tbl SET Quantity = Quantity - 1 WHERE BookTitle = @BookTitle AND Quantity > 0"
+
+            Using updateAcquisitionCmd As New MySqlCommand(updateAcquisitionSql, con)
+                updateAcquisitionCmd.Parameters.AddWithValue("@BookTitle", txtsus.Text)
+                updateAcquisitionCmd.ExecuteNonQuery()
+            End Using
+            ' --------------------------------------------------------
+            ' TAPOS NG BAGONG CODE
+            ' --------------------------------------------------------
+
+
             GlobalVarsModule.LogAudit(
             actionType:="ADD",
             formName:="BORROWING FORM",
@@ -760,7 +774,7 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
             recordID:=transactionReceiptID,
             oldValue:="N/A",
             newValue:=$"Borrower: {txtname.Text} ({identifierValue}), Book: {txtsus.Text}, AccID: {txtaccessionid.Text}"
-        )
+            )
 
 
 
@@ -781,7 +795,7 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
 
 
                     Dim insertCom As String = "INSERT INTO confimation_tbl (Borrower, Name, BorrowedDate, TransactionReceipt, Status, BorrowedBookCount) " &
-                                         "VALUES (@Borrower, @Name, @BDate, @TransactionReceipt, @Status, @BookCount)"
+                                             "VALUES (@Borrower, @Name, @BDate, @TransactionReceipt, @Status, @BookCount)"
 
                     Using insertCmd As New MySqlCommand(insertCom, con)
                         insertCmd.Parameters.AddWithValue("@Borrower", borrower)

@@ -214,7 +214,7 @@ Public Class Returning
 
 
             Dim insert_com As String = "INSERT INTO `returning_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
-                                    "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+                                 "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
 
@@ -298,6 +298,18 @@ Public Class Returning
                     End Using
                 End If
 
+                If newAccessionStatus = "Available" OrElse (newAccessionStatus = "Damaged" AndAlso bookStatus.Contains("Minor")) Then
+
+                    Dim update_acquisition_com As String = "UPDATE `acquisition_tbl` SET `Quantity` = `Quantity` + 1 WHERE `BookTitle` = @bookTitle"
+
+                    Using update_acquisition_cmd As New MySqlCommand(update_acquisition_com, con, trans)
+                        update_acquisition_cmd.Parameters.AddWithValue("@bookTitle", bookTitle)
+                        update_acquisition_cmd.ExecuteNonQuery()
+                    End Using
+
+                End If
+
+
                 Dim delete_com As String = "DELETE FROM `borrowing_tbl` WHERE `TransactionReceipt` = @transNo AND `BookTitle` = @bookTitle LIMIT 1"
                 Using delete_cmd As New MySqlCommand(delete_com, con, trans)
                     delete_cmd.Parameters.AddWithValue("@transNo", TransactionNo)
@@ -311,13 +323,13 @@ Public Class Returning
 
 
             GlobalVarsModule.LogAudit(
-            actionType:="ADD",
-            formName:="BOOK RETURN",
-            description:=$"Returned {booksToReturn.Count} book(s) for transaction {TransactionNo}. Status: {bookStatusDescription}.",
-            recordID:=TransactionNo,
-            oldValue:=$"Borrower: {lblfullname.Text}",
-            newValue:=$"Returned Books: {returnedBookTitles}"
-        )
+        actionType:="ADD",
+        formName:="BOOK RETURN",
+        description:=$"Returned {booksToReturn.Count} book(s) for transaction {TransactionNo}. Status: {bookStatusDescription}.",
+        recordID:=TransactionNo,
+        oldValue:=$"Borrower: {lblfullname.Text}",
+        newValue:=$"Returned Books: {returnedBookTitles}"
+    )
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
                     DirectCast(form, AuditTrail).refreshaudit()
@@ -361,8 +373,9 @@ Public Class Returning
 
 
         Dim penaltyStatus As String = GetPenaltyStatus(transacReceipt)
+
         If penaltyStatus = "PENALIZED" Then
-            MessageBox.Show("Cannot edit status. The borrower has already been penalized (paid) for this transaction.", "Operation Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            MessageBox.Show("Cannot edit status. The penalty for this transaction has already been settled.", "Operation Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             clear_details_only()
             Return
         End If
@@ -384,6 +397,7 @@ Public Class Returning
         Dim tempCon As New MySqlConnection(GlobalVarsModule.connectionString)
         Try
             tempCon.Open()
+
             Dim get_old_accession_status_com As String = "SELECT T1.Status FROM acession_tbl T1 JOIN borrowinghistory_tbl T2 ON T1.AccessionID = T2.AccessionID WHERE T2.TransactionReceipt = @transNo AND T2.BookTitle = @bookTitle LIMIT 1"
             Using get_old_accession_status_cmd As New MySqlCommand(get_old_accession_status_com, tempCon)
                 get_old_accession_status_cmd.Parameters.AddWithValue("@transNo", transacReceipt)
@@ -474,6 +488,7 @@ Public Class Returning
 
             trans = con.BeginTransaction()
 
+
             Dim update_accession_com As String = "UPDATE `acession_tbl` SET `Status` = @newStatus WHERE `AccessionID` = @accessionId"
             Using update_accession_cmd As New MySqlCommand(update_accession_com, con, trans)
                 update_accession_cmd.Parameters.AddWithValue("@newStatus", newAccessionStatus)
@@ -481,8 +496,66 @@ Public Class Returning
                 update_accession_cmd.ExecuteNonQuery()
             End Using
 
+
+            Dim identifier_isbn As String = String.Empty
+            Dim identifier_barcode As String = String.Empty
+            Dim get_identifiers_com As String = "SELECT ISBN, Barcode FROM acession_tbl WHERE AccessionID = @accessionId"
+            Using get_identifiers_cmd As New MySqlCommand(get_identifiers_com, con, trans)
+                get_identifiers_cmd.Parameters.AddWithValue("@accessionId", accessionID)
+
+
+                Using reader As MySqlDataReader = get_identifiers_cmd.ExecuteReader()
+                    If reader.Read() Then
+                        identifier_isbn = If(reader("ISBN") Is DBNull.Value, String.Empty, reader("ISBN").ToString().Trim())
+                        identifier_barcode = If(reader("Barcode") Is DBNull.Value, String.Empty, reader("Barcode").ToString().Trim())
+                    End If
+                End Using
+            End Using
+
+            Dim quantityUpdated As Boolean = False
+            Dim identifierToUpdate As String = If(Not String.IsNullOrWhiteSpace(identifier_isbn), identifier_isbn, identifier_barcode)
+            Dim identifierColumn As String = If(Not String.IsNullOrWhiteSpace(identifier_isbn), "ISBN", "Barcode")
+
+
+            If bookStatus = "Lost" AndAlso oldAccessionStatus.ToUpper() <> "LOST" Then
+
+                If Not String.IsNullOrWhiteSpace(identifierToUpdate) Then
+                    Dim update_com As String = $"UPDATE `acquisition_tbl` SET `Quantity` = `Quantity` - 1 WHERE `{identifierColumn}` = @identifier AND `Quantity` > 0"
+                    Using update_cmd As New MySqlCommand(update_com, con, trans)
+                        update_cmd.Parameters.AddWithValue("@identifier", identifierToUpdate)
+                        If update_cmd.ExecuteNonQuery() > 0 Then
+                            quantityUpdated = True
+                        End If
+                    End Using
+                End If
+
+                If Not quantityUpdated Then
+
+                End If
+
+
+            ElseIf oldAccessionStatus.ToUpper() = "LOST" AndAlso (newAccessionStatus.ToUpper() = "AVAILABLE" OrElse newAccessionStatus.ToUpper() = "DAMAGED") Then
+
+
+                If Not String.IsNullOrWhiteSpace(identifierToUpdate) Then
+                    Dim restore_com As String = $"UPDATE `acquisition_tbl` SET `Quantity` = `Quantity` + 1 WHERE `{identifierColumn}` = @identifier"
+                    Using restore_cmd As New MySqlCommand(restore_com, con, trans)
+                        restore_cmd.Parameters.AddWithValue("@identifier", identifierToUpdate)
+                        If restore_cmd.ExecuteNonQuery() > 0 Then
+                            quantityUpdated = True
+
+                        End If
+                    End Using
+                End If
+
+                If Not quantityUpdated Then
+                    MessageBox.Show("Warning: Failed to restore book quantity in Acquisition table. Please check book identifiers.", "Data Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                End If
+            End If
+
+
             Dim insert_com As String = "INSERT INTO `returning_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
-        "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, 1, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+    "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, 1, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
                 insert_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
@@ -504,6 +577,7 @@ Public Class Returning
                 insert_cmd.ExecuteNonQuery()
             End Using
 
+
             Dim newBookTotal As Integer = originalBookTotal - 1
             Dim newReturnedBookList As String = String.Empty
 
@@ -518,7 +592,7 @@ Public Class Returning
             If newBookTotal > 0 Then
 
                 Dim update_com As String = "UPDATE `returning_tbl` SET `ReturnedBook` = @newReturnedBook, `BookTotal` = @newBookTotal " &
-                                     "WHERE `ID` = @originalID"
+                                   "WHERE `ID` = @originalID"
 
                 Using update_cmd As New MySqlCommand(update_com, con, trans)
                     update_cmd.Parameters.AddWithValue("@newReturnedBook", newReturnedBookList)
@@ -534,6 +608,7 @@ Public Class Returning
                     delete_original_cmd.ExecuteNonQuery()
                 End Using
             End If
+
 
 
             Dim delete_penalty_com As String = "DELETE FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
@@ -566,14 +641,22 @@ Public Class Returning
 
             trans.Commit()
 
+            For Each form In Application.OpenForms
+
+                If TypeOf form Is Acquisition Then
+                    DirectCast(form, Acquisition).refreshData()
+                End If
+            Next
+
+
             GlobalVarsModule.LogAudit(
-            actionType:="UPDATE",
-            formName:="RETURN FORM",
-            description:=$"Edited status of book '{bookToSplitTitle}' in transaction {transacReceipt}.",
-            recordID:=transacReceipt,
-            oldValue:=$"Book: {bookToSplitTitle}, Old Status: {currentStatus}, Old Accession: {oldAccessionStatus}",
-            newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
-        )
+        actionType:="UPDATE",
+        formName:="RETURN FORM",
+        description:=$"Edited status of book '{bookToSplitTitle}' in transaction {transacReceipt}.",
+        recordID:=transacReceipt,
+        oldValue:=$"Book: {bookToSplitTitle}, Old Status: {currentStatus}, Old Accession: {oldAccessionStatus}",
+        newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
+    )
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
                     DirectCast(form, AuditTrail).refreshaudit()
@@ -582,20 +665,30 @@ Public Class Returning
 
 
             For Each form In Application.OpenForms
-                If TypeOf form Is Accession Then DirectCast(form, Accession).RefreshAccessionData()
+
+                If TypeOf form Is Accession Then
+                    DirectCast(form, Accession).RefreshAccessionData()
+                End If
+
+
+                If TypeOf form Is MainForm Then
+                    DirectCast(form, MainForm).lbltotalbookscount()
+                End If
             Next
 
-            MessageBox.Show($"Book status for '{bookToSplitTitle}' updated to '{bookStatus}' successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show($"Book status for '{bookToSplitTitle}' updated to '{bookStatus}' successfully!{(If(bookStatus = "Lost", Environment.NewLine & "", If(quantityUpdated, Environment.NewLine & "", "")))}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
             clear_click(sender, e)
-            RefreshReturningData()
+                RefreshReturningData()
 
 
-            For Each form In Application.OpenForms
-                If TypeOf form Is Penalty Then DirectCast(form, Penalty).refreshpenalty()
-            Next
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Penalty Then
+                        DirectCast(form, Penalty).refreshpenalty()
+                    End If
+                Next
 
-        Catch ex As Exception
+    Catch ex As Exception
             trans?.Rollback()
             MessageBox.Show("Error during book status edit: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
@@ -604,7 +697,6 @@ Public Class Returning
             End If
         End Try
     End Sub
-
     Private Sub InsertPenaltyRecord(ByVal row As DataRow, ByVal con As MySqlConnection, ByVal trans As MySqlTransaction)
         Dim insert_penalty_com As String = "INSERT INTO `penalty_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
                                      "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
@@ -1037,21 +1129,32 @@ Public Class Returning
         Dim status As String = "NOT PENALIZED"
         Dim con As New MySqlConnection(connectionString)
 
-        Dim query As String = "SELECT BorrowerStatus FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"
-
         Try
             con.Open()
-            Using cmd As New MySqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@transNo", transactionNo)
-                Dim result As Object = cmd.ExecuteScalar()
+
+            Dim penaltyQuery As String = "SELECT BorrowerStatus FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"
+            Using cmdPenalty As New MySqlCommand(penaltyQuery, con)
+                cmdPenalty.Parameters.AddWithValue("@transNo", transactionNo)
+                Dim result As Object = cmdPenalty.ExecuteScalar()
 
                 If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
-
                     status = result.ToString().ToUpper().Trim()
+                    If status = "PENALIZED" Then Return "PENALIZED"
                 End If
             End Using
-        Catch ex As Exception
 
+            Dim returningQuery As String = "SELECT COUNT(*) FROM `returning_tbl` WHERE `TransactionReceipt` = @transNo AND (`Status` LIKE 'Overdue%' OR `Status` LIKE 'Lost%' OR `Status` LIKE 'Damaged%')"
+
+            Using cmdReturning As New MySqlCommand(returningQuery, con)
+                cmdReturning.Parameters.AddWithValue("@transNo", transactionNo)
+                Dim count As Integer = Convert.ToInt32(cmdReturning.ExecuteScalar())
+
+                If count > 0 Then
+                    Return "PENALIZED_PENDING"
+                End If
+            End Using
+
+        Catch ex As Exception
             Return "NOT PENALIZED"
         Finally
             If con.State = ConnectionState.Open Then con.Close()
@@ -1060,33 +1163,33 @@ Public Class Returning
         Return status
     End Function
 
-
     Private Sub DataGridView1_RowPrePaint(sender As Object, e As DataGridViewRowPrePaintEventArgs) Handles DataGridView1.RowPrePaint
         If e.RowIndex >= 0 AndAlso e.RowIndex < DataGridView1.Rows.Count Then
             Try
 
+
                 Dim transNo As String = DataGridView1.Rows(e.RowIndex).Cells("TransactionReceipt").Value.ToString().Trim()
-
-
                 Dim penaltyStatus As String = GetPenaltyStatus(transNo)
 
-                If penaltyStatus = "PENALIZED" Then
 
-                    DataGridView1.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.DarkSeaGreen
-                    DataGridView1.Rows(e.RowIndex).DefaultCellStyle.SelectionBackColor = Color.LightGreen
-                Else
+
+                If penaltyStatus = "PENALIZED" OrElse penaltyStatus = "PENALIZED_PENDING" Then
 
                     DataGridView1.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.LightCoral
                     DataGridView1.Rows(e.RowIndex).DefaultCellStyle.SelectionBackColor = Color.Red
+                Else
+
+                    DataGridView1.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.SteelBlue
+                    DataGridView1.Rows(e.RowIndex).DefaultCellStyle.SelectionBackColor = Color.SkyBlue
                 End If
 
 
                 DataGridView1.Rows(e.RowIndex).DefaultCellStyle.ForeColor = Color.Black
 
             Catch ex As Exception
-
                 DataGridView1.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.White
             End Try
         End If
     End Sub
+
 End Class
