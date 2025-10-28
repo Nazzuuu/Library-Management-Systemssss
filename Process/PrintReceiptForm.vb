@@ -168,43 +168,6 @@ Public Class PrintReceiptForm
         End Try
     End Sub
 
-    Public Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal targetWidth As Integer, ByVal targetHeight As Integer) As Image
-        If String.IsNullOrWhiteSpace(barcodeText) Then Return Nothing
-        Try
-            Dim options As New ZXing.Common.EncodingOptions With {
-.Width = targetWidth,
-.Height = targetHeight,
-.Margin = 1,
-.PureBarcode = True
-}
-
-            Dim writer As New BarcodeWriter(Of Bitmap) With {
-        .Format = BarcodeFormat.CODE_128,
-        .Options = options,
-        .Renderer = New BitmapRenderer()
-    }
-
-            Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
-            barcodeBitmap.SetResolution(96, 96)
-            Return barcodeBitmap
-
-        Catch ex As Exception
-            Dim bmp As New Bitmap(targetWidth, targetHeight)
-            Using g As Graphics = Graphics.FromImage(bmp)
-                g.Clear(Color.White)
-                Using font As New Font("Arial", 6)
-                    g.DrawString("Barcode Error", font, Brushes.Red, 2, 2)
-                End Using
-            End Using
-            Return bmp
-        End Try
-
-
-    End Function
-
-
-
-
     Public Function GetBookDetailsByTransaction(ByVal transactionID As String) As DataTable
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim dt As New DataTable
@@ -276,36 +239,79 @@ Public Class PrintReceiptForm
         yPos += lineHeight + 3
 
         For Each bookRow As DataRow In bookDetailsList.Rows
-            g.DrawString("Title: " & bookRow("BookTitle").ToString(), fontBody, Brushes.Black, margin, yPos)
+
+            Dim titleText As String = "Title: " & bookRow("BookTitle").ToString()
+            Dim titleRect As New RectangleF(margin, yPos, contentWidth, lineHeight * 3)
+            g.DrawString(titleText, fontBody, Brushes.Black, titleRect)
+            yPos += CInt(g.MeasureString(titleText, fontBody, contentWidth).Height)
+
+
+            Dim accessionID As String = "Accession ID: " & bookRow("AccessionID").ToString()
+            g.DrawString(accessionID, fontBody, Brushes.Black, margin, yPos)
             yPos += lineHeight
-            g.DrawString("Accession ID: " & bookRow("AccessionID").ToString(), fontBody, Brushes.Black, margin, yPos)
-            yPos += lineHeight
-            g.DrawString("Barcode/ISBN: " & If(String.IsNullOrWhiteSpace(bookRow("Barcode").ToString()), bookRow("ISBN").ToString(), bookRow("Barcode").ToString()), fontBody, Brushes.Black, margin, yPos)
-            yPos += lineHeight + 5
+
+            Dim codeText As String = "Barcode/ISBN: " & If(String.IsNullOrWhiteSpace(bookRow("Barcode").ToString()), bookRow("ISBN").ToString(), bookRow("Barcode").ToString())
+            Dim codeRect As New RectangleF(margin, yPos, contentWidth, lineHeight * 2)
+            g.DrawString(codeText, fontBody, Brushes.Black, codeRect)
+            yPos += CInt(g.MeasureString(codeText, fontBody, contentWidth).Height) + 5
         Next
 
 
         If Not String.IsNullOrEmpty(transacReceipt) Then
-            Dim barcodeWidth As Integer = 150
-            Dim barcodeHeight As Integer = 30
+            Dim barcodeWidth As Integer = 140
+            Dim barcodeHeight As Integer = 25
+
             Using receiptBarcode As Image = GenerateBarcodeImage(transacReceipt, barcodeWidth, barcodeHeight)
                 If receiptBarcode IsNot Nothing Then
                     Dim xPosBarcode As Integer = margin + ((contentWidth - barcodeWidth) / 2)
                     g.DrawImage(receiptBarcode, xPosBarcode, yPos, barcodeWidth, barcodeHeight)
                     yPos += barcodeHeight + 2
+
                     Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
                         g.DrawString(transacReceipt, fontBody, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
                     End Using
-                    yPos += lineHeight
+                    yPos += lineHeight + 2
                 End If
             End Using
         End If
 
         e.HasMorePages = False
-
-
     End Sub
 
+
+    Public Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal targetWidth As Integer, ByVal targetHeight As Integer) As Image
+        If String.IsNullOrWhiteSpace(barcodeText) Then Return Nothing
+        Try
+            Dim options As New ZXing.Common.EncodingOptions With {
+.Width = targetWidth,
+.Height = targetHeight,
+.Margin = 1,
+.PureBarcode = True
+}
+
+            Dim writer As New BarcodeWriter(Of Bitmap) With {
+        .Format = BarcodeFormat.CODE_128,
+        .Options = options,
+        .Renderer = New BitmapRenderer()
+    }
+
+            Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
+            barcodeBitmap.SetResolution(96, 96)
+            Return barcodeBitmap
+
+        Catch ex As Exception
+            Dim bmp As New Bitmap(targetWidth, targetHeight)
+            Using g As Graphics = Graphics.FromImage(bmp)
+                g.Clear(Color.White)
+                Using font As New Font("Arial", 6)
+                    g.DrawString("Barcode Error", font, Brushes.Red, 2, 2)
+                End Using
+            End Using
+            Return bmp
+        End Try
+
+
+    End Function
 
     Public Sub LoadPrintReceiptDataByTransaction(ByVal transactionID As String)
 
