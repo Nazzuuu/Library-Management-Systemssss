@@ -440,6 +440,7 @@ Partial Class Borrower
         txtcontactnumber.ForeColor = Color.Black
         txtcontactnumber.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontactnumber.Location = New Point(643, 85)
+        txtcontactnumber.MaxLength = 9
         txtcontactnumber.Name = "txtcontactnumber"
         txtcontactnumber.PlaceholderText = ""
         txtcontactnumber.SelectedText = ""
@@ -640,6 +641,7 @@ Partial Class Borrower
         txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlrn.Location = New Point(306, 154)
+        txtlrn.MaxLength = 13
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
         txtlrn.SelectedText = ""
@@ -686,6 +688,7 @@ Partial Class Borrower
         txtmname.ForeColor = Color.Black
         txtmname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtmname.Location = New Point(306, 88)
+        txtmname.MaxLength = 2
         txtmname.Name = "txtmname"
         txtmname.PlaceholderText = ""
         txtmname.SelectedText = ""
@@ -719,6 +722,7 @@ Partial Class Borrower
         txtlname.ForeColor = Color.Black
         txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlname.Location = New Point(30, 154)
+        txtlname.MaxLength = 15
         txtlname.Name = "txtlname"
         txtlname.PlaceholderText = ""
         txtlname.SelectedText = ""
@@ -741,6 +745,7 @@ Partial Class Borrower
         txtfname.ForeColor = Color.Black
         txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfname.Location = New Point(30, 88)
+        txtfname.MaxLength = 15
         txtfname.Name = "txtfname"
         txtfname.PlaceholderText = ""
         txtfname.SelectedText = ""
@@ -760,8 +765,10 @@ Partial Class Borrower
         txtemployeeno.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtemployeeno.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemployeeno.Font = New Font("Segoe UI", 9F)
+        txtemployeeno.ForeColor = Color.Black
         txtemployeeno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemployeeno.Location = New Point(306, 154)
+        txtemployeeno.MaxLength = 8
         txtemployeeno.Name = "txtemployeeno"
         txtemployeeno.PlaceholderText = ""
         txtemployeeno.SelectedText = ""

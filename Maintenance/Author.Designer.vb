@@ -33,12 +33,12 @@ Partial Class Author
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Label2 = New Label()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         Label1 = New Label()
@@ -47,12 +47,12 @@ Partial Class Author
         btnedit = New Guna.UI2.WinForms.Guna2Button()
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        DataGridView1 = New DataGridView()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         PictureBox1 = New PictureBox()
-        DataGridView1 = New DataGridView()
         Guna2GradientPanel1.SuspendLayout()
-        CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Label2
@@ -110,6 +110,7 @@ Partial Class Author
         txtauthor.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtauthor.Location = New Point(36, 48)
         txtauthor.Margin = New Padding(3, 5, 3, 5)
+        txtauthor.MaxLength = 20
         txtauthor.Name = "txtauthor"
         txtauthor.PlaceholderText = ""
         txtauthor.SelectedText = ""
@@ -182,40 +183,6 @@ Partial Class Author
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
-        ' txtsearch
-        ' 
-        txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges11
-        txtsearch.DefaultText = ""
-        txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
-        txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
-        txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
-        txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
-        txtsearch.ForeColor = Color.Black
-        txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Location = New Point(30, 13)
-        txtsearch.Margin = New Padding(4)
-        txtsearch.Name = "txtsearch"
-        txtsearch.PlaceholderText = "Search Author"
-        txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges12
-        txtsearch.Size = New Size(420, 30)
-        txtsearch.TabIndex = 24
-        ' 
-        ' PictureBox1
-        ' 
-        PictureBox1.BackColor = Color.White
-        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
-        PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        PictureBox1.Location = New Point(422, 20)
-        PictureBox1.Name = "PictureBox1"
-        PictureBox1.Size = New Size(20, 18)
-        PictureBox1.TabIndex = 25
-        PictureBox1.TabStop = False
-        ' 
         ' DataGridView1
         ' 
         DataGridView1.AllowUserToAddRows = False
@@ -264,6 +231,40 @@ Partial Class Author
         DataGridView1.Size = New Size(420, 150)
         DataGridView1.TabIndex = 28
         ' 
+        ' txtsearch
+        ' 
+        txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtsearch.BorderRadius = 16
+        txtsearch.CustomizableEdges = CustomizableEdges11
+        txtsearch.DefaultText = ""
+        txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
+        txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtsearch.Location = New Point(30, 13)
+        txtsearch.Margin = New Padding(4)
+        txtsearch.Name = "txtsearch"
+        txtsearch.PlaceholderText = "Search Author"
+        txtsearch.SelectedText = ""
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        txtsearch.Size = New Size(420, 30)
+        txtsearch.TabIndex = 24
+        ' 
+        ' PictureBox1
+        ' 
+        PictureBox1.BackColor = Color.White
+        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
+        PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
+        PictureBox1.Location = New Point(422, 20)
+        PictureBox1.Name = "PictureBox1"
+        PictureBox1.Size = New Size(20, 18)
+        PictureBox1.TabIndex = 25
+        PictureBox1.TabStop = False
+        ' 
         ' Author
         ' 
         AutoScaleDimensions = New SizeF(7F, 14F)
@@ -286,8 +287,8 @@ Partial Class Author
         Text = "Author Maintenance"
         Guna2GradientPanel1.ResumeLayout(False)
         Guna2GradientPanel1.PerformLayout()
-        CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
+        CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub
     Friend WithEvents Guna2Elipse2 As Guna.UI2.WinForms.Guna2Elipse

@@ -104,6 +104,7 @@ Partial Class Strand
         txtdescription.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtdescription.Location = New Point(34, 118)
         txtdescription.Margin = New Padding(3, 4, 3, 4)
+        txtdescription.MaxLength = 24
         txtdescription.Name = "txtdescription"
         txtdescription.PlaceholderText = ""
         txtdescription.SelectedText = ""
@@ -138,6 +139,7 @@ Partial Class Strand
         txtstrand.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtstrand.Location = New Point(36, 55)
         txtstrand.Margin = New Padding(3, 4, 3, 4)
+        txtstrand.MaxLength = 9
         txtstrand.Name = "txtstrand"
         txtstrand.PlaceholderText = ""
         txtstrand.SelectedText = ""

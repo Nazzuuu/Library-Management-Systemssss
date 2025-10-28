@@ -382,11 +382,26 @@ Public Class Book
 
         Else
             isbn = txtisbn.Text.Trim()
+
             If String.IsNullOrEmpty(CStr(isbn)) Then
                 MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
                 Exit Sub
             End If
 
+            If String.IsNullOrEmpty(CStr(isbn)) Then
+                MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
+                Exit Sub
+            End If
+
+
+            Dim isbnString As String = CStr(isbn).Replace("-", "").Replace(" ", "")
+
+
+            If Not System.Text.RegularExpressions.Regex.IsMatch(isbnString, "^(978|979)\d{10}$") Then
+
+                MsgBox("ISBN must start with '978' or '979'.", vbExclamation, "ISBN Format Error")
+                Exit Sub
+            End If
 
             Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `ISBN` = @isbn", con)
             coms.Parameters.AddWithValue("@isbn", isbn)
@@ -513,6 +528,22 @@ Public Class Book
                     MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
                     Exit Sub
                 End If
+
+                If String.IsNullOrEmpty(CStr(isbnValue)) Then
+                    MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
+                    Exit Sub
+                End If
+
+
+                Dim isbnString As String = CStr(isbnValue).Replace("-", "").Replace(" ", "")
+
+
+                If Not System.Text.RegularExpressions.Regex.IsMatch(isbnString, "^(978|979)\d{10}$") Then
+
+                    MsgBox("ISBN must start with '978' or '979'.", vbExclamation, "ISBN Format Error")
+                    Exit Sub
+                End If
+
                 Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `ISBN` = @isbn AND `ID` <> @id", con)
                 coms.Parameters.AddWithValue("@isbn", isbnValue)
                 coms.Parameters.AddWithValue("@id", bookID)

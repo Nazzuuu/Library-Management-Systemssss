@@ -67,6 +67,7 @@ Partial Class Penalty
         lblemployeeno = New Label()
         Label1 = New Label()
         Guna2GroupBox2 = New Guna.UI2.WinForms.Guna2GroupBox()
+        chkdisregard = New CheckBox()
         lblbookstatus = New Label()
         Label21 = New Label()
         lbldetails = New Label()
@@ -86,7 +87,6 @@ Partial Class Penalty
         lblbooktotal = New Label()
         Label7 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        chkdisregard = New CheckBox()
         Guna2GroupBox3.SuspendLayout()
         Guna2GroupBox4.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -504,6 +504,18 @@ Partial Class Penalty
         Guna2GroupBox2.Size = New Size(590, 284)
         Guna2GroupBox2.TabIndex = 92
         ' 
+        ' chkdisregard
+        ' 
+        chkdisregard.AutoSize = True
+        chkdisregard.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        chkdisregard.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        chkdisregard.Location = New Point(173, 239)
+        chkdisregard.Name = "chkdisregard"
+        chkdisregard.Size = New Size(158, 20)
+        chkdisregard.TabIndex = 106
+        chkdisregard.Text = "Disregard (New Fee)"
+        chkdisregard.UseVisualStyleBackColor = True
+        ' 
         ' lblbookstatus
         ' 
         lblbookstatus.AutoSize = True
@@ -585,6 +597,7 @@ Partial Class Penalty
         txtfee.ForeColor = Color.Black
         txtfee.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfee.Location = New Point(22, 232)
+        txtfee.MaxLength = 4
         txtfee.Name = "txtfee"
         txtfee.PlaceholderText = ""
         txtfee.SelectedText = ""
@@ -717,18 +730,6 @@ Partial Class Penalty
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
-        ' 
-        ' chkdisregard
-        ' 
-        chkdisregard.AutoSize = True
-        chkdisregard.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        chkdisregard.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        chkdisregard.Location = New Point(173, 239)
-        chkdisregard.Name = "chkdisregard"
-        chkdisregard.Size = New Size(158, 20)
-        chkdisregard.TabIndex = 106
-        chkdisregard.Text = "Disregard (New Fee)"
-        chkdisregard.UseVisualStyleBackColor = True
         ' 
         ' Penalty
         ' 

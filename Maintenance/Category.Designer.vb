@@ -97,6 +97,7 @@ Partial Class Category
         txtcategory.ForeColor = Color.Black
         txtcategory.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcategory.Location = New Point(36, 48)
+        txtcategory.MaxLength = 15
         txtcategory.Name = "txtcategory"
         txtcategory.PlaceholderText = ""
         txtcategory.SelectedText = ""

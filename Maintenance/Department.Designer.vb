@@ -98,6 +98,7 @@ Partial Class Department
         txtdepartment.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtdepartment.Location = New Point(36, 55)
         txtdepartment.Margin = New Padding(3, 4, 3, 4)
+        txtdepartment.MaxLength = 20
         txtdepartment.Name = "txtdepartment"
         txtdepartment.PlaceholderText = ""
         txtdepartment.SelectedText = ""

@@ -57,6 +57,8 @@ Partial Class Returning
         lblemployeeno = New Label()
         lblfullname = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label20 = New Label()
+        Panel4 = New Panel()
         Label4 = New Label()
         lblstrand = New Label()
         lblsection = New Label()
@@ -100,8 +102,6 @@ Partial Class Returning
         lblbooktotal = New Label()
         cbbooks = New ComboBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Label20 = New Label()
-        Panel4 = New Panel()
         Guna2GroupBox1.SuspendLayout()
         Guna2GroupBox3.SuspendLayout()
         Panel1.SuspendLayout()
@@ -137,6 +137,7 @@ Partial Class Returning
         txttransactionreceipt.ForeColor = Color.Black
         txttransactionreceipt.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txttransactionreceipt.Location = New Point(38, 25)
+        txttransactionreceipt.MaxLength = 12
         txttransactionreceipt.Name = "txttransactionreceipt"
         txttransactionreceipt.PlaceholderText = ""
         txttransactionreceipt.SelectedText = ""
@@ -281,6 +282,25 @@ Partial Class Returning
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         Guna2GroupBox1.Size = New Size(592, 218)
         Guna2GroupBox1.TabIndex = 91
+        ' 
+        ' Label20
+        ' 
+        Label20.AutoSize = True
+        Label20.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label20.ForeColor = Color.SteelBlue
+        Label20.Location = New Point(394, 61)
+        Label20.Name = "Label20"
+        Label20.Size = New Size(55, 16)
+        Label20.TabIndex = 118
+        Label20.Text = "Normal."
+        ' 
+        ' Panel4
+        ' 
+        Panel4.BackColor = Color.SteelBlue
+        Panel4.Location = New Point(345, 60)
+        Panel4.Name = "Panel4"
+        Panel4.Size = New Size(40, 17)
+        Panel4.TabIndex = 117
         ' 
         ' Label4
         ' 
@@ -863,25 +883,6 @@ Partial Class Returning
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
-        ' 
-        ' Label20
-        ' 
-        Label20.AutoSize = True
-        Label20.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label20.ForeColor = Color.SteelBlue
-        Label20.Location = New Point(394, 61)
-        Label20.Name = "Label20"
-        Label20.Size = New Size(55, 16)
-        Label20.TabIndex = 118
-        Label20.Text = "Normal."
-        ' 
-        ' Panel4
-        ' 
-        Panel4.BackColor = Color.SteelBlue
-        Panel4.Location = New Point(345, 60)
-        Panel4.Name = "Panel4"
-        Panel4.Size = New Size(40, 17)
-        Panel4.TabIndex = 117
         ' 
         ' Returning
         ' 

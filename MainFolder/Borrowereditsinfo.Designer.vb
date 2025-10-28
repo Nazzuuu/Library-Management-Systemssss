@@ -194,6 +194,7 @@ Partial Class Borrowereditsinfo
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemail.Location = New Point(296, 74)
         txtemail.Margin = New Padding(5)
+        txtemail.MaxLength = 20
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""
@@ -239,6 +240,7 @@ Partial Class Borrowereditsinfo
         txtemployeeno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemployeeno.Location = New Point(29, 136)
         txtemployeeno.Margin = New Padding(5)
+        txtemployeeno.MaxLength = 8
         txtemployeeno.Name = "txtemployeeno"
         txtemployeeno.PlaceholderText = ""
         txtemployeeno.SelectedText = ""
@@ -273,6 +275,7 @@ Partial Class Borrowereditsinfo
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlrn.Location = New Point(29, 74)
         txtlrn.Margin = New Padding(5)
+        txtlrn.MaxLength = 13
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
         txtlrn.SelectedText = ""
@@ -352,6 +355,7 @@ Partial Class Borrowereditsinfo
         txtuser.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtuser.Location = New Point(296, 136)
         txtuser.Margin = New Padding(5)
+        txtuser.MaxLength = 15
         txtuser.Name = "txtuser"
         txtuser.PlaceholderText = ""
         txtuser.SelectedText = ""

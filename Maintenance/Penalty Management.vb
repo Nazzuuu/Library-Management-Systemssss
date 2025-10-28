@@ -66,8 +66,15 @@ Public Class Penalty_Management
 
     Private Sub Penalty_Management_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
-        MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
-        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+        Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+        If activeMain Is Nothing OrElse activeMain.IsDisposed Then
+            activeMain = New MainForm()
+            GlobalVarsModule.ActiveMainForm = activeMain
+            activeMain.Show()
+        End If
+
+        activeMain.MaintenanceToolStripMenuItem.ShowDropDown()
+        activeMain.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         txtamount.Text = ""
         txtdescription.Text = ""
         cbpenaltytype.SelectedIndex = -1

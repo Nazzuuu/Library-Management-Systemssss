@@ -320,6 +320,7 @@ Partial Class Section
         txtsection.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsection.Location = New Point(368, 82)
         txtsection.Margin = New Padding(3, 4, 3, 4)
+        txtsection.MaxLength = 12
         txtsection.Name = "txtsection"
         txtsection.PlaceholderText = ""
         txtsection.SelectedText = ""

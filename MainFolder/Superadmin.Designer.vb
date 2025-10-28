@@ -316,6 +316,7 @@ Partial Class Superadmin
         txtusername.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtusername.Location = New Point(692, 62)
         txtusername.Margin = New Padding(3, 5, 3, 5)
+        txtusername.MaxLength = 20
         txtusername.Name = "txtusername"
         txtusername.PlaceholderText = ""
         txtusername.SelectedText = ""
@@ -350,6 +351,7 @@ Partial Class Superadmin
         txtaddress.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaddress.Location = New Point(360, 205)
         txtaddress.Margin = New Padding(3, 5, 3, 5)
+        txtaddress.MaxLength = 20
         txtaddress.Name = "txtaddress"
         txtaddress.PlaceholderText = ""
         txtaddress.SelectedText = ""
@@ -384,6 +386,7 @@ Partial Class Superadmin
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemail.Location = New Point(360, 135)
         txtemail.Margin = New Padding(3, 5, 3, 5)
+        txtemail.MaxLength = 20
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""
@@ -418,6 +421,7 @@ Partial Class Superadmin
         txtcontact.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontact.Location = New Point(360, 62)
         txtcontact.Margin = New Padding(3, 5, 3, 5)
+        txtcontact.MaxLength = 11
         txtcontact.Name = "txtcontact"
         txtcontact.PlaceholderText = ""
         txtcontact.SelectedText = ""
@@ -452,6 +456,7 @@ Partial Class Superadmin
         txtmname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtmname.Location = New Point(31, 205)
         txtmname.Margin = New Padding(3, 5, 3, 5)
+        txtmname.MaxLength = 15
         txtmname.Name = "txtmname"
         txtmname.PlaceholderText = ""
         txtmname.SelectedText = ""
@@ -486,6 +491,7 @@ Partial Class Superadmin
         txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlname.Location = New Point(31, 138)
         txtlname.Margin = New Padding(3, 5, 3, 5)
+        txtlname.MaxLength = 12
         txtlname.Name = "txtlname"
         txtlname.PlaceholderText = ""
         txtlname.SelectedText = ""
@@ -520,6 +526,7 @@ Partial Class Superadmin
         txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfname.Location = New Point(31, 68)
         txtfname.Margin = New Padding(3, 5, 3, 5)
+        txtfname.MaxLength = 12
         txtfname.Name = "txtfname"
         txtfname.PlaceholderText = ""
         txtfname.SelectedText = ""

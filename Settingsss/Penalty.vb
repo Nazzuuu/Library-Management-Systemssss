@@ -21,10 +21,15 @@ Public Class Penalty
         Dim ds As New DataSet
         Dim com As String
 
+
+        Dim statusFilter As String = "(`BorrowerStatus` IS NULL OR `BorrowerStatus` <> 'PENALIZED')"
+
         If String.IsNullOrWhiteSpace(searchText) Then
-            com = "SELECT * FROM `penalty_tbl` ORDER BY ID DESC"
+
+            com = $"SELECT * FROM `penalty_tbl` WHERE {statusFilter} ORDER BY ID DESC"
         Else
-            com = "SELECT * FROM `penalty_tbl` WHERE `FullName` LIKE @search OR `LRN` LIKE @search OR `EmployeeNo` LIKE @search OR `TransactionReceipt` LIKE @search ORDER BY ID DESC"
+
+            com = $"SELECT * FROM `penalty_tbl` WHERE ({statusFilter}) AND (`FullName` LIKE @search OR `LRN` LIKE @search OR `EmployeeNo` LIKE @search OR `TransactionReceipt` LIKE @search) ORDER BY ID DESC"
         End If
 
         Try
@@ -39,8 +44,13 @@ Public Class Penalty
 
                 If DataGridView1.Rows.Count > 0 Then
                     If Not String.IsNullOrWhiteSpace(searchText) Then
+
+
+                        DataGridView1.ClearSelection()
                         DataGridView1.MultiSelect = True
-                        DataGridView1.SelectAll()
+
+
+                        DataGridView1.Rows(0).Selected = True
                         DataGridView1.FirstDisplayedScrollingRowIndex = 0
 
                         LoadDetailsFromSelectedRow(DataGridView1.Rows(0))
@@ -53,6 +63,7 @@ Public Class Penalty
                     DataGridView1.MultiSelect = False
                     ClearAllDetails()
                 End If
+
 
                 DataGridView1.Columns("ID").Visible = False
                 DataGridView1.Columns("Grade").Visible = False
@@ -499,13 +510,35 @@ Public Class Penalty
             Return
         End If
 
-        If enteredFee < ABSOLUTE_MIN_FEE Then
-            MessageBox.Show($"The entered fee must not be less than {ABSOLUTE_MIN_FEE.ToString("N2")}.", "Fee Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            txtfee.Focus()
-            Return
-        End If
-
         Dim transNo As String = lbltransactionreceipt.Text
+
+
+        Dim penaltyStatus As String = String.Empty
+
+        Using conFetch As New MySqlConnection(connectionString)
+            Dim getStatusQuery As String = "SELECT `Status` FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"
+            Try
+                conFetch.Open()
+                Using cmdStatus As New MySqlCommand(getStatusQuery, conFetch)
+                    cmdStatus.Parameters.AddWithValue("@transNo", transNo)
+                    Dim result As Object = cmdStatus.ExecuteScalar()
+                    If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
+                        penaltyStatus = result.ToString()
+                    End If
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error fetching penalty status: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End Try
+        End Using
+
+        If Not penaltyStatus.StartsWith("Overdue") Then
+            If enteredFee < ABSOLUTE_MIN_FEE Then
+                MessageBox.Show($"The entered fee must not be less than {ABSOLUTE_MIN_FEE.ToString("N2")}.", "Fee Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                txtfee.Focus()
+                Return
+            End If
+        End If
 
 
         Using con As New MySqlConnection(connectionString)
@@ -533,15 +566,16 @@ Public Class Penalty
             End Try
         End Using
 
+
         Dim oldFeeStatus As String = If(chkdisregard.Checked, $"Disregarded Fee: {enteredFee.ToString("N2")}", $"Calculated Fee: {originalCalculatedFee.ToString("N2")}")
 
         GlobalVarsModule.LogAudit(
-        actionType:="UPDATE",
-        formName:="PENALTY PAYMENT",
-        description:=$"Transaction {transNo} marked as PENALIZED in penalty_tbl and returning_tbl.",
-        recordID:=transNo,
-        oldValue:=$"Status: NOT PENALIZED | Fee: {oldFeeStatus}",
-        newValue:=$"Status: PENALIZED | Paid Amount: {enteredFee.ToString("N2")}"
+    actionType:="UPDATE",
+    formName:="PENALTY PAYMENT",
+    description:=$"Transaction {transNo} marked as PENALIZED in penalty_tbl and returning_tbl.",
+    recordID:=transNo,
+    oldValue:=$"Status: NOT PENALIZED | Fee: {oldFeeStatus}",
+    newValue:=$"Status: PENALIZED | Paid Amount: {enteredFee.ToString("N2")}"
     )
         For Each form In Application.OpenForms
             If TypeOf form Is AuditTrail Then

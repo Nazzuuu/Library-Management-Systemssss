@@ -98,6 +98,7 @@ Partial Class Genre
         txtgenre.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtgenre.Location = New Point(36, 44)
         txtgenre.Margin = New Padding(3, 4, 3, 4)
+        txtgenre.MaxLength = 20
         txtgenre.Name = "txtgenre"
         txtgenre.PlaceholderText = ""
         txtgenre.SelectedText = ""

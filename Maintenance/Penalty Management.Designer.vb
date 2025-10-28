@@ -177,6 +177,7 @@ Partial Class Penalty_Management
         txtamount.ForeColor = Color.Black
         txtamount.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtamount.Location = New Point(236, 41)
+        txtamount.MaxLength = 4
         txtamount.Name = "txtamount"
         txtamount.PlaceholderText = ""
         txtamount.SelectedText = ""

@@ -66,6 +66,7 @@ Partial Class Acquisition
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_acquisition = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label9 = New Label()
         NumericUpDown2 = New Guna.UI2.WinForms.Guna2NumericUpDown()
         Label6 = New Label()
         Label12 = New Label()
@@ -99,7 +100,6 @@ Partial Class Acquisition
         Label1 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         suppliernametooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
-        Label9 = New Label()
         panel_acquisition.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(NumericUpDown2, ComponentModel.ISupportInitialize).BeginInit()
@@ -165,6 +165,17 @@ Partial Class Acquisition
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges36
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label9.ForeColor = Color.Red
+        Label9.Location = New Point(656, 245)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(189, 16)
+        Label9.TabIndex = 109
+        Label9.Text = "1. Set Expected Book Types."
         ' 
         ' NumericUpDown2
         ' 
@@ -296,6 +307,7 @@ Partial Class Acquisition
         txtbarcodes.ForeColor = Color.Black
         txtbarcodes.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbarcodes.Location = New Point(299, 122)
+        txtbarcodes.MaxLength = 12
         txtbarcodes.Name = "txtbarcodes"
         txtbarcodes.PlaceholderText = ""
         txtbarcodes.SelectedText = ""
@@ -362,6 +374,7 @@ Partial Class Acquisition
         txtbookprice.ForeColor = Color.Black
         txtbookprice.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbookprice.Location = New Point(602, 196)
+        txtbookprice.MaxLength = 4
         txtbookprice.Name = "txtbookprice"
         txtbookprice.PlaceholderText = ""
         txtbookprice.SelectedText = ""
@@ -618,6 +631,7 @@ Partial Class Acquisition
         txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Location = New Point(25, 122)
+        txtisbn.MaxLength = 13
         txtisbn.Name = "txtisbn"
         txtisbn.PlaceholderText = ""
         txtisbn.SelectedText = ""
@@ -711,17 +725,6 @@ Partial Class Acquisition
         suppliernametooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
         suppliernametooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         suppliernametooltip.MaximumSize = New Size(0, 0)
-        ' 
-        ' Label9
-        ' 
-        Label9.AutoSize = True
-        Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label9.ForeColor = Color.Red
-        Label9.Location = New Point(656, 245)
-        Label9.Name = "Label9"
-        Label9.Size = New Size(189, 16)
-        Label9.TabIndex = 109
-        Label9.Text = "1. Set Expected Book Types."
         ' 
         ' Acquisition
         ' 

@@ -183,6 +183,24 @@ Public Class Returning
             borrowerStatus = "NOT PENALIZED"
 
         Else
+
+
+            Dim dueDateStringCheck As String = lblduedate.Text
+            Dim dueDateCheck As Date
+
+            If Date.TryParse(dueDateStringCheck, dueDateCheck) Then
+
+                If DateTime.Now.Date > dueDateCheck.Date Then
+                    MessageBox.Show("Book is overdue. Please select 'Overdue' status.", "Status Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+            Else
+
+                MessageBox.Show("Due Date format is invalid. Cannot check for Overdue status.", "Date Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End If
+
+
             bookStatus = "Normal"
             newAccessionStatus = "Available"
             bookStatusDescription = "Normal Return"
@@ -217,8 +235,8 @@ Public Class Returning
             Dim returnedBookTitles As String = String.Join(" | ", booksToReturn)
 
             Dim insert_com As String = "INSERT INTO `returning_tbl` " &
-                                   "(`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`, `BorrowerStatus`) " &
-                                   "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)"
+                                 "(`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`, `BorrowerStatus`) " &
+                                 "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)"
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
                 insert_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
@@ -421,11 +439,13 @@ Public Class Returning
                 newAccessionStatus = "Damaged"
                 bookStatusDescription = "Damaged"
                 borrowerStatus = "NOT PENALIZED"
+
             ElseIf rblost.Checked Then
                 bookStatus = "Lost"
                 newAccessionStatus = "Lost"
                 bookStatusDescription = "Lost"
                 borrowerStatus = "NOT PENALIZED"
+
             ElseIf rboverdue.Checked Then
                 Dim dueDateString As String = selectedRow.Cells("DueDate").Value?.ToString()
                 Dim dueDate As Date
@@ -445,7 +465,18 @@ Public Class Returning
                 newAccessionStatus = "Available"
                 bookStatusDescription = "Overdue"
                 borrowerStatus = "NOT PENALIZED"
+
             Else
+                Dim dueDateStringCheck As String = selectedRow.Cells("DueDate").Value?.ToString()
+                Dim dueDateCheck As Date
+
+                If Date.TryParse(dueDateStringCheck, dueDateCheck) Then
+                    If DateTime.Now.Date > dueDateCheck.Date Then
+                        MessageBox.Show("Cannot edit as normal. This book is already overdue, Please select another status.", "Status Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+                Else
+                End If
 
                 If currentStatus IsNot Nothing AndAlso currentStatus.ToLower().Contains("normal") Then
                     If MessageBox.Show("No new status is selected. Do you want to proceed and keep the status as 'Normal'?", "Confirm Edit", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then
@@ -543,7 +574,7 @@ Public Class Returning
 
 
             Dim insert_com As String = "INSERT INTO `returning_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`, `BorrowerStatus`) " &
-                                   "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, 1, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)" ' <--- Idagdag ang BorrowerStatus column at parameter
+                                     "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, 1, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)" ' <--- Tama: Kasama na ang BorrowerStatus
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
                 insert_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
@@ -581,7 +612,7 @@ Public Class Returning
             If newBookTotal > 0 Then
 
                 Dim update_com As String = "UPDATE `returning_tbl` SET `ReturnedBook` = @newReturnedBook, `BookTotal` = @newBookTotal, `BorrowerStatus` = @borrowerStatusUpdate " &
-                                   "WHERE `ID` = @originalID"
+                                         "WHERE `ID` = @originalID"
 
                 Using update_cmd As New MySqlCommand(update_com, con, trans)
                     update_cmd.Parameters.AddWithValue("@newReturnedBook", newReturnedBookList)
@@ -639,12 +670,12 @@ Public Class Returning
 
 
             GlobalVarsModule.LogAudit(
-    actionType:="UPDATE",
-    formName:="RETURN FORM",
-    description:=$"Edited status of book '{bookToSplitTitle}' in transaction {transacReceipt}.",
-    recordID:=transacReceipt,
-    oldValue:=$"Book: {bookToSplitTitle}, Old Status: {currentStatus}, Old Accession: {oldAccessionStatus}",
-    newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
+actionType:="UPDATE",
+formName:="RETURN FORM",
+description:=$"Edited status of book '{bookToSplitTitle}' in transaction {transacReceipt}.",
+recordID:=transacReceipt,
+oldValue:=$"Book: {bookToSplitTitle}, Old Status: {currentStatus}, Old Accession: {oldAccessionStatus}",
+newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
 )
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -706,8 +737,8 @@ Public Class Returning
     End Sub
 
     Private Sub InsertPenaltyRecord(ByVal row As DataRow, ByVal con As MySqlConnection, ByVal trans As MySqlTransaction)
-        Dim insert_penalty_com As String = "INSERT INTO `penalty_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`) " &
-                                     "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus)"
+        Dim insert_penalty_com As String = "INSERT INTO `penalty_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`, `BorrowerStatus`) " &
+                                        "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)" ' ✨ IDINAGDAG ANG `BorrowerStatus`
 
         Using insert_penalty_cmd As New MySqlCommand(insert_penalty_com, con, trans)
             insert_penalty_cmd.Parameters.AddWithValue("@borrowerType", row("Borrower"))
@@ -728,6 +759,8 @@ Public Class Returning
             insert_penalty_cmd.Parameters.AddWithValue("@returnDate", row("ReturnDate"))
             insert_penalty_cmd.Parameters.AddWithValue("@transNo", row("TransactionReceipt"))
             insert_penalty_cmd.Parameters.AddWithValue("@bookStatus", row("Status"))
+
+            insert_penalty_cmd.Parameters.AddWithValue("@borrowerStatus", row("BorrowerStatus"))
 
             insert_penalty_cmd.ExecuteNonQuery()
         End Using
@@ -812,7 +845,7 @@ Public Class Returning
 
     Private Sub txttransactionreceipt_TextChanged(sender As Object, e As EventArgs) Handles txttransactionreceipt.TextChanged
         If IsLoadingTransaction Then Return
-        Const MIN_LENGTH As Integer = 11
+        Const MIN_LENGTH As Integer = 12
 
         clear_details_only()
         cbbooks.Items.Clear()
@@ -823,18 +856,50 @@ Public Class Returning
             Return
         End If
 
-        If scannedBarcodes.Contains(TransactionNo) Then
-            MessageBox.Show("This barcode has already been scanned.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            txttransactionreceipt.Clear()
-            Return
-        End If
 
-        scannedBarcodes.Add(TransactionNo)
+        If TransactionNo.Length > MIN_LENGTH Then
+
+            TransactionNo = TransactionNo.Substring(TransactionNo.Length - MIN_LENGTH)
+
+        End If
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
             con.Open()
+
+            Dim com_check_return As String = "SELECT COUNT(*) FROM `borrowing_tbl` WHERE `TransactionReceipt` = @transNo"
+            Using comsi_check As New MySqlCommand(com_check_return, con)
+                comsi_check.Parameters.AddWithValue("@transNo", TransactionNo)
+                Dim active_borrows As Integer = CInt(comsi_check.ExecuteScalar())
+
+
+                If active_borrows = 0 Then
+
+                    Dim com_check_history As String = "SELECT COUNT(*) FROM `returning_tbl` WHERE `TransactionReceipt` = @transNo"
+                    Using comsi_history As New MySqlCommand(com_check_history, con)
+                        comsi_history.Parameters.AddWithValue("@transNo", TransactionNo)
+                        Dim history_count As Integer = CInt(comsi_history.ExecuteScalar())
+
+                        If history_count > 0 Then
+
+                            MessageBox.Show("This transaction is complete. All borrowed books have been returned.", "Transaction Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                            txttransactionreceipt.Clear()
+                            Return
+                        Else
+
+                            MessageBox.Show("Transaction record not found.", "Transaction Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                            txttransactionreceipt.Clear()
+                            Return
+                        End If
+                    End Using
+                End If
+            End Using
+
+
+
+            scannedBarcodes.Clear()
+
 
             Dim borrowerIDValue As String = ""
             Dim borrowerIDColumn As String = ""
@@ -878,9 +943,7 @@ Public Class Returning
                         reader_header.Close()
                     Else
                         reader_header.Close()
-                        MessageBox.Show("Transaction record not found.", "Transaction Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                        txttransactionreceipt.Clear()
-                        Return
+
                     End If
                 End Using
             End Using
@@ -924,7 +987,7 @@ Public Class Returning
                     If cbbooks.Items.Count = 0 Then
                         reader_items.Close()
                         If Not IsLoadingTransaction Then
-                            MessageBox.Show("This transaction is complete. All borrowed books have been returned.", "Transaction Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
                         End If
                         txttransactionreceipt.Clear()
                         Return
@@ -942,7 +1005,6 @@ Public Class Returning
             End If
         End Try
     End Sub
-
 
     Private Sub cbbooks_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbbooks.SelectedIndexChanged
 

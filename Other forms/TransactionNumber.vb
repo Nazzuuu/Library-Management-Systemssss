@@ -205,10 +205,10 @@ Public Class TransactionNumber
 
                         If generatedIDs.Count > 0 Then
                             accessionForm.txtaccessionid.Text = String.Join(", ", generatedIDs.ToArray())
-                            accessionForm.txtaccessionid.Enabled = True
+                            accessionForm.txtaccessionid.Enabled = False
                         Else
                             accessionForm.txtaccessionid.Text = ""
-                            accessionForm.txtaccessionid.Enabled = True
+                            accessionForm.txtaccessionid.Enabled = False
                         End If
                     End Using
 

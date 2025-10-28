@@ -46,8 +46,15 @@ Public Class Section
             End If
         Next
 
-        MainForm.MaintenanceToolStripMenuItem.ShowDropDown()
-        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
+        Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+        If activeMain Is Nothing OrElse activeMain.IsDisposed Then
+            activeMain = New MainForm()
+            GlobalVarsModule.ActiveMainForm = activeMain
+            activeMain.Show()
+        End If
+
+        activeMain.MaintenanceToolStripMenuItem.ShowDropDown()
+        activeMain.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
         clearlahat()
 
     End Sub
@@ -647,14 +654,7 @@ Public Class Section
         cbstrand.DataSource = Nothing
 
         cbdeptss()
-        ' Note: cbgradesu and cbstrandsu are often called after department selection.
-        ' Calling them here might overwrite the DataSource if cbdeptss() is called first.
-        ' They are now commented out since cbdeptss() is called, and comboboxes will be
-        ' populated based on department selection. If they must be reset, simply setting 
-        ' DataSource to Nothing is better.
 
-        ' cbgradesu() 
-        ' cbstrandsu()
 
         txtsection.Text = ""
         txtsearch.Clear()
