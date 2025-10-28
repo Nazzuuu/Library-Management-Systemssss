@@ -1,5 +1,6 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports System.Data
+Imports System.Linq
 
 Public Class AvailableBooks
 
@@ -114,18 +115,66 @@ Public Class AvailableBooks
     Private Sub DataGridView1_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellDoubleClick
 
         If e.RowIndex >= 0 AndAlso Not DataGridView1.Rows(e.RowIndex).IsNewRow Then
-
             Try
-                Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
+                Dim activeBorrowing As Borrowing = Nothing
+
+
+                Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+                If activeMain Is Nothing Then
+                    activeMain = Application.OpenForms.OfType(Of MainForm)().FirstOrDefault()
+                    If activeMain IsNot Nothing Then
+                        GlobalVarsModule.ActiveMainForm = activeMain
+                    End If
+                End If
+
+                If activeMain IsNot Nothing Then
+                    For Each ctrl As Control In activeMain.Panel_dash.Controls
+                        If TypeOf ctrl Is Borrowing Then
+                            activeBorrowing = DirectCast(ctrl, Borrowing)
+                            Exit For
+                        End If
+                    Next
+
+
+                    If activeBorrowing Is Nothing Then
+                        activeBorrowing = New Borrowing()
+                        With activeBorrowing
+                            .TopLevel = False
+                            .Dock = DockStyle.Fill
+                            activeMain.Panel_dash.Controls.Add(activeBorrowing)
+                            .BringToFront()
+                            .Show()
+                        End With
+                    End If
+                End If
+
+
+                If activeBorrowing Is Nothing OrElse activeBorrowing.IsDisposed Then
+                    activeBorrowing = New Borrowing()
+                    If activeMain IsNot Nothing Then
+                        activeMain.Panel_dash.Controls.Add(activeBorrowing)
+                        activeBorrowing.TopLevel = False
+                        activeBorrowing.BringToFront()
+                        activeBorrowing.Show()
+                    End If
+                End If
+
+
+                Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
                 Dim accessionID As String = row.Cells("AccessionID").Value.ToString()
                 Dim bookTitle As String = row.Cells("BookTitle").Value.ToString()
 
+                activeBorrowing.txtaccessionid.Text = accessionID
+                activeBorrowing.txtsus.Text = bookTitle.Trim()
 
-                Borrowing.txtaccessionid.Text = accessionID
-                Borrowing.txtsus.Text = bookTitle.Trim()
 
+                activeBorrowing.SetupBorrowerFields()
+
+
+                DataGridView1.ClearSelection()
                 Me.Close()
+
 
                 Accession.btnview.Visible = False
                 Accession.CheckBox1.Checked = False
@@ -133,9 +182,9 @@ Public Class AvailableBooks
             Catch ex As Exception
                 MessageBox.Show("Error selecting book: " & ex.Message, "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
-
         End If
     End Sub
+
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 

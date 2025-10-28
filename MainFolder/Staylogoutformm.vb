@@ -56,46 +56,77 @@
 
     Private Sub btnlogout_Click(sender As Object, e As EventArgs) Handles btnlogout.Click
 
-        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso IsTimedIn Then
-            Dim recordIDToUpdate As Integer = GlobalVarsModule.GetLastTimeInRecordID(GlobalVarsModule.CurrentUserID)
+        Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?",
+                                                     "Confirmation",
+                                                     MessageBoxButtons.YesNo,
+                                                     MessageBoxIcon.Question)
 
-            If recordIDToUpdate > 0 Then
-                Dim isAutoTimedOut As Boolean = GlobalVarsModule.AutomaticTimeOut(recordIDToUpdate)
+        If result = DialogResult.Yes Then
+            Try
+                Dim previousRole As String = GlobalVarsModule.GlobalRole
+                Dim userEmail As String = GlobalVarsModule.GlobalEmail
+                Dim userName As String = GlobalVarsModule.GlobalUsername
 
-                If isAutoTimedOut Then
-                    MessageBox.Show(
-                        "You have successfully logged out. Your Time-In session was automatically Timed Out by the system.",
-                        "Auto Time-Out Complete",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    )
-                Else
-                    MessageBox.Show(
-                        "Warning: Automatic Time-Out failed. Please notify the librarian about your active Time-In session.",
-                        "Auto Time-Out Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
+                If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+                   previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+                   previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="LOGOUT SUCCESS",
+                        formName:="MAIN FORM",
+                        description:=$"User '{userName}' ({previousRole}) successfully logged out.",
+                        recordID:="N/A"
                     )
                 End If
-            End If
+
+
+                GlobalVarsModule.GlobalRole = "Guest"
+                GlobalVarsModule.GlobalEmail = ""
+                GlobalVarsModule.GlobalUsername = ""
+                GlobalVarsModule.CurrentUserRole = "Guest"
+                GlobalVarsModule.CurrentBorrowerType = ""
+                GlobalVarsModule.CurrentBorrowerID = ""
+                GlobalVarsModule.CurrentUserID = ""
+                GlobalVarsModule.CurrentEmployeeID = ""
+
+
+                If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then
+                    Borrowing.Close()
+                    Borrowing.Dispose()
+                    Borrowing = Nothing
+                End If
+
+
+                Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+                If activeMain IsNot Nothing Then
+                    activeMain.Hide()
+                End If
+
+
+                Me.DialogResult = DialogResult.OK
+                Me.Hide()
+
+
+                Dim borrowerLogin As BorrowerLoginForm = Application.OpenForms.OfType(Of BorrowerLoginForm)().FirstOrDefault()
+                If borrowerLogin Is Nothing OrElse borrowerLogin.IsDisposed Then
+                    borrowerLogin = New BorrowerLoginForm()
+                    GlobalVarsModule.ActiveBorrowerLoginForm = borrowerLogin
+                End If
+
+                borrowerLogin.txtuser.Clear()
+                borrowerLogin.txtpass.Clear()
+
+                borrowerLogin.Show()
+                borrowerLogin.BringToFront()
+
+            Catch ex As Exception
+                MessageBox.Show("An error occurred while logging out: " & ex.Message,
+                                "Logout Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error)
+            End Try
         End If
 
-        Me.DialogResult = DialogResult.OK
-        Me.Close()
-
-
-        Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
-        If activeMain IsNot Nothing Then
-            activeMain.Hide()
-        End If
-
-        Dim borrowerLogin As BorrowerLoginForm = Application.OpenForms.OfType(Of BorrowerLoginForm)().FirstOrDefault()
-        If borrowerLogin Is Nothing Then
-            borrowerLogin = New BorrowerLoginForm()
-            GlobalVarsModule.ActiveBorrowerLoginForm = borrowerLogin
-        End If
-
-        borrowerLogin.Show()
     End Sub
 
 End Class

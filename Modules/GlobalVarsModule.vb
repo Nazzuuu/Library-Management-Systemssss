@@ -5,8 +5,6 @@ Module GlobalVarsModule
 
 
 
-
-
     Private _connectionString As String =
         $"Server={My.Settings.Server};Database={My.Settings.Database};Uid={My.Settings.Username};Pwd={My.Settings.Password};"
 

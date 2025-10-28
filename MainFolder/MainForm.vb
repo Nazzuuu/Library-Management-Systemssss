@@ -1245,6 +1245,16 @@ Public Class MainForm
 
     Private Sub BorrowingConfirmationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowingConfirmationToolStripMenuItem.Click
 
+        For Each form In Application.OpenForms
+            If TypeOf form Is BookBorrowingConfirmation Then
+                Dim confForm = DirectCast(form, BookBorrowingConfirmation)
+                Application.DoEvents()
+                System.Threading.Thread.Sleep(150)
+                confForm.refreshconfirmation()
+                Exit For
+            End If
+        Next
+
         Panel_dash.Controls.Clear()
 
         With BookBorrowingConfirmation

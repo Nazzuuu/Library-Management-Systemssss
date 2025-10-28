@@ -619,12 +619,10 @@ Public Class Borrowing
 
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
-
         Dim borrower As String = ""
         Dim con As New MySqlConnection(connectionString)
         Dim borrowerIdentifier As String = ""
         Dim identifierType As String = ""
-
 
         If rbstudent.Checked Then
             borrower = "Student"
@@ -639,10 +637,7 @@ Public Class Borrowing
             Exit Sub
         End If
 
-
-        If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse
-String.IsNullOrWhiteSpace(txtname.Text) Then
-
+        If String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse String.IsNullOrWhiteSpace(txtname.Text) Then
             MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
         End If
@@ -672,12 +667,10 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
             Exit Sub
         End If
 
-
         If Not limitniborrower(borrowerIdentifier, identifierType) Then
             MsgBox($"Borrowing limit reached. This borrower has already borrowed {MAX_BORROWED_BOOKS} books.", vbExclamation, "Borrowing Limit Exceeded")
             Exit Sub
         End If
-
 
         Dim booktitleee As String = txtsus.Text.Trim
         Dim identifierValue As String = If(borrower = "Student", txtlrn.Text, txtemployee.Text)
@@ -687,15 +680,11 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
             con.Open()
 
 
-
             Dim checkDuplicateQuery As String = $"SELECT COUNT(*) FROM borrowing_tbl WHERE {identifierColumn} = @IdentifierValue AND AccessionID = @AccessionID"
-
             Using cmdCheck As New MySqlCommand(checkDuplicateQuery, con)
                 cmdCheck.Parameters.AddWithValue("@IdentifierValue", identifierValue)
                 cmdCheck.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
-
                 Dim count As Integer = Convert.ToInt32(cmdCheck.ExecuteScalar())
-
                 If count > 0 Then
                     MsgBox("You cannot borrow same book with the same accessionID.", vbExclamation, "Duplication is not allowed.")
                     con.Close()
@@ -708,9 +697,7 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
             Using cmdCheckTitle As New MySqlCommand(checkTitleQuery, con)
                 cmdCheckTitle.Parameters.AddWithValue("@IdentifierValue", identifierValue)
                 cmdCheckTitle.Parameters.AddWithValue("@BookTitle", booktitleee)
-
                 Dim titleCount As Integer = Convert.ToInt32(cmdCheckTitle.ExecuteScalar())
-
                 If titleCount > 0 Then
                     MsgBox("You cannot borrow same book.", vbExclamation, "Book Title Duplication.")
                     con.Close()
@@ -722,7 +709,6 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
             Dim transactionReceiptID As String = lbltransac.Text
             Dim formattedBorrowedDate As String = DateTimePicker1.Value.ToString("MMMM-dd-yyyy")
 
-
             Dim currentBookCount As Integer = 0
             Dim countCom As String = "SELECT COUNT(*) FROM `borrowing_tbl` WHERE `TransactionReceipt` = @TID"
             Using countCmd As New MySqlCommand(countCom, con)
@@ -730,13 +716,11 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 currentBookCount = CInt(countCmd.ExecuteScalar())
             End Using
 
-
             Dim newBookCount As Integer = currentBookCount + 1
             Dim comsx As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate,TransactionReceipt) " &
-                                 "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @TransactionReceipt)"
+                              "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @TransactionReceipt)"
 
             Using comsi As New MySqlCommand(comsx, con)
-
                 comsi.Parameters.AddWithValue("@Borrower", borrower)
                 comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text))
                 comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text))
@@ -747,12 +731,9 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 comsi.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
                 comsi.Parameters.AddWithValue("@Shelf", txtshelf.Text)
                 comsi.Parameters.AddWithValue("@BDate", formattedBorrowedDate)
-
                 comsi.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
-
                 comsi.ExecuteNonQuery()
             End Using
-
 
 
             GlobalVarsModule.LogAudit(
@@ -762,29 +743,21 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
             recordID:=transactionReceiptID,
             oldValue:="N/A",
             newValue:=$"Borrower: {txtname.Text} ({identifierValue}), Book: {txtsus.Text}, AccID: {txtaccessionid.Text}"
-            )
-
-
+        )
 
             Dim checkExistingCom As String = "SELECT COUNT(*) FROM `confimation_tbl` WHERE `TransactionReceipt` = @TID"
             Using checkCmd As New MySqlCommand(checkExistingCom, con)
                 checkCmd.Parameters.AddWithValue("@TID", transactionReceiptID)
                 If CInt(checkCmd.ExecuteScalar()) > 0 Then
-
-
                     Dim updateCom As String = "UPDATE `confimation_tbl` SET `BorrowedBookCount` = @BookCount WHERE `TransactionReceipt` = @TID"
                     Using updateCmd As New MySqlCommand(updateCom, con)
                         updateCmd.Parameters.AddWithValue("@BookCount", newBookCount.ToString())
                         updateCmd.Parameters.AddWithValue("@TID", transactionReceiptID)
                         updateCmd.ExecuteNonQuery()
                     End Using
-
                 Else
-
-
                     Dim insertCom As String = "INSERT INTO confimation_tbl (Borrower, Name, BorrowedDate, TransactionReceipt, Status, BorrowedBookCount) " &
-                                             "VALUES (@Borrower, @Name, @BDate, @TransactionReceipt, @Status, @BookCount)"
-
+                                          "VALUES (@Borrower, @Name, @BDate, @TransactionReceipt, @Status, @BookCount)"
                     Using insertCmd As New MySqlCommand(insertCom, con)
                         insertCmd.Parameters.AddWithValue("@Borrower", borrower)
                         insertCmd.Parameters.AddWithValue("@Name", txtname.Text)
@@ -797,14 +770,11 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 End If
             End Using
 
-
             Dim accessionID As String = txtaccessionid.Text.ToString
-
-
             pendingstats(accessionID, "Pending")
 
-
             MsgBox("Book successfully added for confirmation. Total pending books: " & newBookCount.ToString(), vbInformation, "Awaiting Confirmation")
+
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -813,7 +783,20 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
             Next
 
 
+            For Each form In Application.OpenForms
+                If TypeOf form Is BookBorrowingConfirmation Then
+                    Dim confForm = DirectCast(form, BookBorrowingConfirmation)
+                    Application.DoEvents()
+                    System.Threading.Thread.Sleep(150)
+                    confForm.refreshconfirmation()
+                    Exit For
+                End If
+            Next
+
+
             refreshborrowingsu()
+            Application.DoEvents()
+            System.Threading.Thread.Sleep(100)
             ClearBookFields()
 
         Catch ex As Exception
@@ -823,8 +806,8 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 con.Close()
             End If
         End Try
-
     End Sub
+
 
 
     Private Sub btntimein_Click(sender As Object, e As EventArgs) Handles btntimein.Click
@@ -971,18 +954,22 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
 
     Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
 
+        Dim avail As AvailableBooks = Application.OpenForms.OfType(Of AvailableBooks)().FirstOrDefault()
+
+        If avail Is Nothing OrElse avail.IsDisposed Then
+            avail = New AvailableBooks()
+        End If
 
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is AvailableBooks Then
-                Dim avail = DirectCast(form, AvailableBooks)
-                avail.refreshavail()
-                avail.counts()
-            End If
-        Next
+        avail.refreshavail()
+        avail.counts()
 
-        AvailableBooks.ShowDialog()
+        avail.TopMost = True
+        avail.BringToFront()
+        avail.Show()
+
     End Sub
+
 
     Public Sub SetupBorrowerFields()
 
@@ -993,14 +980,11 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
 
         If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrEmpty(borrowerType) Then
 
-
-
             If borrowerType = "Student" Then
 
                 lblemployee.Visible = False
                 txtemployee.Visible = False
                 rbteacher.Visible = False
-
 
                 lbllrn.Visible = True
                 txtlrn.Visible = True
@@ -1009,7 +993,6 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 lbllrn.Location = New Point(30, 78)
                 txtlrn.Location = New Point(30, 97)
                 rbstudent.Location = New Point(121, 8)
-
 
                 rbstudent.Checked = True
                 rbstudent.Enabled = False
@@ -1021,7 +1004,6 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 txtlrn.Visible = False
                 rbstudent.Visible = False
 
-
                 lblemployee.Visible = True
                 txtemployee.Visible = True
                 rbteacher.Visible = True
@@ -1031,14 +1013,12 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
                 txtemployee.Location = New Point(30, 97)
                 rbteacher.Location = New Point(121, 8)
 
-
                 rbteacher.Checked = True
                 rbteacher.Enabled = False
 
             End If
 
         Else
-
 
             lblemployee.Visible = True
             txtemployee.Visible = True
@@ -1052,11 +1032,43 @@ String.IsNullOrWhiteSpace(txtname.Text) Then
         End If
 
 
+        Try
+
+            If DataGridView1.Rows.Count > 0 Then
+                DataGridView1.Rows.Clear()
+            End If
+
+
+            Dim currentBorrowerName As String = GlobalVarsModule.GlobalUsername
+
+            Dim query As String = "SELECT * FROM borrowing_tbl WHERE Borrower = @Borrower"
+
+            Using conn As New MySqlConnection(GlobalVarsModule.connectionString)
+                Using cmd As New MySqlCommand(query, conn)
+                    cmd.Parameters.AddWithValue("@Borrower", currentBorrowerName)
+                    conn.Open()
+
+                    Using dr As MySqlDataReader = cmd.ExecuteReader()
+                        While dr.Read()
+
+                            DataGridView1.Rows.Add(
+                            dr("TransactionReceipt").ToString(),
+                            dr("BookTitle").ToString(),
+                            dr("BorrowedDate").ToString(),
+                            dr("DueDate").ToString(),
+                            dr("Barcode").ToString()
+                        )
+                        End While
+                    End Using
+                End Using
+            End Using
+
+        Catch ex As Exception
+
+        End Try
+
+
     End Sub
-
-
-
-
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
         Cursor = Cursors.Hand
