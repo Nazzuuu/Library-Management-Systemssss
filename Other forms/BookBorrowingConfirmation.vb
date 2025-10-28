@@ -489,7 +489,7 @@ Public Class BookBorrowingConfirmation
 
     End Sub
 
-    Private Sub BShown(sender As Object, e As EventArgs) Handles MyBase.Shown
+    Private Sub Confirmation_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
         DataGridView1.ClearSelection()
 

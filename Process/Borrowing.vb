@@ -1033,11 +1033,9 @@ Public Class Borrowing
 
 
         Try
-
             If DataGridView1.Rows.Count > 0 Then
                 DataGridView1.Rows.Clear()
             End If
-
 
             Dim currentBorrowerName As String = GlobalVarsModule.GlobalUsername
 
@@ -1050,7 +1048,6 @@ Public Class Borrowing
 
                     Using dr As MySqlDataReader = cmd.ExecuteReader()
                         While dr.Read()
-
                             DataGridView1.Rows.Add(
                             dr("TransactionReceipt").ToString(),
                             dr("BookTitle").ToString(),
@@ -1064,11 +1061,25 @@ Public Class Borrowing
             End Using
 
         Catch ex As Exception
-
+            MessageBox.Show("Error loading borrower data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
 
+
+        Try
+            Dim mainForm = GlobalVarsModule.ActiveMainForm
+            If mainForm IsNot Nothing Then
+                If mainForm.BorrowerEditsInfoForm Is Nothing Then
+                    mainForm.BorrowerEditsInfoForm = New Borrowereditsinfo()
+                End If
+                mainForm.BorrowerEditsInfoForm.visibilitysus(GlobalVarsModule.CurrentBorrowerType)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Failed to apply visibility settings: " & ex.Message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        End Try
+
     End Sub
+
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
         Cursor = Cursors.Hand

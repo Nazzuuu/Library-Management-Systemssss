@@ -183,7 +183,16 @@ Public Class BorrowerLoginForm
                 borrowingForm.BringToFront()
                 activeMain.Panel_dash.Controls.Add(borrowingForm)
                 borrowingForm.SetupBorrowerFields()
+
                 borrowingForm.Show()
+
+                If borrowerType = "Student" Or borrowerType = "student" Then
+                    borrowingForm.lblnotesu.Text = "Input your LRN."
+                ElseIf borrowerType = "Teacher" Or borrowerType = "teacher" Then
+                    borrowingForm.lblnotesu.Text = "Input your Employee No."
+                Else
+                    borrowingForm.lblnotesu.Text = ""
+                End If
 
                 activeMain.lblform.Text = "BORROWING FORM"
                 activeMain.Show()

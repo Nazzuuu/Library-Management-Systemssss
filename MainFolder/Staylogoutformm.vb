@@ -67,6 +67,25 @@
                 Dim userEmail As String = GlobalVarsModule.GlobalEmail
                 Dim userName As String = GlobalVarsModule.GlobalUsername
 
+
+                If GlobalVarsModule.CurrentUserRole.Equals("Borrower", StringComparison.OrdinalIgnoreCase) Then
+                    Dim borrowerID As String = GlobalVarsModule.GetCleanCurrentBorrowerID()
+                    If Not String.IsNullOrEmpty(borrowerID) Then
+                        Dim activeRecordID As Integer = GlobalVarsModule.GetLastTimeInRecordID(borrowerID)
+                        If activeRecordID > 0 Then
+                            Dim timeoutSuccess As Boolean = GlobalVarsModule.AutomaticTimeOut(activeRecordID)
+                            If timeoutSuccess Then
+                                MessageBox.Show("You have successfully logged out. Your Time-In session was automatically Timed Out by the system.",
+                                                "Auto Time-Out",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Information)
+                            End If
+                        End If
+                    End If
+                End If
+
+
+
                 If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
                    previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
                    previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
@@ -126,7 +145,7 @@
                                 MessageBoxIcon.Error)
             End Try
         End If
-
     End Sub
+
 
 End Class
