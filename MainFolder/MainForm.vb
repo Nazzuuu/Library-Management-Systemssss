@@ -24,9 +24,6 @@ Public Class MainForm
 
         loadsu()
 
-
-
-
     End Sub
 
     Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
@@ -36,7 +33,7 @@ Public Class MainForm
 
     End Sub
     Public Sub loadsu()
-        ' 🔹 Load updates for MainForm
+
         Dim main As MainForm = Application.OpenForms.OfType(Of MainForm)().FirstOrDefault()
         If main IsNot Nothing AndAlso Not main.IsDisposed Then
             Try
@@ -51,7 +48,7 @@ Public Class MainForm
             End Try
         End If
 
-        ' 🔹 Load updates for Penalty form
+
         Dim penaltyForm As Penalty = Application.OpenForms.OfType(Of Penalty)().FirstOrDefault()
         If penaltyForm IsNot Nothing AndAlso Not penaltyForm.IsDisposed Then
             Try
@@ -61,7 +58,6 @@ Public Class MainForm
             End Try
         End If
 
-        ' 🔹 Load updates for Returning form
         Dim returningForm As Returning = Application.OpenForms.OfType(Of Returning)().FirstOrDefault()
         If returningForm IsNot Nothing AndAlso Not returningForm.IsDisposed Then
             Try
@@ -71,7 +67,7 @@ Public Class MainForm
             End Try
         End If
 
-        ' 🔹 Load updates for Book form
+   
         Dim bookForm As Book = Application.OpenForms.OfType(Of Book)().FirstOrDefault()
         If bookForm IsNot Nothing AndAlso Not bookForm.IsDisposed Then
             Try

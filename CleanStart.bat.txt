@@ -1,0 +1,9 @@
+@echo off
+echo Stopping old instances...
+REM Forcefully ends the application process (like End Task)
+taskkill /f /im "Library Management Systemssss.exe" > nul 2>&1
+
+echo Launching application...
+start "" "bin\TempDebug\Library Management Systemssss.exe"
+
+timeout /t 1 /nobreak > nul
