@@ -316,7 +316,6 @@ Public Class Acquisition
         oldValues.Add("TotalCost", selectedRow.Cells("TotalCost").Value)
         oldValues.Add("DateAcquired", selectedRow.Cells("DateAcquired").Value)
 
-
         Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
         Dim oldQuantity As Integer = CInt(selectedRow.Cells("Quantity").Value)
         Dim newQuantity As Integer = CInt(NumericUpDown1.Value)
@@ -326,6 +325,22 @@ Public Class Acquisition
 
         Dim originalTotalCost As Double = CDbl(selectedRow.Cells("TotalCost").Value)
         Dim currentBookPrice As Double = 0.0
+
+        If NumericUpDown1.Value <= 0 Then
+            MessageBox.Show("Quantity of this book cannot be 0 or less.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            Dim oldBookPrice As Decimal = CDec(selectedRow.Cells("BookPrice").Value)
+
+            NumericUpDown1.Value = oldQuantity
+            txttotalcost.Text = originalTotalCost.ToString("F2")
+            Return
+        End If
+
+        Dim bookPrice As Decimal
+        If Not Decimal.TryParse(txtbookprice.Text, bookPrice) OrElse bookPrice <= 0 Then
+            MessageBox.Show("Book Price cannot be 0 or less, or contain non-numeric characters.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
 
         If String.IsNullOrWhiteSpace(txtbookprice.Text) Then
             MessageBox.Show("Book Price cannot be empty.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -378,16 +393,13 @@ Public Class Acquisition
                 nonAvailableCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
                 Dim totalNonAvailableCopies As Integer = CInt(nonAvailableCmd.ExecuteScalar())
 
-
                 If newQuantity = 0 AndAlso totalExistingCopies > 0 Then
-
                     Dim warningMessage As String = "WARNING: Cannot reduce quantity to " & newQuantity & ". " & Environment.NewLine & Environment.NewLine &
-                                              "There are currently " & totalExistingCopies & " existing copies of '" & bookTitle & "' for Transaction No. " & transactionNo & ":" & Environment.NewLine &
-                                              "- " & totalAcessionCopies & " copies in the Acession Table." & Environment.NewLine &
-                                              "- " & reserveCount & " copies in the Reserve Copies Table."
+                                          "There are currently " & totalExistingCopies & " existing copies of '" & bookTitle & "' for Transaction No. " & transactionNo & ":" & Environment.NewLine &
+                                          "- " & totalAcessionCopies & " copies in the Accession Table." & Environment.NewLine &
+                                          "- " & reserveCount & " copies in the Reserve Copies Table."
 
                     MessageBox.Show(warningMessage, "Cannot Update Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
                     NumericUpDown1.Value = oldQuantity
                     txttotalcost.Text = originalTotalCost.ToString("F2")
                     Return
@@ -395,9 +407,7 @@ Public Class Acquisition
 
                 If newQuantity < totalNonAvailableCopies Then
                     Dim warningMessage As String = "CRITICAL WARNING: The new quantity (" & newQuantity & ") is less than the total number of copies currently in use or non-Available (" & totalNonAvailableCopies & "). Please check Borrowed/Reserved/Damaged records."
-
                     MessageBox.Show(warningMessage, "Safety Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-
                     NumericUpDown1.Value = oldQuantity
                     txttotalcost.Text = originalTotalCost.ToString("F2")
                     Return
@@ -414,6 +424,17 @@ Public Class Acquisition
             ElseIf newQuantity > oldQuantity Then
 
                 Dim recordsToAdd As Integer = newQuantity - oldQuantity
+
+
+                Dim checkIfExistsSql As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE BookTitle = @BookTitle"
+                Dim checkIfExistsCmd As New MySqlCommand(checkIfExistsSql, con)
+                checkIfExistsCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+                Dim existingCount As Integer = CInt(checkIfExistsCmd.ExecuteScalar())
+
+                If existingCount = 0 Then
+
+                    GoTo SkipAcessionInsert
+                End If
 
                 Dim rand As New Random()
                 Dim newAccessionID As String = ""
@@ -463,7 +484,7 @@ Public Class Acquisition
                     End Using
 
                     Dim insertAvailSql As String = "INSERT INTO available_tbl (AccessionID, ISBN, Barcode, BookTitle, Shelf, Status) " &
-                                              "VALUES (@AccessionID_A, @ISBN_A, @Barcode_A, @BookTitle_A, @Shelf_A, @Status_A)"
+                                            "VALUES (@AccessionID_A, @ISBN_A, @Barcode_A, @BookTitle_A, @Shelf_A, @Status_A)"
                     Using insertAvailCmd As New MySqlCommand(insertAvailSql, con)
                         insertAvailCmd.Parameters.AddWithValue("@AccessionID_A", newAccessionID)
                         insertAvailCmd.Parameters.AddWithValue("@ISBN_A", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
@@ -475,20 +496,21 @@ Public Class Acquisition
                     End Using
                 Next
 
+SkipAcessionInsert:
             End If
 
             txttotalcost.Text = newTotalCost.ToString("F2")
 
             Dim updates As String = "UPDATE `acquisition_tbl` SET " &
-                                "`ISBN` = @ISBN, " &
-                                "`Barcode` = @Barcode, " &
-                                "`BookTitle` = @BookTitle, " &
-                                "`SupplierName` = @SupplierName, " &
-                                "`Quantity` = @Quantity, " &
-                                "`BookPrice` = @BookPrice, " &
-                                "`TotalCost` = @TotalCost, " &
-                                "`DateAcquired` = @DateAcquired " &
-                                "WHERE `ID` = @ID"
+                            "`ISBN` = @ISBN, " &
+                            "`Barcode` = @Barcode, " &
+                            "`BookTitle` = @BookTitle, " &
+                            "`SupplierName` = @SupplierName, " &
+                            "`Quantity` = @Quantity, " &
+                            "`BookPrice` = @BookPrice, " &
+                            "`TotalCost` = @TotalCost, " &
+                            "`DateAcquired` = @DateAcquired " &
+                            "WHERE `ID` = @ID"
 
             Using Updateacqt As New MySqlCommand(updates, con)
                 Updateacqt.Parameters.AddWithValue("@ISBN", txtisbn.Text)
@@ -514,6 +536,7 @@ Public Class Acquisition
             oldValue:=oldValueStr,
             newValue:=newValueStr
         )
+
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
                     DirectCast(form, AuditTrail).refreshaudit()
@@ -550,6 +573,7 @@ Public Class Acquisition
         End Try
 
     End Sub
+
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
@@ -969,4 +993,8 @@ Public Class Acquisition
     Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
         Cursor = Cursors.Default
     End Sub
+
+
+
+
 End Class

@@ -8,6 +8,9 @@ Public Class Borrowing
 
     Private isLoadingData As Boolean = False
     Private WithEvents timerSystemDate As New Timer()
+    Private lastBorrowerReceiptMap As New Dictionary(Of String, String)
+    Private lastEnteredBorrowerID As String = ""
+    Private lastProcessedText As String = ""
 
     Private Sub Borrowing_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -17,7 +20,9 @@ Public Class Borrowing
         timerSystemDate.Start()
 
         btntimein.Visible = False
-        UpdateTransactionBarcode()
+
+
+
 
     End Sub
 
@@ -211,14 +216,13 @@ Public Class Borrowing
 
     Public Sub ClearBookFields()
 
-
-
-
+        lastEnteredBorrowerID = ""
         txtsus.Text = ""
         txtisbn.Text = ""
         txtbarcode.Text = ""
         txtaccessionid.Text = ""
         txtshelf.Text = ""
+
 
         txtname.Enabled = False
         txtsus.Enabled = False
@@ -227,8 +231,9 @@ Public Class Borrowing
         txtshelf.Enabled = False
         txtaccessionid.Enabled = False
 
-
     End Sub
+
+
     Private Sub rbteacher_CheckedChanged(sender As Object, e As EventArgs) Handles rbteacher.CheckedChanged
 
         If rbteacher.Checked Then
@@ -301,7 +306,6 @@ Public Class Borrowing
     End Function
 
     Private Sub txtemployee_TextChanged(sender As Object, e As EventArgs) Handles txtemployee.TextChanged
-
         If isLoadingData Then Exit Sub
 
         If String.IsNullOrWhiteSpace(txtemployee.Text) Then
@@ -310,10 +314,7 @@ Public Class Borrowing
             Exit Sub
         End If
 
-
         Dim enteredEmployeeID As String = txtemployee.Text.Trim()
-
-
         Dim currentUserID_Cleaned As String = GlobalVarsModule.GetCleanCurrentBorrowerID()
         Dim enteredEmployeeID_Cleaned As String = enteredEmployeeID
 
@@ -324,14 +325,12 @@ Public Class Borrowing
         Try
             con.Open()
 
-
-
-            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, NULLIF(TRIM(REPLACE(MiddleInitial, '.', '')), 'N/A')) FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
+            Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, NULLIF(TRIM(REPLACE(MiddleInitial, '.', '')), 'N/A')) 
+                             FROM `borrower_tbl` WHERE `EmployeeNo` = @emp"
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@emp", enteredEmployeeID)
                 Dim emp As Object = comsi.ExecuteScalar()
                 If emp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(emp.ToString()) Then
-
                     borrowerName = System.Text.RegularExpressions.Regex.Replace(emp.ToString().Trim(), "\s+", " ")
                     txtname.Text = borrowerName
                     foundBorrower = True
@@ -342,30 +341,20 @@ Public Class Borrowing
         Catch ex As Exception
             MessageBox.Show("An error occurred while retrieving borrower information: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
+            If con.State = ConnectionState.Open Then con.Close()
         End Try
 
-
         If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso GlobalVarsModule.CurrentBorrowerType = "Teacher" Then
-
             If foundBorrower AndAlso Not String.Equals(enteredEmployeeID_Cleaned, currentUserID_Cleaned, StringComparison.Ordinal) Then
-
                 txtname.Text = ""
                 btntimein.Visible = False
-
                 MessageBox.Show($"The Employee No. '{enteredEmployeeID}' belongs to {borrowerName}. You are only allowed to search your own Employee No.", "Security Restriction", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
                 Exit Sub
             End If
         End If
 
         If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(enteredEmployeeID) Then
-
-
             Dim isTimedIn As Boolean = CheckTimeInStatus(enteredEmployeeID, "EmployeeNo")
-
             If Not isTimedIn Then
                 MessageBox.Show($"NOTICE: {borrowerName} has not yet Timed In.", "Time In Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 btntimein.Visible = True
@@ -376,28 +365,68 @@ Public Class Borrowing
             btntimein.Visible = False
         End If
 
+
+        If foundBorrower Then
+
+            If lastBorrowerReceiptMap.ContainsKey(enteredEmployeeID) Then
+                lbltransac.Text = lastBorrowerReceiptMap(enteredEmployeeID)
+                Try
+
+                    Dim writer As New ZXing.BarcodeWriter(Of Bitmap)() With {
+                    .Format = ZXing.BarcodeFormat.CODE_128,
+                    .Renderer = New BitmapRenderer()
+                }
+
+                    writer.Options = New ZXing.Common.EncodingOptions With {
+                    .Height = picbarcode.Height,
+                    .Width = picbarcode.Width,
+                    .PureBarcode = False,
+                    .Margin = 10
+                }
+
+                    Dim bmp As Bitmap = writer.Write(lbltransac.Text)
+
+                    If picbarcode.Image IsNot Nothing Then
+                        picbarcode.Image.Dispose()
+                    End If
+                    picbarcode.Image = bmp
+
+                Catch ex As Exception
+                    MessageBox.Show("Error regenerating barcode image: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+
+            Else
+
+                UpdateTransactionBarcode()
+                lastBorrowerReceiptMap(enteredEmployeeID) = lbltransac.Text
+            End If
+
+            lastEnteredBorrowerID = enteredEmployeeID
+        Else
+            lbltransac.Text = ""
+            If picbarcode.Image IsNot Nothing Then picbarcode.Image.Dispose()
+            picbarcode.Image = Nothing
+        End If
+
+
     End Sub
 
 
+
     Private Sub txtlrn_TextChanged(sender As Object, e As EventArgs) Handles txtlrn.TextChanged
-
-
         If isLoadingData Then Exit Sub
 
         Dim enteredLRN As String = txtlrn.Text.Trim()
 
-
         Dim currentUserID_Trimmed As String = GlobalVarsModule.CurrentBorrowerID.Trim()
         Dim currentUserID_Cleaned As String = ""
         Dim tempID As Long
-
 
         If Long.TryParse(currentUserID_Trimmed, tempID) Then
             currentUserID_Cleaned = tempID.ToString()
         Else
             currentUserID_Cleaned = currentUserID_Trimmed
         End If
-
 
         Dim enteredLRN_Cleaned As String = ""
         If Long.TryParse(enteredLRN, tempID) Then
@@ -406,7 +435,6 @@ Public Class Borrowing
             enteredLRN_Cleaned = enteredLRN
         End If
 
-
         Dim con As New MySqlConnection(connectionString)
         Dim foundBorrower As Boolean = False
         Dim borrowerName As String = ""
@@ -414,13 +442,11 @@ Public Class Borrowing
         Try
             con.Open()
 
-
             Dim com As String = "SELECT CONCAT_WS(' ', `FirstName`, `LastName`, NULLIF(TRIM(REPLACE(MiddleInitial, '.', '')), 'N/A')) FROM `borrower_tbl` WHERE `LRN` = @lrn"
             Using comsi As New MySqlCommand(com, con)
                 comsi.Parameters.AddWithValue("@lrn", enteredLRN)
                 Dim lrn As Object = comsi.ExecuteScalar()
                 If lrn IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(lrn.ToString()) Then
-
                     borrowerName = System.Text.RegularExpressions.Regex.Replace(lrn.ToString().Trim(), "\s+", " ")
                     txtname.Text = borrowerName
                     foundBorrower = True
@@ -436,23 +462,14 @@ Public Class Borrowing
             End If
         End Try
 
-
         If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso GlobalVarsModule.CurrentBorrowerType = "Student" Then
-
             If foundBorrower AndAlso Not String.Equals(enteredLRN_Cleaned, currentUserID_Cleaned, StringComparison.Ordinal) Then
-
                 txtname.Text = ""
                 btntimein.Visible = False
-
-
                 MessageBox.Show($"The LRN '{enteredLRN}' belongs to {borrowerName}. You are only allowed to search your own LRN.", "Security Restriction", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
-
                 Exit Sub
             End If
         End If
-
-
 
         If foundBorrower AndAlso Not String.IsNullOrWhiteSpace(enteredLRN) Then
             Dim isTimedIn As Boolean = CheckTimeInStatus(enteredLRN, "LRN")
@@ -467,7 +484,54 @@ Public Class Borrowing
             btntimein.Visible = False
         End If
 
+
+        If foundBorrower Then
+
+            If lastBorrowerReceiptMap.ContainsKey(enteredLRN) Then
+                lbltransac.Text = lastBorrowerReceiptMap(enteredLRN)
+                Try
+
+                    Dim writer As New ZXing.BarcodeWriter(Of Bitmap)() With {
+                    .Format = ZXing.BarcodeFormat.CODE_128,
+                    .Renderer = New BitmapRenderer()
+                }
+
+                    writer.Options = New ZXing.Common.EncodingOptions With {
+                    .Height = picbarcode.Height,
+                    .Width = picbarcode.Width,
+                    .PureBarcode = False,
+                    .Margin = 10
+                }
+
+                    Dim bmp As Bitmap = writer.Write(lbltransac.Text)
+
+                    If picbarcode.Image IsNot Nothing Then
+                        picbarcode.Image.Dispose()
+                    End If
+                    picbarcode.Image = bmp
+
+                Catch ex As Exception
+                    MessageBox.Show("Error regenerating barcode image: " & ex.Message, "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+
+            Else
+
+                UpdateTransactionBarcode()
+                lastBorrowerReceiptMap(enteredLRN) = lbltransac.Text
+            End If
+
+            lastEnteredBorrowerID = enteredLRN
+        Else
+            lbltransac.Text = ""
+            If picbarcode.Image IsNot Nothing Then picbarcode.Image.Dispose()
+            picbarcode.Image = Nothing
+        End If
+
+
     End Sub
+
+
+
 
     Private Sub txtaccessionid_TextChanged(sender As Object, e As EventArgs) Handles txtaccessionid.TextChanged
 
