@@ -49,6 +49,8 @@ Partial Class Language
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         DataGridView1 = New DataGridView()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        Label12 = New Label()
+        Label13 = New Label()
         Guna2GradientPanel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -253,11 +255,35 @@ Partial Class Language
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(32, 421)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 108
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(80, 422)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(296, 16)
+        Label13.TabIndex = 107
+        Label13.Text = "Select Row before clicking [Edit] or [Delete]."
+        ' 
         ' Language
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(474, 413)
+        ClientSize = New Size(474, 447)
+        Controls.Add(Label12)
+        Controls.Add(Label13)
         Controls.Add(DataGridView1)
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
@@ -275,6 +301,7 @@ Partial Class Language
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
+        PerformLayout()
     End Sub
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents Label1 As Label
@@ -286,4 +313,6 @@ Partial Class Language
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class

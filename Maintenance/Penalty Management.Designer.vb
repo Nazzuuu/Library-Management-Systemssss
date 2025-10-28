@@ -60,6 +60,8 @@ Partial Class Penalty_Management
         PictureBox1 = New PictureBox()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2GradientPanel2 = New Guna.UI2.WinForms.Guna2GradientPanel()
+        Label12 = New Label()
+        Label13 = New Label()
         Guna2GradientPanel1.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -149,7 +151,7 @@ Partial Class Penalty_Management
         txtdescription.SelectedText = ""
         txtdescription.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtdescription.Size = New Size(227, 36)
-        txtdescription.TabIndex = 84
+        txtdescription.TabIndex = 2
         ' 
         ' Label2
         ' 
@@ -183,7 +185,7 @@ Partial Class Penalty_Management
         txtamount.SelectedText = ""
         txtamount.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtamount.Size = New Size(144, 36)
-        txtamount.TabIndex = 82
+        txtamount.TabIndex = 1
         ' 
         ' cbpenaltytype
         ' 
@@ -203,7 +205,7 @@ Partial Class Penalty_Management
         cbpenaltytype.Name = "cbpenaltytype"
         cbpenaltytype.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         cbpenaltytype.Size = New Size(177, 36)
-        cbpenaltytype.TabIndex = 81
+        cbpenaltytype.TabIndex = 0
         ' 
         ' btnedit
         ' 
@@ -345,11 +347,35 @@ Partial Class Penalty_Management
         Guna2GradientPanel2.Size = New Size(671, 215)
         Guna2GradientPanel2.TabIndex = 88
         ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(35, 490)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 108
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(83, 491)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(242, 16)
+        Label13.TabIndex = 107
+        Label13.Text = "Select Row before clicking [Update]."
+        ' 
         ' Penalty_Management
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(707, 489)
+        ClientSize = New Size(707, 526)
+        Controls.Add(Label12)
+        Controls.Add(Label13)
         Controls.Add(Guna2GradientPanel2)
         Controls.Add(PictureBox1)
         Controls.Add(txtsearch)
@@ -361,13 +387,14 @@ Partial Class Penalty_Management
         Name = "Penalty_Management"
         ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Penalty_Management"
+        Text = "0"
         Guna2GradientPanel1.ResumeLayout(False)
         Guna2GradientPanel1.PerformLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         Guna2GradientPanel2.ResumeLayout(False)
         ResumeLayout(False)
+        PerformLayout()
     End Sub
     Friend WithEvents Label1 As Label
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
@@ -384,4 +411,6 @@ Partial Class Penalty_Management
     Friend WithEvents btnclear As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Guna2GradientPanel2 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class

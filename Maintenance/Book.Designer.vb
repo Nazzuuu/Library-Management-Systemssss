@@ -72,6 +72,8 @@ Partial Class Book
         Dim CustomizableEdges40 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_book = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label12 = New Label()
+        Label13 = New Label()
         btnaddlangauge = New Guna.UI2.WinForms.Guna2Button()
         btnaddpublisher = New Guna.UI2.WinForms.Guna2Button()
         btnaddcategory = New Guna.UI2.WinForms.Guna2Button()
@@ -135,6 +137,8 @@ Partial Class Book
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label12)
+        Guna2GroupBox1.Controls.Add(Label13)
         Guna2GroupBox1.Controls.Add(btnaddlangauge)
         Guna2GroupBox1.Controls.Add(btnaddpublisher)
         Guna2GroupBox1.Controls.Add(btnaddcategory)
@@ -178,6 +182,28 @@ Partial Class Book
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges42
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(758, 252)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 108
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(806, 253)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(296, 16)
+        Label13.TabIndex = 107
+        Label13.Text = "Select Row before clicking [Edit] or [Delete]."
         ' 
         ' btnaddlangauge
         ' 
@@ -361,7 +387,7 @@ Partial Class Book
         DateTimePicker1.Name = "DateTimePicker1"
         DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         DateTimePicker1.Size = New Size(108, 36)
-        DateTimePicker1.TabIndex = 71
+        DateTimePicker1.TabIndex = 8
         DateTimePicker1.Value = New Date(2025, 8, 25, 19, 46, 49, 668)
         ' 
         ' Label8
@@ -407,7 +433,7 @@ Partial Class Book
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         txtsearch.Size = New Size(889, 30)
-        txtsearch.TabIndex = 48
+        txtsearch.TabIndex = 9
         ' 
         ' btnclear
         ' 
@@ -582,7 +608,7 @@ Partial Class Book
         txtbooktitle.SelectedText = ""
         txtbooktitle.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         txtbooktitle.Size = New Size(232, 33)
-        txtbooktitle.TabIndex = 40
+        txtbooktitle.TabIndex = 2
         ' 
         ' Label6
         ' 
@@ -616,7 +642,7 @@ Partial Class Book
         txtisbn.SelectedText = ""
         txtisbn.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         txtisbn.Size = New Size(232, 33)
-        txtisbn.TabIndex = 38
+        txtisbn.TabIndex = 1
         ' 
         ' cblanguage
         ' 
@@ -635,7 +661,7 @@ Partial Class Book
         cblanguage.Name = "cblanguage"
         cblanguage.ShadowDecoration.CustomizableEdges = CustomizableEdges32
         cblanguage.Size = New Size(232, 36)
-        cblanguage.TabIndex = 37
+        cblanguage.TabIndex = 7
         ' 
         ' cbpublisher
         ' 
@@ -654,7 +680,7 @@ Partial Class Book
         cbpublisher.Name = "cbpublisher"
         cbpublisher.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         cbpublisher.Size = New Size(232, 36)
-        cbpublisher.TabIndex = 36
+        cbpublisher.TabIndex = 6
         ' 
         ' cbcategory
         ' 
@@ -673,7 +699,7 @@ Partial Class Book
         cbcategory.Name = "cbcategory"
         cbcategory.ShadowDecoration.CustomizableEdges = CustomizableEdges36
         cbcategory.Size = New Size(232, 36)
-        cbcategory.TabIndex = 35
+        cbcategory.TabIndex = 5
         ' 
         ' cbgenre
         ' 
@@ -692,7 +718,7 @@ Partial Class Book
         cbgenre.Name = "cbgenre"
         cbgenre.ShadowDecoration.CustomizableEdges = CustomizableEdges38
         cbgenre.Size = New Size(232, 36)
-        cbgenre.TabIndex = 34
+        cbgenre.TabIndex = 4
         ' 
         ' cbauthor
         ' 
@@ -711,7 +737,7 @@ Partial Class Book
         cbauthor.Name = "cbauthor"
         cbauthor.ShadowDecoration.CustomizableEdges = CustomizableEdges40
         cbauthor.Size = New Size(232, 36)
-        cbauthor.TabIndex = 33
+        cbauthor.TabIndex = 3
         ' 
         ' Label5
         ' 
@@ -877,4 +903,6 @@ Partial Class Book
     Friend WithEvents categorytooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
     Friend WithEvents publishertooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
     Friend WithEvents languagetooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class

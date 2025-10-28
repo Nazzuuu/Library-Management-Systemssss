@@ -68,6 +68,8 @@ Partial Class Users
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Label6 = New Label()
         groupbox = New Guna.UI2.WinForms.Guna2GroupBox()
+        lblnote = New Label()
+        lblmessagesu = New Label()
         Label10 = New Label()
         txtaddress = New Guna.UI2.WinForms.Guna2TextBox()
         PictureBox2 = New PictureBox()
@@ -190,7 +192,7 @@ Partial Class Users
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtsearch.Size = New Size(889, 30)
-        txtsearch.TabIndex = 48
+        txtsearch.TabIndex = 8
         ' 
         ' btnclear
         ' 
@@ -302,6 +304,8 @@ Partial Class Users
         groupbox.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         groupbox.BorderRadius = 9
         groupbox.BorderThickness = 2
+        groupbox.Controls.Add(lblnote)
+        groupbox.Controls.Add(lblmessagesu)
         groupbox.Controls.Add(Label10)
         groupbox.Controls.Add(txtaddress)
         groupbox.Controls.Add(PictureBox2)
@@ -344,6 +348,28 @@ Partial Class Users
         groupbox.Size = New Size(1333, 626)
         groupbox.TabIndex = 0
         ' 
+        ' lblnote
+        ' 
+        lblnote.AutoSize = True
+        lblnote.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblnote.ForeColor = Color.Black
+        lblnote.Location = New Point(916, 230)
+        lblnote.Name = "lblnote"
+        lblnote.Size = New Size(42, 16)
+        lblnote.TabIndex = 129
+        lblnote.Text = "Note:"
+        ' 
+        ' lblmessagesu
+        ' 
+        lblmessagesu.AutoSize = True
+        lblmessagesu.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblmessagesu.ForeColor = Color.Red
+        lblmessagesu.Location = New Point(964, 231)
+        lblmessagesu.Name = "lblmessagesu"
+        lblmessagesu.Size = New Size(296, 16)
+        lblmessagesu.TabIndex = 128
+        lblmessagesu.Text = "Select Row before clicking [Edit] or [Delete]."
+        ' 
         ' Label10
         ' 
         Label10.AutoSize = True
@@ -377,7 +403,7 @@ Partial Class Users
         txtaddress.SelectedText = ""
         txtaddress.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtaddress.Size = New Size(232, 33)
-        txtaddress.TabIndex = 126
+        txtaddress.TabIndex = 3
         ' 
         ' PictureBox2
         ' 
@@ -514,7 +540,7 @@ Partial Class Users
         txtmname.SelectedText = ""
         txtmname.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         txtmname.Size = New Size(232, 33)
-        txtmname.TabIndex = 75
+        txtmname.TabIndex = 2
         ' 
         ' txtlname
         ' 
@@ -537,7 +563,7 @@ Partial Class Users
         txtlname.SelectedText = ""
         txtlname.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         txtlname.Size = New Size(232, 33)
-        txtlname.TabIndex = 74
+        txtlname.TabIndex = 1
         ' 
         ' txtfname
         ' 
@@ -560,7 +586,7 @@ Partial Class Users
         txtfname.SelectedText = ""
         txtfname.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         txtfname.Size = New Size(232, 33)
-        txtfname.TabIndex = 73
+        txtfname.TabIndex = 0
         ' 
         ' lblexample
         ' 
@@ -642,7 +668,7 @@ Partial Class Users
         txtcontactnumber.SelectedText = ""
         txtcontactnumber.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         txtcontactnumber.Size = New Size(232, 33)
-        txtcontactnumber.TabIndex = 59
+        txtcontactnumber.TabIndex = 5
         ' 
         ' Label2
         ' 
@@ -676,7 +702,7 @@ Partial Class Users
         txtemail.SelectedText = ""
         txtemail.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         txtemail.Size = New Size(232, 33)
-        txtemail.TabIndex = 57
+        txtemail.TabIndex = 4
         ' 
         ' Label1
         ' 
@@ -709,7 +735,7 @@ Partial Class Users
         txtpassword.SelectedText = ""
         txtpassword.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         txtpassword.Size = New Size(232, 33)
-        txtpassword.TabIndex = 55
+        txtpassword.TabIndex = 7
         ' 
         ' txtusername
         ' 
@@ -732,7 +758,7 @@ Partial Class Users
         txtusername.SelectedText = ""
         txtusername.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         txtusername.Size = New Size(232, 33)
-        txtusername.TabIndex = 38
+        txtusername.TabIndex = 6
         ' 
         ' panel_book
         ' 
@@ -807,4 +833,6 @@ Partial Class Users
     Friend WithEvents PictureBox2 As PictureBox
     Friend WithEvents Label10 As Label
     Friend WithEvents txtaddress As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents lblnote As Label
+    Friend WithEvents lblmessagesu As Label
 End Class

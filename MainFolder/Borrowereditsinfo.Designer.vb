@@ -200,7 +200,7 @@ Partial Class Borrowereditsinfo
         txtemail.SelectedText = ""
         txtemail.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtemail.Size = New Size(238, 28)
-        txtemail.TabIndex = 144
+        txtemail.TabIndex = 2
         ' 
         ' lblpassword
         ' 
@@ -210,7 +210,7 @@ Partial Class Borrowereditsinfo
         lblpassword.Location = New Point(568, 105)
         lblpassword.Name = "lblpassword"
         lblpassword.Size = New Size(97, 13)
-        lblpassword.TabIndex = 142
+        lblpassword.TabIndex = 5
         lblpassword.Text = "Password strength"
         ' 
         ' lblemp
@@ -246,7 +246,7 @@ Partial Class Borrowereditsinfo
         txtemployeeno.SelectedText = ""
         txtemployeeno.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         txtemployeeno.Size = New Size(238, 28)
-        txtemployeeno.TabIndex = 140
+        txtemployeeno.TabIndex = 1
         ' 
         ' lbllrn
         ' 
@@ -281,7 +281,7 @@ Partial Class Borrowereditsinfo
         txtlrn.SelectedText = ""
         txtlrn.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         txtlrn.Size = New Size(238, 28)
-        txtlrn.TabIndex = 138
+        txtlrn.TabIndex = 0
         ' 
         ' PictureBox1
         ' 
@@ -337,7 +337,7 @@ Partial Class Borrowereditsinfo
         txtpass.SelectedText = ""
         txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         txtpass.Size = New Size(238, 28)
-        txtpass.TabIndex = 134
+        txtpass.TabIndex = 4
         ' 
         ' txtuser
         ' 
@@ -361,7 +361,7 @@ Partial Class Borrowereditsinfo
         txtuser.SelectedText = ""
         txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtuser.Size = New Size(238, 28)
-        txtuser.TabIndex = 133
+        txtuser.TabIndex = 3
         ' 
         ' Borrowereditsinfo
         ' 

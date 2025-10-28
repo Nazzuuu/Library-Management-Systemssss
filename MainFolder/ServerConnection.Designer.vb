@@ -77,7 +77,7 @@ Partial Class ServerConnection
         txtserver.SelectedText = ""
         txtserver.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtserver.Size = New Size(242, 33)
-        txtserver.TabIndex = 118
+        txtserver.TabIndex = 0
         ' 
         ' txtusername
         ' 
@@ -100,7 +100,7 @@ Partial Class ServerConnection
         txtusername.SelectedText = ""
         txtusername.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtusername.Size = New Size(242, 33)
-        txtusername.TabIndex = 121
+        txtusername.TabIndex = 1
         ' 
         ' txtpassword
         ' 
@@ -123,7 +123,7 @@ Partial Class ServerConnection
         txtpassword.SelectedText = ""
         txtpassword.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtpassword.Size = New Size(242, 33)
-        txtpassword.TabIndex = 122
+        txtpassword.TabIndex = 2
         ' 
         ' btnconnect
         ' 

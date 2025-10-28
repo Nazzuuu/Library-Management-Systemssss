@@ -246,7 +246,7 @@ Partial Class BorrowerCreateAccount
         txtpass.SelectedText = ""
         txtpass.ShadowDecoration.CustomizableEdges = CustomizableEdges13
         txtpass.Size = New Size(238, 28)
-        txtpass.TabIndex = 77
+        txtpass.TabIndex = 4
         ' 
         ' txtuser
         ' 
@@ -270,7 +270,7 @@ Partial Class BorrowerCreateAccount
         txtuser.SelectedText = ""
         txtuser.ShadowDecoration.CustomizableEdges = CustomizableEdges15
         txtuser.Size = New Size(238, 28)
-        txtuser.TabIndex = 76
+        txtuser.TabIndex = 3
         ' 
         ' Panel2
         ' 
@@ -352,7 +352,7 @@ Partial Class BorrowerCreateAccount
         txtlrn.SelectedText = ""
         txtlrn.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtlrn.Size = New Size(238, 28)
-        txtlrn.TabIndex = 89
+        txtlrn.TabIndex = 0
         ' 
         ' Label6
         ' 
@@ -387,7 +387,7 @@ Partial Class BorrowerCreateAccount
         txtemployeeno.SelectedText = ""
         txtemployeeno.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtemployeeno.Size = New Size(238, 28)
-        txtemployeeno.TabIndex = 91
+        txtemployeeno.TabIndex = 1
         ' 
         ' lblfullname
         ' 
@@ -444,7 +444,7 @@ Partial Class BorrowerCreateAccount
         txtemail.SelectedText = ""
         txtemail.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtemail.Size = New Size(238, 28)
-        txtemail.TabIndex = 96
+        txtemail.TabIndex = 2
         ' 
         ' lbldomain
         ' 

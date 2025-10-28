@@ -66,6 +66,7 @@ Partial Class Acquisition
         Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_acquisition = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        lblmessagesu = New Label()
         Label9 = New Label()
         NumericUpDown2 = New Guna.UI2.WinForms.Guna2NumericUpDown()
         Label6 = New Label()
@@ -124,6 +125,7 @@ Partial Class Acquisition
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(lblmessagesu)
         Guna2GroupBox1.Controls.Add(Label9)
         Guna2GroupBox1.Controls.Add(NumericUpDown2)
         Guna2GroupBox1.Controls.Add(Label6)
@@ -166,6 +168,17 @@ Partial Class Acquisition
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' lblmessagesu
+        ' 
+        lblmessagesu.AutoSize = True
+        lblmessagesu.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblmessagesu.ForeColor = Color.Red
+        lblmessagesu.Location = New Point(656, 277)
+        lblmessagesu.Name = "lblmessagesu"
+        lblmessagesu.Size = New Size(312, 16)
+        lblmessagesu.TabIndex = 130
+        lblmessagesu.Text = "3. Select Row before clicking [Edit] or [Delete]."
+        ' 
         ' Label9
         ' 
         Label9.AutoSize = True
@@ -188,7 +201,7 @@ Partial Class Acquisition
         NumericUpDown2.Name = "NumericUpDown2"
         NumericUpDown2.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         NumericUpDown2.Size = New Size(78, 24)
-        NumericUpDown2.TabIndex = 108
+        NumericUpDown2.TabIndex = 21
         NumericUpDown2.UpDownButtonFillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ' 
         ' Label6
@@ -207,7 +220,7 @@ Partial Class Acquisition
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(607, 253)
+        Label12.Location = New Point(607, 260)
         Label12.Name = "Label12"
         Label12.Size = New Size(49, 16)
         Label12.TabIndex = 106
@@ -243,7 +256,7 @@ Partial Class Acquisition
         DateTimePicker1.Name = "DateTimePicker1"
         DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         DateTimePicker1.Size = New Size(157, 36)
-        DateTimePicker1.TabIndex = 95
+        DateTimePicker1.TabIndex = 30
         DateTimePicker1.Value = New Date(2025, 10, 2, 0, 0, 0, 0)
         ' 
         ' btnsupplieradd
@@ -313,7 +326,7 @@ Partial Class Acquisition
         txtbarcodes.SelectedText = ""
         txtbarcodes.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         txtbarcodes.Size = New Size(232, 33)
-        txtbarcodes.TabIndex = 76
+        txtbarcodes.TabIndex = 24
         ' 
         ' txttransactionno
         ' 
@@ -335,7 +348,7 @@ Partial Class Acquisition
         txttransactionno.SelectedText = ""
         txttransactionno.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         txttransactionno.Size = New Size(232, 36)
-        txttransactionno.TabIndex = 75
+        txttransactionno.TabIndex = 28
         ' 
         ' txttotalcost
         ' 
@@ -357,7 +370,7 @@ Partial Class Acquisition
         txttotalcost.SelectedText = ""
         txttotalcost.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         txttotalcost.Size = New Size(232, 36)
-        txttotalcost.TabIndex = 74
+        txttotalcost.TabIndex = 29
         ' 
         ' txtbookprice
         ' 
@@ -380,7 +393,7 @@ Partial Class Acquisition
         txtbookprice.SelectedText = ""
         txtbookprice.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtbookprice.Size = New Size(232, 36)
-        txtbookprice.TabIndex = 73
+        txtbookprice.TabIndex = 27
         ' 
         ' NumericUpDown1
         ' 
@@ -393,7 +406,7 @@ Partial Class Acquisition
         NumericUpDown1.Name = "NumericUpDown1"
         NumericUpDown1.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         NumericUpDown1.Size = New Size(232, 36)
-        NumericUpDown1.TabIndex = 72
+        NumericUpDown1.TabIndex = 26
         NumericUpDown1.UpDownButtonFillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ' 
         ' Label8
@@ -439,7 +452,7 @@ Partial Class Acquisition
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         txtsearch.Size = New Size(889, 30)
-        txtsearch.TabIndex = 48
+        txtsearch.TabIndex = 0
         ' 
         ' btnclear
         ' 
@@ -614,7 +627,7 @@ Partial Class Acquisition
         txtbooktitle.SelectedText = ""
         txtbooktitle.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         txtbooktitle.Size = New Size(232, 33)
-        txtbooktitle.TabIndex = 40
+        txtbooktitle.TabIndex = 23
         ' 
         ' txtisbn
         ' 
@@ -637,7 +650,7 @@ Partial Class Acquisition
         txtisbn.SelectedText = ""
         txtisbn.ShadowDecoration.CustomizableEdges = CustomizableEdges32
         txtisbn.Size = New Size(232, 33)
-        txtisbn.TabIndex = 38
+        txtisbn.TabIndex = 22
         ' 
         ' cbsuppliername
         ' 
@@ -656,7 +669,7 @@ Partial Class Acquisition
         cbsuppliername.Name = "cbsuppliername"
         cbsuppliername.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         cbsuppliername.Size = New Size(232, 36)
-        cbsuppliername.TabIndex = 33
+        cbsuppliername.TabIndex = 25
         ' 
         ' Label5
         ' 
@@ -782,4 +795,5 @@ Partial Class Acquisition
     Friend WithEvents NumericUpDown2 As Guna.UI2.WinForms.Guna2NumericUpDown
     Friend WithEvents Label6 As Label
     Friend WithEvents Label9 As Label
+    Friend WithEvents lblmessagesu As Label
 End Class

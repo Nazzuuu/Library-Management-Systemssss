@@ -56,8 +56,6 @@ Partial Class MainForm
         Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges35 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         pnl_maintenance = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_maintenance = New Panel()
         MenuStrip1 = New MenuStrip()
@@ -134,7 +132,6 @@ Partial Class MainForm
         Panel_welcome = New Panel()
         lblgmail = New Label()
         Label6 = New Label()
-        Guna2Button1 = New Guna.UI2.WinForms.Guna2Button()
         Panel_dash = New Panel()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
@@ -1047,30 +1044,8 @@ Partial Class MainForm
         Label6.TabIndex = 2
         Label6.Text = "Welcome:"
         ' 
-        ' Guna2Button1
-        ' 
-        Guna2Button1.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        Guna2Button1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2Button1.BorderRadius = 9
-        Guna2Button1.BorderThickness = 2
-        Guna2Button1.CustomizableEdges = CustomizableEdges34
-        Guna2Button1.DisabledState.BorderColor = Color.DarkGray
-        Guna2Button1.DisabledState.CustomBorderColor = Color.DarkGray
-        Guna2Button1.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        Guna2Button1.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        Guna2Button1.FillColor = Color.Transparent
-        Guna2Button1.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        Guna2Button1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2Button1.Location = New Point(243, 10)
-        Guna2Button1.Name = "Guna2Button1"
-        Guna2Button1.ShadowDecoration.CustomizableEdges = CustomizableEdges35
-        Guna2Button1.Size = New Size(144, 26)
-        Guna2Button1.TabIndex = 22
-        Guna2Button1.Text = "TESTING"
-        ' 
         ' Panel_dash
         ' 
-        Panel_dash.Controls.Add(Guna2Button1)
         Panel_dash.Controls.Add(Panel_welcome)
         Panel_dash.Controls.Add(Panel_User)
         Panel_dash.Controls.Add(dshboard)
@@ -1201,7 +1176,6 @@ Partial Class MainForm
     Friend WithEvents Panel_welcome As Panel
     Friend WithEvents lblgmail As Label
     Friend WithEvents Label6 As Label
-    Friend WithEvents Guna2Button1 As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Panel_dash As Panel
     Friend WithEvents AttendanceRecordToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents btnexit As Guna.UI2.WinForms.Guna2Button

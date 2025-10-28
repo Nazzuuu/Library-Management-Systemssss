@@ -78,6 +78,7 @@ Partial Class Accession
         Label2 = New Label()
         Label1 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        lblmessagesu = New Label()
         rbforlibraryonly = New RadioButton()
         Label12 = New Label()
         Label13 = New Label()
@@ -182,7 +183,7 @@ Partial Class Accession
         txtsuppliername.SelectedText = ""
         txtsuppliername.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtsuppliername.Size = New Size(232, 36)
-        txtsuppliername.TabIndex = 73
+        txtsuppliername.TabIndex = 5
         ' 
         ' PictureBox1
         ' 
@@ -216,7 +217,7 @@ Partial Class Accession
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtsearch.Size = New Size(889, 30)
-        txtsearch.TabIndex = 48
+        txtsearch.TabIndex = 7
         ' 
         ' btnclear
         ' 
@@ -322,7 +323,7 @@ Partial Class Accession
         txtisbn.SelectedText = ""
         txtisbn.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtisbn.Size = New Size(232, 33)
-        txtisbn.TabIndex = 40
+        txtisbn.TabIndex = 2
         ' 
         ' Label6
         ' 
@@ -374,6 +375,7 @@ Partial Class Accession
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(lblmessagesu)
         Guna2GroupBox1.Controls.Add(rbforlibraryonly)
         Guna2GroupBox1.Controls.Add(Label12)
         Guna2GroupBox1.Controls.Add(Label13)
@@ -416,6 +418,17 @@ Partial Class Accession
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' lblmessagesu
+        ' 
+        lblmessagesu.AutoSize = True
+        lblmessagesu.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblmessagesu.ForeColor = Color.Red
+        lblmessagesu.Location = New Point(80, 243)
+        lblmessagesu.Name = "lblmessagesu"
+        lblmessagesu.Size = New Size(220, 16)
+        lblmessagesu.TabIndex = 130
+        lblmessagesu.Text = "Select Row before clicking [Edit]."
+        ' 
         ' rbforlibraryonly
         ' 
         rbforlibraryonly.AutoSize = True
@@ -435,11 +448,11 @@ Partial Class Accession
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(32, 226)
+        Label12.Location = New Point(32, 234)
         Label12.Name = "Label12"
-        Label12.Size = New Size(42, 16)
+        Label12.Size = New Size(49, 16)
         Label12.TabIndex = 106
-        Label12.Text = "Note:"
+        Label12.Text = "Notes:"
         ' 
         ' Label13
         ' 
@@ -601,7 +614,7 @@ Partial Class Accession
         txttransactionno.SelectedText = ""
         txttransactionno.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         txttransactionno.Size = New Size(232, 33)
-        txttransactionno.TabIndex = 92
+        txttransactionno.TabIndex = 0
         ' 
         ' btntransaction
         ' 
@@ -643,7 +656,7 @@ Partial Class Accession
         txtbarcodes.SelectedText = ""
         txtbarcodes.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         txtbarcodes.Size = New Size(232, 36)
-        txtbarcodes.TabIndex = 84
+        txtbarcodes.TabIndex = 4
         ' 
         ' Label9
         ' 
@@ -684,7 +697,7 @@ Partial Class Accession
         cbshelf.Name = "cbshelf"
         cbshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         cbshelf.Size = New Size(232, 36)
-        cbshelf.TabIndex = 81
+        cbshelf.TabIndex = 6
         ' 
         ' txtbooktitle
         ' 
@@ -706,7 +719,7 @@ Partial Class Accession
         txtbooktitle.SelectedText = ""
         txtbooktitle.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         txtbooktitle.Size = New Size(232, 36)
-        txtbooktitle.TabIndex = 78
+        txtbooktitle.TabIndex = 3
         ' 
         ' txtaccessionid
         ' 
@@ -728,7 +741,7 @@ Partial Class Accession
         txtaccessionid.SelectedText = ""
         txtaccessionid.ShadowDecoration.CustomizableEdges = CustomizableEdges32
         txtaccessionid.Size = New Size(232, 36)
-        txtaccessionid.TabIndex = 77
+        txtaccessionid.TabIndex = 1
         ' 
         ' panel_accession
         ' 
@@ -805,4 +818,5 @@ Partial Class Accession
     Friend WithEvents shelftooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
     Friend WithEvents Label12 As Label
     Friend WithEvents Label13 As Label
+    Friend WithEvents lblmessagesu As Label
 End Class

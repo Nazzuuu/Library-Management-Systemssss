@@ -60,6 +60,8 @@ Partial Class Publisher
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
         Guna2GradientPanel2 = New Guna.UI2.WinForms.Guna2GradientPanel()
+        Label12 = New Label()
+        Label13 = New Label()
         Guna2GradientPanel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -85,7 +87,7 @@ Partial Class Publisher
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         Guna2GradientPanel1.Size = New Size(664, 239)
-        Guna2GradientPanel1.TabIndex = 26
+        Guna2GradientPanel1.TabIndex = 0
         ' 
         ' Label3
         ' 
@@ -119,7 +121,7 @@ Partial Class Publisher
         txtcontact.SelectedText = ""
         txtcontact.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtcontact.Size = New Size(266, 33)
-        txtcontact.TabIndex = 7
+        txtcontact.TabIndex = 3
         ' 
         ' Label2
         ' 
@@ -153,7 +155,7 @@ Partial Class Publisher
         txtaddress.SelectedText = ""
         txtaddress.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtaddress.Size = New Size(266, 33)
-        txtaddress.TabIndex = 5
+        txtaddress.TabIndex = 2
         ' 
         ' Label1
         ' 
@@ -187,7 +189,7 @@ Partial Class Publisher
         txtpublisher.SelectedText = ""
         txtpublisher.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtpublisher.Size = New Size(266, 33)
-        txtpublisher.TabIndex = 3
+        txtpublisher.TabIndex = 1
         ' 
         ' btndelete
         ' 
@@ -281,7 +283,7 @@ Partial Class Publisher
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         txtsearch.Size = New Size(665, 30)
-        txtsearch.TabIndex = 25
+        txtsearch.TabIndex = 0
         ' 
         ' Guna2Elipse1
         ' 
@@ -349,11 +351,35 @@ Partial Class Publisher
         Guna2GradientPanel2.Size = New Size(664, 283)
         Guna2GradientPanel2.TabIndex = 27
         ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(47, 663)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 108
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(95, 664)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(296, 16)
+        Label13.TabIndex = 107
+        Label13.Text = "Select Row before clicking [Edit] or [Delete]."
+        ' 
         ' Publisher
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(725, 695)
+        Controls.Add(Label12)
+        Controls.Add(Label13)
         Controls.Add(Guna2GradientPanel2)
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
@@ -373,6 +399,7 @@ Partial Class Publisher
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         Guna2GradientPanel2.ResumeLayout(False)
         ResumeLayout(False)
+        PerformLayout()
     End Sub
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents Label3 As Label
@@ -389,4 +416,6 @@ Partial Class Publisher
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Guna2GradientPanel2 As Guna.UI2.WinForms.Guna2GradientPanel
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class

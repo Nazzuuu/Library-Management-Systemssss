@@ -53,6 +53,8 @@ Partial Class Strand
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
+        Label12 = New Label()
+        Label13 = New Label()
         Guna2GradientPanel1.SuspendLayout()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -74,7 +76,7 @@ Partial Class Strand
         Guna2GradientPanel1.Location = New Point(28, 69)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
         Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges12
-        Guna2GradientPanel1.Size = New Size(415, 208)
+        Guna2GradientPanel1.Size = New Size(415, 212)
         Guna2GradientPanel1.TabIndex = 26
         ' 
         ' Label2
@@ -82,7 +84,7 @@ Partial Class Strand
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(34, 97)
+        Label2.Location = New Point(34, 91)
         Label2.Name = "Label2"
         Label2.Size = New Size(85, 16)
         Label2.TabIndex = 6
@@ -102,7 +104,7 @@ Partial Class Strand
         txtdescription.Font = New Font("Microsoft Sans Serif", 9F)
         txtdescription.ForeColor = Color.Black
         txtdescription.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtdescription.Location = New Point(34, 118)
+        txtdescription.Location = New Point(34, 111)
         txtdescription.Margin = New Padding(3, 4, 3, 4)
         txtdescription.MaxLength = 24
         txtdescription.Name = "txtdescription"
@@ -110,14 +112,14 @@ Partial Class Strand
         txtdescription.SelectedText = ""
         txtdescription.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtdescription.Size = New Size(347, 33)
-        txtdescription.TabIndex = 5
+        txtdescription.TabIndex = 1
         ' 
         ' Label1
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(36, 27)
+        Label1.Location = New Point(36, 28)
         Label1.Name = "Label1"
         Label1.Size = New Size(56, 16)
         Label1.TabIndex = 4
@@ -137,7 +139,7 @@ Partial Class Strand
         txtstrand.Font = New Font("Microsoft Sans Serif", 9F)
         txtstrand.ForeColor = Color.Black
         txtstrand.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtstrand.Location = New Point(36, 55)
+        txtstrand.Location = New Point(36, 48)
         txtstrand.Margin = New Padding(3, 4, 3, 4)
         txtstrand.MaxLength = 9
         txtstrand.Name = "txtstrand"
@@ -145,7 +147,7 @@ Partial Class Strand
         txtstrand.SelectedText = ""
         txtstrand.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtstrand.Size = New Size(347, 33)
-        txtstrand.TabIndex = 3
+        txtstrand.TabIndex = 0
         ' 
         ' btndelete
         ' 
@@ -160,7 +162,7 @@ Partial Class Strand
         btndelete.FillColor = Color.Empty
         btndelete.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btndelete.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btndelete.Location = New Point(290, 162)
+        btndelete.Location = New Point(290, 169)
         btndelete.Name = "btndelete"
         btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         btndelete.Size = New Size(90, 27)
@@ -180,7 +182,7 @@ Partial Class Strand
         btnedit.FillColor = Color.Empty
         btnedit.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnedit.Location = New Point(160, 162)
+        btnedit.Location = New Point(160, 169)
         btnedit.Name = "btnedit"
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         btnedit.Size = New Size(90, 27)
@@ -200,7 +202,7 @@ Partial Class Strand
         btnadd.FillColor = Color.Empty
         btnadd.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnadd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnadd.Location = New Point(36, 162)
+        btnadd.Location = New Point(36, 169)
         btnadd.Name = "btnadd"
         btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         btnadd.Size = New Size(90, 27)
@@ -239,7 +241,7 @@ Partial Class Strand
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtsearch.Size = New Size(420, 30)
-        txtsearch.TabIndex = 25
+        txtsearch.TabIndex = 0
         ' 
         ' Guna2Elipse1
         ' 
@@ -273,7 +275,7 @@ Partial Class Strand
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(23, 306)
+        DataGridView1.Location = New Point(33, 306)
         DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
@@ -292,14 +294,38 @@ Partial Class Strand
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        DataGridView1.Size = New Size(420, 150)
+        DataGridView1.Size = New Size(410, 150)
         DataGridView1.TabIndex = 29
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label12.ForeColor = Color.Black
+        Label12.Location = New Point(33, 474)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(42, 16)
+        Label12.TabIndex = 108
+        Label12.Text = "Note:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.Red
+        Label13.Location = New Point(81, 475)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(296, 16)
+        Label13.TabIndex = 107
+        Label13.Text = "Select Row before clicking [Edit] or [Delete]."
         ' 
         ' Strand
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(474, 478)
+        ClientSize = New Size(474, 505)
+        Controls.Add(Label12)
+        Controls.Add(Label13)
         Controls.Add(DataGridView1)
         Controls.Add(Guna2GradientPanel1)
         Controls.Add(PictureBox1)
@@ -317,6 +343,7 @@ Partial Class Strand
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
+        PerformLayout()
     End Sub
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents Label1 As Label
@@ -330,4 +357,6 @@ Partial Class Strand
     Friend WithEvents Label2 As Label
     Friend WithEvents txtdescription As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
 End Class

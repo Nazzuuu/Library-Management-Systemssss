@@ -102,6 +102,8 @@ Partial Class Returning
         lblbooktotal = New Label()
         cbbooks = New ComboBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        lblnote = New Label()
+        lblmessagesu = New Label()
         Guna2GroupBox1.SuspendLayout()
         Guna2GroupBox3.SuspendLayout()
         Panel1.SuspendLayout()
@@ -143,7 +145,7 @@ Partial Class Returning
         txttransactionreceipt.SelectedText = ""
         txttransactionreceipt.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txttransactionreceipt.Size = New Size(232, 33)
-        txttransactionreceipt.TabIndex = 42
+        txttransactionreceipt.TabIndex = 0
         ' 
         ' Label1
         ' 
@@ -695,15 +697,17 @@ Partial Class Returning
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtsearch.Size = New Size(625, 30)
-        txtsearch.TabIndex = 94
+        txtsearch.TabIndex = 1
         ' 
         ' Guna2GroupBox2
         ' 
         Guna2GroupBox2.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox2.BorderRadius = 8
         Guna2GroupBox2.BorderThickness = 2
+        Guna2GroupBox2.Controls.Add(lblnote)
         Guna2GroupBox2.Controls.Add(lblaccessionid)
         Guna2GroupBox2.Controls.Add(Label18)
+        Guna2GroupBox2.Controls.Add(lblmessagesu)
         Guna2GroupBox2.Controls.Add(chkSelectAll)
         Guna2GroupBox2.Controls.Add(lblisbnbarcode)
         Guna2GroupBox2.Controls.Add(Label11)
@@ -877,12 +881,34 @@ Partial Class Returning
         cbbooks.Location = New Point(146, 122)
         cbbooks.Name = "cbbooks"
         cbbooks.Size = New Size(224, 23)
-        cbbooks.TabIndex = 59
+        cbbooks.TabIndex = 0
         ' 
         ' Guna2Elipse1
         ' 
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
+        ' 
+        ' lblnote
+        ' 
+        lblnote.AutoSize = True
+        lblnote.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblnote.ForeColor = Color.Black
+        lblnote.Location = New Point(322, 184)
+        lblnote.Name = "lblnote"
+        lblnote.Size = New Size(42, 16)
+        lblnote.TabIndex = 131
+        lblnote.Text = "Note:"
+        ' 
+        ' lblmessagesu
+        ' 
+        lblmessagesu.AutoSize = True
+        lblmessagesu.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblmessagesu.ForeColor = Color.Red
+        lblmessagesu.Location = New Point(370, 185)
+        lblmessagesu.Name = "lblmessagesu"
+        lblmessagesu.Size = New Size(220, 16)
+        lblmessagesu.TabIndex = 130
+        lblmessagesu.Text = "Select Row before clicking [Edit]."
         ' 
         ' Returning
         ' 
@@ -969,4 +995,6 @@ Partial Class Returning
     Friend WithEvents Panel2 As Panel
     Friend WithEvents Label20 As Label
     Friend WithEvents Panel4 As Panel
+    Friend WithEvents lblnote As Label
+    Friend WithEvents lblmessagesu As Label
 End Class

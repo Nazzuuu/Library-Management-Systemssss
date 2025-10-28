@@ -128,6 +128,8 @@ Public Class Users
 
         lblrolesu.Visible = False
 
+        lblnote.Visible = False
+        lblmessagesu.Visible = False
     End Sub
 
     Public Sub uireset()
@@ -142,6 +144,9 @@ Public Class Users
         rbstaff.Visible = True
 
         lblrolesu.Visible = True
+
+        lblnote.Visible = True
+        lblmessagesu.Visible = True
 
     End Sub
 

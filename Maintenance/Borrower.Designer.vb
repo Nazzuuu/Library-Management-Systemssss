@@ -72,6 +72,7 @@ Partial Class Borrower
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Label6 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Label7 = New Label()
         Label4 = New Label()
         Label3 = New Label()
         Panel3 = New Panel()
@@ -197,7 +198,7 @@ Partial Class Borrower
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtsearch.Size = New Size(889, 30)
-        txtsearch.TabIndex = 48
+        txtsearch.TabIndex = 9
         ' 
         ' btnclear
         ' 
@@ -309,6 +310,7 @@ Partial Class Borrower
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Label7)
         Guna2GroupBox1.Controls.Add(Label4)
         Guna2GroupBox1.Controls.Add(Label3)
         Guna2GroupBox1.Controls.Add(Panel3)
@@ -354,12 +356,23 @@ Partial Class Borrower
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' Label7
+        ' 
+        Label7.AutoSize = True
+        Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label7.ForeColor = Color.Red
+        Label7.Location = New Point(81, 211)
+        Label7.Name = "Label7"
+        Label7.Size = New Size(296, 16)
+        Label7.TabIndex = 109
+        Label7.Text = "Select Row before clicking [Edit] or [Delete]."
+        ' 
         ' Label4
         ' 
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.Green
-        Label4.Location = New Point(81, 251)
+        Label4.Location = New Point(81, 255)
         Label4.Name = "Label4"
         Label4.Size = New Size(229, 16)
         Label4.TabIndex = 108
@@ -370,7 +383,7 @@ Partial Class Borrower
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.Maroon
-        Label3.Location = New Point(81, 227)
+        Label3.Location = New Point(81, 233)
         Label3.Name = "Label3"
         Label3.Size = New Size(299, 16)
         Label3.TabIndex = 107
@@ -379,7 +392,7 @@ Partial Class Borrower
         ' Panel3
         ' 
         Panel3.BackColor = Color.DarkGreen
-        Panel3.Location = New Point(32, 250)
+        Panel3.Location = New Point(32, 257)
         Panel3.Name = "Panel3"
         Panel3.Size = New Size(40, 17)
         Panel3.TabIndex = 106
@@ -387,7 +400,7 @@ Partial Class Borrower
         ' Panel2
         ' 
         Panel2.BackColor = Color.Maroon
-        Panel2.Location = New Point(32, 226)
+        Panel2.Location = New Point(32, 234)
         Panel2.Name = "Panel2"
         Panel2.Size = New Size(40, 17)
         Panel2.TabIndex = 105
@@ -399,16 +412,16 @@ Partial Class Borrower
         Label12.ForeColor = Color.Black
         Label12.Location = New Point(31, 204)
         Label12.Name = "Label12"
-        Label12.Size = New Size(42, 16)
+        Label12.Size = New Size(49, 16)
         Label12.TabIndex = 104
-        Label12.Text = "Note:"
+        Label12.Text = "Notes:"
         ' 
         ' Label13
         ' 
         Label13.AutoSize = True
         Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label13.ForeColor = Color.Red
-        Label13.Location = New Point(79, 205)
+        Label13.Location = New Point(81, 195)
         Label13.Name = "Label13"
         Label13.Size = New Size(181, 16)
         Label13.TabIndex = 103
@@ -446,7 +459,7 @@ Partial Class Borrower
         txtcontactnumber.SelectedText = ""
         txtcontactnumber.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtcontactnumber.Size = New Size(232, 33)
-        txtcontactnumber.TabIndex = 71
+        txtcontactnumber.TabIndex = 4
         ' 
         ' Panel1
         ' 
@@ -512,7 +525,7 @@ Partial Class Borrower
         cbstrand.Name = "cbstrand"
         cbstrand.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         cbstrand.Size = New Size(232, 36)
-        cbstrand.TabIndex = 66
+        cbstrand.TabIndex = 8
         ' 
         ' lblstrand
         ' 
@@ -542,7 +555,7 @@ Partial Class Borrower
         cbsection.Name = "cbsection"
         cbsection.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         cbsection.Size = New Size(232, 36)
-        cbsection.TabIndex = 64
+        cbsection.TabIndex = 7
         ' 
         ' lblsection
         ' 
@@ -572,7 +585,7 @@ Partial Class Borrower
         cbgrade.Name = "cbgrade"
         cbgrade.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         cbgrade.Size = New Size(232, 36)
-        cbgrade.TabIndex = 62
+        cbgrade.TabIndex = 6
         ' 
         ' lblgrade
         ' 
@@ -602,7 +615,7 @@ Partial Class Borrower
         cbdepartment.Name = "cbdepartment"
         cbdepartment.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         cbdepartment.Size = New Size(232, 36)
-        cbdepartment.TabIndex = 60
+        cbdepartment.TabIndex = 5
         ' 
         ' lbldepartment
         ' 
@@ -647,7 +660,7 @@ Partial Class Borrower
         txtlrn.SelectedText = ""
         txtlrn.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         txtlrn.Size = New Size(232, 33)
-        txtlrn.TabIndex = 57
+        txtlrn.TabIndex = 3
         ' 
         ' rbnone
         ' 
@@ -694,7 +707,7 @@ Partial Class Borrower
         txtmname.SelectedText = ""
         txtmname.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         txtmname.Size = New Size(232, 33)
-        txtmname.TabIndex = 54
+        txtmname.TabIndex = 2
         ' 
         ' Label1
         ' 
@@ -728,7 +741,7 @@ Partial Class Borrower
         txtlname.SelectedText = ""
         txtlname.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         txtlname.Size = New Size(232, 33)
-        txtlname.TabIndex = 52
+        txtlname.TabIndex = 1
         ' 
         ' txtfname
         ' 
@@ -751,7 +764,7 @@ Partial Class Borrower
         txtfname.SelectedText = ""
         txtfname.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         txtfname.Size = New Size(232, 33)
-        txtfname.TabIndex = 38
+        txtfname.TabIndex = 0
         ' 
         ' txtemployeeno
         ' 
@@ -851,5 +864,6 @@ Partial Class Borrower
     Friend WithEvents Label4 As Label
     Friend WithEvents Label3 As Label
     Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Label7 As Label
 
 End Class

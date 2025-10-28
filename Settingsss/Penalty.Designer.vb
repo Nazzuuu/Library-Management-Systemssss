@@ -248,7 +248,7 @@ Partial Class Penalty
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtsearch.Size = New Size(645, 30)
-        txtsearch.TabIndex = 94
+        txtsearch.TabIndex = 0
         ' 
         ' Guna2GroupBox1
         ' 

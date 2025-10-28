@@ -185,7 +185,7 @@ Partial Class Borrowing
         txtsus.SelectedText = ""
         txtsus.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtsus.Size = New Size(232, 36)
-        txtsus.TabIndex = 108
+        txtsus.TabIndex = 6
         ' 
         ' Label3
         ' 
@@ -313,7 +313,7 @@ Partial Class Borrowing
         txtshelf.SelectedText = ""
         txtshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         txtshelf.Size = New Size(185, 36)
-        txtshelf.TabIndex = 98
+        txtshelf.TabIndex = 8
         ' 
         ' Label11
         ' 
@@ -393,7 +393,7 @@ Partial Class Borrowing
         txtaccessionid.SelectedText = ""
         txtaccessionid.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         txtaccessionid.Size = New Size(185, 36)
-        txtaccessionid.TabIndex = 95
+        txtaccessionid.TabIndex = 7
         ' 
         ' txtname
         ' 
@@ -415,7 +415,7 @@ Partial Class Borrowing
         txtname.SelectedText = ""
         txtname.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         txtname.Size = New Size(232, 36)
-        txtname.TabIndex = 93
+        txtname.TabIndex = 3
         ' 
         ' Label7
         ' 
@@ -458,7 +458,7 @@ Partial Class Borrowing
         DateTimePicker1.Name = "DateTimePicker1"
         DateTimePicker1.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         DateTimePicker1.Size = New Size(166, 36)
-        DateTimePicker1.TabIndex = 87
+        DateTimePicker1.TabIndex = 5
         DateTimePicker1.Value = New Date(2025, 10, 2, 0, 0, 0, 0)
         ' 
         ' Label8
@@ -493,7 +493,7 @@ Partial Class Borrowing
         txtlrn.SelectedText = ""
         txtlrn.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         txtlrn.Size = New Size(232, 36)
-        txtlrn.TabIndex = 83
+        txtlrn.TabIndex = 1
         ' 
         ' lbllrn
         ' 
@@ -537,7 +537,7 @@ Partial Class Borrowing
         txtisbn.SelectedText = ""
         txtisbn.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         txtisbn.Size = New Size(232, 36)
-        txtisbn.TabIndex = 81
+        txtisbn.TabIndex = 2
         ' 
         ' Label4
         ' 
@@ -582,7 +582,7 @@ Partial Class Borrowing
         txtemployee.SelectedText = ""
         txtemployee.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         txtemployee.Size = New Size(232, 36)
-        txtemployee.TabIndex = 73
+        txtemployee.TabIndex = 0
         ' 
         ' PictureBox1
         ' 
@@ -616,7 +616,7 @@ Partial Class Borrowing
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         txtsearch.Size = New Size(889, 30)
-        txtsearch.TabIndex = 48
+        txtsearch.TabIndex = 9
         ' 
         ' btnclear
         ' 
@@ -751,7 +751,7 @@ Partial Class Borrowing
         txtbarcode.SelectedText = ""
         txtbarcode.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         txtbarcode.Size = New Size(232, 36)
-        txtbarcode.TabIndex = 38
+        txtbarcode.TabIndex = 4
         ' 
         ' Guna2Elipse1
         ' 
