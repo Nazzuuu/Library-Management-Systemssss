@@ -223,7 +223,7 @@ Public Class MainForm
             Me.Panel_dash.Controls.Add(dshboard)
             Me.Panel_dash.Controls.Add(Panel_User)
             Me.Panel_dash.Controls.Add(Panel_welcome)
-            Me.Panel_dash.Controls.Add(Guna2Button1)
+
             lumabasna = True
         End If
 
@@ -258,7 +258,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-            Panel_dash.Controls.Add(Guna2Button1)
+
             lumabasna = True
         End If
 
@@ -298,7 +298,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-            Panel_dash.Controls.Add(Guna2Button1)
+
             lumabasna = True
         End If
 
@@ -335,7 +335,7 @@ Public Class MainForm
             Panel_dash.Controls.Add(dshboard)
             Panel_dash.Controls.Add(Panel_User)
             Panel_dash.Controls.Add(Panel_welcome)
-            Panel_dash.Controls.Add(Guna2Button1)
+
             lumabasna = True
         End If
 
@@ -422,7 +422,7 @@ Public Class MainForm
                 Panel_dash.Controls.Add(dshboard)
                 Panel_dash.Controls.Add(Panel_User)
                 Panel_dash.Controls.Add(Panel_welcome)
-                Panel_dash.Controls.Add(Guna2Button1)
+
                 lumabasna = True
             End If
 
