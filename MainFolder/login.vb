@@ -12,7 +12,12 @@ Public Class login
         txtuser.Text = ""
     End Sub
 
+
+
     Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
+
+
+        Dim currentDeviceIP As String = GlobalVarsModule.GetLocalIPAddress()
 
         For i As Integer = Application.OpenForms.Count - 1 To 0 Step -1
             Dim formInApp As Form = Application.OpenForms(i)
@@ -30,10 +35,11 @@ Public Class login
         End If
 
         Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+
             Dim comsus As String =
-            "SELECT 0 AS ID, Username, Password, Email, 'Librarian' AS Role FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
-            "UNION " &
-            "SELECT ID, Username, Password, Email, Role FROM user_staff_tbl WHERE Username = @username AND Password = @password"
+        "SELECT 0 AS ID, Username, Password, Email, 'Librarian' AS Role, CurrentIP, is_logged_in FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
+        "UNION " &
+        "SELECT ID, Username, Password, Email, Role, CurrentIP, 0 AS is_logged_in FROM user_staff_tbl WHERE Username = @username AND Password = @password"
 
             Using com As New MySqlCommand(comsus, con)
                 com.Parameters.AddWithValue("@username", User)
@@ -48,6 +54,60 @@ Public Class login
                             Dim employeeID As String = lahatngrole("ID").ToString()
 
 
+                            Dim activeIP As String = IIf(lahatngrole("CurrentIP") Is DBNull.Value, "", lahatngrole("CurrentIP").ToString()).Trim()
+
+
+                            Dim isLoggedInStatus As Integer = 0
+                            If Not lahatngrole("is_logged_in") Is DBNull.Value Then
+                                isLoggedInStatus = Convert.ToInt32(lahatngrole("is_logged_in"))
+                            End If
+
+
+                            lahatngrole.Close()
+
+
+                            If isLoggedInStatus = 1 Then
+                                GlobalVarsModule.LogAudit(
+                                actionType:="LOGIN BLOCKED (Is Logged In)",
+                                formName:="LOGIN FORM",
+                                description:=$"User '{User}' ({role}) blocked. Account is already active. Current IP: {currentDeviceIP}."
+                            )
+
+                                MessageBox.Show($"Account '{User}' ({role}) is already active. Simultaneous login is not allowed. Please logout from the other device first.",
+                                             "Login Blocked", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                                Exit Sub
+                            End If
+
+
+                            If Not String.IsNullOrWhiteSpace(activeIP) AndAlso activeIP <> "0.0.0.0" AndAlso activeIP <> currentDeviceIP Then
+
+                                GlobalVarsModule.LogAudit(
+                                actionType:="LOGIN BLOCKED (Conflict)",
+                                formName:="LOGIN FORM",
+                                description:=$"User '{User}' ({role}) blocked. Already logged in on IP: {activeIP}. Attempted IP: {currentDeviceIP}."
+                            )
+
+                                MessageBox.Show($"Account '{User}' ({role}) is already logged in on another device with IP: {activeIP}. Simultaneous login is not allowed.",
+                                             "Login Blocked", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                                Exit Sub
+                            End If
+
+
+                            Dim updateTable As String = If(role = "Librarian", "superadmin_tbl", "user_staff_tbl")
+
+                            Dim updateQuery As String = $"UPDATE {updateTable} SET CurrentIP = @newIP, is_logged_in = 1 WHERE Username = @username"
+
+                            Using updateCmd As New MySqlCommand(updateQuery, con)
+                                updateCmd.Parameters.AddWithValue("@newIP", currentDeviceIP)
+                                updateCmd.Parameters.AddWithValue("@username", User)
+
+
+                                If con.State <> ConnectionState.Open Then con.Open()
+
+                                updateCmd.ExecuteNonQuery()
+                            End Using
+
+
                             GlobalVarsModule.GlobalRole = role
                             GlobalVarsModule.GlobalUsername = User
                             GlobalVarsModule.GlobalEmail = userEmail
@@ -56,9 +116,9 @@ Public Class login
 
 
                             GlobalVarsModule.LogAudit(
-                            actionType:="LOGIN SUCCESS",
-                            formName:="LOGIN FORM",
-                            description:=$"User '{User}' ({role}) successfully logged in."
+                        actionType:="LOGIN SUCCESS",
+                        formName:="LOGIN FORM",
+                        description:=$"User '{User}' ({role}) successfully logged in from IP: {currentDeviceIP}."
                         )
 
 
@@ -152,6 +212,7 @@ Public Class login
             End Using
         End Using
     End Sub
+
 
 
 

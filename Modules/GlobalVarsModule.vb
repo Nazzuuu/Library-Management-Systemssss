@@ -1,5 +1,6 @@
 ﻿Imports MySql.Data.MySqlClient
-
+Imports System.Net
+Imports System.Net.Sockets
 
 Module GlobalVarsModule
 
@@ -33,6 +34,46 @@ Module GlobalVarsModule
     Public ActiveBorrowerLoginForm As BorrowerLoginForm
     Public connectdatabase As ServerConnection
     Public loginform As login
+
+
+    Public Function GetLocalIPAddress() As String
+        Try
+            Dim host As String = Dns.GetHostName()
+            Dim ipEntry As IPHostEntry = Dns.GetHostEntry(host)
+
+            For Each ipAddress As IPAddress In ipEntry.AddressList
+                If ipAddress.AddressFamily = AddressFamily.InterNetwork Then
+                    Return ipAddress.ToString()
+                End If
+            Next
+
+            Return "127.0.0.1"
+        Catch ex As Exception
+            Return "0.0.0.0"
+        End Try
+    End Function
+
+    Public Sub UpdateAllUserIPs(newIP As String)
+        Dim currentIP As String = GetLocalIPAddress()
+
+        Using con As New MySqlConnection(connectionString)
+            Try
+                con.Open()
+
+                Dim cmdAdmin As New MySqlCommand("UPDATE superadmin_tbl SET CurrentIP = @ip", con)
+                cmdAdmin.Parameters.AddWithValue("@ip", newIP)
+                cmdAdmin.ExecuteNonQuery()
+
+
+                Dim cmdStaff As New MySqlCommand("UPDATE user_staff_tbl SET CurrentIP = @ip", con)
+                cmdStaff.Parameters.AddWithValue("@ip", newIP)
+                cmdStaff.ExecuteNonQuery()
+
+            Catch ex As Exception
+
+            End Try
+        End Using
+    End Sub
 
     Public Function GetCleanCurrentBorrowerID() As String
         Dim idTrimmed As String = CurrentBorrowerID.Trim()

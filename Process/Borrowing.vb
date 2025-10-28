@@ -1061,7 +1061,7 @@ Public Class Borrowing
             End Using
 
         Catch ex As Exception
-            MessageBox.Show("Error loading borrower data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
         End Try
 
 

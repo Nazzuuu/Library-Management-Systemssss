@@ -138,25 +138,50 @@ Public Class MainForm
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
 
         Dim dialogResult = MessageBox.Show("Are you sure you want to logout?",
-                                   "Confirmation",
-                                   MessageBoxButtons.YesNo,
-                                   MessageBoxIcon.Question)
+              "Confirmation",
+              MessageBoxButtons.YesNo,
+              MessageBoxIcon.Question)
 
         If dialogResult = DialogResult.Yes Then
             Dim previousRole As String = GlobalVarsModule.GlobalRole
             Dim userEmail As String = GlobalVarsModule.GlobalEmail
             Dim userName As String = GlobalVarsModule.GlobalUsername
 
+
+
+            If Not String.IsNullOrWhiteSpace(userName) AndAlso (previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+      previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+      previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase)) Then
+
+                Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                    Dim updateTable As String = If(previousRole = "Librarian", "superadmin_tbl", "user_staff_tbl")
+
+                    Dim updateQuery As String = $"UPDATE {updateTable} SET CurrentIP = NULL, is_logged_in = 0 WHERE Username = @username"
+
+                    Using updateCmd As New MySqlCommand(updateQuery, con)
+                        updateCmd.Parameters.AddWithValue("@username", userName)
+                        Try
+                            con.Open()
+                            updateCmd.ExecuteNonQuery()
+                        Catch ex As Exception
+
+                            MessageBox.Show("Warning: Failed to clear login status in the database: " & ex.Message, "Database Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        End Try
+                    End Using
+                End Using
+            End If
+
+
             If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-           previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-           previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
+          previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+          previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
 
                 GlobalVarsModule.LogAudit(
-                actionType:="LOGOUT SUCCESS",
-                formName:="MAIN FORM",
-                description:=$"User '{userName}' ({previousRole}) successfully logged out.",
-                recordID:="N/A"
-            )
+              actionType:="LOGOUT SUCCESS",
+              formName:="MAIN FORM",
+              description:=$"User '{userName}' ({previousRole}) successfully logged out.",
+              recordID:="N/A"
+           )
             End If
 
             GlobalVarsModule.GlobalRole = "Guest"
