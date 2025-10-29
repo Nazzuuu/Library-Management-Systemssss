@@ -17,7 +17,12 @@ Public Class login
     Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
 
 
+
         Dim currentDeviceIP As String = GlobalVarsModule.GetLocalIPAddress()
+
+        If Not String.IsNullOrEmpty(GlobalVarsModule.CurrentUserID) Then
+            GlobalVarsModule.UpdateUserIP(currentDeviceIP, GlobalVarsModule.CurrentUserID, GlobalVarsModule.GlobalRole)
+        End If
 
         For i As Integer = Application.OpenForms.Count - 1 To 0 Step -1
             Dim formInApp As Form = Application.OpenForms(i)

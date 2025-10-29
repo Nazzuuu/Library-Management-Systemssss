@@ -288,7 +288,41 @@ Public Class BookBorrowingConfirmation
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
         LoadBorrowerDetails()
+
+
+        Try
+            If NumericUpDown1 IsNot Nothing Then
+
+                Dim originalValue As Decimal = NumericUpDown1.Value
+                Dim newValue As Decimal = originalValue
+
+
+                If originalValue < NumericUpDown1.Maximum Then
+                    NumericUpDown1.Value += 1
+                    NumericUpDown1.Value = originalValue
+                ElseIf originalValue > NumericUpDown1.Minimum Then
+                    NumericUpDown1.Value -= 1
+                    NumericUpDown1.Value = originalValue
+                End If
+            End If
+        Catch ex As Exception
+
+        End Try
+
+        Try
+            If cbbooks.Items.Count > 1 Then
+
+                cbbooks.SelectedIndex = 1
+            ElseIf cbbooks.Items.Count > 0 Then
+
+                cbbooks.SelectedIndex = 0
+            End If
+        Catch ex As Exception
+
+        End Try
+
     End Sub
 
     Private Sub LoadBorrowerDetails()
@@ -403,11 +437,9 @@ Public Class BookBorrowingConfirmation
 
         LoadBookList(transactionReceiptID)
 
-
         If cbbooks.Items.Count > 0 Then
 
             cbbooks.SelectedIndex = 0
-            cbbooks_SelectedIndexChanged(cbbooks, EventArgs.Empty)
         End If
     End Sub
 
@@ -544,13 +576,19 @@ Public Class BookBorrowingConfirmation
 
 
     Private Sub cbbooks_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbbooks.SelectedIndexChanged
+
+        If Not Me.IsHandleCreated OrElse Not cbbooks.Visible Then Exit Sub
+        If cbbooks.SelectedIndex = -1 Then Exit Sub
+
+
         If cbbooks.SelectedValue IsNot Nothing AndAlso cbbooks.SelectedValue.ToString() <> "" Then
             Dim selectedAccessionID As String = cbbooks.SelectedValue.ToString()
             lblaccessionid.Text = selectedAccessionID
 
-
             lbldetails.Visible = False
 
+
+            Dim currentDueDate As String = lblduedate.Text
 
             Dim con As New MySqlConnection(connectionString)
             Try
@@ -562,15 +600,24 @@ Public Class BookBorrowingConfirmation
                 If con.State = ConnectionState.Open Then con.Close()
             End Try
 
+
+            If Not String.IsNullOrWhiteSpace(currentDueDate) AndAlso currentDueDate <> "-- Invalid Date --" AndAlso currentDueDate <> "--" Then
+                lblduedate.Text = currentDueDate
+            End If
+
         Else
-            lblaccessionid.Text = "--"
-            lblisbnbarcode.Text = "--"
-            currentBookTitle = ""
-            lblborroweddate.Text = "--"
-            lblduedate.Text = "--"
-            lbldetails.Visible = True
+
+            If cbbooks.Items.Count = 0 Then
+                lblaccessionid.Text = "--"
+                lblisbnbarcode.Text = "--"
+                currentBookTitle = ""
+                lblborroweddate.Text = "--"
+                lblduedate.Text = "--"
+                lbldetails.Visible = True
+            End If
         End If
     End Sub
+
 
 
     Private Function GetBookDetailsFromAccession(con As MySqlConnection, accessionID As String) As Dictionary(Of String, String)

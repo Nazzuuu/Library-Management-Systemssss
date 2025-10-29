@@ -10,7 +10,9 @@ Public Class ServerConnection
             Dim currentIP As String = GlobalVarsModule.GetLocalIPAddress()
 
 
-            GlobalVarsModule.UpdateAllUserIPs(currentIP)
+            If Not String.IsNullOrEmpty(GlobalVarsModule.CurrentUserID) Then
+                GlobalVarsModule.UpdateUserIP(currentIP, GlobalVarsModule.CurrentUserID, GlobalVarsModule.GlobalRole)
+            End If
 
 
 
@@ -83,9 +85,9 @@ Public Class ServerConnection
 
         MessageBox.Show("✅ Settings saved successfully!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-        ' --- NEW: IP Update after saving settings ---
+
         UpdateIPInDatabase(GlobalVarsModule.connectionString)
-        ' -------------------------------------------
+
 
         Dim result = MessageBox.Show("Do you want to test the new connection?",
                                      "Test Connection", MessageBoxButtons.YesNo, MessageBoxIcon.Question)

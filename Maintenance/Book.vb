@@ -748,16 +748,13 @@ Public Class Book
 
     Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
 
-
         BarcodeList.Clear()
         BarcodeIndex = 0
-
 
         For Each row As DataGridViewRow In DataGridView1.Rows
             If Not row.IsNewRow Then
                 Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
                 Dim bookTitleValue As String = If(IsDBNull(row.Cells("BookTitle").Value), "(No Title)", CStr(row.Cells("BookTitle").Value))
-
 
                 If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
                     BarcodeList.Add(New BarcodeInfo With {.Barcode = barcodeValue, .Title = bookTitleValue})
@@ -766,34 +763,33 @@ Public Class Book
         Next
 
         If BarcodeList.Count = 0 Then
-            MessageBox.Show("No barcode's found.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("No barcodes found.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
-
         Try
-
             Using pdlg As New PrintDialog With {.Document = printDoc}
                 printDoc.DefaultPageSettings.Landscape = False
 
-
                 If pdlg.ShowDialog() = DialogResult.OK Then
 
+                    Dim selectedPrinterName As String = pdlg.PrinterSettings.PrinterName.ToLower()
+
+                    If Not (selectedPrinterName.Contains("microsoft") OrElse selectedPrinterName.Contains("epson")) Then
+                        MessageBox.Show("Printer is not compatible. Please use a Microsoft or Epson printer only.", "Printer Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Exit Sub
+                    End If
+
                     printDoc.PrinterSettings = pdlg.PrinterSettings
-
-
                     printDoc.Print()
 
-                    Dim selectedPrinterName As String = printDoc.PrinterSettings.PrinterName
-                    MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{selectedPrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{pdlg.PrinterSettings.PrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Else
-
                     Exit Sub
                 End If
             End Using
 
         Catch ex As System.Drawing.Printing.InvalidPrinterException
-
             Dim currentPrinterName As String = If(printDoc.PrinterSettings Is Nothing, "Selected Printer", printDoc.PrinterSettings.PrinterName)
             MessageBox.Show($"Warning: The selected printer ('{currentPrinterName}') is not connected or ready. Please check the printer connection.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         Catch ex As Exception
@@ -802,9 +798,8 @@ Public Class Book
             BarcodeIndex = 0
         End Try
 
+
     End Sub
-
-
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
         clear()

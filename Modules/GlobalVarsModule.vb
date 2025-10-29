@@ -53,21 +53,33 @@ Module GlobalVarsModule
         End Try
     End Function
 
-    Public Sub UpdateAllUserIPs(newIP As String)
-        Dim currentIP As String = GetLocalIPAddress()
+    Public Sub UpdateUserIP(ByVal newIP As String, ByVal userID As String, ByVal userRole As String)
 
         Using con As New MySqlConnection(connectionString)
             Try
                 con.Open()
-
-                Dim cmdAdmin As New MySqlCommand("UPDATE superadmin_tbl SET CurrentIP = @ip", con)
-                cmdAdmin.Parameters.AddWithValue("@ip", newIP)
-                cmdAdmin.ExecuteNonQuery()
+                Dim tableName As String = ""
+                Dim idColumn As String = ""
 
 
-                Dim cmdStaff As New MySqlCommand("UPDATE user_staff_tbl SET CurrentIP = @ip", con)
-                cmdStaff.Parameters.AddWithValue("@ip", newIP)
-                cmdStaff.ExecuteNonQuery()
+                Select Case userRole.ToLower()
+                    Case "librarian"
+                        tableName = "superadmin_tbl"
+                        idColumn = "ID"
+                    Case "staff", "assistant librarian"
+                        tableName = "user_staff_tbl"
+                        idColumn = "ID"
+                    Case Else
+                        Return
+                End Select
+
+                Dim sqlQuery As String = $"UPDATE {tableName} SET CurrentIP = @ip WHERE {idColumn} = @userID"
+
+                Using cmd As New MySqlCommand(sqlQuery, con)
+                    cmd.Parameters.AddWithValue("@ip", newIP)
+                    cmd.Parameters.AddWithValue("@userID", userID)
+                    cmd.ExecuteNonQuery()
+                End Using
 
             Catch ex As Exception
 
