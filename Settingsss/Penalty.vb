@@ -510,6 +510,13 @@ Public Class Penalty
             Return
         End If
 
+        Const MINIMUM_FEE_REQUIRED As Decimal = 1.0
+
+        If enteredFee < MINIMUM_FEE_REQUIRED Then
+            MessageBox.Show($"Penalty Fee must be 0.00 to be disregarded or at least {MINIMUM_FEE_REQUIRED.ToString("N2")} to be recorded as a valid payment.", "Fee Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            txtfee.Focus()
+            Return
+        End If
         Dim transNo As String = lbltransactionreceipt.Text
 
 
@@ -595,6 +602,23 @@ Public Class Penalty
     Private Sub penalty_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
         DataGridView1.ClearSelection()
+
+    End Sub
+
+    Private Sub txtfee_KeyDown(sender As Object, e As KeyEventArgs) Handles txtfee.KeyDown
+
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub txtfee_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtfee.KeyPress
+
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+
 
     End Sub
 End Class

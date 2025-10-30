@@ -26,6 +26,11 @@ Public Class Acquisition
         clear()
         NumericUpDown2.Focus()
 
+        DateTimePicker1.MaxDate = DateTime.Today
+
+
+        ' DateTimePicker1.MinDate = DateTime.Today.AddYears(-50)
+
     End Sub
 
     Public Sub refreshData()
@@ -192,8 +197,9 @@ Public Class Acquisition
         End If
 
         Dim bookPrice As Decimal
-        If Not Decimal.TryParse(txtbookprice.Text, bookPrice) OrElse bookPrice <= 0 Then
-            MessageBox.Show("Book Price cannot be 0 or less, or contain non-numeric characters.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+        If Not Decimal.TryParse(txtbookprice.Text, bookPrice) OrElse bookPrice < 1.0 Then
+            MessageBox.Show("Book Price must be a valid number and cannot be less than 1.00.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
@@ -252,13 +258,13 @@ Public Class Acquisition
                 comsu.ExecuteNonQuery()
 
                 GlobalVarsModule.LogAudit(
-                actionType:="ADD",
-                formName:="ACQUISITION FORM",
-                description:=$"Added book entry to transaction {txttransactionno.Text}. Title: {txtbooktitle.Text}, Qty: {NumericUpDown1.Value}.",
-                recordID:=txttransactionno.Text,
-                oldValue:="N/A",
-                newValue:=$"Title: {txtbooktitle.Text}, Qty: {NumericUpDown1.Value}, Price: {txtbookprice.Text}"
-            )
+            actionType:="ADD",
+            formName:="ACQUISITION FORM",
+            description:=$"Added book entry to transaction {txttransactionno.Text}. Title: {txtbooktitle.Text}, Qty: {NumericUpDown1.Value}.",
+            recordID:=txttransactionno.Text,
+            oldValue:="N/A",
+            newValue:=$"Title: {txtbooktitle.Text}, Qty: {NumericUpDown1.Value}, Price: {txtbookprice.Text}"
+        )
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is AuditTrail Then
@@ -859,8 +865,9 @@ SkipAcessionInsert:
         rbbarcode.Enabled = True
         rbisbn.Enabled = True
 
-        DateTimePicker1.Value = DateTime.Now
+        DateTimePicker1.Value = DateTime.Today
         DateTimePicker1.Enabled = True
+        DateTimePicker1.MaxDate = DateTime.Today
         DataGridView1.ClearSelection()
     End Sub
 
@@ -922,6 +929,7 @@ SkipAcessionInsert:
         If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
             e.Handled = True
         End If
+
 
     End Sub
 

@@ -56,6 +56,13 @@ Public Class Language
             Exit Sub
         End If
 
+
+        If lang.Length < 3 Then
+            MsgBox("Language name must be 3 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+
         Try
             con.Open()
 
@@ -73,11 +80,11 @@ Public Class Language
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-                actionType:="ADD",
-                formName:="LANGUAGE FORM",
-                description:=$"Added new language: {lang}",
-                recordID:=newID.ToString()
-            )
+            actionType:="ADD",
+            formName:="LANGUAGE FORM",
+            description:=$"Added new language: {lang}",
+            recordID:=newID.ToString()
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -123,6 +130,13 @@ Public Class Language
                 Exit Sub
             End If
 
+
+            If lang.Length < 3 Then
+                MsgBox("Language name must be 3 characters or more.", vbExclamation, "Input Error")
+                Exit Sub
+            End If
+
+
             If oldLang.ToUpper() = lang.ToUpper() Then
                 MsgBox("No changes were made.", vbExclamation, "No Update")
                 Exit Sub
@@ -153,13 +167,13 @@ Public Class Language
                 comss.ExecuteNonQuery()
 
                 GlobalVarsModule.LogAudit(
-                    actionType:="UPDATE",
-                    formName:="LANGUAGE FORM",
-                    description:=$"Updated language ID {ID} from '{oldLang}' to '{lang}'",
-                    recordID:=ID.ToString(),
-                    oldValue:=$"Language: {oldLang}",
-                    newValue:=$"Language: {lang}"
-                )
+                actionType:="UPDATE",
+                formName:="LANGUAGE FORM",
+                description:=$"Updated language ID {ID} from '{oldLang}' to '{lang}'",
+                recordID:=ID.ToString(),
+                oldValue:=$"Language: {oldLang}",
+                newValue:=$"Language: {lang}"
+            )
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is AuditTrail Then

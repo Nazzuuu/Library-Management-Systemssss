@@ -63,13 +63,13 @@ Public Class Book
         cbgenree()
         cbpublisherr()
         cblang()
-        cbcategoryy()
+        'cbcategoryy()
 
         clear()
 
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
-        DateTimePicker1.Value = DateTime.Now
+        DateTimePicker1.MaxDate = DateTime.Today
 
     End Sub
 
@@ -149,21 +149,21 @@ Public Class Book
         cblanguage.SelectedIndex = -1
     End Sub
 
-    Public Sub cbcategoryy()
+    'Public Sub cbcategoryy()
 
-        Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT ID, Category FROM category_tbl"
-        Dim adap As New MySqlDataAdapter(com, con)
-        Dim dt As New DataTable
+    '    Dim con As New MySqlConnection(connectionString)
+    '    Dim com As String = "SELECT ID, Category FROM category_tbl"
+    '    Dim adap As New MySqlDataAdapter(com, con)
+    '    Dim dt As New DataTable
 
-        adap.Fill(dt)
+    '    adap.Fill(dt)
 
-        cbcategory.DataSource = dt
-        cbcategory.DisplayMember = "Category"
-        cbcategory.ValueMember = "ID"
-        cbcategory.SelectedIndex = -1
+    '    cbcategory.DataSource = dt
+    '    cbcategory.DisplayMember = "Category"
+    '    cbcategory.ValueMember = "ID"
+    '    cbcategory.SelectedIndex = -1
 
-    End Sub
+    'End Sub
 
     Private Sub Book_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         DataGridView1.ClearSelection()
@@ -424,29 +424,31 @@ Public Class Book
             barcode = DBNull.Value
         End If
 
-        If String.IsNullOrEmpty(booktitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
+        If String.IsNullOrEmpty(booktitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
             MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
             Exit Sub
         End If
 
+
         If deyts.Date > DateTime.Today.Date Then
-            MsgBox("You cannot select a future date.", vbExclamation)
+            MsgBox("You cannot select a future date.", vbExclamation, "Date Error")
             Exit Sub
         End If
+
 
         Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
 
         Try
             con.Open()
 
-            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`Barcode`,`ISBN`, `BookTitle`, `Author`, `Genre`, `Category`, `Publisher`, `Language`, `YearPublished`) VALUES (@barcode, @isbn, @booktitle, @author, @genre, @category, @publisher, @language, @yearpublished); SELECT LAST_INSERT_ID()", con)
+            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`Barcode`,`ISBN`, `BookTitle`, `Author`, `Genre`, `Publisher`, `Language`, `YearPublished`) VALUES (@barcode, @isbn, @booktitle, @author, @genre, @publisher, @language, @yearpublished); SELECT LAST_INSERT_ID()", con)
 
             com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcode), DBNull.Value, barcode))
             com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbn), DBNull.Value, isbn))
             com.Parameters.AddWithValue("@booktitle", booktitle)
             com.Parameters.AddWithValue("@author", cbauthor.Text)
             com.Parameters.AddWithValue("@genre", cbgenre.Text)
-            com.Parameters.AddWithValue("@category", cbcategory.Text)
+            'com.Parameters.AddWithValue("@category", cbcategory.Text) ' Inalis ang category sa SQL, pero kasama pa rin sa code
             com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
             com.Parameters.AddWithValue("@language", cblanguage.Text)
             com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
@@ -487,7 +489,7 @@ Public Class Book
             Dim oldBookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
             Dim newBookTitle As String = txtbooktitle.Text.Trim()
 
-            If String.IsNullOrEmpty(newBookTitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbcategory.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
+            If String.IsNullOrEmpty(newBookTitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
                 MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
                 Exit Sub
             End If
@@ -574,13 +576,13 @@ Public Class Book
             Try
                 con.Open()
 
-                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Category`= @category, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished WHERE `ID` = @id", con)
+                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished WHERE `ID` = @id", con)
                 com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcodeValue), DBNull.Value, barcodeValue))
                 com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbnValue), DBNull.Value, isbnValue))
                 com.Parameters.AddWithValue("@booktitle", newBookTitle)
                 com.Parameters.AddWithValue("@author", cbauthor.Text)
                 com.Parameters.AddWithValue("@genre", cbgenre.Text)
-                com.Parameters.AddWithValue("@category", cbcategory.Text)
+                'com.Parameters.AddWithValue("@category", cbcategory.Text)
                 com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
                 com.Parameters.AddWithValue("@language", cblanguage.Text)
                 com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
@@ -817,21 +819,21 @@ Public Class Book
 
         cbauthor.DataSource = Nothing
         cbgenre.DataSource = Nothing
-        cbcategory.DataSource = Nothing
+        'cbcategory.DataSource = Nothing
         cbpublisher.DataSource = Nothing
         cblanguage.DataSource = Nothing
         rbgenerate.Checked = False
 
         cbauthorr()
         cbgenree()
-        cbcategoryy()
+        'cbcategoryy()
         cbpublisherr()
         cblang()
 
 
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
-        DateTimePicker1.Value = DateTime.Today
+        DateTimePicker1.Value = DateTime.Today.AddMonths(-1)
         DataGridView1.ClearSelection()
     End Sub
 
@@ -948,7 +950,7 @@ Public Class Book
             txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
             cbauthor.Text = row.Cells("Author").Value.ToString
             cbgenre.Text = row.Cells("Genre").Value.ToString
-            cbcategory.Text = row.Cells("Category").Value.ToString
+            'cbcategory.Text = row.Cells("Category").Value.ToString
             cbpublisher.Text = row.Cells("Publisher").Value.ToString
             cblanguage.Text = row.Cells("Language").Value.ToString
             DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
@@ -1023,9 +1025,9 @@ Public Class Book
         Genre.ShowDialog()
     End Sub
 
-    Private Sub btnaddcategory_Click(sender As Object, e As EventArgs) Handles btnaddcategory.Click
-        Category.ShowDialog()
-    End Sub
+    'Private Sub btnaddcategory_Click(sender As Object, e As EventArgs) Handles btnaddcategory.Click
+    '    Category.ShowDialog()
+    'End Sub
 
     Private Sub btnaddpublisher_Click(sender As Object, e As EventArgs) Handles btnaddpublisher.Click
         Publisher.ShowDialog()
@@ -1051,13 +1053,13 @@ Public Class Book
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btnaddcategory_MouseHover(sender As Object, e As EventArgs) Handles btnaddcategory.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
+    'Private Sub btnaddcategory_MouseHover(sender As Object, e As EventArgs) Handles btnaddcategory.MouseHover
+    '    Cursor = Cursors.Hand
+    'End Sub
 
-    Private Sub btnaddcategory_MouseLeave(sender As Object, e As EventArgs) Handles btnaddcategory.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
+    'Private Sub btnaddcategory_MouseLeave(sender As Object, e As EventArgs) Handles btnaddcategory.MouseLeave
+    '    Cursor = Cursors.Default
+    'End Sub
 
     Private Sub btnaddpublisher_MouseHover(sender As Object, e As EventArgs) Handles btnaddpublisher.MouseHover
         Cursor = Cursors.Hand

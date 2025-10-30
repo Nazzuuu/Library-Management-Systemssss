@@ -59,8 +59,8 @@ Public Class Strand
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim strandd As String = txtstrand.Text.Trim
-        Dim des As String = txtdescription.Text.Trim
+        Dim strandd As String = txtstrand.Text.Trim()
+        Dim des As String = txtdescription.Text.Trim()
         Dim newID As Integer = 0
 
         If String.IsNullOrWhiteSpace(strandd) OrElse String.IsNullOrWhiteSpace(des) Then
@@ -68,13 +68,30 @@ Public Class Strand
             Exit Sub
         End If
 
+        If strandd.Length < 3 Then
+            MsgBox("Strand Code must be 3 characters or more.", vbExclamation, "Input Error: Strand")
+            Exit Sub
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(strandd, "^[A-Z]+$") Then
+            MsgBox("Strand Code must contain only uppercase letters (e.g., STEM, ABM, GAS).", vbExclamation, "Invalid Strand Code Format")
+            Exit Sub
+        End If
+
+        If des.Length < 10 Then
+            MsgBox("Description must be at least 10 characters long.", vbExclamation, "Input Error: Description")
+            Exit Sub
+        End If
+
+
+
         Try
             con.Open()
 
             Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl` WHERE `Strand` = @strand OR `Description` = @description", con)
             coms.Parameters.AddWithValue("@strand", strandd)
             coms.Parameters.AddWithValue("@description", des)
-            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar())
 
             If count > 0 Then
                 MsgBox("This strand or description already exists.", vbExclamation, "Duplication not allowed.")
@@ -87,11 +104,11 @@ Public Class Strand
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-                actionType:="ADD",
-                formName:="STRAND FORM",
-                description:=$"Added new strand: {strandd} ({des})",
-                recordID:=newID.ToString()
-            )
+            actionType:="ADD",
+            formName:="STRAND FORM",
+            description:=$"Added new strand: {strandd} ({des})",
+            recordID:=newID.ToString()
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -121,7 +138,7 @@ Public Class Strand
         Finally
             If con.State = ConnectionState.Open Then con.Close()
             txtstrand.Clear()
-            txtdescription.Clear()
+            txtdescription.Text = ""
         End Try
 
     End Sub
@@ -136,13 +153,29 @@ Public Class Strand
 
             Dim oldStrand As String = selectedRow.Cells("Strand").Value.ToString().Trim()
             Dim oldDescription As String = selectedRow.Cells("Description").Value.ToString().Trim()
-            Dim newStrand As String = txtstrand.Text.Trim
-            Dim newDescription As String = txtdescription.Text.Trim
+            Dim newStrand As String = txtstrand.Text.Trim()
+            Dim newDescription As String = txtdescription.Text.Trim()
 
             If String.IsNullOrWhiteSpace(newStrand) OrElse String.IsNullOrWhiteSpace(newDescription) Then
                 MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
+
+            If newStrand.Length < 3 Then
+                MsgBox("Strand Code must be 3 characters or more.", vbExclamation, "Input Error: Strand")
+                Exit Sub
+            End If
+
+            If Not System.Text.RegularExpressions.Regex.IsMatch(newStrand, "^[A-Z]+$") Then
+                MsgBox("Strand Code must contain only uppercase letters (e.g., STEM, ABM, GAS).", vbExclamation, "Invalid Strand Code Format")
+                Exit Sub
+            End If
+
+            If newDescription.Length < 10 Then
+                MsgBox("Description must be at least 10 characters long.", vbExclamation, "Input Error: Description")
+                Exit Sub
+            End If
+
 
             If oldStrand.Equals(newStrand, StringComparison.OrdinalIgnoreCase) AndAlso oldDescription.Equals(newDescription, StringComparison.OrdinalIgnoreCase) Then
                 MsgBox("No changes were made.", vbInformation)
@@ -157,7 +190,7 @@ Public Class Strand
                 coms.Parameters.AddWithValue("@description", newDescription)
                 coms.Parameters.AddWithValue("@id", ID)
 
-                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar())
 
                 If count > 0 Then
                     MsgBox("This strand or description already exists.", vbExclamation, "Duplication not allowed.")
@@ -170,26 +203,25 @@ Public Class Strand
                 com.Parameters.AddWithValue("@id", ID)
                 com.ExecuteNonQuery()
 
-                ' Update related records in section_tbl
+
                 Dim comsus As New MySqlCommand("UPDATE `section_tbl` SET `Strand` = @newStrand WHERE `Strand` = @oldStrand", con)
                 comsus.Parameters.AddWithValue("@newStrand", newStrand)
                 comsus.Parameters.AddWithValue("@oldStrand", oldStrand)
                 comsus.ExecuteNonQuery()
 
-                ' Update related records in borrower_tbl
                 Dim comsis As New MySqlCommand("UPDATE `borrower_tbl` SET `Strand` = @newStrand WHERE `Strand` = @oldStrand", con)
                 comsis.Parameters.AddWithValue("@newStrand", newStrand)
                 comsis.Parameters.AddWithValue("@oldStrand", oldStrand)
                 comsis.ExecuteNonQuery()
 
                 GlobalVarsModule.LogAudit(
-                    actionType:="UPDATE",
-                    formName:="STRAND FORM",
-                    description:=$"Updated strand ID {ID} from '{oldStrand} ({oldDescription})' to '{newStrand} ({newDescription})'",
-                    recordID:=ID.ToString(),
-                    oldValue:=$"{oldStrand}|{oldDescription}",
-                    newValue:=$"{newStrand}|{newDescription}"
-                )
+                actionType:="UPDATE",
+                formName:="STRAND FORM",
+                description:=$"Updated strand ID {ID} from '{oldStrand} ({oldDescription})' to '{newStrand} ({newDescription})'",
+                recordID:=ID.ToString(),
+                oldValue:=$"{oldStrand}|{oldDescription}",
+                newValue:=$"{newStrand}|{newDescription}"
+            )
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is AuditTrail Then
@@ -214,7 +246,7 @@ Public Class Strand
                 MsgBox("Updated successfully!", vbInformation)
                 Strand_Load(sender, e)
                 txtstrand.Clear()
-                txtdescription.Clear()
+                txtdescription.Text = ""
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)
             Finally
@@ -243,7 +275,7 @@ Public Class Strand
                 Try
                     con.Open()
 
-                    ' Check if strand is assigned to any section
+
                     Dim sectionCom As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl` WHERE Strand = @strand", con)
                     sectionCom.Parameters.AddWithValue("@strand", strandName)
                     Dim sectionCount As Integer = CInt(sectionCom.ExecuteScalar())
@@ -283,7 +315,7 @@ Public Class Strand
                     MsgBox("Strand deleted successfully.", vbInformation)
                     Strand_Load(sender, e)
                     txtstrand.Clear()
-                    txtdescription.Clear()
+                    txtdescription.Text = ""
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `strand_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
@@ -328,6 +360,40 @@ Public Class Strand
 
     End Sub
 
+
+    Private Sub txtstrand_TextChanged(sender As Object, e As EventArgs) Handles txtstrand.TextChanged
+
+        Dim strandInput As String = txtstrand.Text.Trim().ToUpper()
+
+        txtdescription.Text = ""
+
+        Select Case strandInput
+            Case "STEM"
+                txtdescription.Text = "Science, Technology, Engineering, and Mathematics"
+            Case "ABM"
+                txtdescription.Text = "Accountancy, Business, and Management"
+            Case "ICT"
+                txtdescription.Text = "Information and Communications Technology"
+            Case "HUMSS"
+                txtdescription.Text = "Humanities and Social Sciences"
+            Case "GAS"
+                txtdescription.Text = "General Academic Strand"
+            Case "TVL"
+                txtdescription.Text = "Technical-Vocational-Livelihood"
+            Case "SPORTS"
+                txtdescription.Text = "Sports Track"
+            Case "ARTS AND DESIGN"
+                txtdescription.Text = "Arts and Design Track"
+            Case Else
+
+        End Select
+
+        If txtstrand.Text <> txtstrand.Text.ToUpper() Then
+            txtstrand.Text = txtstrand.Text.ToUpper()
+
+            txtstrand.SelectionStart = txtstrand.Text.Length
+        End If
+    End Sub
     Private Sub txtstrand_KeyDown(sender As Object, e As KeyEventArgs) Handles txtstrand.KeyDown
 
         If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then

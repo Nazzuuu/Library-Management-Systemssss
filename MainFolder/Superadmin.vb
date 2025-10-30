@@ -67,6 +67,27 @@ Public Class Superadmin
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
+        Dim firstName As String = txtfname.Text.Trim()
+        Dim lastName As String = txtlname.Text.Trim()
+        Dim user As String = txtusername.Text.Trim()
+        Dim contact As String = txtcontact.Text.Trim()
+
+        If firstName.Length < 2 Then
+            MessageBox.Show("First Name must be 2 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        If lastName.Length < 2 Then
+            MessageBox.Show("Last Name must be 2 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        If user.Length < 5 Then
+            MessageBox.Show("Username must be atleast 5 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+
         Dim email As String = txtemail.Text.Trim()
         If Not String.IsNullOrEmpty(email) Then
             Dim emailRegex As New Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
@@ -90,9 +111,19 @@ Public Class Superadmin
         End If
 
         If String.IsNullOrEmpty(txtusername.Text.Trim) OrElse String.IsNullOrEmpty(txtpassword.Text.Trim) OrElse String.IsNullOrEmpty(txtfname.Text.Trim) OrElse String.IsNullOrEmpty(txtlname.Text.Trim) Then
-            MessageBox.Show("Please fill out all required fields (Username, Password, First Name, Last Name).", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Please fill out all required fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
+
+        If Not IsPasswordValid() Then
+            Return
+        End If
+
+        If contact.Length < 11 OrElse (contact.StartsWith("09") AndAlso contact.Length = 2) Then
+            MessageBox.Show("Contact Number must be a valid length (e.g., 11 digits).", "Invalid Contact Number", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
 
         Dim con As New MySqlConnection(connectionString)
         Dim com As New MySqlCommand("INSERT INTO superadmin_tbl (Username, Password, FirstName, LastName, MiddleName, ContactNumber, Address, Email, Gender, Role) VALUES (@username, @password, @fname, @lname, @mname, @contact, @address, @email, @gender, @role)", con)
@@ -171,6 +202,10 @@ Public Class Superadmin
             Return
         End If
 
+        If Not IsPasswordValid() Then
+            Return
+        End If
+
         Dim con As New MySqlConnection(connectionString)
         Dim com As New MySqlCommand("UPDATE superadmin_tbl SET Username = @username, Password = @password, FirstName = @fname, LastName = @lname, MiddleName = @mname, ContactNumber = @contact, Address = @address, Email = @email, Gender = @gender, Role = @role WHERE ID = @id", con)
 
@@ -207,6 +242,31 @@ Public Class Superadmin
         End Try
     End Sub
 
+    Private Function IsPasswordValid() As Boolean
+
+        Const MIN_LENGTH As Integer = 10
+
+        Const MIN_STRENGTH_SCORE As Integer = 5
+
+        Dim Password As String = txtpassword.Text.Trim()
+
+
+        If Password.Length < MIN_LENGTH Then
+            MessageBox.Show($"Password must be between {MIN_LENGTH} characters long.", "Password Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtpassword.Focus()
+            Return False
+        End If
+
+        Dim StrengthScore As Integer = paswurdstringth(Password)
+
+        If StrengthScore < MIN_STRENGTH_SCORE Then
+            MessageBox.Show("Password is too weak.", "Password Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtpassword.Focus()
+            Return False
+        End If
+
+        Return True
+    End Function
 
     Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
@@ -534,9 +594,11 @@ Public Class Superadmin
     End Function
 
 
-    Private Sub txtpass(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
-        Dim Password As String = txtpassword.Text
+    Private Sub txtpassword_TextChanged(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
 
+        Dim Password As String = txtpassword.Text
+        Dim Length As Integer = Password.Length
+        Const MIN_LENGTH As Integer = 10
 
         If String.IsNullOrEmpty(Password) Then
             lblpassword.Visible = False
@@ -546,16 +608,22 @@ Public Class Superadmin
         End If
 
 
-        Dim StrengthScore As Integer = paswurdstringth(Password)
+        If Length < MIN_LENGTH Then
+            lblpassword.ForeColor = Color.Red
+            lblpassword.Text = $"CRITICAL: Password must be at least {MIN_LENGTH} characters long."
+            Exit Sub
+        End If
 
+
+        Dim StrengthScore As Integer = paswurdstringth(Password)
 
         Select Case StrengthScore
             Case 0, 1, 2
-                lblpassword.ForeColor = Color.Red
-                lblpassword.Text = "Weak: Password must be longer and more complex."
+                lblpassword.ForeColor = Color.OrangeRed
+                lblpassword.Text = "Weak: Need more character types (Uppercase, number, or symbol)."
             Case 3, 4
                 lblpassword.ForeColor = Color.Orange
-                lblpassword.Text = "Moderate: Try adding a number or symbol."
+                lblpassword.Text = "Moderate: Try adding another character type."
             Case 5, 6
                 lblpassword.ForeColor = Color.Blue
                 lblpassword.Text = "Strong: Good combination of characters."

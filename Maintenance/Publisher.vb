@@ -68,6 +68,19 @@ Public Class Publisher
             Exit Sub
         End If
 
+
+        If publisher.Length < 2 Then
+            MsgBox("Publisher Name must be 2 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+
+        If contact.Length < 11 OrElse (contact.StartsWith("09") AndAlso contact.Length = 2) Then
+            MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
+            Exit Sub
+        End If
+
+
         Try
             con.Open()
 
@@ -88,11 +101,11 @@ Public Class Publisher
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-                actionType:="ADD",
-                formName:="PUBLISHER FORM",
-                description:=$"Added new publisher: {publisher}",
-                recordID:=newID.ToString()
-            )
+            actionType:="ADD",
+            formName:="PUBLISHER FORM",
+            description:=$"Added new publisher: {publisher}",
+            recordID:=newID.ToString()
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -143,6 +156,19 @@ Public Class Publisher
             End If
 
 
+            If newPub.Length < 2 Then
+                MsgBox("Publisher Name must be 2 characters or more.", vbExclamation, "Input Error")
+                Exit Sub
+            End If
+
+
+            If newContact.Length < 11 OrElse (newContact.StartsWith("09") AndAlso newContact.Length = 2) Then
+                MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
+                Exit Sub
+            End If
+
+
+
             If oldPub.Equals(newPub) And oldAddress.Equals(newAddress) And oldContact.Equals(newContact) Then
                 MsgBox("No changes were made.", vbExclamation, "No Update")
                 Exit Sub
@@ -174,13 +200,13 @@ Public Class Publisher
                 comsus.ExecuteNonQuery()
 
                 GlobalVarsModule.LogAudit(
-                    actionType:="UPDATE",
-                    formName:="PUBLISHER FORM",
-                    description:=$"Updated publisher ID {ID} from '{oldPub}' to '{newPub}'",
-                    recordID:=ID.ToString(),
-                    oldValue:=$"Pub: {oldPub}, Address: {oldAddress}, Contact: {oldContact}",
-                    newValue:=$"Pub: {newPub}, Address: {newAddress}, Contact: {newContact}"
-                )
+                actionType:="UPDATE",
+                formName:="PUBLISHER FORM",
+                description:=$"Updated publisher ID {ID} from '{oldPub}' to '{newPub}'",
+                recordID:=ID.ToString(),
+                oldValue:=$"Pub: {oldPub}, Address: {oldAddress}, Contact: {oldContact}",
+                newValue:=$"Pub: {newPub}, Address: {newAddress}, Contact: {newContact}"
+            )
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is AuditTrail Then

@@ -377,9 +377,9 @@ Partial Class Users
         Label10.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label10.Location = New Point(324, 145)
         Label10.Name = "Label10"
-        Label10.Size = New Size(130, 16)
+        Label10.Size = New Size(66, 16)
         Label10.TabIndex = 127
-        Label10.Text = "Address (Optional)"
+        Label10.Text = "Address:"
         ' 
         ' txtaddress
         ' 

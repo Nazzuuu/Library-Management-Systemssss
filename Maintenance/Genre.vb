@@ -59,6 +59,19 @@ Public Class Genre
         End If
 
 
+        If genre.Length < 3 Then
+            MsgBox("Genre must be 3 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+        For Each c As Char In genre
+            If Not Char.IsLetter(c) AndAlso Not Char.IsWhiteSpace(c) AndAlso c <> "-" Then
+                MsgBox("Genre name can only contain letters, spaces, and hyphens (e.g., Sci-Fi).", vbExclamation, "Invalid Genre Format")
+                Exit Sub
+            End If
+        Next
+
+
         Try
             con.Open()
 
@@ -76,11 +89,11 @@ Public Class Genre
             insertedID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-                actionType:="ADD",
-                formName:="GENRE FORM",
-                description:=$"Added new Genre: {genre}",
-                recordID:=insertedID.ToString()
-            )
+            actionType:="ADD",
+            formName:="GENRE FORM",
+            description:=$"Added new Genre: {genre}",
+            recordID:=insertedID.ToString()
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is Book Then
@@ -122,6 +135,21 @@ Public Class Genre
                 Exit Sub
             End If
 
+
+            If newGenre.Length < 3 Then
+                MsgBox("New Genre must be 3 characters or more.", vbExclamation, "Input Error")
+                Exit Sub
+            End If
+
+
+            For Each c As Char In newGenre
+                If Not Char.IsLetter(c) AndAlso Not Char.IsWhiteSpace(c) AndAlso c <> "-" Then
+                    MsgBox("New Genre name can only contain letters (e.g., Sci-Fi).", vbExclamation, "Invalid Genre Format")
+                    Exit Sub
+                End If
+            Next
+
+
             If String.Equals(oldGenre, newGenre, StringComparison.OrdinalIgnoreCase) Then
                 MsgBox("The genre name is the same as the current one.", vbInformation)
                 Exit Sub
@@ -156,13 +184,13 @@ Public Class Genre
 
 
                     GlobalVarsModule.LogAudit(
-                    actionType:="UPDATE",
-                    formName:="GENRE FORM",
-                    description:=$"Updated Genre Name from '{oldGenre}' to '{newGenre}'.",
-                    recordID:=ID.ToString(),
-                    oldValue:=oldGenre,
-                    newValue:=newGenre
-                )
+                actionType:="UPDATE",
+                formName:="GENRE FORM",
+                description:=$"Updated Genre Name from '{oldGenre}' to '{newGenre}'.",
+                recordID:=ID.ToString(),
+                oldValue:=oldGenre,
+                newValue:=newGenre
+            )
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then

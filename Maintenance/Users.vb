@@ -172,10 +172,36 @@ Public Class Users
         Dim address As String = txtaddress.Text.Trim()
         Dim newID As Integer = 0
 
-        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
-            MsgBox("Please fill in all the required fields (including Address).", vbExclamation, "Missing Information")
+        If firstName.Length < 2 Then
+            MsgBox("First Name must be 2 characters or more.", vbExclamation, "Input Error")
             Exit Sub
         End If
+
+        If lastName.Length < 2 Then
+            MsgBox("Last Name must be 2 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+        If user.Length < 5 Then
+            MsgBox("Username must be 5 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
+            MsgBox("Please fill in all the required fields.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
+        If Not IsPasswordValid() Then
+            Return
+        End If
+
+        If contact.Length < 11 OrElse (contact.StartsWith("09") AndAlso contact.Length = 2) Then
+            MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
+            Exit Sub
+        End If
+
 
         Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(email) Then
@@ -226,6 +252,24 @@ Public Class Users
                 Exit Sub
             End If
 
+            Dim maxLimit As Integer = 0
+            If role = "Assistant Librarian" Then
+                maxLimit = 2
+            ElseIf role = "Staff" Then
+                maxLimit = 3
+            End If
+
+            If maxLimit > 0 Then
+                Dim limitCheck As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE `Role` = @role", con)
+                limitCheck.Parameters.AddWithValue("@role", role)
+                Dim currentCount As Integer = Convert.ToInt32(limitCheck.ExecuteScalar())
+
+                If currentCount >= maxLimit Then
+                    MsgBox($"Cannot add new {role}. The maximum limit of {maxLimit} {role}s has been reached.", vbExclamation, "Role Limit Reached")
+                    Exit Sub
+                End If
+            End If
+
             Dim com As New MySqlCommand("INSERT INTO `user_staff_tbl`(`FirstName`, `LastName`, `MiddleInitial`, `Username`, `Password`, `Email`, `ContactNumber`, `Address`, `Gender`, `Role`) VALUES (@firstName, @lastName, @middleName, @username, @password, @email, @contact, @address, @gender, @role); SELECT LAST_INSERT_ID();", con)
             com.Parameters.AddWithValue("@firstName", firstName)
             com.Parameters.AddWithValue("@lastName", lastName)
@@ -240,11 +284,11 @@ Public Class Users
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-            actionType:="ADD",
-            formName:="USER STAFF FORM",
-            description:=$"Added new staff: {lastName}, {firstName} ({role})",
-            recordID:=newID.ToString()
-        )
+        actionType:="ADD",
+        formName:="USER STAFF FORM",
+        description:=$"Added new staff: {lastName}, {firstName} ({role})",
+        recordID:=newID.ToString()
+    )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -303,6 +347,31 @@ Public Class Users
             Exit Sub
         End If
 
+        If Not IsPasswordValid() Then
+            Return
+        End If
+
+        If firstName.Length < 2 Then
+            MsgBox("First Name must be 2 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+        If lastName.Length < 2 Then
+            MsgBox("Last Name must be 2 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+        If user.Length < 5 Then
+            MsgBox("Username must be 2 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+        If contact.Length < 11 OrElse (contact.StartsWith("09") AndAlso contact.Length = 2) Then
+            MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
+            Exit Sub
+        End If
+
+
         Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(email) Then
             MsgBox("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
@@ -352,6 +421,30 @@ Public Class Users
                 Exit Sub
             End If
 
+
+            If role <> oldRole Then
+                Dim maxLimit As Integer = 0
+                If role = "Assistant Librarian" Then
+                    maxLimit = 2
+                ElseIf role = "Staff" Then
+                    maxLimit = 3
+                End If
+
+                If maxLimit > 0 Then
+                    Dim conLimit As New MySqlConnection(GlobalVarsModule.connectionString)
+                    conLimit.Open()
+                    Dim limitCheck As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE `Role` = @role", conLimit)
+                    limitCheck.Parameters.AddWithValue("@role", role)
+                    Dim currentCount As Integer = Convert.ToInt32(limitCheck.ExecuteScalar())
+                    conLimit.Close()
+
+                    If currentCount >= maxLimit Then
+                        MsgBox($"Cannot change role to {role}. The maximum limit of {maxLimit} {role}s has been reached.", vbExclamation, "Role Limit Reached")
+                        Exit Sub
+                    End If
+                End If
+            End If
+
             Dim Coms As New MySqlCommand("UPDATE `user_staff_tbl` SET `FirstName` = @firstName, `LastName` = @lastName, `MiddleInitial` = @middleName, `Username` = @username, `Password` = @password, `Email` = @email, `ContactNumber` = @contact, `Address` = @address, `Gender` = @gender, `Role` = @role WHERE `ID` = @id", con)
             Coms.Parameters.AddWithValue("@firstName", firstName)
             Coms.Parameters.AddWithValue("@lastName", lastName)
@@ -370,13 +463,13 @@ Public Class Users
             Dim newValueString As String = $"{firstName}|{lastName}|{middleName}|{user}|{pass}|{email}|{contact}|{address}|{gender}|{role}"
 
             GlobalVarsModule.LogAudit(
-            actionType:="UPDATE",
-            formName:="USER STAFF FORM",
-            description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
-            recordID:=ID.ToString(),
-            oldValue:=oldValueString,
-            newValue:=newValueString
-        )
+        actionType:="UPDATE",
+        formName:="USER STAFF FORM",
+        description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
+        recordID:=ID.ToString(),
+        oldValue:=oldValueString,
+        newValue:=newValueString
+    )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -802,6 +895,7 @@ Public Class Users
             Score += 1
         End If
 
+
         If System.Text.RegularExpressions.Regex.IsMatch(Password, "[a-z]") Then
             Score += 1
         End If
@@ -818,6 +912,7 @@ Public Class Users
             Score += 2
         End If
 
+
         If String.IsNullOrWhiteSpace(Password) Then
             Return 0
         End If
@@ -825,9 +920,12 @@ Public Class Users
         Return Score
     End Function
 
-    Private Sub txtpass(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
-        Dim Password As String = txtpassword.Text
 
+    Private Sub txtpass(sender As Object, e As EventArgs) Handles txtpassword.TextChanged
+
+        Dim Password As String = txtpassword.Text
+        Dim Length As Integer = Password.Length
+        Const MIN_LENGTH As Integer = 10
 
         If String.IsNullOrEmpty(Password) Then
             lblpassword.Visible = False
@@ -837,16 +935,22 @@ Public Class Users
         End If
 
 
-        Dim StrengthScore As Integer = paswurdstringth(Password)
+        If Length < MIN_LENGTH Then
+            lblpassword.ForeColor = Color.Red
+            lblpassword.Text = $"CRITICAL: Password must be at least {MIN_LENGTH} characters long."
+            Exit Sub
+        End If
 
+
+        Dim StrengthScore As Integer = paswurdstringth(Password)
 
         Select Case StrengthScore
             Case 0, 1, 2
-                lblpassword.ForeColor = Color.Red
-                lblpassword.Text = "Weak: Password must be longer and more complex."
+                lblpassword.ForeColor = Color.OrangeRed
+                lblpassword.Text = "Weak: Need more character types (Uppercase, number, or symbol)."
             Case 3, 4
                 lblpassword.ForeColor = Color.Orange
-                lblpassword.Text = "Moderate: Try adding a number or symbol."
+                lblpassword.Text = "Moderate: Try adding another character type."
             Case 5, 6
                 lblpassword.ForeColor = Color.Blue
                 lblpassword.Text = "Strong: Good combination of characters."
@@ -857,6 +961,31 @@ Public Class Users
 
     End Sub
 
+    Private Function IsPasswordValid() As Boolean
+
+        Const MIN_LENGTH As Integer = 10
+
+        Const MIN_STRENGTH_SCORE As Integer = 5
+
+        Dim Password As String = txtpassword.Text.Trim()
+
+
+        If Password.Length < MIN_LENGTH Then
+            MessageBox.Show($"Password must be between {MIN_LENGTH} characters long.", "Password Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtpassword.Focus()
+            Return False
+        End If
+
+        Dim StrengthScore As Integer = paswurdstringth(Password)
+
+        If StrengthScore < MIN_STRENGTH_SCORE Then
+            MessageBox.Show("Password is too weak.", "Password Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtpassword.Focus()
+            Return False
+        End If
+
+        Return True
+    End Function
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
         Cursor = Cursors.Hand
@@ -998,7 +1127,7 @@ Public Class Users
                 Dim filePath As String = Application.StartupPath & "\Resources\dilat.png"
                 If File.Exists(filePath) Then
                     Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
-                        PictureBox1.Image = New Bitmap(fs)
+                        PictureBox2.Image = New Bitmap(fs)
                     End Using
                     txtpassword.PasswordChar = ""
                 Else
@@ -1013,7 +1142,7 @@ Public Class Users
                 Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
                 If File.Exists(filePath) Then
                     Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
-                        PictureBox1.Image = New Bitmap(fs)
+                        PictureBox2.Image = New Bitmap(fs)
                     End Using
                     txtpassword.PasswordChar = "•"
                 Else

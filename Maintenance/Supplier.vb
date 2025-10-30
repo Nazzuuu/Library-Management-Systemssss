@@ -56,15 +56,26 @@ Public Class Supplier
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
-        Dim supp = txtsupplier.Text.Trim
-        Dim address = txtaddress.Text.Trim
-        Dim contact = txtcontact.Text.Trim
+        Dim supp As String = txtsupplier.Text.Trim
+        Dim address As String = txtaddress.Text.Trim
+        Dim contact As String = txtcontact.Text.Trim
         Dim newID As Integer = 0
 
         If String.IsNullOrWhiteSpace(supp) OrElse String.IsNullOrWhiteSpace(address) OrElse String.IsNullOrWhiteSpace(contact) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
+
+        If supp.Length < 2 Then
+            MsgBox("Supplier Name must be 2 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+        If contact.Length < 11 OrElse (contact.StartsWith("09") AndAlso contact.Length = 2) Then
+            MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
+            Exit Sub
+        End If
+
 
         Try
             con.Open()
@@ -86,11 +97,11 @@ Public Class Supplier
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-                actionType:="ADD",
-                formName:="SUPPLIER FORM",
-                description:=$"Added new supplier: {supp}",
-                recordID:=newID.ToString()
-            )
+            actionType:="ADD",
+            formName:="SUPPLIER FORM",
+            description:=$"Added new supplier: {supp}",
+            recordID:=newID.ToString()
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -139,9 +150,21 @@ Public Class Supplier
                 Exit Sub
             End If
 
+
+            If newSupp.Length < 2 Then
+                MsgBox("Supplier Name must be 2 characters or more.", vbExclamation, "Input Error")
+                Exit Sub
+            End If
+
+            If newContact.Length < 11 OrElse (newContact.StartsWith("09") AndAlso newContact.Length = 2) Then
+                MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
+                Exit Sub
+            End If
+
+
             If oldSupp.Equals(newSupp, StringComparison.OrdinalIgnoreCase) AndAlso
-               oldAddress.Equals(newAddress, StringComparison.OrdinalIgnoreCase) AndAlso
-               oldContact.Equals(newContact, StringComparison.OrdinalIgnoreCase) Then
+             oldAddress.Equals(newAddress, StringComparison.OrdinalIgnoreCase) AndAlso
+             oldContact.Equals(newContact, StringComparison.OrdinalIgnoreCase) Then
 
                 MsgBox("No changes were made.", vbInformation)
                 Exit Sub
@@ -177,13 +200,13 @@ Public Class Supplier
                 comsuss.ExecuteNonQuery()
 
                 GlobalVarsModule.LogAudit(
-                    actionType:="UPDATE",
-                    formName:="SUPPLIER FORM",
-                    description:=$"Updated supplier ID {ID} from '{oldSupp}' to '{newSupp}'",
-                    recordID:=ID.ToString(),
-                    oldValue:=$"{oldSupp}|{oldAddress}|{oldContact}",
-                    newValue:=$"{newSupp}|{newAddress}|{newContact}"
-                )
+                actionType:="UPDATE",
+                formName:="SUPPLIER FORM",
+                description:=$"Updated supplier ID {ID} from '{oldSupp}' to '{newSupp}'",
+                recordID:=ID.ToString(),
+                oldValue:=$"{oldSupp}|{oldAddress}|{oldContact}",
+                newValue:=$"{newSupp}|{newAddress}|{newContact}"
+            )
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is AuditTrail Then

@@ -272,18 +272,50 @@ Public Class Borrower
         End If
 
 
+        If firstName.Length < 2 Then
+            MsgBox("First Name must be 2 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+        If lastName.Length < 2 Then
+            MsgBox("Last Name must be 2 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+
+        If contactNumber.Length < 11 OrElse (contactNumber.StartsWith("09") AndAlso contactNumber.Length = 2) Then
+            MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
+            Exit Sub
+        End If
+
+
+
         If borrowerType = "Student" Then
             If String.IsNullOrWhiteSpace(txtlrn.Text) Then
                 MsgBox("Please enter the student's LRN.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
             lrn = txtlrn.Text.Trim()
+
+
+            If lrn.ToString().Length <> 12 OrElse Not IsNumeric(lrn) Then
+                MsgBox("LRN must be 12 digits.", vbExclamation, "Invalid LRN")
+                Exit Sub
+            End If
+
         ElseIf borrowerType = "Teacher" Then
             If String.IsNullOrWhiteSpace(txtemployeeno.Text) Then
                 MsgBox("Please enter the teacher's Employee Number.", vbExclamation, "Missing Information")
                 Exit Sub
             End If
             employeeNo = txtemployeeno.Text.Trim()
+
+
+            If employeeNo.ToString().Length <> 8 OrElse Not IsNumeric(employeeNo) Then
+                MsgBox("Employee Number must be 8 digits.", vbExclamation, "Invalid Employee Number")
+                Exit Sub
+            End If
+
         End If
 
 
@@ -291,7 +323,7 @@ Public Class Borrower
             con.Open()
 
 
-            Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE (`LRN` = @LRN OR `EmployeeNo` = @EmployeeNo) OR `ContactNumber` = @ContactNumber", con)
+            Dim checkCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE (`LRN` = @LRN AND `LRN` IS NOT NULL) OR (`EmployeeNo` = @EmployeeNo AND `EmployeeNo` IS NOT NULL) OR `ContactNumber` = @ContactNumber", con)
             checkCom.Parameters.AddWithValue("@LRN", If(lrn Is DBNull.Value, "", lrn))
             checkCom.Parameters.AddWithValue("@EmployeeNo", If(employeeNo Is DBNull.Value, "", employeeNo))
             checkCom.Parameters.AddWithValue("@ContactNumber", contactNumber)
@@ -322,10 +354,10 @@ Public Class Borrower
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-            actionType:="ADD",
-            formName:="BORROWER FORM",
-            description:=$"Added new {borrowerType}: {fullName}",
-            recordID:=newID.ToString()
+        actionType:="ADD",
+        formName:="BORROWER FORM",
+        description:=$"Added new {borrowerType}: {fullName}",
+        recordID:=newID.ToString()
         )
 
             For Each form In Application.OpenForms
@@ -419,6 +451,23 @@ Public Class Borrower
                 Exit Sub
             End If
 
+            If firstName.Length < 2 Then
+                MsgBox("First Name must be 2 characters or more.", vbExclamation, "Input Error")
+                Exit Sub
+            End If
+
+            If lastName.Length < 2 Then
+                MsgBox("Last Name must be 2 characters or more.", vbExclamation, "Input Error")
+                Exit Sub
+            End If
+
+
+            If contactNumber.Length < 11 OrElse (contactNumber.StartsWith("09") AndAlso contactNumber.Length = 2) Then
+                MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
+                Exit Sub
+            End If
+
+
 
             If borrowerType = "Student" Then
                 If String.IsNullOrWhiteSpace(txtlrn.Text) Then
@@ -427,6 +476,13 @@ Public Class Borrower
                 End If
                 lrn = txtlrn.Text.Trim()
                 employeeNo = DBNull.Value
+
+
+                If lrn.ToString().Length <> 12 OrElse Not IsNumeric(lrn) Then
+                    MsgBox("LRN must be 12 digits.", vbExclamation, "Invalid LRN")
+                    Exit Sub
+                End If
+
             ElseIf borrowerType = "Teacher" Then
                 If String.IsNullOrWhiteSpace(txtemployeeno.Text) Then
                     MsgBox("Please enter the teacher's Employee Number.", vbExclamation, "Missing Information")
@@ -434,6 +490,13 @@ Public Class Borrower
                 End If
                 employeeNo = txtemployeeno.Text.Trim()
                 lrn = DBNull.Value
+
+
+                If employeeNo.ToString().Length <> 8 OrElse Not IsNumeric(employeeNo) Then
+                    MsgBox("Employee Number must be 8 digits.", vbExclamation, "Invalid Employee Number")
+                    Exit Sub
+                End If
+
             End If
 
             Try
@@ -507,12 +570,12 @@ Public Class Borrower
                 Dim newValueLog As String = $"Name: {newFullName}, Type: {borrowerType}, LRN: {If(lrn Is DBNull.Value, "N/A", lrn)}, EmployeeNo: {If(employeeNo Is DBNull.Value, "N/A", employeeNo)}, Contact: {contactNumber}"
 
                 GlobalVarsModule.LogAudit(
-                actionType:="UPDATE",
-                formName:="BORROWER FORM",
-                description:=auditDescription,
-                recordID:=ID.ToString(),
-                oldValue:=oldValueLog,
-                newValue:=newValueLog
+            actionType:="UPDATE",
+            formName:="BORROWER FORM",
+            description:=auditDescription,
+            recordID:=ID.ToString(),
+            oldValue:=oldValueLog,
+            newValue:=newValueLog
             )
 
                 For Each form In Application.OpenForms
@@ -1375,5 +1438,16 @@ Public Class Borrower
 
     End Sub
 
+    Private Sub txtemployeeno_KeyDown(sender As Object, e As KeyEventArgs) Handles txtemployeeno.KeyDown
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+    End Sub
 
+    Private Sub txtemployeeno_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtemployeeno.KeyPress
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+
+    End Sub
 End Class

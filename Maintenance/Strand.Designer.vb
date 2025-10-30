@@ -100,6 +100,7 @@ Partial Class Strand
         txtdescription.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
         txtdescription.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtdescription.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtdescription.Enabled = False
         txtdescription.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtdescription.Font = New Font("Microsoft Sans Serif", 9F)
         txtdescription.ForeColor = Color.Black
@@ -141,7 +142,7 @@ Partial Class Strand
         txtstrand.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtstrand.Location = New Point(36, 48)
         txtstrand.Margin = New Padding(3, 4, 3, 4)
-        txtstrand.MaxLength = 9
+        txtstrand.MaxLength = 18
         txtstrand.Name = "txtstrand"
         txtstrand.PlaceholderText = ""
         txtstrand.SelectedText = ""

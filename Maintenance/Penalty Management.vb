@@ -159,6 +159,20 @@ Public Class Penalty_Management
             Return
         End If
 
+
+        Dim amountValue As Decimal
+        If Decimal.TryParse(txtamount.Text, amountValue) Then
+            If amountValue < 1D Then
+                MessageBox.Show("Amount must be 1.0 or greater.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+        Else
+
+            MessageBox.Show("Invalid amount format. Please enter a valid number.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+
         Dim penaltyType = cbpenaltytype.Text
 
         If IsPenaltyTypeExist(penaltyType) Then
@@ -183,11 +197,11 @@ Public Class Penalty_Management
             newID = Convert.ToInt32(cmd.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-                actionType:="ADD",
-                formName:="PENALTY MANAGEMENT",
-                description:=$"Added new penalty: {penaltyType}",
-                recordID:=newID.ToString()
-            )
+            actionType:="ADD",
+            formName:="PENALTY MANAGEMENT",
+            description:=$"Added new penalty: {penaltyType}",
+            recordID:=newID.ToString()
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -223,6 +237,20 @@ Public Class Penalty_Management
             Return
         End If
 
+
+        Dim amountValue As Decimal
+        If Decimal.TryParse(txtamount.Text, amountValue) Then
+            If amountValue < 1D Then
+                MessageBox.Show("Amount must be 1.0 or greater.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+        Else
+
+            MessageBox.Show("Invalid amount format. Please enter a valid number.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+
         Dim penaltyType = cbpenaltytype.Text
 
         If IsPenaltyTypeExist(penaltyType, selectrow) Then
@@ -233,15 +261,14 @@ Public Class Penalty_Management
         Dim amount = Decimal.Parse(txtamount.Text)
         Dim description = txtdescription.Text
 
-        ' Get old values for logging
         Dim oldRow As DataGridViewRow = DataGridView1.Rows.Cast(Of DataGridViewRow)().
-            Where(Function(r) Convert.ToInt32(r.Cells("ID").Value) = selectrow).FirstOrDefault()
+        Where(Function(r) Convert.ToInt32(r.Cells("ID").Value) = selectrow).FirstOrDefault()
 
         Dim oldPenaltyType As String = oldRow.Cells("PenaltyType").Value.ToString()
         Dim oldAmount As Decimal = Convert.ToDecimal(oldRow.Cells("Amount").Value)
         Dim oldDescription As String = oldRow.Cells("Description").Value.ToString()
 
-        ' Check if there are actual changes
+
         If oldPenaltyType.Equals(penaltyType) And oldAmount.Equals(amount) And oldDescription.Equals(description) Then
             MessageBox.Show("No changes were made.", "No Update", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
@@ -261,13 +288,13 @@ Public Class Penalty_Management
             cmd.ExecuteNonQuery()
 
             GlobalVarsModule.LogAudit(
-                actionType:="UPDATE",
-                formName:="PENALTY MANAGEMENT",
-                description:=$"Updated penalty ID {selectrow} from '{oldPenaltyType}' to '{penaltyType}'",
-                recordID:=selectrow.ToString(),
-                oldValue:=$"Type: {oldPenaltyType}, Amount: {oldAmount}, Description: {oldDescription}",
-                newValue:=$"Type: {penaltyType}, Amount: {amount}, Description: {description}"
-            )
+            actionType:="UPDATE",
+            formName:="PENALTY MANAGEMENT",
+            description:=$"Updated penalty ID {selectrow} from '{oldPenaltyType}' to '{penaltyType}'",
+            recordID:=selectrow.ToString(),
+            oldValue:=$"Type: {oldPenaltyType}, Amount: {oldAmount}, Description: {oldDescription}",
+            newValue:=$"Type: {penaltyType}, Amount: {amount}, Description: {description}"
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
