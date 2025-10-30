@@ -169,51 +169,37 @@ Public Class PrintReceiptForm
     End Sub
 
     Public Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal targetWidth As Integer, ByVal targetHeight As Integer) As Image
-
-        If String.IsNullOrWhiteSpace(barcodeText) Then
-            Return Nothing
-        End If
-
+        If String.IsNullOrWhiteSpace(barcodeText) Then Return Nothing
         Try
-
-            Dim pixelWidth As Integer = CInt((targetWidth / 100.0F) * PRINTER_DPI)
-            Dim pixelHeight As Integer = CInt((targetHeight / 100.0F) * PRINTER_DPI)
-
-
-            If pixelWidth < 300 Then pixelWidth = 300
-            If pixelHeight < 50 Then pixelHeight = 50
-
             Dim options As New ZXing.Common.EncodingOptions With {
-                .Width = pixelWidth,
-                .Height = pixelHeight,
-                .Margin = 10,
-                .PureBarcode = True
-            }
+.Width = targetWidth,
+.Height = targetHeight,
+.Margin = 1,
+.PureBarcode = True
+}
 
             Dim writer As New BarcodeWriter(Of Bitmap) With {
-                .Format = BarcodeFormat.CODE_128,
-                .Options = options,
-                .Renderer = New BitmapRenderer()
-            }
+        .Format = BarcodeFormat.CODE_128,
+        .Options = options,
+        .Renderer = New BitmapRenderer()
+    }
 
             Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
-
-
-            barcodeBitmap.SetResolution(PRINTER_DPI, PRINTER_DPI)
-
+            barcodeBitmap.SetResolution(96, 96)
             Return barcodeBitmap
 
         Catch ex As Exception
-
             Dim bmp As New Bitmap(targetWidth, targetHeight)
             Using g As Graphics = Graphics.FromImage(bmp)
                 g.Clear(Color.White)
-                Using font As New Font("Arial", 8)
-                    g.DrawString("Barcode Error: " & barcodeText, font, Brushes.Red, 5, 5)
+                Using font As New Font("Arial", 6)
+                    g.DrawString("Barcode Error", font, Brushes.Red, 2, 2)
                 End Using
             End Using
             Return bmp
         End Try
+
+
     End Function
 
 
@@ -248,21 +234,18 @@ Public Class PrintReceiptForm
         g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
         g.TextRenderingHint = Drawing.Text.TextRenderingHint.ClearTypeGridFit
 
-        Dim margin As Integer = 10
+        Dim margin As Integer = 5
         Dim yPos As Integer = margin
         Dim lineHeight As Integer = 9
 
         Dim pageWidth As Integer = e.PageSettings.PrintableArea.Width
         Dim contentWidth As Integer = pageWidth - (margin * 2)
-        Dim fontHeader As New Font("Arial", 9, FontStyle.Bold)
-        Dim fontBody As New Font("Arial", 7, FontStyle.Regular)
-        Dim fontBodyBold As New Font("Arial", 7, FontStyle.Bold)
 
-        lineHeight = 10
+        Dim fontHeader As New Font("Arial", 7, FontStyle.Bold)
+        Dim fontBody As New Font("Arial", 6.5, FontStyle.Regular)
+        Dim fontBodyBold As New Font("Arial", 6.5, FontStyle.Bold)
 
-        If Me.DataGridView1.SelectedRows.Count = 0 Then
-            Exit Sub
-        End If
+        If Me.DataGridView1.SelectedRows.Count = 0 Then Exit Sub
 
         Dim summaryRow As DataGridViewRow = Me.DataGridView1.SelectedRows(0)
         Dim name As String = summaryRow.Cells("Name").Value?.ToString()
@@ -270,127 +253,57 @@ Public Class PrintReceiptForm
         Dim borrowedDate As String = CDate(summaryRow.Cells("BorrowedDate").Value).ToShortDateString()
         Dim dueDate As String = CDate(summaryRow.Cells("DueDate").Value).ToShortDateString()
         Dim transacReceipt As String = summaryRow.Cells("TransactionReceipt").Value?.ToString()
-
-        If String.IsNullOrEmpty(transacReceipt) Then
-            transacReceipt = Me.lbltransacno.Text
-        End If
-
-        Dim printingUser As String = $"{GlobalRole} ({GlobalEmail})"
+        If String.IsNullOrEmpty(transacReceipt) Then transacReceipt = Me.lbltransacno.Text
 
 
         Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
-
             g.DrawString("Monlimar Development Academy", fontHeader, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
-            yPos += lineHeight + 3
+            yPos += lineHeight + 2
             g.DrawString("Library Management System", fontBody, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
-            yPos += lineHeight + 10
+            yPos += lineHeight + 8
         End Using
 
-        g.DrawString("Transaction Receipt No: " & transacReceipt, fontHeader, Brushes.Black, margin, yPos)
-        yPos += lineHeight * 2
 
-        g.DrawString($"Borrower: {name} ({borrowerType})", fontBody, Brushes.Black, margin, yPos)
-        yPos += lineHeight
-        g.DrawString($"Date Borrowed: {borrowedDate}", fontBody, Brushes.Black, margin, yPos)
-        yPos += lineHeight
-        g.DrawString($"Due Date: {dueDate}", fontBody, Brushes.Black, margin, yPos)
-        yPos += lineHeight + 10
+        g.DrawString("Transaction Receipt No: " & transacReceipt, fontBody, Brushes.Black, margin, yPos) : yPos += lineHeight
+        g.DrawString("Name: " & name, fontBody, Brushes.Black, margin, yPos) : yPos += lineHeight
+        g.DrawString("Borrower Type: " & borrowerType, fontBody, Brushes.Black, margin, yPos) : yPos += lineHeight
+        g.DrawString("Date Borrowed: " & borrowedDate, fontBody, Brushes.Black, margin, yPos) : yPos += lineHeight
+        g.DrawString("Due Date: " & dueDate, fontBody, Brushes.Black, margin, yPos) : yPos += lineHeight + 6
 
 
         Dim bookDetailsList As DataTable = GetBookDetailsByTransaction(transacReceipt)
-
-        g.DrawString("Book Details (Total: " & bookDetailsList.Rows.Count.ToString() & "):", fontHeader, Brushes.Black, margin, yPos)
+        g.DrawString("Book Details (Total: " & bookDetailsList.Rows.Count & ")", fontBodyBold, Brushes.Black, margin, yPos)
         yPos += lineHeight + 3
 
-
-        Dim col1Width As Integer = CInt(contentWidth * 0.4)
-        Dim col2Width As Integer = CInt(contentWidth * 0.3)
-        Dim col3Width As Integer = CInt(contentWidth * 0.3)
-
-        Dim colTitleX As Integer = margin
-        Dim colAccessionX As Integer = colTitleX + col1Width
-        Dim colCodeX As Integer = colAccessionX + col2Width
-
-
-        g.DrawString("Title", fontBodyBold, Brushes.Black, colTitleX, yPos)
-        g.DrawString("Accession", fontBodyBold, Brushes.Black, colAccessionX, yPos)
-        g.DrawString("Barcode/ISBN", fontBodyBold, Brushes.Black, colCodeX, yPos)
-
-
-        yPos += 12
-
-
         For Each bookRow As DataRow In bookDetailsList.Rows
-            Dim bookTitle As String = bookRow("BookTitle").ToString()
-            Dim accessionID As String = bookRow("AccessionID").ToString()
-            Dim isbn As String = bookRow("ISBN").ToString()
-            Dim barcode As String = bookRow("Barcode").ToString()
-
-            Dim codeToPrint As String = If(String.IsNullOrWhiteSpace(barcode), isbn, barcode)
-
-            Dim titleLayout As New RectangleF(colTitleX, yPos, col1Width - 5, lineHeight * 3)
-            Dim sizeF As SizeF = g.MeasureString(bookTitle, fontBody, col1Width - 5)
-            Dim titlePrintHeight As Integer = CInt(sizeF.Height)
-
-            g.DrawString(bookTitle, fontBody, Brushes.Black, titleLayout)
-
-            g.DrawString(accessionID, fontBody, Brushes.Black, colAccessionX, yPos)
-            g.DrawString(codeToPrint, fontBody, Brushes.Black, colCodeX, yPos)
-
-            yPos += Math.Max(lineHeight, titlePrintHeight) + 3
+            g.DrawString("Title: " & bookRow("BookTitle").ToString(), fontBody, Brushes.Black, margin, yPos)
+            yPos += lineHeight
+            g.DrawString("Accession ID: " & bookRow("AccessionID").ToString(), fontBody, Brushes.Black, margin, yPos)
+            yPos += lineHeight
+            g.DrawString("Barcode/ISBN: " & If(String.IsNullOrWhiteSpace(bookRow("Barcode").ToString()), bookRow("ISBN").ToString(), bookRow("Barcode").ToString()), fontBody, Brushes.Black, margin, yPos)
+            yPos += lineHeight + 5
         Next
-
-        yPos += 10
-        g.DrawLine(Pens.Black, margin, yPos, pageWidth - margin, yPos)
-
-        yPos += 10
-
-
-        g.DrawString($"Printed By: {printingUser}", fontBody, Brushes.Black, margin, yPos)
-        yPos += lineHeight + 5
 
 
         If Not String.IsNullOrEmpty(transacReceipt) Then
-
-            Dim barcodeWidth As Integer = 180
-            Dim barcodeHeight As Integer = 35
-            Dim compressionFactor As Double = 0.8
-
-            Using receiptBarcode As Image = GenerateBarcodeImage(transacReceipt, CInt(barcodeWidth * compressionFactor), barcodeHeight)
+            Dim barcodeWidth As Integer = 150
+            Dim barcodeHeight As Integer = 30
+            Using receiptBarcode As Image = GenerateBarcodeImage(transacReceipt, barcodeWidth, barcodeHeight)
                 If receiptBarcode IsNot Nothing Then
-
-                    Dim compressedWidth As Integer = CInt(barcodeWidth * compressionFactor)
-                    Dim xPosBarcode As Integer = margin + ((contentWidth - compressedWidth) / 2)
-                    Dim oldInterpolation = g.InterpolationMode
-                    Dim oldSmoothing = g.SmoothingMode
-
-                    g.InterpolationMode = Drawing2D.InterpolationMode.NearestNeighbor
-                    g.SmoothingMode = Drawing2D.SmoothingMode.None
-                    g.DrawImage(receiptBarcode, xPosBarcode, yPos, compressedWidth, barcodeHeight)
-                    g.InterpolationMode = oldInterpolation
-                    g.SmoothingMode = oldSmoothing
-
+                    Dim xPosBarcode As Integer = margin + ((contentWidth - barcodeWidth) / 2)
+                    g.DrawImage(receiptBarcode, xPosBarcode, yPos, barcodeWidth, barcodeHeight)
                     yPos += barcodeHeight + 2
-
-
                     Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
-                        g.DrawString(transacReceipt, fontBody, Brushes.Black,
-                             New RectangleF(xPosBarcode, yPos, compressedWidth, lineHeight), sfCenter)
+                        g.DrawString(transacReceipt, fontBody, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
                     End Using
-                    yPos += lineHeight + 5
+                    yPos += lineHeight
                 End If
             End Using
         End If
 
-
-
-        g.DrawString("Please return the book on or before the due date to avoid penalty.", fontBody, Brushes.Black, margin, yPos)
-        yPos += lineHeight * 2
-
-        g.DrawString("Signature: __________________________", fontBody, Brushes.Black, margin, yPos)
-        yPos += lineHeight + 10
-
         e.HasMorePages = False
+
+
     End Sub
 
 
