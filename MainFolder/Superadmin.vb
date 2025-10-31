@@ -1,5 +1,6 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.IO
+﻿Imports System.IO
+Imports Microsoft.VisualBasic.ApplicationServices
+Imports MySql.Data.MySqlClient
 
 Public Class Superadmin
     Private Sub Superadmin_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -173,6 +174,12 @@ Public Class Superadmin
             Return
         End If
 
+        Dim firstName As String = txtfname.Text.Trim()
+        Dim lastName As String = txtlname.Text.Trim()
+        Dim user As String = txtusername.Text.Trim()
+        Dim contact As String = txtcontact.Text.Trim()
+        Dim adr As String = txtaddress.Text.Trim
+
         Dim email As String = txtemail.Text.Trim()
         If Not String.IsNullOrEmpty(email) Then
             Dim emailRegex As New Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
@@ -180,6 +187,32 @@ Public Class Superadmin
                 MessageBox.Show("Please enter a valid email address.", "Invalid Email", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return
             End If
+        End If
+
+        If firstName.Length < 2 Then
+            MessageBox.Show("First Name must be 2 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        If lastName.Length < 2 Then
+            MessageBox.Show("Last Name must be 2 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        If user.Length < 5 Then
+            MessageBox.Show("Username must be atleast 5 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        If adr.Length <= 5 Then
+            MessageBox.Show("Address must be valid, atleast 5 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+
+        If contact.Length < 11 OrElse (contact.StartsWith("09") AndAlso contact.Length = 2) Then
+            MessageBox.Show("Contact Number must be a valid length (e.g., 11 digits).", "Invalid Contact Number", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
         End If
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)

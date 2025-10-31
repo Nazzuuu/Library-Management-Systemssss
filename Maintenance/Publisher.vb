@@ -168,6 +168,12 @@ Public Class Publisher
             End If
 
 
+            If newAddress.Length <= 5 Then
+                MessageBox.Show("Address must be valid.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+
 
             If oldPub.Equals(newPub) And oldAddress.Equals(newAddress) And oldContact.Equals(newContact) Then
                 MsgBox("No changes were made.", vbExclamation, "No Update")
@@ -208,6 +214,15 @@ Public Class Publisher
                 newValue:=$"Pub: {newPub}, Address: {newAddress}, Contact: {newContact}"
             )
 
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is Book Then
+                        Dim load = DirectCast(form, Book)
+                        load.refreshbook()
+                    End If
+
+                Next
+
                 For Each form In Application.OpenForms
                     If TypeOf form Is AuditTrail Then
                         DirectCast(form, AuditTrail).refreshaudit()
@@ -228,6 +243,7 @@ Public Class Publisher
                     End If
 
                 Next
+
                 MsgBox("Updated successfully", vbInformation)
                 Publisher_Load(sender, e)
 

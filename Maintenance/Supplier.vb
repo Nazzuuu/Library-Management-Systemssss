@@ -162,6 +162,11 @@ Public Class Supplier
             End If
 
 
+            If newAddress.Length <= 5 Then
+                MessageBox.Show("Address must be valid.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
             If oldSupp.Equals(newSupp, StringComparison.OrdinalIgnoreCase) AndAlso
              oldAddress.Equals(newAddress, StringComparison.OrdinalIgnoreCase) AndAlso
              oldContact.Equals(newContact, StringComparison.OrdinalIgnoreCase) Then
