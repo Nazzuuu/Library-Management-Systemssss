@@ -320,7 +320,7 @@ Partial Class Acquisition
         txtbarcodes.ForeColor = Color.Black
         txtbarcodes.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbarcodes.Location = New Point(299, 122)
-        txtbarcodes.MaxLength = 12
+        txtbarcodes.MaxLength = 13
         txtbarcodes.Name = "txtbarcodes"
         txtbarcodes.PlaceholderText = ""
         txtbarcodes.SelectedText = ""

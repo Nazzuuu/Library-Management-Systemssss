@@ -453,7 +453,7 @@ Partial Class Borrower
         txtcontactnumber.ForeColor = Color.Black
         txtcontactnumber.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtcontactnumber.Location = New Point(643, 85)
-        txtcontactnumber.MaxLength = 9
+        txtcontactnumber.MaxLength = 11
         txtcontactnumber.Name = "txtcontactnumber"
         txtcontactnumber.PlaceholderText = ""
         txtcontactnumber.SelectedText = ""

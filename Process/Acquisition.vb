@@ -26,7 +26,10 @@ Public Class Acquisition
         clear()
         NumericUpDown2.Focus()
 
-        DateTimePicker1.MaxDate = DateTime.Today
+        DateTimePicker1.MaxDate = DateTime.Now.Date
+        If DateTimePicker1.Value > DateTimePicker1.MaxDate Then
+            DateTimePicker1.Value = DateTimePicker1.MaxDate
+        End If
 
 
         ' DateTimePicker1.MinDate = DateTime.Today.AddYears(-50)
@@ -159,8 +162,10 @@ Public Class Acquisition
         rbbarcode.Enabled = True
         rbisbn.Enabled = True
 
-        DateTimePicker1.Value = DateTime.Now
+        DateTimePicker1.MaxDate = DateTime.Today
+        DateTimePicker1.Value = DateTime.Today
         DateTimePicker1.Enabled = True
+
         DataGridView1.ClearSelection()
 
         txttransactionno.ReadOnly = False
