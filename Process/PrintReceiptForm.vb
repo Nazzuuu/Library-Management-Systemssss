@@ -126,7 +126,16 @@ Public Class PrintReceiptForm
         Return dt
     End Function
 
+    Private printedAlready As Boolean = False
+
     Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
+
+        If printedAlready Then
+            e.HasMorePages = False
+            Exit Sub
+        End If
+        printedAlready = True
+
         Dim g As Graphics = e.Graphics
         g.SmoothingMode = SmoothingMode.AntiAlias
         g.TextRenderingHint = Drawing.Text.TextRenderingHint.ClearTypeGridFit
@@ -137,7 +146,8 @@ Public Class PrintReceiptForm
         Dim pageWidth As Integer = e.PageSettings.PrintableArea.Width
         Dim contentWidth As Integer = pageWidth - (margin * 2)
 
-        Dim fontHeader As New Font("Arial", 8, FontStyle.Bold)
+
+        Dim fontHeader As New Font("Arial", 7.2, FontStyle.Bold)
         Dim fontSubHeader As New Font("Arial", 7, FontStyle.Regular)
         Dim fontBody As New Font("Arial", 6.5, FontStyle.Regular)
         Dim fontBodyBold As New Font("Arial", 6.5, FontStyle.Bold)
@@ -155,11 +165,16 @@ Public Class PrintReceiptForm
 
         Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
 
-            g.DrawString("Monlimar Development Academy", fontHeader, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
+            g.DrawString("", fontHeader, Brushes.Black,
+                 New RectangleF(margin - 8, yPos, contentWidth + 16, lineHeight * 2), sfCenter)
             yPos += CInt(lineHeight * 1.8)
-            g.DrawString("Library Management System", fontSubHeader, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
+
+            g.DrawString("Library Management System", fontSubHeader, Brushes.Black,
+                 New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
             yPos += lineHeight
-            g.DrawString("Borrowing Receipt", fontSubHeader, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
+
+            g.DrawString("---- Borrowing Receipt ----", fontSubHeader, Brushes.Black,
+                 New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
             yPos += CInt(lineHeight * 2.5)
         End Using
 
@@ -168,11 +183,10 @@ Public Class PrintReceiptForm
         yPos += lineHeight + 2
         g.DrawString($"Borrower: {name} ({borrowerType})", fontBody, Brushes.Black, margin, yPos)
         yPos += lineHeight
-        g.DrawString($"Date Borrowed: {borrowedDate}", fontBody, Brushes.Black, margin, yPos)
+        g.DrawString($"Date Borrowed: {borrowedDate}", fontBody, Brushes.Black, margin + 2, yPos)
         yPos += lineHeight + 2
-        g.DrawString($"Due Date: {dueDate}", fontBody, Brushes.Black, margin, yPos)
+        g.DrawString($"Due Date: {dueDate}", fontBody, Brushes.Black, margin + 2, yPos)
         yPos += lineHeight + 6
-
 
         Dim bookDetailsList As DataTable = GetBookDetailsByTransaction(transacReceipt)
         Dim totalBooks As Integer = bookDetailsList.Rows.Count
@@ -193,9 +207,7 @@ Public Class PrintReceiptForm
             g.DrawString($"Barcode/ISBN: {codeToPrint}", fontBody, Brushes.Black, margin + 10, yPos)
             yPos += lineHeight + 5
         Next
-
         yPos += 5
-
 
         If Not String.IsNullOrEmpty(transacReceipt) Then
             Dim barcodeWidth As Integer = 140
@@ -206,7 +218,8 @@ Public Class PrintReceiptForm
                     g.DrawImage(receiptBarcode, xPosBarcode, yPos, barcodeWidth, barcodeHeight)
                     yPos += barcodeHeight + 3
                     Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
-                        g.DrawString(transacReceipt, fontBody, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
+                        g.DrawString(transacReceipt, fontBody, Brushes.Black,
+                               New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
                     End Using
                     yPos += lineHeight + 2
                 End If
@@ -217,20 +230,39 @@ Public Class PrintReceiptForm
     End Sub
 
 
+
+
+    Private Sub printDoc_EndPrint(sender As Object, e As Printing.PrintEventArgs) Handles printDoc.EndPrint
+        printedAlready = False
+    End Sub
+
+
     Public Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal targetWidth As Integer, ByVal targetHeight As Integer) As Image
         If String.IsNullOrWhiteSpace(barcodeText) Then Return Nothing
+
         Try
-            Dim options As New ZXing.Common.EncodingOptions With {.Width = targetWidth, .Height = targetHeight, .Margin = 1, .PureBarcode = True}
-            Dim writer As New BarcodeWriter(Of Bitmap) With {.Format = BarcodeFormat.CODE_128, .Options = options, .Renderer = New BitmapRenderer()}
+            Dim options As New ZXing.Common.EncodingOptions With {
+            .Width = targetWidth,
+            .Height = targetHeight,
+            .Margin = 1,
+            .PureBarcode = True
+        }
+
+            Dim writer As New BarcodeWriter(Of Bitmap) With {
+            .Format = BarcodeFormat.CODE_128,
+            .Options = options,
+            .Renderer = New ZXing.Windows.Compatibility.BitmapRenderer()
+        }
+
             Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
-            barcodeBitmap.SetResolution(96, 96)
             Return barcodeBitmap
+
         Catch ex As Exception
             Dim bmp As New Bitmap(targetWidth, targetHeight)
             Using g As Graphics = Graphics.FromImage(bmp)
                 g.Clear(Color.White)
                 Using font As New Font("Arial", 6)
-                    g.DrawString("Barcode Error", font, Brushes.Red, 2, 2)
+                    g.DrawString("Barcode Error: " & ex.Message, font, Brushes.Red, 2, 2)
                 End Using
             End Using
             Return bmp
