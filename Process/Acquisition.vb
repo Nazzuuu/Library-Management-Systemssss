@@ -8,6 +8,8 @@ Public Class Acquisition
 
     Private Sub Acquisition_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        DisablePaste_AllTextBoxes()
+
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `acquisition_tbl`"
         Dim adp As New MySqlDataAdapter(com, con)
@@ -1008,6 +1010,51 @@ SkipAcessionInsert:
     End Sub
 
 
+    Private Sub DisablePaste_AllTextBoxes()
+        For Each ctrl As Control In Me.Controls
+            AddHandlerToTextBoxes_NoPaste(ctrl)
+        Next
+    End Sub
+
+    Private Sub AddHandlerToTextBoxes_NoPaste(parent As Control)
+        For Each ctrl As Control In parent.Controls
+            If TypeOf ctrl Is TextBox Then
+                Dim tb As TextBox = CType(ctrl, TextBox)
+
+                tb.ContextMenuStrip = New ContextMenuStrip()
+
+                AddHandler tb.KeyDown, AddressOf BlockPasteKey
+                AddHandler tb.MouseUp, AddressOf BlockRightClick
+
+            End If
+
+            If ctrl.HasChildren Then
+                AddHandlerToTextBoxes_NoPaste(ctrl)
+            End If
+        Next
+
+    End Sub
+
+
+    Private Sub BlockPasteKey(sender As Object, e As KeyEventArgs)
+
+        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub BlockRightClick(sender As Object, e As MouseEventArgs)
+
+        If e.Button = MouseButtons.Right Then
+
+            Dim tb As TextBox = TryCast(sender, TextBox)
+            If tb IsNot Nothing Then
+                tb.ContextMenuStrip = New ContextMenuStrip()
+            End If
+        End If
+
+    End Sub
 
 
 End Class

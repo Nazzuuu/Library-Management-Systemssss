@@ -1166,7 +1166,7 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
 
-                Dim filter As String = String.Format("Borrower LIKE '%{0}%' OR BookTitle LIKE '%{0}%'", txtsearch.Text.Trim())
+                Dim filter As String = String.Format("Borrower LIKE '%{0}%' OR ReturnedBook LIKE '%{0}%'", txtsearch.Text.Trim())
 
 
                 dt.DefaultView.RowFilter = filter

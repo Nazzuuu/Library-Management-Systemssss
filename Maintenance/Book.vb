@@ -37,7 +37,7 @@ Public Class Book
 
     Private Sub Book_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshbook()
-
+        DisablePaste_AllTextBoxes()
     End Sub
 
 
@@ -1118,4 +1118,51 @@ Public Class Book
     Private Sub btnprint_MouseLeave(sender As Object, e As EventArgs) Handles btnprint.MouseLeave
         Cursor = Cursors.Default
     End Sub
+
+    Private Sub DisablePaste_AllTextBoxes()
+        For Each ctrl As Control In Me.Controls
+            AddHandlerToTextBoxes_NoPaste(ctrl)
+        Next
+    End Sub
+
+    Private Sub AddHandlerToTextBoxes_NoPaste(parent As Control)
+        For Each ctrl As Control In parent.Controls
+            If TypeOf ctrl Is TextBox Then
+                Dim tb As TextBox = CType(ctrl, TextBox)
+
+                tb.ContextMenuStrip = New ContextMenuStrip()
+
+                AddHandler tb.KeyDown, AddressOf BlockPasteKey
+                AddHandler tb.MouseUp, AddressOf BlockRightClick
+
+            End If
+
+            If ctrl.HasChildren Then
+                AddHandlerToTextBoxes_NoPaste(ctrl)
+            End If
+        Next
+
+    End Sub
+
+
+    Private Sub BlockPasteKey(sender As Object, e As KeyEventArgs)
+
+        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub BlockRightClick(sender As Object, e As MouseEventArgs)
+
+        If e.Button = MouseButtons.Right Then
+
+            Dim tb As TextBox = TryCast(sender, TextBox)
+            If tb IsNot Nothing Then
+                tb.ContextMenuStrip = New ContextMenuStrip()
+            End If
+        End If
+
+    End Sub
+
 End Class

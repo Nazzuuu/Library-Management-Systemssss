@@ -446,4 +446,9 @@ Public Class Author
         End If
     End Sub
 
+    Private Sub txtauthor_MouseDown(sender As Object, e As MouseEventArgs) Handles txtauthor.MouseDown
+        If e.Button = MouseButtons.Right Then
+            e = Nothing
+        End If
+    End Sub
 End Class
