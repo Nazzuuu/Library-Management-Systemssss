@@ -201,4 +201,41 @@ Module GlobalVarsModule
         End Using
     End Sub
 
+
+    Public Event DatabaseUpdated()
+
+    Private WithEvents dbRefreshTimer As New Timer() With {.Interval = 200}
+
+
+    Private lastBorrowingCount As Integer = -1
+
+    Public Sub StartAutoRefresh()
+        dbRefreshTimer.Start()
+    End Sub
+
+    Public Sub StopAutoRefresh()
+        dbRefreshTimer.Stop()
+    End Sub
+
+    Private Sub dbRefreshTimer_Tick(sender As Object, e As EventArgs) Handles dbRefreshTimer.Tick
+        Try
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+
+
+                Dim com As New MySqlCommand("SELECT COUNT(*) FROM borrowing_tbl", con)
+                Dim count As Integer = Convert.ToInt32(com.ExecuteScalar())
+
+                If lastBorrowingCount <> -1 AndAlso count <> lastBorrowingCount Then
+
+                    RaiseEvent DatabaseUpdated()
+                End If
+
+                lastBorrowingCount = count
+            End Using
+        Catch
+
+        End Try
+    End Sub
+
 End Module

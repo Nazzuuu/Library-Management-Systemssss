@@ -1,4 +1,6 @@
-﻿Public Class StayLogoutFormm
+﻿Imports MySql.Data.MySqlClient
+
+Public Class StayLogoutFormm
 
     Public IsTimedIn As Boolean = False
 
@@ -61,91 +63,102 @@
                                                      MessageBoxButtons.YesNo,
                                                      MessageBoxIcon.Question)
 
-        If result = DialogResult.Yes Then
-            Try
-                Dim previousRole As String = GlobalVarsModule.GlobalRole
-                Dim userEmail As String = GlobalVarsModule.GlobalEmail
-                Dim userName As String = GlobalVarsModule.GlobalUsername
+        If result <> DialogResult.Yes Then Exit Sub
+
+        Try
+            Dim previousRole As String = GlobalVarsModule.GlobalRole
+            Dim userEmail As String = GlobalVarsModule.GlobalEmail
+            Dim userName As String = GlobalVarsModule.GlobalUsername
 
 
-                If GlobalVarsModule.CurrentUserRole.Equals("Borrower", StringComparison.OrdinalIgnoreCase) Then
-                    Dim borrowerID As String = GlobalVarsModule.GetCleanCurrentBorrowerID()
-                    If Not String.IsNullOrEmpty(borrowerID) Then
-                        Dim activeRecordID As Integer = GlobalVarsModule.GetLastTimeInRecordID(borrowerID)
-                        If activeRecordID > 0 Then
-                            Dim timeoutSuccess As Boolean = GlobalVarsModule.AutomaticTimeOut(activeRecordID)
-                            If timeoutSuccess Then
-                                MessageBox.Show("You have successfully logged out. Your Time-In session was automatically Timed Out by the system.",
-                                                "Auto Time-Out",
-                                                MessageBoxButtons.OK,
-                                                MessageBoxIcon.Information)
-                            End If
+            If GlobalVarsModule.CurrentUserRole.Equals("Borrower", StringComparison.OrdinalIgnoreCase) Then
+                Dim borrowerID As String = GlobalVarsModule.GetCleanCurrentBorrowerID()
+                If Not String.IsNullOrEmpty(borrowerID) Then
+
+                    Dim activeRecordID As Integer = GlobalVarsModule.GetLastTimeInRecordID(borrowerID)
+                    If activeRecordID > 0 Then
+                        Dim timeoutSuccess As Boolean = GlobalVarsModule.AutomaticTimeOut(activeRecordID)
+                        If timeoutSuccess Then
+                            MessageBox.Show("You have successfully logged out. Your Time-In session was automatically Timed Out by the system.",
+                                            "Auto Time-Out",
+                                            MessageBoxButtons.OK,
+                                            MessageBoxIcon.Information)
                         End If
                     End If
+
+
+                    Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                        con.Open()
+                        Dim updateLogout As String =
+                            "UPDATE borroweredit_tbl " &
+                            "SET is_logged_in = 0, CurrentIP = NULL " &
+                            "WHERE (LRN = @id OR EmployeeNo = @id) LIMIT 1"
+
+                        Using cmd As New MySqlCommand(updateLogout, con)
+                            cmd.Parameters.AddWithValue("@id", borrowerID)
+                            cmd.ExecuteNonQuery()
+                        End Using
+                    End Using
                 End If
+            End If
+
+            If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+               previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+               previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
+
+                GlobalVarsModule.LogAudit(
+                    actionType:="LOGOUT SUCCESS",
+                    formName:="MAIN FORM",
+                    description:=$"User '{userName}' ({previousRole}) successfully logged out.",
+                    recordID:="N/A"
+                )
+            End If
 
 
-
-                If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-                   previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-                   previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
-
-                    GlobalVarsModule.LogAudit(
-                        actionType:="LOGOUT SUCCESS",
-                        formName:="MAIN FORM",
-                        description:=$"User '{userName}' ({previousRole}) successfully logged out.",
-                        recordID:="N/A"
-                    )
-                End If
+            GlobalVarsModule.GlobalRole = "Guest"
+            GlobalVarsModule.GlobalEmail = ""
+            GlobalVarsModule.GlobalUsername = ""
+            GlobalVarsModule.CurrentUserRole = "Guest"
+            GlobalVarsModule.CurrentBorrowerType = ""
+            GlobalVarsModule.CurrentBorrowerID = ""
+            GlobalVarsModule.CurrentUserID = ""
+            GlobalVarsModule.CurrentEmployeeID = ""
 
 
-                GlobalVarsModule.GlobalRole = "Guest"
-                GlobalVarsModule.GlobalEmail = ""
-                GlobalVarsModule.GlobalUsername = ""
-                GlobalVarsModule.CurrentUserRole = "Guest"
-                GlobalVarsModule.CurrentBorrowerType = ""
-                GlobalVarsModule.CurrentBorrowerID = ""
-                GlobalVarsModule.CurrentUserID = ""
-                GlobalVarsModule.CurrentEmployeeID = ""
+            If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then
+                Borrowing.Close()
+                Borrowing.Dispose()
+                Borrowing = Nothing
+            End If
 
 
-                If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then
-                    Borrowing.Close()
-                    Borrowing.Dispose()
-                    Borrowing = Nothing
-                End If
+            Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+            If activeMain IsNot Nothing Then
+                activeMain.Hide()
+            End If
 
+            Me.DialogResult = DialogResult.OK
+            Me.Hide()
 
-                Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
-                If activeMain IsNot Nothing Then
-                    activeMain.Hide()
-                End If
+            Dim borrowerLogin As BorrowerLoginForm = Application.OpenForms.OfType(Of BorrowerLoginForm)().FirstOrDefault()
+            If borrowerLogin Is Nothing OrElse borrowerLogin.IsDisposed Then
+                borrowerLogin = New BorrowerLoginForm()
+                GlobalVarsModule.ActiveBorrowerLoginForm = borrowerLogin
+            End If
 
+            borrowerLogin.txtuser.Clear()
+            borrowerLogin.txtpass.Clear()
+            borrowerLogin.Show()
+            borrowerLogin.BringToFront()
 
-                Me.DialogResult = DialogResult.OK
-                Me.Hide()
-
-
-                Dim borrowerLogin As BorrowerLoginForm = Application.OpenForms.OfType(Of BorrowerLoginForm)().FirstOrDefault()
-                If borrowerLogin Is Nothing OrElse borrowerLogin.IsDisposed Then
-                    borrowerLogin = New BorrowerLoginForm()
-                    GlobalVarsModule.ActiveBorrowerLoginForm = borrowerLogin
-                End If
-
-                borrowerLogin.txtuser.Clear()
-                borrowerLogin.txtpass.Clear()
-
-                borrowerLogin.Show()
-                borrowerLogin.BringToFront()
-
-            Catch ex As Exception
-                MessageBox.Show("An error occurred while logging out: " & ex.Message,
-                                "Logout Error",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error)
-            End Try
-        End If
+        Catch ex As Exception
+            MessageBox.Show("An error occurred while logging out: " & ex.Message,
+                            "Logout Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error)
+        End Try
     End Sub
+
 
 
 End Class

@@ -24,6 +24,9 @@ Public Class MainForm
 
         loadsu()
 
+        GlobalVarsModule.StartAutoRefresh()
+
+
     End Sub
 
     Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
@@ -132,31 +135,29 @@ Public Class MainForm
         End If
 
     End Sub
-
-
-
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
-
         Dim dialogResult = MessageBox.Show("Are you sure you want to logout?",
-              "Confirmation",
-              MessageBoxButtons.YesNo,
-              MessageBoxIcon.Question)
+          "Confirmation",
+          MessageBoxButtons.YesNo,
+          MessageBoxIcon.Question)
 
         If dialogResult = DialogResult.Yes Then
             Dim previousRole As String = GlobalVarsModule.GlobalRole
             Dim userEmail As String = GlobalVarsModule.GlobalEmail
             Dim userName As String = GlobalVarsModule.GlobalUsername
 
-
-
-            If Not String.IsNullOrWhiteSpace(userName) AndAlso (previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-      previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-      previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase)) Then
+            If Not String.IsNullOrWhiteSpace(userName) AndAlso
+            (previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+             previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+             previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase)) Then
 
                 Using con As New MySqlConnection(GlobalVarsModule.connectionString)
-                    Dim updateTable As String = If(previousRole = "Librarian", "superadmin_tbl", "user_staff_tbl")
+                    Dim updateTable As String = If(previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase),
+                                               "superadmin_tbl",
+                                               "user_staff_tbl")
 
-                    Dim updateQuery As String = $"UPDATE {updateTable} SET CurrentIP = NULL, is_logged_in = 0 WHERE Username = @username"
+                    Dim updateQuery As String =
+                    $"UPDATE {updateTable} SET CurrentIP = '0.0.0.0', is_logged_in = 0 WHERE Username = @username"
 
                     Using updateCmd As New MySqlCommand(updateQuery, con)
                         updateCmd.Parameters.AddWithValue("@username", userName)
@@ -164,26 +165,30 @@ Public Class MainForm
                             con.Open()
                             updateCmd.ExecuteNonQuery()
                         Catch ex As Exception
-
-                            MessageBox.Show("Warning: Failed to clear login status in the database: " & ex.Message, "Database Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            MessageBox.Show("⚠️ Warning: Failed to clear login status in the database: " &
+                                        ex.Message, "Database Warning",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Finally
+                            con.Close()
                         End Try
                     End Using
                 End Using
             End If
 
-
+            ' 🧾 Audit trail logging
             If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-          previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-          previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
+           previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+           previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
 
                 GlobalVarsModule.LogAudit(
-              actionType:="LOGOUT SUCCESS",
-              formName:="MAIN FORM",
-              description:=$"User '{userName}' ({previousRole}) successfully logged out.",
-              recordID:="N/A"
-           )
+                actionType:="LOGOUT SUCCESS",
+                formName:="MAIN FORM",
+                description:=$"User '{userName}' ({previousRole}) successfully logged out.",
+                recordID:="N/A"
+            )
             End If
 
+            ' 🧹 Clear Global Variables
             GlobalVarsModule.GlobalRole = "Guest"
             GlobalVarsModule.GlobalEmail = ""
             GlobalVarsModule.GlobalUsername = ""
@@ -193,41 +198,43 @@ Public Class MainForm
             GlobalVarsModule.CurrentUserID = ""
             GlobalVarsModule.CurrentEmployeeID = ""
 
+            ' 🪟 Close Borrowing Form if open
             If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then
                 Borrowing.Close()
             End If
 
+            ' 🪟 Close Main Form
             If GlobalVarsModule.ActiveMainForm IsNot Nothing AndAlso Not GlobalVarsModule.ActiveMainForm.IsDisposed Then
                 Try
                     GlobalVarsModule.ActiveMainForm.Close()
                     GlobalVarsModule.ActiveMainForm.Dispose()
                 Catch
-
+                    ' ignore errors
                 End Try
                 GlobalVarsModule.ActiveMainForm = Nothing
             End If
 
-
+            ' 🔁 Return to Login Form
             Me.Hide()
-
 
             If GlobalVarsModule.loginform Is Nothing OrElse GlobalVarsModule.loginform.IsDisposed Then
                 GlobalVarsModule.loginform = New login()
             End If
 
-
             Try
                 GlobalVarsModule.loginform.txtuser.Clear()
                 GlobalVarsModule.loginform.txtpass.Clear()
             Catch
-
             End Try
 
             GlobalVarsModule.loginform.Show()
             GlobalVarsModule.loginform.BringToFront()
         End If
 
+        GlobalVarsModule.StopAutoRefresh()
+
     End Sub
+
 
 
 
