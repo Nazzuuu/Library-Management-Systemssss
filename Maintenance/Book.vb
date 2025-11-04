@@ -36,56 +36,74 @@ Public Class Book
 
 
     Private Sub Book_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        TopMost = True
+        Me.Font = New Font("Baskerville Old Face", 9)
+        Me.Refresh()
+
         refreshbook()
         DisablePaste_AllTextBoxes()
+
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
 
     Public Sub refreshbook()
-
         If String.IsNullOrEmpty(GlobalVarsModule.connectionString) Then
             MessageBox.Show("Connection string is not set.", "Configuration Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
+
         LoadBookData()
 
-        DataGridView1.Columns("ID").Visible = False
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
-        DataGridView1.ClearSelection()
-        DataGridView1.CurrentCell = Nothing
+        SetupGridStyle()
 
 
         cbauthorr()
         cbgenree()
         cbpublisherr()
         cblang()
-        'cbcategoryy()
 
         clear()
+
 
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
         DateTimePicker1.MaxDate = DateTime.Today
-
     End Sub
+
+
 
     Private Sub LoadBookData()
-        Dim con As New MySqlConnection(connectionString)
-        Try
-            Dim com As String = "SELECT * FROM `book_tbl`"
-            Dim adp As New MySqlDataAdapter(com, con)
-            Dim dt As New DataSet
+        Dim query As String = "SELECT * FROM `book_tbl` ORDER BY ID DESC"
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
+    End Sub
 
-            adp.Fill(dt, "INFO")
-            DataGridView1.DataSource = dt.Tables("INFO")
-        Catch ex As Exception
-            MessageBox.Show("Error loading book data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+    Private Async Sub OnDatabaseUpdated()
+        Dim query As String = "SELECT * FROM `book_tbl` ORDER BY ID DESC"
+        Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+        SetupGridStyle()
+    End Sub
+
+
+    Private Sub SetupGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.ReadOnly = True
+        Catch
         End Try
     End Sub
+
 
     Public Sub cbauthorr()
 

@@ -1,6 +1,7 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports System.Net
 Imports System.Net.Sockets
+Imports System.Threading.Tasks
 
 Module GlobalVarsModule
 
@@ -202,12 +203,24 @@ Module GlobalVarsModule
     End Sub
 
 
-    Public Event DatabaseUpdated()
 
+    Public Event DatabaseUpdated()
     Private WithEvents dbRefreshTimer As New Timer() With {.Interval = 200}
 
 
-    Private lastBorrowingCount As Integer = -1
+    Private lastTableCounts As New Dictionary(Of String, Integer)
+
+
+    Private monitoredTables As String() = {
+        "acession_tbl", "acquisition_tbl", "audit_trail_tbl", "author_tbl", "available_tbl",
+        "book_tbl", "borrowerview_tbl", "borroweredit_tbl", "borrower_tbl", "borrowinghistory_tbl",
+        "borrowing_tbl", "category_tbl", "confirmation_tbl", "damagedview_tbl", "department_tbl",
+        "genre_tbl", "grade_tbl", "language_tbl", "lostview_tbl", "oras_tbl", "overdueview_tbl",
+        "penalty_management_tbl", "penalty_tbl", "printreceipt_tbl", "publisher_tbl",
+        "reservecopiess_tbl", "reserveview_tbl", "returnedview_tbl", "returning_tbl",
+        "section_tbl", "shelf_tbl", "strand_tbl", "superadmin_tbl", "supplier_tbl",
+        "timeoutrecord_tbl", "totalbooksview_tbl", "user_staff_tbl"
+    }
 
     Public Sub StartAutoRefresh()
         dbRefreshTimer.Start()
@@ -217,25 +230,134 @@ Module GlobalVarsModule
         dbRefreshTimer.Stop()
     End Sub
 
+
     Private Sub dbRefreshTimer_Tick(sender As Object, e As EventArgs) Handles dbRefreshTimer.Tick
         Try
             Using con As New MySqlConnection(connectionString)
                 con.Open()
 
+                Dim changesDetected As Boolean = False
 
-                Dim com As New MySqlCommand("SELECT COUNT(*) FROM borrowing_tbl", con)
-                Dim count As Integer = Convert.ToInt32(com.ExecuteScalar())
+                For Each tableName As String In monitoredTables
+                    Dim com As New MySqlCommand($"SELECT COUNT(*) FROM `{tableName}`", con)
+                    Dim currentCount As Integer = Convert.ToInt32(com.ExecuteScalar())
 
-                If lastBorrowingCount <> -1 AndAlso count <> lastBorrowingCount Then
+                    If lastTableCounts.ContainsKey(tableName) Then
+                        If lastTableCounts(tableName) <> currentCount Then
+                            changesDetected = True
+                            lastTableCounts(tableName) = currentCount
+                        End If
+                    Else
+                        lastTableCounts(tableName) = currentCount
+                    End If
+                Next
 
+
+                If changesDetected Then
                     RaiseEvent DatabaseUpdated()
                 End If
-
-                lastBorrowingCount = count
             End Using
-        Catch
+        Catch ex As Exception
 
         End Try
     End Sub
+
+    Public Async Function LoadToGridAsync(grid As DataGridView, query As String) As Task
+        Await Task.Run(Sub()
+                           Try
+                               Using con As New MySqlConnection(connectionString)
+                                   Using adap As New MySqlDataAdapter(query, con)
+                                       Dim ds As New DataSet()
+                                       adap.Fill(ds)
+                                       Dim dt As DataTable = ds.Tables(0)
+
+                                       grid.Invoke(Sub()
+                                                       grid.DataSource = dt
+                                                   End Sub)
+                                   End Using
+                               End Using
+                           Catch ex As MySqlException
+                               grid.Invoke(Sub()
+                                               MessageBox.Show("Error loading data: " & ex.Message,
+                                                           "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                           End Sub)
+                           Catch ex As Exception
+                               grid.Invoke(Sub()
+                                               MessageBox.Show("Unexpected error while loading data: " & ex.Message,
+                                                           "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                           End Sub)
+                           End Try
+                       End Sub)
+    End Function
+
+
+    Private refreshTimers As New Dictionary(Of DataGridView, Timer)
+
+
+    Public Async Sub AutoRefreshGrid(grid As DataGridView, query As String, Optional intervalMs As Integer = 2000)
+        Try
+            Await LoadToGridAsync(grid, query)
+        Catch ex As Exception
+            MessageBox.Show("Initial data load failed: " & ex.Message)
+        End Try
+
+
+        If refreshTimers.ContainsKey(grid) Then
+            refreshTimers(grid).Stop()
+            refreshTimers.Remove(grid)
+        End If
+
+
+        Dim t As New Timer() With {.Interval = intervalMs}
+        AddHandler t.Tick, Async Sub(sender As Object, e As EventArgs)
+                               Try
+
+                                   Dim selectedValue As Object = Nothing
+                                   Dim selectedColumn As String = ""
+
+                                   If grid.SelectedRows.Count > 0 Then
+
+                                       If grid.Columns.Contains("ID") Then
+                                           selectedColumn = "ID"
+                                           selectedValue = grid.SelectedRows(0).Cells("ID").Value
+                                       Else
+
+                                           For Each col As DataGridViewColumn In grid.Columns
+                                               If col.Visible Then
+                                                   selectedColumn = col.Name
+                                                   selectedValue = grid.SelectedRows(0).Cells(col.Name).Value
+                                                   Exit For
+                                               End If
+                                           Next
+                                       End If
+                                   End If
+
+                                   Await LoadToGridAsync(grid, query)
+
+
+                                   If selectedValue IsNot Nothing AndAlso grid.Rows.Count > 0 AndAlso grid.Columns.Contains(selectedColumn) Then
+                                       For Each row As DataGridViewRow In grid.Rows
+                                           If row.Cells(selectedColumn).Value IsNot Nothing AndAlso
+                                              row.Cells(selectedColumn).Value.ToString() = selectedValue.ToString() Then
+                                               row.Selected = True
+                                               grid.FirstDisplayedScrollingRowIndex = row.Index
+                                               Exit For
+                                           End If
+                                       Next
+                                   Else
+
+                                       grid.ClearSelection()
+                                       grid.CurrentCell = Nothing
+                                   End If
+                               Catch
+
+                               End Try
+                           End Sub
+
+        refreshTimers(grid) = t
+        t.Start()
+    End Sub
+
+
 
 End Module

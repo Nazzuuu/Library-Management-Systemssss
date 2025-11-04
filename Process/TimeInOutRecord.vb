@@ -11,64 +11,78 @@ Public Class TimeInOutRecord
 
     Private Sub TimeInOutRecord_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshtimeoutrecrod()
+
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+
     End Sub
 
     Public Sub refreshtimeoutrecrod()
 
-        DataGridView1.DataSource = Nothing
-        DataGridView1.Columns.Clear()
 
-        Dim com As String = "SELECT " &
-                            "o.`ID`, " &
-                            "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
-                            "b.`Borrower`, " &
-                            "CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
-                            "IF(b.`MiddleInitial` IS NULL OR b.`MiddleInitial` = '' OR UPPER(b.`MiddleInitial`) = 'N/A', '', CONCAT(' ', b.`MiddleInitial`))" &
-                            ") AS `FullName`, " &
-                            "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
-                            "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
-                            "FROM `oras_tbl` o " &
-                            "LEFT JOIN `borrower_tbl` b " &
-                            "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
-                            "ORDER BY o.`TimeIn` DESC"
-
-        Using con As New MySqlConnection(connectionString)
-            Try
-                con.Open()
-                Using cmd As New MySqlCommand(com, con)
-                    Dim adap As New MySqlDataAdapter(cmd)
-                    Dim ds As New DataSet
-                    adap.Fill(ds, "info")
-
-                    DataGridView1.DataSource = ds.Tables("info")
-
-                    If DataGridView1.Columns.Contains("ID") Then
-                        DataGridView1.Columns("ID").Visible = False
-                    End If
+        Dim query As String =
+            "SELECT " &
+            "o.`ID`, " &
+            "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
+            "b.`Borrower`, " &
+            "CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
+            "IF(b.`MiddleInitial` IS NULL OR b.`MiddleInitial` = '' OR UPPER(b.`MiddleInitial`) = 'N/A', '', CONCAT(' ', b.`MiddleInitial`))" &
+            ") AS `FullName`, " &
+            "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
+            "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
+            "FROM `oras_tbl` o " &
+            "LEFT JOIN `borrower_tbl` b " &
+            "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
+            "ORDER BY o.`TimeIn` DESC"
 
 
-                    If DataGridView1.Columns.Contains("Date") Then DataGridView1.Columns("Date").HeaderText = "DATE"
-                    If DataGridView1.Columns.Contains("Borrower") Then DataGridView1.Columns("Borrower").HeaderText = "BORROWER TYPE"
-                    If DataGridView1.Columns.Contains("FullName") Then DataGridView1.Columns("FullName").HeaderText = "FULL NAME"
-                    If DataGridView1.Columns.Contains("TimeIn") Then DataGridView1.Columns("TimeIn").HeaderText = "TIME IN"
-                    If DataGridView1.Columns.Contains("TimeOut") Then
-                        DataGridView1.Columns("TimeOut").HeaderText = "TIME OUT"
-                        DataGridView1.Columns("TimeOut").Visible = True
-                    End If
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
 
-                    DataGridView1.ClearSelection()
-                    DataGridView1.EnableHeadersVisualStyles = False
-                    DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-                    DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
 
-                End Using
-            Catch ex As Exception
-                MessageBox.Show("Error loading records: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End Try
-        End Using
+        SetupGridStyle()
+    End Sub
+
+
+
+    Private Async Sub OnDatabaseUpdated()
+        Dim query As String =
+            "SELECT " &
+            "o.`ID`, " &
+            "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
+            "b.`Borrower`, " &
+            "CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
+            "IF(b.`MiddleInitial` IS NULL OR b.`MiddleInitial` = '' OR UPPER(b.`MiddleInitial`) = 'N/A', '', CONCAT(' ', b.`MiddleInitial`))" &
+            ") AS `FullName`, " &
+            "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
+            "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
+            "FROM `oras_tbl` o " &
+            "LEFT JOIN `borrower_tbl` b " &
+            "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
+            "ORDER BY o.`TimeIn` DESC"
+
+        Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+        SetupGridStyle()
+    End Sub
+
+
+    Private Sub SetupGridStyle()
+        If DataGridView1.Columns.Contains("ID") Then
+            DataGridView1.Columns("ID").Visible = False
+        End If
+
+        If DataGridView1.Columns.Contains("Date") Then DataGridView1.Columns("Date").HeaderText = "DATE"
+        If DataGridView1.Columns.Contains("Borrower") Then DataGridView1.Columns("Borrower").HeaderText = "BORROWER TYPE"
+        If DataGridView1.Columns.Contains("FullName") Then DataGridView1.Columns("FullName").HeaderText = "FULL NAME"
+        If DataGridView1.Columns.Contains("TimeIn") Then DataGridView1.Columns("TimeIn").HeaderText = "TIME IN"
+        If DataGridView1.Columns.Contains("TimeOut") Then
+            DataGridView1.Columns("TimeOut").HeaderText = "TIME OUT"
+            DataGridView1.Columns("TimeOut").Visible = True
+        End If
 
         DataGridView1.ReadOnly = True
-
+        DataGridView1.ClearSelection()
+        DataGridView1.EnableHeadersVisualStyles = False
+        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
     End Sub
 
 

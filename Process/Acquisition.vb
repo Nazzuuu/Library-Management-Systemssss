@@ -7,7 +7,6 @@ Public Class Acquisition
     Private isEditing As Boolean = False
 
     Private Sub Acquisition_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
@@ -34,25 +33,35 @@ Public Class Acquisition
         End If
 
 
-        ' DateTimePicker1.MinDate = DateTime.Today.AddYears(-50)
-
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `acquisition_tbl`", 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
     Public Sub refreshData()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `acquisition_tbl`"
         Dim adp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
+
         Try
             adp.Fill(dt, "INFO")
             DataGridView1.DataSource = dt.Tables("INFO")
-
             DataGridView1.ClearSelection()
         Catch ex As Exception
             MessageBox.Show("Error refreshing data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+
         cbsupplierr()
     End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `acquisition_tbl`")
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
+
 
     Public Sub cbsupplierr()
 

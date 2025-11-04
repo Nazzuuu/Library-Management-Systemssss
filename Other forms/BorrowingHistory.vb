@@ -3,23 +3,34 @@
 Public Class BorrowingHistory
     Private Sub BorrowingHistory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshhistory()
+
+
     End Sub
 
     Public Sub refreshhistory()
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim com As String = "SELECT * FROM `borrowinghistory_tbl`"
-        Dim adap As New MySqlDataAdapter(com, con)
-        Dim ds As New DataSet
 
-        adap.Fill(ds, "info")
-        DataGridView1.DataSource = ds.Tables("info")
-        DataGridView1.Columns("ID").Visible = False
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM borrowinghistory_tbl", 2000)
 
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
 
+
+        SetupGridStyle()
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+
+        Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM borrowinghistory_tbl")
+
+    End Sub
+
+    Private Sub SetupGridStyle()
+        With DataGridView1
+            .EnableHeadersVisualStyles = False
+            .ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            .ColumnHeadersDefaultCellStyle.Font = New Font("Segoe UI", 10, FontStyle.Bold)
+        End With
     End Sub
 
     Private Sub BorrowingHistory_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown

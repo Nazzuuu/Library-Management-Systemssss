@@ -6,26 +6,6 @@ Public Class Returning
 
     Private IsLoadingTransaction As Boolean = False
 
-    Public Sub RefreshReturningData()
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim com As String = "SELECT * FROM `returning_tbl` ORDER BY ID DESC"
-        Dim adap As New MySqlDataAdapter(com, con)
-        Dim ds As New DataSet
-
-        Try
-            adap.Fill(ds, "info")
-            DataGridView1.DataSource = ds.Tables("info")
-        Catch ex As Exception
-            MessageBox.Show("Error loading Returning data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
-
-        DataGridView1.Columns("ID").Visible = False
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-        clear_details_only()
-    End Sub
-
     Private Sub clear_details_only()
 
         If DataGridView1.SelectedRows.Count > 0 Then
@@ -93,7 +73,47 @@ Public Class Returning
         rboverdue.Checked = False
         rbdamage.Checked = False
         rblost.Checked = False
+
+
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `returning_tbl` ORDER BY ID DESC", 2000)
+
+
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated_Returning
     End Sub
+
+    Public Sub RefreshReturningData()
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim com As String = "SELECT * FROM `returning_tbl` ORDER BY ID DESC"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim ds As New DataSet
+
+        Try
+            adap.Fill(ds, "info")
+            DataGridView1.DataSource = ds.Tables("info")
+            DataGridView1.ClearSelection()
+        Catch ex As Exception
+            MessageBox.Show("Error loading Returning data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
+        If DataGridView1.Columns.Contains("ID") Then
+            DataGridView1.Columns("ID").Visible = False
+        End If
+
+        DataGridView1.EnableHeadersVisualStyles = False
+        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+        clear_details_only()
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated_Returning()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `returning_tbl` ORDER BY ID DESC")
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub rbdamage_CheckedChanged(sender As Object, e As EventArgs) Handles rbdamage.CheckedChanged
         If rbdamage.Checked Then

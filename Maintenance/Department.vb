@@ -5,24 +5,39 @@ Imports MySql.Data.MySqlClient
 
 Public Class Department
     Private Sub Department_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         TopMost = True
         Me.Refresh()
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim com As String = "SELECT * FROM `department_tbl`"
-        Dim adap As New MySqlDataAdapter(com, con)
-        Dim dt As New DataSet
-
-        adap.Fill(dt, "INFO")
-        DataGridView1.DataSource = dt.Tables("INFO")
-
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-        DataGridView1.Columns("ID").Visible = False
-
+        refreshDepartment()
         DisablePaste_AllTextBoxes()
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
+
+    Public Sub refreshDepartment()
+        Dim query As String = "SELECT * FROM `department_tbl`"
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
+        SetupGridStyle()
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Dim query As String = "SELECT * FROM `department_tbl`"
+        Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+        SetupGridStyle()
+    End Sub
+
+    Private Sub SetupGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub Department_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 

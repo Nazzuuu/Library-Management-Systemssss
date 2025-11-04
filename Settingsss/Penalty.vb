@@ -10,28 +10,34 @@ Public Class Penalty
     Private Const ABSOLUTE_MIN_FEE As Decimal = 50.0
 
     Private Sub Penalty_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
         ClearAllDetails()
         refreshpenalty()
 
         lblborrowerstatus.Text = "NOT PENALIZED"
+
+
+        GlobalVarsModule.AutoRefreshGrid(
+        grid:=DataGridView1,
+        query:="SELECT * FROM `penalty_tbl` WHERE (`BorrowerStatus` IS NULL OR `BorrowerStatus` <> 'PENALIZED') ORDER BY ID DESC",
+        intervalMs:=2000
+    )
+
+
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated_Penalty
     End Sub
 
     Public Sub refreshpenalty(Optional searchText As String = "")
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim ds As New DataSet
         Dim com As String
-
-
         Dim statusFilter As String = "(`BorrowerStatus` IS NULL OR `BorrowerStatus` <> 'PENALIZED')"
 
         If String.IsNullOrWhiteSpace(searchText) Then
-
             com = $"SELECT * FROM `penalty_tbl` WHERE {statusFilter} ORDER BY ID DESC"
         Else
-
-            com = $"SELECT * FROM `penalty_tbl` WHERE ({statusFilter}) AND (`FullName` LIKE @search OR `LRN` LIKE @search OR `EmployeeNo` LIKE @search OR `TransactionReceipt` LIKE @search) ORDER BY ID DESC"
+            com = $"SELECT * FROM `penalty_tbl` WHERE ({statusFilter}) AND " &
+              "(`FullName` LIKE @search OR `LRN` LIKE @search OR `EmployeeNo` LIKE @search OR `TransactionReceipt` LIKE @search) ORDER BY ID DESC"
         End If
 
         Try
@@ -44,17 +50,28 @@ Public Class Penalty
                 adap.Fill(ds, "INFO")
                 DataGridView1.DataSource = ds.Tables("INFO")
 
+
+                If DataGridView1.Columns.Contains("ID") Then DataGridView1.Columns("ID").Visible = False
+                If DataGridView1.Columns.Contains("Grade") Then DataGridView1.Columns("Grade").Visible = False
+                If DataGridView1.Columns.Contains("Section") Then DataGridView1.Columns("Section").Visible = False
+                If DataGridView1.Columns.Contains("Strand") Then DataGridView1.Columns("Strand").Visible = False
+                If DataGridView1.Columns.Contains("BorrowedDate") Then DataGridView1.Columns("BorrowedDate").Visible = False
+                If DataGridView1.Columns.Contains("DueDate") Then DataGridView1.Columns("DueDate").Visible = False
+                If DataGridView1.Columns.Contains("ReturnDate") Then DataGridView1.Columns("ReturnDate").Visible = False
+
+
+                DataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.False
+                DataGridView1.EnableHeadersVisualStyles = False
+                DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+                DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+
                 If DataGridView1.Rows.Count > 0 Then
                     If Not String.IsNullOrWhiteSpace(searchText) Then
-
-
                         DataGridView1.ClearSelection()
                         DataGridView1.MultiSelect = True
-
-
                         DataGridView1.Rows(0).Selected = True
                         DataGridView1.FirstDisplayedScrollingRowIndex = 0
-
                         LoadDetailsFromSelectedRow(DataGridView1.Rows(0))
                     Else
                         DataGridView1.ClearSelection()
@@ -66,20 +83,6 @@ Public Class Penalty
                     ClearAllDetails()
                 End If
 
-
-                DataGridView1.Columns("ID").Visible = False
-                DataGridView1.Columns("Grade").Visible = False
-                DataGridView1.Columns("Section").Visible = False
-                DataGridView1.Columns("Strand").Visible = False
-                DataGridView1.Columns("BorrowedDate").Visible = False
-                DataGridView1.Columns("DueDate").Visible = False
-                DataGridView1.Columns("ReturnDate").Visible = False
-
-                DataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.False
-                DataGridView1.EnableHeadersVisualStyles = False
-                DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-                DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
             End Using
         Catch ex As Exception
             MessageBox.Show("Error loading penalty data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -87,6 +90,16 @@ Public Class Penalty
             If con.State = ConnectionState.Open Then con.Close()
         End Try
     End Sub
+
+
+    Private Async Sub OnDatabaseUpdated_Penalty()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `penalty_tbl` WHERE (`BorrowerStatus` IS NULL OR `BorrowerStatus` <> 'PENALIZED') ORDER BY ID DESC")
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
+
 
     Private Function GetAccessionIDsByTransaction(ByVal transactionNo As String, ByVal bookTitles As List(Of String)) As String
         If String.IsNullOrWhiteSpace(transactionNo) OrElse bookTitles Is Nothing OrElse bookTitles.Count = 0 Then Return String.Empty

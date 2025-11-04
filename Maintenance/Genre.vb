@@ -1,31 +1,40 @@
 ﻿Imports MySql.Data.MySqlClient
 Public Class Genre
     Private Sub Genre_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
-
         TopMost = True
         Me.Refresh()
-
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim com As String = "SELECT * FROM `genre_tbl`"
-        Dim adp As New MySqlDataAdapter(com, con)
-        Dim dt As New DataSet
-
-        adp.Fill(dt, "INFO")
-
-
-        DataGridView1.DataSource = dt.Tables("INFO")
-        DataGridView1.Columns("ID").Visible = False
-
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
-
-        txtgenre.Text = ""
-
+        refreshGenre()
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
+
+    Public Sub refreshGenre()
+        Dim query As String = "SELECT * FROM `genre_tbl`"
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
+        SetupGridStyle()
+        txtgenre.Text = ""
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Dim query As String = "SELECT * FROM `genre_tbl`"
+        Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+        SetupGridStyle()
+    End Sub
+
+    Private Sub SetupGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub Genre_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 

@@ -4,31 +4,71 @@ Imports Windows.Win32.System
 
 Public Class Author
     Private Sub Author_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         TopMost = True
         Me.Font = New Font("Baskerville Old Face", 9)
         Me.Refresh()
 
+        refreshauthor()
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim comm As String = "SELECT * FROM `author_tbl`"
-        Dim adap As New MySqlDataAdapter(comm, con)
-        Dim ds As New DataSet
-        adap.Fill(ds, "INFO")
-
-
-        DataGridView1.DataSource = ds.Tables("INFO")
-
-
-        DataGridView1.ClearSelection()
-        DataGridView1.CurrentCell = Nothing
-
-
-        DataGridView1.Columns("ID").Visible = False
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
     End Sub
+
+
+    Public Sub refreshauthor()
+
+        Dim query As String = "SELECT * FROM `author_tbl` ORDER BY ID DESC"
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
+        SetupGridStyle()
+
+    End Sub
+
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+
+            Dim selectedAuthor As String = ""
+            If DataGridView1.SelectedRows.Count > 0 Then
+                selectedAuthor = DataGridView1.SelectedRows(0).Cells("AuthorName").Value.ToString()
+            End If
+
+
+            Dim query As String = "SELECT * FROM `author_tbl` ORDER BY ID DESC"
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+            SetupGridStyle()
+
+
+            If Not String.IsNullOrWhiteSpace(selectedAuthor) Then
+                For Each row As DataGridViewRow In DataGridView1.Rows
+                    If row.Cells("AuthorName").Value.ToString() = selectedAuthor Then
+                        row.Selected = True
+                        DataGridView1.FirstDisplayedScrollingRowIndex = row.Index
+                        Exit For
+                    End If
+                Next
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error while refreshing author list: " & ex.Message)
+        End Try
+    End Sub
+
+
+    Private Sub SetupGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
+
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.ReadOnly = True
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
 
     Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs)
         MainForm.Show()

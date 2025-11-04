@@ -34,7 +34,7 @@ Public Class BorrowerLoginForm
 
 
     Private Sub btnlogin_Click(sender As Object, e As EventArgs) Handles btnlogin.Click
-        TopMost = True
+        'TopMost = True
         Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
 
         If activeMain Is Nothing Then

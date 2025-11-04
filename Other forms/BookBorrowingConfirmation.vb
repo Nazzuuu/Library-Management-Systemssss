@@ -9,6 +9,8 @@ Public Class BookBorrowingConfirmation
 
     Private Sub BookBorrowingConfirmation_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshconfirmation()
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DaysLimit, DueDate, TransactionReceipt, Status FROM `confimation_tbl`", 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
     Public Sub refreshconfirmation()
@@ -22,7 +24,6 @@ Public Class BookBorrowingConfirmation
             adap.Fill(ds, "info")
             DataGridView1.DataSource = ds.Tables("info")
             DataGridView1.Columns("ID").Visible = False
-
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
@@ -32,6 +33,16 @@ Public Class BookBorrowingConfirmation
             If con.State = ConnectionState.Open Then con.Close()
         End Try
     End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Dim query As String = "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DaysLimit, DueDate, TransactionReceipt, Status FROM `confimation_tbl`"
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub pendingstats(accessionID As String, status As String)
         Try

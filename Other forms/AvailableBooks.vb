@@ -7,50 +7,40 @@ Public Class AvailableBooks
     Private Sub AvailableBooks_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshavail()
         counts()
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT t1.ISBN, t1.Barcode, t1.AccessionID, t1.BookTitle, t1.Shelf, t1.Status FROM `available_tbl` t1 JOIN `acession_tbl` t2 ON t1.AccessionID = t2.AccessionID WHERE t1.Status = 'Available' ORDER BY t1.BookTitle ASC, t1.AccessionID", 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
     Public Sub refreshavail()
-
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-
         Try
             con.Open()
-
             Dim syncDeleteSql As String = "DELETE av.* FROM available_tbl av " &
-                                     "LEFT JOIN acession_tbl ac ON av.AccessionID = ac.AccessionID " &
-                                     "WHERE ac.Status <> 'Available' OR ac.Status IS NULL"
-
+                                      "LEFT JOIN acession_tbl ac ON av.AccessionID = ac.AccessionID " &
+                                      "WHERE ac.Status <> 'Available' OR ac.Status IS NULL"
             Using syncDeleteCmd As New MySqlCommand(syncDeleteSql, con)
                 syncDeleteCmd.ExecuteNonQuery()
             End Using
 
-
             Dim syncInsertSql As String = "INSERT IGNORE INTO available_tbl (AccessionID, ISBN, Barcode, BookTitle, Shelf, Status) " &
-                                     "SELECT ac.AccessionID, ac.ISBN, ac.Barcode, ac.BookTitle, ac.Shelf, ac.Status " &
-                                     "FROM acession_tbl ac " &
-                                     "LEFT JOIN available_tbl av ON ac.AccessionID = av.AccessionID " &
-                                     "WHERE ac.Status = 'Available' AND av.AccessionID IS NULL"
-
+                                      "SELECT ac.AccessionID, ac.ISBN, ac.Barcode, ac.BookTitle, ac.Shelf, ac.Status " &
+                                      "FROM acession_tbl ac " &
+                                      "LEFT JOIN available_tbl av ON ac.AccessionID = av.AccessionID " &
+                                      "WHERE ac.Status = 'Available' AND av.AccessionID IS NULL"
             Using syncInsertCmd As New MySqlCommand(syncInsertSql, con)
                 syncInsertCmd.ExecuteNonQuery()
             End Using
-
-
 
             Dim com As String = "SELECT t1.ISBN, t1.Barcode, t1.AccessionID, t1.BookTitle, t1.Shelf, t1.Status " &
                             "FROM `available_tbl` t1 " &
                             "JOIN `acession_tbl` t2 ON t1.AccessionID = t2.AccessionID " &
                             "WHERE t1.Status = 'Available' " &
                             "ORDER BY t1.BookTitle ASC, t1.AccessionID"
-
             Dim adap As New MySqlDataAdapter(com, con)
             Dim ds As New DataSet
-
             adap.SelectCommand.Connection = con
             adap.Fill(ds, "avail_info")
-
             DataGridView1.DataSource = ds.Tables("avail_info")
-
         Catch ex As Exception
             MessageBox.Show("Error refreshing Available Books data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
@@ -58,7 +48,6 @@ Public Class AvailableBooks
                 con.Close()
             End If
         End Try
-
 
         If DataGridView1.Columns.Contains("ID") Then
             DataGridView1.Columns("ID").Visible = False
@@ -69,6 +58,19 @@ Public Class AvailableBooks
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         DataGridView1.ClearSelection()
         DataGridView1.AllowUserToAddRows = False
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Dim query As String = "SELECT t1.ISBN, t1.Barcode, t1.AccessionID, t1.BookTitle, t1.Shelf, t1.Status " &
+                              "FROM `available_tbl` t1 " &
+                              "JOIN `acession_tbl` t2 ON t1.AccessionID = t2.AccessionID " &
+                              "WHERE t1.Status = 'Available' " &
+                              "ORDER BY t1.BookTitle ASC, t1.AccessionID"
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
     End Sub
 
     Public Sub counts()

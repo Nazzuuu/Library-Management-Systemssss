@@ -7,62 +7,6 @@ Public Class Accession
 
     Private ReadOnly connectionString As String = GlobalVarsModule.connectionString
 
-
-
-    Public Sub RefreshAccessionData(Optional ByVal filterStatus As String = "")
-
-        Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT * FROM `acession_tbl`"
-
-        If Not String.IsNullOrEmpty(filterStatus) Then
-            com &= " WHERE Status = @Status"
-        End If
-
-
-        com &= " ORDER BY TransactionNo, BookTitle, AccessionID"
-
-        Dim comsu As New MySqlCommand(com, con)
-
-        If Not String.IsNullOrEmpty(filterStatus) Then
-            comsu.Parameters.AddWithValue("@Status", filterStatus)
-        End If
-
-        Dim adap As New MySqlDataAdapter(comsu)
-        Dim ds As New DataSet
-
-        Try
-            adap.Fill(ds, "INFO")
-            DataGridView1.DataSource = ds.Tables("INFO")
-
-            DataGridView1.EnableHeadersVisualStyles = False
-
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
-
-            If DataGridView1.Columns.Contains("ID") Then
-                DataGridView1.Columns("ID").Visible = False
-            End If
-
-        Catch ex As Exception
-            MessageBox.Show("Error refreshing data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
-
-        btnview.Enabled = True
-        btnview.Visible = True
-        shelfsu()
-        DataGridView1.ClearSelection()
-
-        For Each form In Application.OpenForms
-            If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.lbldamagecount()
-                load.lbllostcount()
-                load.lbloverduecount()
-            End If
-        Next
-    End Sub
-
     Public Sub shelfsu()
 
         Dim con As New MySqlConnection(connectionString)
@@ -110,14 +54,12 @@ Public Class Accession
     End Sub
 
     Private Sub Acession_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
         RefreshAccessionData()
 
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
 
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         DataGridView1.MultiSelect = True
@@ -130,10 +72,70 @@ Public Class Accession
         txtsuppliername.Enabled = False
 
 
-
-
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildAccessionQuery(""), 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
+    Private Function BuildAccessionQuery(Optional filterStatus As String = "") As String
+        Dim query As String = "SELECT * FROM `acession_tbl`"
+
+        If Not String.IsNullOrEmpty(filterStatus) Then
+            query &= " WHERE Status = '" & MySqlHelper.EscapeString(filterStatus) & "'"
+        End If
+
+        query &= " ORDER BY TransactionNo, BookTitle, AccessionID"
+        Return query
+    End Function
+
+    Public Sub RefreshAccessionData(Optional ByVal filterStatus As String = "")
+        Dim con As New MySqlConnection(connectionString)
+        Dim query As String = BuildAccessionQuery(filterStatus)
+
+        Dim cmd As New MySqlCommand(query, con)
+        Dim adap As New MySqlDataAdapter(cmd)
+        Dim ds As New DataSet
+
+        Try
+            adap.Fill(ds, "INFO")
+            DataGridView1.DataSource = ds.Tables("INFO")
+
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error refreshing data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            con.Close()
+        End Try
+
+        btnview.Enabled = True
+        btnview.Visible = True
+        shelfsu()
+        DataGridView1.ClearSelection()
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+            End If
+        Next
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Dim query As String = BuildAccessionQuery("")
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
 
 
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged

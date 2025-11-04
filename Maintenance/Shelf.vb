@@ -4,12 +4,21 @@ Imports System.Data
 
 Public Class Shelf
     Private Sub Shelf_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
 
         TopMost = True
         Me.Refresh()
 
+        LoadShelfData()
+
+
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `shelf_tbl`", 2000)
+
+
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+    End Sub
+
+    Private Sub LoadShelfData()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `shelf_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -18,18 +27,35 @@ Public Class Shelf
         Try
             adap.Fill(ds, "INFO")
             DataGridView1.DataSource = ds.Tables("INFO")
-
-            DataGridView1.EnableHeadersVisualStyles = False
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
-            DataGridView1.Columns("ID").Visible = False
-            DataGridView1.ClearSelection()
+            SetupShelfGridStyle()
         Catch ex As Exception
             MsgBox($"Error loading data: {ex.Message}", vbCritical)
         End Try
-
     End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `shelf_tbl`")
+            SetupShelfGridStyle()
+        Catch
+        End Try
+    End Sub
+
+    Private Sub SetupShelfGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 

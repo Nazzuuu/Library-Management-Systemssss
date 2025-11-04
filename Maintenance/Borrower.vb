@@ -9,67 +9,55 @@ Public Class Borrower
     Private isBackspacing As Boolean = False
 
     Private Sub Borrower_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         refreshData()
-
         DisablePaste_AllTextBoxes()
-
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
     Public Sub refreshData()
+        Dim query As String =
+        "SELECT b.*, " &
+        "CASE WHEN e.ID IS NOT NULL THEN 1 ELSE 0 END AS HasAccount " &
+        "FROM `borrower_tbl` b " &
+        "LEFT JOIN `borroweredit_tbl` e ON b.LRN = e.LRN OR b.EmployeeNo = e.EmployeeNo"
 
-        Dim con As New MySqlConnection(connectionString)
-
-        Dim com As String = "SELECT b.*, " &
-                             "CASE WHEN e.ID IS NOT NULL THEN 1 ELSE 0 END AS HasAccount " &
-                             "FROM `borrower_tbl` b " &
-                             "LEFT JOIN `borroweredit_tbl` e ON b.LRN = e.LRN OR b.EmployeeNo = e.EmployeeNo"
-
-        Dim adap As New MySqlDataAdapter(com, con)
-        Dim dt As New DataTable
-
-        Try
-            con.Open()
-            adap.Fill(dt)
-
-            DataGridView1.DataSource = dt
-
-
-            If DataGridView1.Columns.Contains("ID") Then
-                DataGridView1.Columns("ID").Visible = False
-            End If
-
-            If DataGridView1.Columns.Contains("HasAccount") Then
-                DataGridView1.Columns("HasAccount").Visible = False
-            End If
-
-
-            DataGridView1.EnableHeadersVisualStyles = False
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
-
-            ColorRows()
-
-        Catch ex As Exception
-            MessageBox.Show("Error loading data: " & ex.Message)
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
-
-        DataGridView1.ClearSelection()
-        DataGridView1.CurrentCell = Nothing
-
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
+        SetupGridStyle()
         cbgradee()
         cbsecs()
         cbdepts()
         cbstrandd()
-
         ClearFields()
         strandlocation()
+    End Sub
 
+    Private Async Sub OnDatabaseUpdated()
+        Dim query As String =
+        "SELECT b.*, " &
+        "CASE WHEN e.ID IS NOT NULL THEN 1 ELSE 0 END AS HasAccount " &
+        "FROM `borrower_tbl` b " &
+        "LEFT JOIN `borroweredit_tbl` e ON b.LRN = e.LRN OR b.EmployeeNo = e.EmployeeNo"
+
+        Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+        SetupGridStyle()
+    End Sub
+
+    Private Sub SetupGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+            If DataGridView1.Columns.Contains("HasAccount") Then
+                DataGridView1.Columns("HasAccount").Visible = False
+            End If
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            ColorRows()
+        Catch
+        End Try
     End Sub
 
     Public Sub ColorRows()

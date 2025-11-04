@@ -73,28 +73,90 @@ Public Class oras
         Timer1.Interval = 1000
         Timer1.Start()
 
-
-        Dim isBorrowerRole As Boolean = (GlobalVarsModule.CurrentUserRole = "Borrower" OrElse GlobalVarsModule.CurrentUserRole = "Student" OrElse GlobalVarsModule.CurrentUserRole = "Teacher")
+        Dim isBorrowerRole As Boolean =
+        (GlobalVarsModule.CurrentUserRole = "Borrower" OrElse
+         GlobalVarsModule.CurrentUserRole = "Student" OrElse
+         GlobalVarsModule.CurrentUserRole = "Teacher")
 
         If isBorrowerRole Then
-
-
             btnregisterview.Visible = False
             btnedit.Enabled = True
             btnclear.Enabled = True
-            btnview.Location = New Point(398, 274) ' Adjusted location for single button
-            txtsearch.Enabled = False ' Assuming Borrower cannot search other's records
-
+            btnview.Location = New Point(398, 274)
+            txtsearch.Enabled = False
         Else
-
             txtsearch.Enabled = True
             btnregisterview.Visible = True
             btnedit.Enabled = True
             btnclear.Enabled = True
             btnview.Location = New Point(607, 274)
-
         End If
+
+
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildQuery(), 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
+
+    Private Function BuildQuery() As String
+        Dim currentUserRole As String = GlobalVarsModule.CurrentUserRole
+        Dim currentBorrowerID As String = GlobalVarsModule.CurrentBorrowerID
+
+        Dim com As String = "SELECT o.`ID`, b.`Borrower`, o.`LRN`, o.`EmployeeNo`, " &
+                        "b.`FirstName`, b.`LastName`, b.`MiddleInitial`, b.`ContactNumber`, " &
+                        "b.`Department`, b.`Grade`, b.`Section`, b.`Strand`, " &
+                        "o.`TimeIn`, o.`TimeOut` " &
+                        "FROM `oras_tbl` o " &
+                        "LEFT JOIN `borrower_tbl` b " &
+                        "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
+                        "WHERE o.`TimeOut` IS NULL "
+
+        If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
+            com &= " AND (o.`LRN` = '" & MySqlHelper.EscapeString(currentBorrowerID) & "' OR o.`EmployeeNo` = '" & MySqlHelper.EscapeString(currentBorrowerID) & "')"
+        End If
+
+        com &= " ORDER BY o.`TimeIn` DESC"
+        Return com
+    End Function
+
+    Public Sub ludeyngoras()
+        DataGridView1.DataSource = Nothing
+        DataGridView1.Columns.Clear()
+
+        Using con As New MySqlConnection(connectionString)
+            Try
+                con.Open()
+
+                Dim query As String = BuildQuery()
+                Dim adap As New MySqlDataAdapter(query, con)
+                Dim ds As New DataSet
+                adap.Fill(ds, "oras_data")
+
+                DataGridView1.DataSource = ds.Tables("oras_data")
+
+                If DataGridView1.Columns.Contains("ID") Then
+                    DataGridView1.Columns("ID").Visible = False
+                End If
+
+                DataGridView1.ClearSelection()
+                DataGridView1.EnableHeadersVisualStyles = False
+                DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+                DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+            Catch ex As Exception
+                MessageBox.Show("Error loading time records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Dim query As String = BuildQuery()
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub Oras_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
@@ -108,77 +170,6 @@ Public Class oras
     End Sub
 
 
-    Public Sub ludeyngoras()
-
-        DataGridView1.DataSource = Nothing
-        DataGridView1.Columns.Clear()
-
-        Dim currentUserRole As String = GlobalVarsModule.CurrentUserRole
-        Dim currentBorrowerID As String = GlobalVarsModule.CurrentBorrowerID
-
-        Dim com As String = "SELECT " &
-                            "o.`ID`, " &
-                            "b.`Borrower`, " &
-                            "o.`LRN`, " &
-                            "o.`EmployeeNo`, " &
-                            "b.`FirstName`, " &
-                            "b.`LastName`, " &
-                            "b.`MiddleInitial`, " &
-                            "b.`ContactNumber`, " &
-                            "b.`Department`, " &
-                            "b.`Grade`, " &
-                            "b.`Section`, " &
-                            "b.`Strand`, " &
-                            "o.`TimeIn`, " &
-                            "o.`TimeOut` " &
-                            "FROM `oras_tbl` o " &
-                            "LEFT JOIN `borrower_tbl` b " &
-                            "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
-                            "WHERE o.`TimeOut` IS NULL "
-
-
-        If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
-
-            com &= " AND (o.`LRN` = @ID OR o.`EmployeeNo` = @ID)"
-        End If
-
-
-        com &= " ORDER BY o.`TimeIn` DESC"
-
-        Using con As New MySqlConnection(connectionString)
-            Try
-                con.Open()
-                Using cmd As New MySqlCommand(com, con)
-
-                    If currentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(currentBorrowerID) Then
-
-                        cmd.Parameters.AddWithValue("@ID", currentBorrowerID)
-                    End If
-
-
-                    Dim adap As New MySqlDataAdapter(cmd)
-                    Dim ds As New DataSet
-                    adap.Fill(ds, "oras_data")
-
-                    DataGridView1.DataSource = ds.Tables("oras_data")
-
-                    If DataGridView1.Columns.Contains("ID") Then
-                        DataGridView1.Columns("ID").Visible = False
-                    End If
-
-                    DataGridView1.ClearSelection()
-
-                    DataGridView1.EnableHeadersVisualStyles = False
-                    DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-                    DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
-                End Using
-            Catch ex As Exception
-                MessageBox.Show("Error loading time records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End Try
-        End Using
-
-    End Sub
 
     Public Sub clearlahat()
 

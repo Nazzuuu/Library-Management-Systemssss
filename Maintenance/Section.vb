@@ -3,34 +3,45 @@ Imports System.Data
 
 Public Class Section
     Private Sub Section_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
-        refreshsecs()
+        TopMost = True
+        Me.Refresh()
 
+        refreshsecs()
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
     Public Sub refreshsecs()
-
-        TopMost = True
-
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim com As String = "SELECT * FROM `section_tbl`"
-        Dim adap As New MySqlDataAdapter(com, con)
-        Dim dt As New DataSet
-
-        adap.Fill(dt, "INFO")
-        DataGridView1.DataSource = dt.Tables("INFO")
-
-        DataGridView1.EnableHeadersVisualStyles = False
-        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-        DataGridView1.Columns("ID").Visible = False
-
-
+        Dim query As String = "SELECT * FROM `section_tbl`"
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
+        SetupGridStyle()
         cbdeptss()
         clearlahat()
-
     End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Dim query As String = "SELECT * FROM `section_tbl`"
+        Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+        SetupGridStyle()
+        cbdeptss()
+        clearlahat()
+    End Sub
+
+    Private Sub SetupGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub Section_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
@@ -748,48 +759,48 @@ Public Class Section
     End Sub
 
     Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-
         If e.RowIndex >= 0 Then
             Dim row = DataGridView1.Rows(e.RowIndex)
 
-            ' Unhook event handler to prevent recursive calls during programmatic selection
+
             RemoveHandler cbdepartment.SelectedIndexChanged, AddressOf cbdepartment_SelectedIndexChanged
             RemoveHandler cbgrade.SelectedIndexChanged, AddressOf cbgrade_SelectedIndexChanged
 
-            cbdepartment.Text = row.Cells("Department").Value.ToString
-            cbgrade.Text = row.Cells("GradeLevel").Value.ToString
 
-            ' Trigger the department change logic manually
-            cbdepartment_SelectedIndexChanged(cbdepartment, EventArgs.Empty)
-
+            Dim deptValue As String = row.Cells("Department").Value.ToString()
+            Dim gradeValue As String = row.Cells("GradeLevel").Value.ToString()
             Dim sectionValue = row.Cells("Section").Value
             Dim strandValue = row.Cells("Strand").Value
-            Dim selectedDept = cbdepartment.Text
 
-            If selectedDept = "Junior High School" OrElse selectedDept = "Elementary" Then
-                ' For Section
+
+            cbdepartment.Text = deptValue
+
+
+            cbdepartment_SelectedIndexChanged(cbdepartment, EventArgs.Empty)
+
+            cbgrade.Text = gradeValue
+
+            If deptValue = "Junior High School" OrElse deptValue = "Elementary" Then
                 txtsection.Visible = True
                 cbstrand.Visible = False
                 lbl_sectionandstrand.Text = "Section:"
-                txtsection.Text = If(IsDBNull(sectionValue), "", sectionValue.ToString)
+                txtsection.Text = If(IsDBNull(sectionValue), "", sectionValue.ToString())
                 txtsection.Enabled = True
                 cbstrand.Enabled = False
-            ElseIf selectedDept = "Senior High School" Then
-                ' For Strand
+            ElseIf deptValue = "Senior High School" Then
                 cbstrand.Visible = True
                 txtsection.Visible = False
                 lbl_sectionandstrand.Text = "Strand:"
-                cbstrand.Text = If(IsDBNull(strandValue), "", strandValue.ToString)
+                cbstrand.Text = If(IsDBNull(strandValue), "", strandValue.ToString())
                 cbstrand.Enabled = True
                 txtsection.Enabled = False
             End If
 
-            ' Re-hook event handlers
             AddHandler cbdepartment.SelectedIndexChanged, AddressOf cbdepartment_SelectedIndexChanged
             AddHandler cbgrade.SelectedIndexChanged, AddressOf cbgrade_SelectedIndexChanged
         End If
-
     End Sub
+
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
         Cursor = Cursors.Hand

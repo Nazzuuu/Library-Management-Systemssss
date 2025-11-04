@@ -3,30 +3,50 @@ Imports System.Data
 
 Public Class Supplier
     Private Sub Supplier_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
-
         TopMost = True
         Me.Refresh()
+        LoadSupplierData()
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `supplier_tbl`", 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+    End Sub
 
+    Private Sub LoadSupplierData()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `supplier_tbl`"
         Dim adp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
-
         Try
             adp.Fill(dt, "INFO")
             DataGridView1.DataSource = dt.Tables("INFO")
-
-            DataGridView1.EnableHeadersVisualStyles = False
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-            DataGridView1.ClearSelection()
+            SetupSupplierGridStyle()
         Catch ex As Exception
             MsgBox($"Error loading data: {ex.Message}", vbCritical)
         End Try
-
     End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `supplier_tbl`")
+            SetupSupplierGridStyle()
+        Catch
+        End Try
+    End Sub
+
+    Private Sub SetupSupplierGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub Supplier_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 

@@ -13,7 +13,6 @@ Public Class Borrowing
     Private lastProcessedText As String = ""
 
     Private Sub Borrowing_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         refreshborrowingsu()
 
         timerSystemDate.Interval = 1000
@@ -21,10 +20,80 @@ Public Class Borrowing
 
         btntimein.Visible = False
 
-
-
-
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildBorrowingQuery(), 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
+
+    Public Sub refreshborrowingsu()
+        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
+        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim com As String = BuildBorrowingQuery()
+        Dim adap As New MySqlDataAdapter()
+        Dim ds As New DataSet
+
+        Try
+            con.Open()
+            Using cmd As New MySqlCommand(com, con)
+                If borrowerType <> "" AndAlso borrowerID <> "" AndAlso GlobalVarsModule.CurrentUserRole = "Borrower" Then
+                    cmd.Parameters.AddWithValue("@BorrowerID", borrowerID)
+                End If
+
+                adap.SelectCommand = cmd
+                adap.Fill(ds, "borrowing_data")
+                DataGridView1.DataSource = ds.Tables("borrowing_data")
+
+                If DataGridView1.Columns.Contains("ID") Then DataGridView1.Columns("ID").Visible = False
+
+                If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+                    If borrowerType = "Teacher" AndAlso DataGridView1.Columns.Contains("LRN") Then DataGridView1.Columns("LRN").Visible = False
+                    If borrowerType = "Student" AndAlso DataGridView1.Columns.Contains("EmployeeNo") Then DataGridView1.Columns("EmployeeNo").Visible = False
+                End If
+
+                DataGridView1.EnableHeadersVisualStyles = False
+                DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+                DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error loading borrowing records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then con.Close()
+        End Try
+
+        ClearBookFields()
+    End Sub
+
+    Private Function BuildBorrowingQuery() As String
+        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
+        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
+
+
+        If String.IsNullOrWhiteSpace(borrowerID) Then
+            Return "SELECT * FROM `borrowing_tbl` ORDER BY `BorrowedDate` DESC"
+        End If
+
+        If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+            If borrowerType = "Student" Then
+                Return $"SELECT * FROM `borrowing_tbl` WHERE `LRN` = '{MySqlHelper.EscapeString(borrowerID)}' ORDER BY `BorrowedDate` DESC"
+            ElseIf borrowerType = "Teacher" Then
+                Return $"SELECT * FROM `borrowing_tbl` WHERE `EmployeeNo` = '{MySqlHelper.EscapeString(borrowerID)}' ORDER BY `BorrowedDate` DESC"
+            End If
+        End If
+
+
+        Return "SELECT * FROM `borrowing_tbl` ORDER BY `BorrowedDate` DESC"
+    End Function
+
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, BuildBorrowingQuery())
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
+
 
     Private Function GenerateUniqueTransactionID() As String
 
@@ -92,88 +161,6 @@ Public Class Borrowing
     Private Sub Borrowing_Activated(sender As Object, e As EventArgs) Handles Me.Activated
 
         refreshborrowingsu()
-    End Sub
-
-    Public Sub refreshborrowingsu()
-
-
-        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
-        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
-
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim com As String = ""
-        Dim identifierColumn As String = ""
-
-        Dim showAllRecords As Boolean = True
-
-
-        If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(borrowerID) Then
-            showAllRecords = False
-
-            If borrowerType = "Student" Then
-                identifierColumn = "LRN"
-
-                com = $"SELECT * FROM `borrowing_tbl` WHERE `{identifierColumn}` = @BorrowerID ORDER BY `BorrowedDate` DESC"
-            ElseIf borrowerType = "Teacher" Then
-                identifierColumn = "EmployeeNo"
-
-                com = $"SELECT * FROM `borrowing_tbl` WHERE `{identifierColumn}` = @BorrowerID ORDER BY `BorrowedDate` DESC"
-            End If
-        End If
-
-        If showAllRecords OrElse String.IsNullOrWhiteSpace(com) Then
-            com = "SELECT * FROM `borrowing_tbl` ORDER BY `BorrowedDate` DESC"
-        End If
-
-
-        Dim adap As New MySqlDataAdapter()
-        Dim ds As New DataSet
-
-        Try
-            con.Open()
-
-            Using cmd As New MySqlCommand(com, con)
-
-                If Not showAllRecords Then
-
-                    cmd.Parameters.AddWithValue("@BorrowerID", borrowerID)
-                End If
-
-                adap.SelectCommand = cmd
-                adap.Fill(ds, "borrowing_data")
-
-                DataGridView1.DataSource = ds.Tables("borrowing_data")
-
-
-                If DataGridView1.Columns.Contains("ID") Then
-                    DataGridView1.Columns("ID").Visible = False
-                End If
-
-
-                If GlobalVarsModule.CurrentUserRole = "Borrower" Then
-                    If DataGridView1.Columns.Contains("LRN") AndAlso borrowerType = "Teacher" Then
-                        DataGridView1.Columns("LRN").Visible = False
-                    End If
-                    If DataGridView1.Columns.Contains("EmployeeNo") AndAlso borrowerType = "Student" Then
-                        DataGridView1.Columns("EmployeeNo").Visible = False
-                    End If
-                End If
-
-
-                DataGridView1.EnableHeadersVisualStyles = False
-                DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-                DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-            End Using
-        Catch ex As Exception
-            MessageBox.Show("Error loading borrowing records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
-
-        ClearBookFields()
-
     End Sub
 
     Private Sub Borrowing_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown

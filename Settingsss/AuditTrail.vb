@@ -4,7 +4,6 @@ Imports System.Windows.Forms
 
 Public Class AuditTrail
     Private Sub AuditTrail_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         cbfilter.Items.Clear()
         cbfilter.Items.Add("All")
         cbfilter.Items.Add("Librarian")
@@ -13,50 +12,61 @@ Public Class AuditTrail
         cbfilter.SelectedIndex = 0
 
         refreshaudit()
+
+
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `audit_trail_tbl` ORDER BY DateTime DESC", 2000)
+
+
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated_Audit
     End Sub
 
-
     Public Sub refreshaudit(Optional ByVal selectedRole As String = "All")
-
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim sqlFilter As String = ""
-
-
-        If selectedRole <> "All" Then
-            sqlFilter = $" WHERE Role = '{selectedRole}'"
-        End If
-
-
-        Dim com As String = "SELECT * FROM `audit_trail_tbl`" & sqlFilter & " ORDER BY DateTime DESC"
-
-        Dim adap As New MySqlDataAdapter(com, con)
+        Dim com As String = "SELECT * FROM `audit_trail_tbl`"
         Dim ds As New DataSet
 
-
-        If DataGridView1.SortedColumn IsNot Nothing Then
-            DataGridView1.Sort(DataGridView1.SortedColumn, System.ComponentModel.ListSortDirection.Ascending)
+        If selectedRole <> "All" Then
+            com &= " WHERE Role = @Role"
         End If
+        com &= " ORDER BY DateTime DESC"
 
+        Dim adap As New MySqlDataAdapter()
+        adap.SelectCommand = New MySqlCommand(com, con)
+
+        If selectedRole <> "All" Then
+            adap.SelectCommand.Parameters.AddWithValue("@Role", selectedRole)
+        End If
 
         Try
             adap.Fill(ds, "INFO")
             DataGridView1.DataSource = ds.Tables("INFO")
 
-            DataGridView1.Columns("ID").Visible = False
-            If DataGridView1.Columns.Contains("DateTime") Then
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
 
+            If DataGridView1.Columns.Contains("DateTime") Then
                 DataGridView1.Sort(DataGridView1.Columns("DateTime"), System.ComponentModel.ListSortDirection.Descending)
             End If
 
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.ClearSelection()
 
         Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
+            MessageBox.Show("Error loading audit trail: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-
     End Sub
+
+    Private Async Sub OnDatabaseUpdated_Audit()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `audit_trail_tbl` ORDER BY DateTime DESC")
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub cbfilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbfilter.SelectedIndexChanged
 

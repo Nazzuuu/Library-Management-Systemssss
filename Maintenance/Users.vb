@@ -14,20 +14,16 @@ Public Class Users
         Dim com As String = "SELECT * FROM `user_staff_tbl`"
         Dim adapp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
-
         Try
             con.Open()
             adapp.Fill(dt, "INFO")
             DataGridView1.DataSource = dt.Tables("INFO")
             con.Close()
-
             DataGridView1.Columns("ID").Visible = False
             DataGridView1.Columns("Password").Visible = False
-
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
             DataGridView1.ClearSelection()
             DataGridView1.CurrentCell = Nothing
         Catch ex As Exception
@@ -37,21 +33,15 @@ Public Class Users
                 con.Close()
             End If
         End Try
-
         LoadUserData()
     End Sub
 
     Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
-
         txtpassword.PasswordChar = "•"
-
-
         Try
             Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
             If File.Exists(filePath) Then
-
                 Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
                     PictureBox2.Image = New Bitmap(fs)
                 End Using
@@ -61,16 +51,28 @@ Public Class Users
         Catch ex As Exception
             MessageBox.Show("Error loading pikit.png for Users_Staffs Form: " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-
-
         LoadStaffData()
         LoadUserData()
-
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `user_staff_tbl`", 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
         AddHandler DataGridView1.CellFormatting, AddressOf Me.DataGridView1_CellFormatting
-
         lblpassword.Visible = False
-
     End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `user_staff_tbl`")
+            If DataGridView1.Columns.Contains("ID") Then DataGridView1.Columns("ID").Visible = False
+            If DataGridView1.Columns.Contains("Password") Then DataGridView1.Columns("Password").Visible = False
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub User_staff(sender As Object, e As EventArgs) Handles MyBase.Shown
 

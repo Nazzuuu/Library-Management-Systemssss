@@ -3,31 +3,50 @@ Imports System.Data
 
 Public Class Strand
     Private Sub Strand_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         DisablePaste_AllTextBoxes()
-
         TopMost = True
         Me.Refresh()
+        LoadStrandData()
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `strand_tbl`", 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+    End Sub
 
+    Private Sub LoadStrandData()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `strand_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
-
         Try
             adap.Fill(dt, "INFO")
             DataGridView1.DataSource = dt.Tables("INFO")
-
-            DataGridView1.EnableHeadersVisualStyles = False
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-            DataGridView1.Columns("ID").Visible = False
-            DataGridView1.ClearSelection()
+            SetupStrandGridStyle()
         Catch ex As Exception
             MsgBox($"Error loading data: {ex.Message}", vbCritical)
         End Try
-
     End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `strand_tbl`")
+            SetupStrandGridStyle()
+        Catch
+        End Try
+    End Sub
+
+    Private Sub SetupStrandGridStyle()
+        Try
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        Catch
+        End Try
+    End Sub
+
 
     Private Sub Strand_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 

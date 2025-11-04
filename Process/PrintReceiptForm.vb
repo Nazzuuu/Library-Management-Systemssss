@@ -292,6 +292,8 @@ Public Class PrintReceiptForm
 
     Private Sub PrintReceiptForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshreceipt()
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `printreceipt_tbl` WHERE `IsPrinted` = 0", 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
     Public Sub refreshreceipt()
@@ -306,6 +308,15 @@ Public Class PrintReceiptForm
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        DataGridView1.ClearSelection()
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `printreceipt_tbl` WHERE `IsPrinted` = 0")
+            DataGridView1.ClearSelection()
+        Catch
+        End Try
     End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
