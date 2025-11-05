@@ -278,13 +278,11 @@ Module GlobalVarsModule
                                End Using
                            Catch ex As MySqlException
                                grid.Invoke(Sub()
-                                               MessageBox.Show("Error loading data: " & ex.Message,
-                                                           "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
                                            End Sub)
                            Catch ex As Exception
                                grid.Invoke(Sub()
-                                               MessageBox.Show("Unexpected error while loading data: " & ex.Message,
-                                                           "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
                                            End Sub)
                            End Try
                        End Sub)
@@ -294,11 +292,24 @@ Module GlobalVarsModule
     Private refreshTimers As New Dictionary(Of DataGridView, Timer)
 
 
-    Public Async Sub AutoRefreshGrid(grid As DataGridView, query As String, Optional intervalMs As Integer = 2000)
+    Public Async Sub AutoRefreshGrid(grid As DataGridView, queryOrFunc As Object, Optional intervalMs As Integer = 2000)
+        Dim queryFunc As Func(Of String)
+
+
+        If TypeOf queryOrFunc Is String Then
+            Dim fixedQuery As String = DirectCast(queryOrFunc, String)
+            queryFunc = Function() fixedQuery
+        ElseIf TypeOf queryOrFunc Is Func(Of String) Then
+            queryFunc = DirectCast(queryOrFunc, Func(Of String))
+        Else
+            Throw New ArgumentException("Invalid query type passed to AutoRefreshGrid.")
+        End If
+
+
         Try
-            Await LoadToGridAsync(grid, query)
+            Await LoadToGridAsync(grid, queryFunc())
         Catch ex As Exception
-            MessageBox.Show("Initial data load failed: " & ex.Message)
+
         End Try
 
 
@@ -311,17 +322,14 @@ Module GlobalVarsModule
         Dim t As New Timer() With {.Interval = intervalMs}
         AddHandler t.Tick, Async Sub(sender As Object, e As EventArgs)
                                Try
-
                                    Dim selectedValue As Object = Nothing
                                    Dim selectedColumn As String = ""
 
                                    If grid.SelectedRows.Count > 0 Then
-
                                        If grid.Columns.Contains("ID") Then
                                            selectedColumn = "ID"
                                            selectedValue = grid.SelectedRows(0).Cells("ID").Value
                                        Else
-
                                            For Each col As DataGridViewColumn In grid.Columns
                                                If col.Visible Then
                                                    selectedColumn = col.Name
@@ -332,8 +340,8 @@ Module GlobalVarsModule
                                        End If
                                    End If
 
-                                   Await LoadToGridAsync(grid, query)
 
+                                   Await LoadToGridAsync(grid, queryFunc())
 
                                    If selectedValue IsNot Nothing AndAlso grid.Rows.Count > 0 AndAlso grid.Columns.Contains(selectedColumn) Then
                                        For Each row As DataGridViewRow In grid.Rows
@@ -345,18 +353,17 @@ Module GlobalVarsModule
                                            End If
                                        Next
                                    Else
-
                                        grid.ClearSelection()
                                        grid.CurrentCell = Nothing
                                    End If
                                Catch
-
                                End Try
                            End Sub
 
         refreshTimers(grid) = t
         t.Start()
     End Sub
+
 
 
 

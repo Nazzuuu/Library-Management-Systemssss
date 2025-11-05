@@ -255,7 +255,16 @@ Public Class Acquisition
                 End If
             End If
 
-
+            If Not String.IsNullOrWhiteSpace(txtbarcodes.Text) Then
+                Dim checkGlobalDup As String = "SELECT COUNT(*) FROM acquisition_tbl WHERE Barcode = @Barcode"
+                Using checkDupCmd As New MySqlCommand(checkGlobalDup, con)
+                    checkDupCmd.Parameters.AddWithValue("@Barcode", txtbarcodes.Text)
+                    If CInt(checkDupCmd.ExecuteScalar()) > 0 Then
+                        MessageBox.Show("This Barcode already exists.", "Duplicate Barcode", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return
+                    End If
+                End Using
+            End If
 
             Dim com As String = "INSERT INTO acquisition_tbl (`ISBN`, `Barcode`, `BookTitle`, `SupplierName`, `Quantity`, `BookPrice`, `TotalCost`, `TransactionNo`, `DateAcquired`) " &
                             "VALUES (@ISBN, @Barcode, @BookTitle, @SupplierName, @Quantity, @BookPrice, @TotalCost, @TransactionNo, @DateAcquired)"
@@ -289,7 +298,7 @@ Public Class Acquisition
                 Next
 
                 MessageBox.Show("Successfully added book entry to transaction!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
+                clear()
                 NumericUpDown2.Enabled = False
 
                 NumericUpDown2.Value = NumericUpDown2.Value - 1
@@ -693,15 +702,15 @@ SkipAcessionInsert:
 
         isEditing = False
 
-        clear()
-        jineret()
+        clear
+        jineret
         NumericUpDown2.Value = 0
 
 
         txttransactionno.ReadOnly = False
         NumericUpDown2.Enabled = True
 
-        NumericUpDown2.Focus()
+        NumericUpDown2.Focus
 
     End Sub
 
@@ -874,6 +883,7 @@ SkipAcessionInsert:
         txtbooktitle.Enabled = False
         txttotalcost.Enabled = False
         txttransactionno.Enabled = False
+        btnselectsu.Enabled = False
 
         rbbarcode.Checked = False
         rbisbn.Checked = False
@@ -935,7 +945,7 @@ SkipAcessionInsert:
             txtbarcodes.Enabled = True
             txtisbn.Enabled = False
             txtisbn.Text = ""
-
+            btnselectsu.Enabled = True
         End If
 
     End Sub
@@ -1065,5 +1075,15 @@ SkipAcessionInsert:
 
     End Sub
 
+    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles btnselectsu.Click
+        SelectBarcode.ShowDialog()
+    End Sub
 
+    Private Sub btnselectsu_MouseHover(sender As Object, e As EventArgs) Handles btnselectsu.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnselectsu_MouseLeave(sender As Object, e As EventArgs) Handles btnselectsu.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
 End Class

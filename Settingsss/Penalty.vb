@@ -18,10 +18,11 @@ Public Class Penalty
 
 
         GlobalVarsModule.AutoRefreshGrid(
-        grid:=DataGridView1,
-        query:="SELECT * FROM `penalty_tbl` WHERE (`BorrowerStatus` IS NULL OR `BorrowerStatus` <> 'PENALIZED') ORDER BY ID DESC",
-        intervalMs:=2000
-    )
+    DataGridView1,
+    "SELECT * FROM penalty_tbl WHERE BorrowerStatus IS NULL OR BorrowerStatus <> 'PENALIZED' ORDER BY ID DESC",
+    2000
+)
+
 
 
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated_Penalty

@@ -10,20 +10,29 @@ Public Class ReserveCopies
         counts()
 
 
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildReserveCopiesQuery(), 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+
+
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         DataGridView1.ClearSelection()
         DataGridView1.AllowUserToAddRows = False
-
     End Sub
 
+
+
+    Private Function BuildReserveCopiesQuery() As String
+        Return "SELECT ID, TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Status " &
+           "FROM `reservecopiess_tbl` WHERE Status = 'Reserved'"
+    End Function
+
+
+
     Public Sub reserveload()
-
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-
-        Dim com As String = "SELECT ID, TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Status FROM `reservecopiess_tbl` WHERE Status = 'Reserved'"
-
+        Dim com As String = BuildReserveCopiesQuery()
         Dim adap As New MySqlDataAdapter(com, con)
         Dim ds As New DataSet
 
@@ -31,13 +40,13 @@ Public Class ReserveCopies
             adap.Fill(ds, "reserve_info")
             DataGridView1.DataSource = ds.Tables("reserve_info")
 
-
             If DataGridView1.Columns.Contains("ID") Then
                 DataGridView1.Columns("ID").Visible = False
             End If
 
-            DataGridView1.Columns("Shelf").Visible = False
-
+            If DataGridView1.Columns.Contains("Shelf") Then
+                DataGridView1.Columns("Shelf").Visible = False
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Error loading reserved copies: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -45,8 +54,30 @@ Public Class ReserveCopies
 
         DataGridView1.ClearSelection()
         DataGridView1.Refresh()
-
     End Sub
+
+
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Dim query As String = BuildReserveCopiesQuery()
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+            If DataGridView1.Columns.Contains("Shelf") Then
+                DataGridView1.Columns("Shelf").Visible = False
+            End If
+
+            DataGridView1.ClearSelection()
+            DataGridView1.Refresh()
+
+        Catch ex As Exception
+            MessageBox.Show("Error refreshing reserved copies: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
 
     Public Sub counts()
 
