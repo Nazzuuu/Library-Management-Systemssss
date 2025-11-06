@@ -47,12 +47,7 @@ Public Class Department
 
     Private Sub Department_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.loadsu()
-            End If
-        Next
+
 
         Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
         If activeMain Is Nothing OrElse activeMain.IsDisposed Then

@@ -45,12 +45,7 @@ Public Class Genre
 
     Private Sub Genre_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
-        For Each form In Application.OpenForms
-            If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.loadsu()
-            End If
-        Next
+
 
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
         txtgenre.Text = ""

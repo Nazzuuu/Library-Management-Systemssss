@@ -70,7 +70,7 @@ Public Class Book
 
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
-        DateTimePicker1.MaxDate = DateTime.Today
+
     End Sub
 
 
@@ -372,7 +372,7 @@ Public Class Book
         Dim isbn As Object = Nothing
         Dim barcode As Object = Nothing
         Dim booktitle As String = txtbooktitle.Text.Trim()
-        Dim deyts As DateTime = DateTimePicker1.Value
+        Dim yearsu As String = txtyearr.Text.Trim
         Dim bookID As Integer = 0
 
         If rbgenerate.Checked Then
@@ -448,13 +448,7 @@ Public Class Book
         End If
 
 
-        If deyts.Date > DateTime.Today.Date Then
-            MsgBox("You cannot select a future date.", vbExclamation, "Date Error")
-            Exit Sub
-        End If
 
-
-        Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
 
         Try
             con.Open()
@@ -466,10 +460,9 @@ Public Class Book
             com.Parameters.AddWithValue("@booktitle", booktitle)
             com.Parameters.AddWithValue("@author", cbauthor.Text)
             com.Parameters.AddWithValue("@genre", cbgenre.Text)
-            'com.Parameters.AddWithValue("@category", cbcategory.Text) ' Inalis ang category sa SQL, pero kasama pa rin sa code
             com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
             com.Parameters.AddWithValue("@language", cblanguage.Text)
-            com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
+            com.Parameters.AddWithValue("@yearpublished", yearsu)
 
             bookID = Convert.ToInt32(com.ExecuteScalar())
 
@@ -506,6 +499,7 @@ Public Class Book
             Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
             Dim oldBookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
             Dim newBookTitle As String = txtbooktitle.Text.Trim()
+            Dim yearsu As String = txtyearr.Text.Trim
 
             If String.IsNullOrEmpty(newBookTitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
                 MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
@@ -514,7 +508,7 @@ Public Class Book
 
 
             Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-            Dim deyts As DateTime = DateTimePicker1.Value
+
 
             Dim isbnValue As Object
             Dim barcodeValue As Object
@@ -585,11 +579,7 @@ Public Class Book
                 barcodeValue = DBNull.Value
             End If
 
-            If deyts.Date > DateTime.Today.Date Then
-                MsgBox("You cannot select a future date.", vbExclamation)
-                Exit Sub
-            End If
-            Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
+
 
             Try
                 con.Open()
@@ -603,7 +593,7 @@ Public Class Book
                 'com.Parameters.AddWithValue("@category", cbcategory.Text)
                 com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
                 com.Parameters.AddWithValue("@language", cblanguage.Text)
-                com.Parameters.AddWithValue("@yearpublished", purmatdeyt)
+                com.Parameters.AddWithValue("@yearpublished", yearsu)
                 com.Parameters.AddWithValue("@id", bookID)
                 com.ExecuteNonQuery()
 
@@ -829,6 +819,7 @@ Public Class Book
 
         txtisbn.Text = ""
         txtbooktitle.Text = ""
+        txtyearr.Text = ""
         lblrandom.Text = "0000000000000"
         lblrandom.Visible = False
 
@@ -851,7 +842,6 @@ Public Class Book
 
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
-        DateTimePicker1.Value = DateTime.Today.AddMonths(-1)
         DataGridView1.ClearSelection()
     End Sub
 
@@ -968,10 +958,10 @@ Public Class Book
             txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
             cbauthor.Text = row.Cells("Author").Value.ToString
             cbgenre.Text = row.Cells("Genre").Value.ToString
-            'cbcategory.Text = row.Cells("Category").Value.ToString
+            txtyearr.Text = row.Cells("YearPublished").Value.ToString
             cbpublisher.Text = row.Cells("Publisher").Value.ToString
             cblanguage.Text = row.Cells("Language").Value.ToString
-            DateTimePicker1.Value = CDate(row.Cells("YearPublished").Value)
+
 
             rbgenerate.Enabled = False
 
@@ -1043,10 +1033,6 @@ Public Class Book
         Genre.ShowDialog()
     End Sub
 
-    'Private Sub btnaddcategory_Click(sender As Object, e As EventArgs) Handles btnaddcategory.Click
-    '    Category.ShowDialog()
-    'End Sub
-
     Private Sub btnaddpublisher_Click(sender As Object, e As EventArgs) Handles btnaddpublisher.Click
         Publisher.ShowDialog()
     End Sub
@@ -1070,14 +1056,6 @@ Public Class Book
     Private Sub btnaddgenre_MouseLeave(sender As Object, e As EventArgs) Handles btnaddgenre.MouseLeave
         Cursor = Cursors.Default
     End Sub
-
-    'Private Sub btnaddcategory_MouseHover(sender As Object, e As EventArgs) Handles btnaddcategory.MouseHover
-    '    Cursor = Cursors.Hand
-    'End Sub
-
-    'Private Sub btnaddcategory_MouseLeave(sender As Object, e As EventArgs) Handles btnaddcategory.MouseLeave
-    '    Cursor = Cursors.Default
-    'End Sub
 
     Private Sub btnaddpublisher_MouseHover(sender As Object, e As EventArgs) Handles btnaddpublisher.MouseHover
         Cursor = Cursors.Hand
@@ -1181,6 +1159,43 @@ Public Class Book
             End If
         End If
 
+    End Sub
+
+    Private Sub txtyearr_KeyDown(sender As Object, e As KeyEventArgs) Handles txtyearr.KeyDown
+        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+            e.SuppressKeyPress = True
+        End If
+    End Sub
+
+    Private Sub txtyearr_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtyearr.KeyPress
+        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtyearr_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtyearr.Validating
+
+        If String.IsNullOrWhiteSpace(txtyearr.Text) Then
+            Exit Sub
+        End If
+
+        Dim yearValue As Integer
+        If Not Integer.TryParse(txtyearr.Text, yearValue) Then
+            MessageBox.Show("Please enter a valid year.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtyearr.Clear()
+            e.Cancel = True
+            Exit Sub
+        End If
+
+
+        Dim currentYear As Integer = Date.Now.Year
+
+
+        If yearValue > currentYear Then
+            MessageBox.Show("Year Published cannot be in the future. Please enter a valid year (up to " & currentYear & ").", "Invalid Year", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtyearr.Text = currentYear.ToString()
+            e.Cancel = True
+        End If
     End Sub
 
 End Class
