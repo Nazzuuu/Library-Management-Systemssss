@@ -175,7 +175,7 @@ Public Class MainForm
                 End Using
             End If
 
-            ' 🧾 Audit trail logging
+
             If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
            previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
            previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
@@ -188,7 +188,7 @@ Public Class MainForm
             )
             End If
 
-            ' 🧹 Clear Global Variables
+
             GlobalVarsModule.GlobalRole = "Guest"
             GlobalVarsModule.GlobalEmail = ""
             GlobalVarsModule.GlobalUsername = ""
@@ -198,23 +198,23 @@ Public Class MainForm
             GlobalVarsModule.CurrentUserID = ""
             GlobalVarsModule.CurrentEmployeeID = ""
 
-            ' 🪟 Close Borrowing Form if open
+
             If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then
                 Borrowing.Close()
             End If
 
-            ' 🪟 Close Main Form
+
             If GlobalVarsModule.ActiveMainForm IsNot Nothing AndAlso Not GlobalVarsModule.ActiveMainForm.IsDisposed Then
                 Try
                     GlobalVarsModule.ActiveMainForm.Close()
                     GlobalVarsModule.ActiveMainForm.Dispose()
                 Catch
-                    ' ignore errors
+
                 End Try
                 GlobalVarsModule.ActiveMainForm = Nothing
             End If
 
-            ' 🔁 Return to Login Form
+
             Me.Hide()
 
             If GlobalVarsModule.loginform Is Nothing OrElse GlobalVarsModule.loginform.IsDisposed Then
