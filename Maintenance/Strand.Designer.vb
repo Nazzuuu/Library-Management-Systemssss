@@ -107,7 +107,7 @@ Partial Class Strand
         txtdescription.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtdescription.Location = New Point(34, 111)
         txtdescription.Margin = New Padding(3, 4, 3, 4)
-        txtdescription.MaxLength = 24
+        txtdescription.MaxLength = 35
         txtdescription.Name = "txtdescription"
         txtdescription.PlaceholderText = ""
         txtdescription.SelectedText = ""
@@ -213,7 +213,7 @@ Partial Class Strand
         ' PictureBox1
         ' 
         PictureBox1.BackColor = Color.White
-        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
+        PictureBox1.BackgroundImage = Library_Management_Systemssss.My.Resources.Resources.magnifier
         PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
         PictureBox1.Location = New Point(417, 26)
         PictureBox1.Name = "PictureBox1"

@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.InteropServices
+﻿Imports System.Globalization
+Imports System.Runtime.InteropServices
 Imports MySql.Data.MySqlClient
 
 Public Class Language
@@ -36,6 +37,22 @@ Public Class Language
         End Try
     End Sub
 
+    Private Function IsValidLanguage(language As String) As Boolean
+
+        If String.IsNullOrWhiteSpace(language) Then Return False
+
+
+        For Each culture As CultureInfo In CultureInfo.GetCultures(CultureTypes.AllCultures)
+
+            If culture.EnglishName.Equals(language, StringComparison.OrdinalIgnoreCase) _
+          Or culture.NativeName.Equals(language, StringComparison.OrdinalIgnoreCase) Then
+                Return True
+            End If
+        Next
+
+        Return False
+    End Function
+
 
     Private Sub Language_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
 
@@ -65,6 +82,11 @@ Public Class Language
 
         If lang.Length < 3 Then
             MsgBox("Language name must be 3 characters or more.", vbExclamation, "Input Error")
+            Exit Sub
+        End If
+
+        If Not IsValidLanguage(lang) Then
+            MessageBox.Show("Invalid language name. Please enter a valid language.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -143,8 +165,13 @@ Public Class Language
             End If
 
 
-            If oldLang.ToUpper() = lang.ToUpper() Then
-                MsgBox("No changes were made.", vbExclamation, "No Update")
+            'If oldLang.ToUpper() = lang.ToUpper() Then
+            '    MsgBox("No changes were made.", vbExclamation, "No Update")
+            '    Exit Sub
+            'End If
+
+            If Not IsValidLanguage(lang) Then
+                MessageBox.Show("Invalid language name. Please enter a valid language.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Exit Sub
             End If
 
