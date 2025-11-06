@@ -6,12 +6,24 @@ Public Class BookBorrowingConfirmation
     Private ReadOnly connectionString As String = GlobalVarsModule.connectionString
 
     Private currentBookTitle As String = ""
-
+    Private isNumericEditing As Boolean = False
+    Private lastNumericValue As Decimal = 0
     Private Sub BookBorrowingConfirmation_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshconfirmation()
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DaysLimit, DueDate, TransactionReceipt, Status FROM `confimation_tbl`", 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
+
+    Private Sub NumericUpDown1_Enter(sender As Object, e As EventArgs) Handles NumericUpDown1.Enter
+        isNumericEditing = True
+        lastNumericValue = NumericUpDown1.Value
+    End Sub
+
+    Private Sub NumericUpDown1_Leave(sender As Object, e As EventArgs) Handles NumericUpDown1.Leave
+        isNumericEditing = False
+        lastNumericValue = NumericUpDown1.Value
+    End Sub
+
 
     Public Sub refreshconfirmation()
         Dim con As New MySqlConnection(connectionString)
@@ -299,6 +311,10 @@ Public Class BookBorrowingConfirmation
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If Not isNumericEditing Then
+            lastNumericValue = NumericUpDown1.Value
+        End If
 
         LoadBorrowerDetails()
 

@@ -295,7 +295,6 @@ Module GlobalVarsModule
     Public Async Sub AutoRefreshGrid(grid As DataGridView, queryOrFunc As Object, Optional intervalMs As Integer = 2000)
         Dim queryFunc As Func(Of String)
 
-
         If TypeOf queryOrFunc Is String Then
             Dim fixedQuery As String = DirectCast(queryOrFunc, String)
             queryFunc = Function() fixedQuery
@@ -305,23 +304,36 @@ Module GlobalVarsModule
             Throw New ArgumentException("Invalid query type passed to AutoRefreshGrid.")
         End If
 
-
         Try
             Await LoadToGridAsync(grid, queryFunc())
         Catch ex As Exception
-
         End Try
-
 
         If refreshTimers.ContainsKey(grid) Then
             refreshTimers(grid).Stop()
             refreshTimers.Remove(grid)
         End If
 
-
         Dim t As New Timer() With {.Interval = intervalMs}
         AddHandler t.Tick, Async Sub(sender As Object, e As EventArgs)
                                Try
+                                   If TypeOf grid.FindForm() Is Form Then
+                                       Dim parentForm = DirectCast(grid.FindForm(), Form)
+
+
+                                       Dim numeric As NumericUpDown = parentForm.Controls.Find("NumericUpDown1", True).FirstOrDefault()
+                                       If numeric IsNot Nothing AndAlso parentForm.GetType().GetField("isNumericEditing", Reflection.BindingFlags.NonPublic Or Reflection.BindingFlags.Instance)?.GetValue(parentForm) = True Then
+                                           Exit Sub
+                                       End If
+
+
+                                       Dim txtSearch As TextBox = parentForm.Controls.Find("txtSearch", True).FirstOrDefault()
+                                       If txtSearch IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtSearch.Text) Then
+                                           Exit Sub
+                                       End If
+                                   End If
+
+
                                    Dim selectedValue As Object = Nothing
                                    Dim selectedColumn As String = ""
 
@@ -343,6 +355,7 @@ Module GlobalVarsModule
 
                                    Await LoadToGridAsync(grid, queryFunc())
 
+
                                    If selectedValue IsNot Nothing AndAlso grid.Rows.Count > 0 AndAlso grid.Columns.Contains(selectedColumn) Then
                                        For Each row As DataGridViewRow In grid.Rows
                                            If row.Cells(selectedColumn).Value IsNot Nothing AndAlso
@@ -363,6 +376,8 @@ Module GlobalVarsModule
         refreshTimers(grid) = t
         t.Start()
     End Sub
+
+
 
 
 
