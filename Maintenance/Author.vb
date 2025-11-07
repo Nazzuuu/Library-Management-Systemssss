@@ -318,6 +318,7 @@ Public Class Author
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
+
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
@@ -327,6 +328,7 @@ Public Class Author
                 dt.DefaultView.RowFilter = ""
             End If
         End If
+
     End Sub
 
     Private Sub txtauthor_KeyDown(sender As Object, e As KeyEventArgs) Handles txtauthor.KeyDown

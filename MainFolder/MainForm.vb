@@ -25,7 +25,7 @@ Public Class MainForm
         loadsu()
 
         GlobalVarsModule.StartAutoRefresh()
-
+    
 
     End Sub
 

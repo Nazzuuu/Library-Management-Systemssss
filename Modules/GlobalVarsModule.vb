@@ -291,34 +291,14 @@ Module GlobalVarsModule
 
     Private refreshTimers As New Dictionary(Of DataGridView, Timer)
 
-    Public Async Sub AutoRefreshGrid(grid As DataGridView, queryOrFunc As Object, Optional intervalMs As Integer = 2000)
-        Dim queryFunc As Func(Of String)
-
-        If TypeOf queryOrFunc Is String Then
-            Dim fixedQuery As String = DirectCast(queryOrFunc, String)
-            queryFunc = Function() fixedQuery
-        ElseIf TypeOf queryOrFunc Is Func(Of String) Then
-            queryFunc = DirectCast(queryOrFunc, Func(Of String))
-        Else
-            Throw New ArgumentException("Invalid query type passed to AutoRefreshGrid.")
-        End If
-
+    Public Async Sub AutoRefreshGrid(grid As DataGridView, query As String, Optional intervalMs As Integer = 2000)
         Try
-            Await LoadToGridAsync(grid, queryFunc())
+            Await LoadToGridAsync(grid, query)
 
 
-            If grid.Columns.Contains("ID") Then
-                grid.Columns("ID").Visible = False
-            End If
-
-            If grid.Columns.Contains("CurrentIP") Then
-                grid.Columns("CurrentIP").Visible = False
-            End If
-
-            If grid.Columns.Contains("is_logged_in") Then
-                grid.Columns("is_logged_in").Visible = False
-            End If
+            HideStandardColumns(grid)
         Catch ex As Exception
+
         End Try
 
         If refreshTimers.ContainsKey(grid) Then
@@ -329,59 +309,29 @@ Module GlobalVarsModule
         Dim t As New Timer() With {.Interval = intervalMs}
         AddHandler t.Tick, Async Sub(sender As Object, e As EventArgs)
                                Try
-                                   If TypeOf grid.FindForm() Is Form Then
-                                       Dim parentForm = DirectCast(grid.FindForm(), Form)
+                                   SkipRefreshIfSearching(grid)
+                                   'If TypeOf grid.FindForm() Is Form Then
+                                   '    Dim parentForm = DirectCast(grid.FindForm(), Form)
+                                   '    Dim txtSearch As TextBox = parentForm.Controls.Find("txtSearch", True).FirstOrDefault()
+                                   '    If txtSearch IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtSearch.Text) Then
+                                   '        Exit Sub
+                                   '    End If
+                                   'End If
 
-                                       Dim numeric As NumericUpDown = parentForm.Controls.Find("NumericUpDown1", True).FirstOrDefault()
-                                       If numeric IsNot Nothing AndAlso parentForm.GetType().GetField("isNumericEditing", Reflection.BindingFlags.NonPublic Or Reflection.BindingFlags.Instance)?.GetValue(parentForm) = True Then
-                                           Exit Sub
-                                       End If
-
-                                       Dim txtSearch As TextBox = parentForm.Controls.Find("txtSearch", True).FirstOrDefault()
-                                       If txtSearch IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtSearch.Text) Then
-                                           Exit Sub
-                                       End If
-                                   End If
-
-                                   Dim selectedValue As Object = Nothing
                                    Dim selectedColumn As String = ""
+                                   Dim selectedValue As Object = Nothing
+                                   PreserveSelection(grid, selectedColumn, selectedValue)
 
-                                   If grid.SelectedRows.Count > 0 Then
-                                       If grid.Columns.Contains("ID") Then
-                                           selectedColumn = "ID"
-                                           selectedValue = grid.SelectedRows(0).Cells("ID").Value
-                                       Else
-                                           For Each col As DataGridViewColumn In grid.Columns
-                                               If col.Visible Then
-                                                   selectedColumn = col.Name
-                                                   selectedValue = grid.SelectedRows(0).Cells(col.Name).Value
-                                                   Exit For
-                                               End If
-                                           Next
-                                       End If
-                                   End If
-
-                                   Await LoadToGridAsync(grid, queryFunc())
+                                   Await LoadToGridAsync(grid, query)
 
 
-                                   If grid.Columns.Contains("ID") Then
-                                       grid.Columns("ID").Visible = False
-                                   End If
+                                   HideStandardColumns(grid)
 
-                                   If selectedValue IsNot Nothing AndAlso grid.Rows.Count > 0 AndAlso grid.Columns.Contains(selectedColumn) Then
-                                       For Each row As DataGridViewRow In grid.Rows
-                                           If row.Cells(selectedColumn).Value IsNot Nothing AndAlso
-                                              row.Cells(selectedColumn).Value.ToString() = selectedValue.ToString() Then
-                                               row.Selected = True
-                                               grid.FirstDisplayedScrollingRowIndex = row.Index
-                                               Exit For
-                                           End If
-                                       Next
-                                   Else
-                                       grid.ClearSelection()
-                                       grid.CurrentCell = Nothing
-                                   End If
-                               Catch
+
+                                   RestoreSelection(grid, selectedColumn, selectedValue)
+
+                               Catch ex As Exception
+
                                End Try
                            End Sub
 
@@ -390,7 +340,74 @@ Module GlobalVarsModule
     End Sub
 
 
+    Public Sub SkipRefreshIfSearching(grid As DataGridView)
+        Try
+            If TypeOf grid.FindForm() Is Form Then
+                Dim parentForm = DirectCast(grid.FindForm(), Form)
 
+
+                Dim numeric As NumericUpDown = parentForm.Controls.Find("NumericUpDown1", True).FirstOrDefault()
+                If numeric IsNot Nothing AndAlso
+            parentForm.GetType().GetField("isNumericEditing",
+                Reflection.BindingFlags.NonPublic Or Reflection.BindingFlags.Instance)?.GetValue(parentForm) = True Then
+                    Exit Sub
+                End If
+
+
+
+            End If
+        Catch
+
+        End Try
+    End Sub
+
+
+
+    Private Sub HideStandardColumns(grid As DataGridView)
+        Dim colsToHide() As String = {"ID", "CurrentIP", "is_logged_in"}
+        For Each colName In colsToHide
+            If grid.Columns.Contains(colName) Then
+                grid.Columns(colName).Visible = False
+            End If
+        Next
+    End Sub
+
+
+    Private Sub PreserveSelection(grid As DataGridView, ByRef selectedColumn As String, ByRef selectedValue As Object)
+        selectedColumn = ""
+        selectedValue = Nothing
+
+        If grid.SelectedRows.Count > 0 Then
+            If grid.Columns.Contains("ID") Then
+                selectedColumn = "ID"
+                selectedValue = grid.SelectedRows(0).Cells("ID").Value
+            Else
+                For Each col As DataGridViewColumn In grid.Columns
+                    If col.Visible Then
+                        selectedColumn = col.Name
+                        selectedValue = grid.SelectedRows(0).Cells(col.Name).Value
+                        Exit For
+                    End If
+                Next
+            End If
+        End If
+    End Sub
+
+    Private Sub RestoreSelection(grid As DataGridView, selectedColumn As String, selectedValue As Object)
+        If selectedValue IsNot Nothing AndAlso grid.Rows.Count > 0 AndAlso grid.Columns.Contains(selectedColumn) Then
+            For Each row As DataGridViewRow In grid.Rows
+                If row.Cells(selectedColumn).Value IsNot Nothing AndAlso
+               row.Cells(selectedColumn).Value.ToString() = selectedValue.ToString() Then
+                    row.Selected = True
+                    grid.FirstDisplayedScrollingRowIndex = row.Index
+                    Exit For
+                End If
+            Next
+        Else
+            grid.ClearSelection()
+            grid.CurrentCell = Nothing
+        End If
+    End Sub
 
 
 

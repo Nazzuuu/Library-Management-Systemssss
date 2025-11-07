@@ -10,11 +10,8 @@ Public Class SelectBarcode
         cbfilter.SelectedIndex = 0
 
         LoadAndSyncBarcodes()
-        GlobalVarsModule.AutoRefreshGrid(
-        DataGridView1,
-        CType(Function() BuildSelectBarcodeQuery(cbfilter.SelectedItem.ToString()), Func(Of String)),
-        2000
-)
+
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildSelectBarcodeQuery(cbfilter.SelectedItem.ToString()), 2000)
 
 
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
