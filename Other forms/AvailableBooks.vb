@@ -190,6 +190,8 @@ Public Class AvailableBooks
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
+        HandleAutoRefreshPause(DataGridView1, txtsearch)
+
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then

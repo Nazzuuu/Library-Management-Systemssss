@@ -310,13 +310,6 @@ Module GlobalVarsModule
         AddHandler t.Tick, Async Sub(sender As Object, e As EventArgs)
                                Try
                                    SkipRefreshIfSearching(grid)
-                                   'If TypeOf grid.FindForm() Is Form Then
-                                   '    Dim parentForm = DirectCast(grid.FindForm(), Form)
-                                   '    Dim txtSearch As TextBox = parentForm.Controls.Find("txtSearch", True).FirstOrDefault()
-                                   '    If txtSearch IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtSearch.Text) Then
-                                   '        Exit Sub
-                                   '    End If
-                                   'End If
 
                                    Dim selectedColumn As String = ""
                                    Dim selectedValue As Object = Nothing
@@ -324,10 +317,7 @@ Module GlobalVarsModule
 
                                    Await LoadToGridAsync(grid, query)
 
-
                                    HideStandardColumns(grid)
-
-
                                    RestoreSelection(grid, selectedColumn, selectedValue)
 
                                Catch ex As Exception
@@ -394,6 +384,7 @@ Module GlobalVarsModule
     End Sub
 
     Private Sub RestoreSelection(grid As DataGridView, selectedColumn As String, selectedValue As Object)
+
         If selectedValue IsNot Nothing AndAlso grid.Rows.Count > 0 AndAlso grid.Columns.Contains(selectedColumn) Then
             For Each row As DataGridViewRow In grid.Rows
                 If row.Cells(selectedColumn).Value IsNot Nothing AndAlso
@@ -409,6 +400,22 @@ Module GlobalVarsModule
         End If
     End Sub
 
+    Public Sub HandleAutoRefreshPause(grid As DataGridView, txtSearch As Control)
+        Try
+            If refreshTimers.ContainsKey(grid) Then
+                Dim t As Timer = refreshTimers(grid)
+
+
+                If Not String.IsNullOrWhiteSpace(txtSearch.Text) Then
+                    If t.Enabled Then t.Stop()
+                Else
+                    If Not t.Enabled Then t.Start()
+                End If
+            End If
+        Catch ex As Exception
+
+        End Try
+    End Sub
 
 
 

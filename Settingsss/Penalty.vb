@@ -457,6 +457,9 @@ Public Class Penalty
     End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        HandleAutoRefreshPause(DataGridView1, txtsearch)
+
         Dim searchText As String = txtsearch.Text.Trim()
 
         If String.IsNullOrWhiteSpace(searchText) Then

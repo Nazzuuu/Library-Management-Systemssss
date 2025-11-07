@@ -283,6 +283,9 @@ Public Class BookBorrowingConfirmation
 
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        HandleAutoRefreshPause(DataGridView1, txtsearch)
+
         If String.IsNullOrWhiteSpace(txtsearch.Text) Then
             refreshconfirmation()
             ClearDetails()

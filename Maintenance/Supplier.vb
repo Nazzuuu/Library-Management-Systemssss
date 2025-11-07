@@ -98,6 +98,10 @@ Public Class Supplier
             Exit Sub
         End If
 
+        If address.Length <= 5 Then
+            MessageBox.Show("Address must be valid.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
 
         Try
             con.Open()
@@ -355,6 +359,7 @@ Public Class Supplier
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
+        HandleAutoRefreshPause(DataGridView1, txtsearch)
 
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
         If dt IsNot Nothing Then
