@@ -36,8 +36,12 @@ Public Class StayLogoutFormm
                 If timeInPrompt = DialogResult.Yes Then
                     Me.DialogResult = DialogResult.Retry
                     Me.Close()
+                    login.txtpass.Text = ""
+                    login.txtuser.Text = ""
                 Else
                     Me.Close()
+                    login.txtpass.Text = ""
+                    login.txtuser.Text = ""
                 End If
             Else
                 MessageBox.Show(
@@ -49,10 +53,14 @@ Public Class StayLogoutFormm
 
                 Me.DialogResult = DialogResult.Yes
                 Me.Close()
+                login.txtpass.Text = ""
+                login.txtuser.Text = ""
             End If
         Else
             Me.DialogResult = DialogResult.Cancel
             Me.Close()
+            login.txtpass.Text = ""
+            login.txtuser.Text = ""
         End If
     End Sub
 
@@ -86,7 +94,6 @@ Public Class StayLogoutFormm
                         End If
                     End If
 
-
                     Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                         con.Open()
                         Dim updateLogout As String =
@@ -100,7 +107,11 @@ Public Class StayLogoutFormm
                         End Using
                     End Using
                 End If
+
+
+                GlobalVarsModule.ShouldShowMainFormNextLogin = True
             End If
+
 
             If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
                previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
@@ -113,6 +124,7 @@ Public Class StayLogoutFormm
                     recordID:="N/A"
                 )
             End If
+
 
 
             GlobalVarsModule.GlobalRole = "Guest"
@@ -132,6 +144,7 @@ Public Class StayLogoutFormm
             End If
 
 
+
             Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
             If activeMain IsNot Nothing Then
                 activeMain.Hide()
@@ -140,10 +153,11 @@ Public Class StayLogoutFormm
             Me.DialogResult = DialogResult.OK
             Me.Hide()
 
-            Dim borrowerLogin As BorrowerLoginForm = Application.OpenForms.OfType(Of BorrowerLoginForm)().FirstOrDefault()
+
+            Dim borrowerLogin As login = Application.OpenForms.OfType(Of login)().FirstOrDefault()
             If borrowerLogin Is Nothing OrElse borrowerLogin.IsDisposed Then
-                borrowerLogin = New BorrowerLoginForm()
-                GlobalVarsModule.ActiveBorrowerLoginForm = borrowerLogin
+                borrowerLogin = New login()
+                GlobalVarsModule.loginform = borrowerLogin
             End If
 
             borrowerLogin.txtuser.Clear()
@@ -158,6 +172,7 @@ Public Class StayLogoutFormm
                             MessageBoxIcon.Error)
         End Try
     End Sub
+
 
 
 

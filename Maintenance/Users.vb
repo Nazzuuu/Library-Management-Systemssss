@@ -81,44 +81,70 @@ Public Class Users
     End Sub
 
     Public Sub LoadUserData()
+        Try
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                Dim SQLQuery As String =
+                "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
+                "FROM user_staff_tbl"
 
+                If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
+                    SQLQuery &= " WHERE ID = @EmployeeID"
+                    uidisplay()
+                Else
+                    uireset()
+                End If
 
+                Using cmd As New MySqlCommand(SQLQuery, con)
+                    If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
+                        cmd.Parameters.AddWithValue("@EmployeeID", GlobalVarsModule.CurrentEmployeeID)
+                    End If
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim SQLQuery As String = "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role FROM user_staff_tbl"
+                    Dim da As New MySqlDataAdapter(cmd)
+                    Dim dt As New DataTable()
 
+                    con.Open()
+                    da.Fill(dt)
 
-        If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
-            SQLQuery &= " WHERE ID = @EmployeeID"
-            uidisplay()
-        Else
-            uireset()
-        End If
+                    DataGridView1.AutoGenerateColumns = True
+                    DataGridView1.DataSource = Nothing
+                    DataGridView1.DataSource = dt
+                End Using
+            End Using
 
-        Using cmd As New MySqlCommand(SQLQuery, con)
-            If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
-                cmd.Parameters.AddWithValue("@EmployeeID", GlobalVarsModule.CurrentEmployeeID)
-            End If
-
-            Try
-                con.Open()
-
-
-                Dim da As New MySqlDataAdapter(cmd)
-                Dim dt As New DataTable()
-                da.Fill(dt)
-
-                DataGridView1.DataSource = dt
-
-
-            Catch ex As Exception
-                MessageBox.Show("Error loading user data: " & ex.Message)
-            Finally
-                If con.State = ConnectionState.Open Then con.Close()
-            End Try
-        End Using
-
+        Catch ex As Exception
+            MessageBox.Show("Error loading user data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
+
+    Private Sub Users_Shown(sender As Object, e As EventArgs) Handles Me.Shown
+        Try
+            Dim refreshQuery As String = ""
+
+            Select Case GlobalVarsModule.GlobalRole
+                Case "Staff", "Assistant Librarian"
+                    refreshQuery =
+                "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
+                "FROM user_staff_tbl WHERE ID = '" & GlobalVarsModule.CurrentEmployeeID & "'"
+
+                Case Else
+                    refreshQuery =
+                "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
+                "FROM user_staff_tbl"
+            End Select
+
+
+            Dim localQuery As String = refreshQuery
+
+            GlobalVarsModule.AutoRefreshGrid(DataGridView1, localQuery, 2000)
+
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+
+
+
 
     Public Sub uidisplay()
 
@@ -191,7 +217,6 @@ Public Class Users
             Exit Sub
         End If
 
-
         If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
             MsgBox("Please fill in all the required fields.", vbExclamation, "Missing Information")
             Exit Sub
@@ -205,7 +230,6 @@ Public Class Users
             MsgBox("Contact Number must be a valid length (e.g., 11 digits).", vbExclamation, "Invalid Contact Number")
             Exit Sub
         End If
-
 
         Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(email) Then
@@ -224,7 +248,6 @@ Public Class Users
         End If
 
         Dim role As String = ""
-
         If rbassistant.Checked Then
             role = "Assistant Librarian"
         ElseIf rbstaff.Checked Then
@@ -241,7 +264,6 @@ Public Class Users
             middleName = txtmname.Text.Trim()
         End If
 
-
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Try
             con.Open()
@@ -255,6 +277,25 @@ Public Class Users
                 MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
                 Exit Sub
             End If
+
+            Dim checkSuper As New MySqlCommand("SELECT COUNT(*) FROM superadmin_tbl WHERE Username = @username OR Email = @email", con)
+            checkSuper.Parameters.AddWithValue("@username", user)
+            checkSuper.Parameters.AddWithValue("@email", email)
+            Dim superCount As Integer = Convert.ToInt32(checkSuper.ExecuteScalar())
+            If superCount > 0 Then
+                MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
+                Exit Sub
+            End If
+
+            Dim checkBorrower As New MySqlCommand("SELECT COUNT(*) FROM borroweredit_tbl WHERE Username = @username OR Email = @email", con)
+            checkBorrower.Parameters.AddWithValue("@username", user)
+            checkBorrower.Parameters.AddWithValue("@email", email)
+            Dim borrowerCount As Integer = Convert.ToInt32(checkBorrower.ExecuteScalar())
+            If borrowerCount > 0 Then
+                MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
+                Exit Sub
+            End If
+
 
             Dim maxLimit As Integer = 0
             If role = "Assistant Librarian" Then
@@ -288,11 +329,11 @@ Public Class Users
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-        actionType:="ADD",
-        formName:="USER STAFF FORM",
-        description:=$"Added new staff: {lastName}, {firstName} ({role})",
-        recordID:=newID.ToString()
-    )
+    actionType:="ADD",
+    formName:="USER STAFF FORM",
+    description:=$"Added new staff: {lastName}, {firstName} ({role})",
+    recordID:=newID.ToString()
+)
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -313,6 +354,7 @@ Public Class Users
         End Try
     End Sub
 
+
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If DataGridView1.CurrentRow Is Nothing Then
@@ -322,7 +364,6 @@ Public Class Users
 
         Dim selectedRow = DataGridView1.CurrentRow
         Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-
 
         Dim oldFirstName As String = selectedRow.Cells("FirstName").Value.ToString.Trim()
         Dim oldLastName As String = selectedRow.Cells("LastName").Value.ToString.Trim()
@@ -334,7 +375,6 @@ Public Class Users
         Dim oldAddress As String = selectedRow.Cells("Address").Value.ToString.Trim()
         Dim oldGender As String = selectedRow.Cells("Gender").Value.ToString.Trim()
         Dim oldRole As String = selectedRow.Cells("Role").Value.ToString.Trim()
-
 
         Dim firstName As String = txtfname.Text.Trim()
         Dim lastName As String = txtlname.Text.Trim()
@@ -375,7 +415,6 @@ Public Class Users
             Exit Sub
         End If
 
-
         Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(email) Then
             MsgBox("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
@@ -392,7 +431,6 @@ Public Class Users
         End If
 
         Dim role As String = ""
-
         If rbassistant.Checked Then
             role = "Assistant Librarian"
         ElseIf rbstaff.Checked Then
@@ -414,6 +452,7 @@ Public Class Users
         Try
             con.Open()
 
+
             Dim Com As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE (`Username` = @username OR `Email` = @email) AND `ID` <> @id", con)
             Com.Parameters.AddWithValue("@username", user)
             Com.Parameters.AddWithValue("@email", email)
@@ -421,6 +460,25 @@ Public Class Users
             Dim count As Integer = Convert.ToInt32(Com.ExecuteScalar())
 
             If count > 0 Then
+                MsgBox("The username or email already exists in user staff. Please use a different one.", vbExclamation, "Duplication Not Allowed")
+                Exit Sub
+            End If
+
+
+            Dim checkSuper As New MySqlCommand("SELECT COUNT(*) FROM superadmin_tbl WHERE Username = @username OR Email = @email", con)
+            checkSuper.Parameters.AddWithValue("@username", user)
+            checkSuper.Parameters.AddWithValue("@email", email)
+            Dim superCount As Integer = Convert.ToInt32(checkSuper.ExecuteScalar())
+            If superCount > 0 Then
+                MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
+                Exit Sub
+            End If
+
+            Dim checkBorrower As New MySqlCommand("SELECT COUNT(*) FROM borroweredit_tbl WHERE Username = @username OR Email = @email", con)
+            checkBorrower.Parameters.AddWithValue("@username", user)
+            checkBorrower.Parameters.AddWithValue("@email", email)
+            Dim borrowerCount As Integer = Convert.ToInt32(checkBorrower.ExecuteScalar())
+            If borrowerCount > 0 Then
                 MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
                 Exit Sub
             End If
@@ -467,13 +525,13 @@ Public Class Users
             Dim newValueString As String = $"{firstName}|{lastName}|{middleName}|{user}|{pass}|{email}|{contact}|{address}|{gender}|{role}"
 
             GlobalVarsModule.LogAudit(
-        actionType:="UPDATE",
-        formName:="USER STAFF FORM",
-        description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
-        recordID:=ID.ToString(),
-        oldValue:=oldValueString,
-        newValue:=newValueString
-    )
+    actionType:="UPDATE",
+    formName:="USER STAFF FORM",
+    description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
+    recordID:=ID.ToString(),
+    oldValue:=oldValueString,
+    newValue:=newValueString
+)
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -497,6 +555,7 @@ Public Class Users
             End If
         End Try
     End Sub
+
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 

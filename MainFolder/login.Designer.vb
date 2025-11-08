@@ -45,7 +45,8 @@ Partial Class login
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         PictureBox1 = New PictureBox()
         LinkLabel1 = New LinkLabel()
-        lblborrowerloginform = New LinkLabel()
+        LinkLabel2 = New LinkLabel()
+        Label4 = New Label()
         Panel1.SuspendLayout()
         CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Panel_btnlogin.SuspendLayout()
@@ -225,27 +226,37 @@ Partial Class login
         LinkLabel1.TabStop = True
         LinkLabel1.Text = "Connect to Database"
         ' 
-        ' lblborrowerloginform
+        ' LinkLabel2
         ' 
-        lblborrowerloginform.ActiveLinkColor = Color.RosyBrown
-        lblborrowerloginform.AutoSize = True
-        lblborrowerloginform.Font = New Font("Baskerville Old Face", 11.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
-        lblborrowerloginform.LinkColor = Color.HotPink
-        lblborrowerloginform.Location = New Point(337, 68)
-        lblborrowerloginform.Name = "lblborrowerloginform"
-        lblborrowerloginform.Size = New Size(133, 17)
-        lblborrowerloginform.TabIndex = 14
-        lblborrowerloginform.TabStop = True
-        lblborrowerloginform.Text = "BorrowerLoginForm"
+        LinkLabel2.AutoSize = True
+        LinkLabel2.Font = New Font("Tahoma", 11.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
+        LinkLabel2.Location = New Point(325, 257)
+        LinkLabel2.Name = "LinkLabel2"
+        LinkLabel2.Size = New Size(49, 18)
+        LinkLabel2.TabIndex = 77
+        LinkLabel2.TabStop = True
+        LinkLabel2.Text = "Sign in"
+        ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Font = New Font("Tahoma", 11.25F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        Label4.ForeColor = SystemColors.WindowFrame
+        Label4.Location = New Point(139, 257)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(189, 18)
+        Label4.TabIndex = 76
+        Label4.Text = "Don't have an account yet?"
         ' 
         ' login
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.White
-        ClientSize = New Size(482, 276)
+        ClientSize = New Size(482, 321)
         ControlBox = False
-        Controls.Add(lblborrowerloginform)
+        Controls.Add(LinkLabel2)
+        Controls.Add(Label4)
         Controls.Add(LinkLabel1)
         Controls.Add(PictureBox1)
         Controls.Add(Panel_btnlogin)
@@ -283,5 +294,6 @@ Partial Class login
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents LinkLabel1 As LinkLabel
-    Friend WithEvents lblborrowerloginform As LinkLabel
+    Friend WithEvents LinkLabel2 As LinkLabel
+    Friend WithEvents Label4 As Label
 End Class

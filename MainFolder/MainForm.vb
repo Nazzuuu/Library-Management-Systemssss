@@ -25,7 +25,7 @@ Public Class MainForm
         loadsu()
 
         GlobalVarsModule.StartAutoRefresh()
-    
+
 
     End Sub
 
@@ -70,7 +70,7 @@ Public Class MainForm
             End Try
         End If
 
-   
+
         Dim bookForm As Book = Application.OpenForms.OfType(Of Book)().FirstOrDefault()
         If bookForm IsNot Nothing AndAlso Not bookForm.IsDisposed Then
             Try
@@ -136,20 +136,30 @@ Public Class MainForm
 
     End Sub
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
-        Dim dialogResult = MessageBox.Show("Are you sure you want to logout?",
-          "Confirmation",
-          MessageBoxButtons.YesNo,
-          MessageBoxIcon.Question)
 
-        If dialogResult = DialogResult.Yes Then
+        Try
+
+            Dim dialogResult As DialogResult = MessageBox.Show(
+            "Are you sure you want to logout?",
+            "Confirmation",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question
+        )
+
+
+            If dialogResult <> DialogResult.Yes Then
+                Exit Sub
+            End If
+
+
             Dim previousRole As String = GlobalVarsModule.GlobalRole
             Dim userEmail As String = GlobalVarsModule.GlobalEmail
             Dim userName As String = GlobalVarsModule.GlobalUsername
 
             If Not String.IsNullOrWhiteSpace(userName) AndAlso
-            (previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-             previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-             previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase)) Then
+           (previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+            previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+            previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase)) Then
 
                 Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                     Dim updateTable As String = If(previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase),
@@ -161,16 +171,8 @@ Public Class MainForm
 
                     Using updateCmd As New MySqlCommand(updateQuery, con)
                         updateCmd.Parameters.AddWithValue("@username", userName)
-                        Try
-                            con.Open()
-                            updateCmd.ExecuteNonQuery()
-                        Catch ex As Exception
-                            MessageBox.Show("⚠️ Warning: Failed to clear login status in the database: " &
-                                        ex.Message, "Database Warning",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        Finally
-                            con.Close()
-                        End Try
+                        con.Open()
+                        updateCmd.ExecuteNonQuery()
                     End Using
                 End Using
             End If
@@ -197,43 +199,34 @@ Public Class MainForm
             GlobalVarsModule.CurrentBorrowerID = ""
             GlobalVarsModule.CurrentUserID = ""
             GlobalVarsModule.CurrentEmployeeID = ""
+            GlobalVarsModule.StopAutoRefresh()
 
 
-            If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then
-                Borrowing.Close()
-            End If
 
+            If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then Borrowing.Close()
 
             If GlobalVarsModule.ActiveMainForm IsNot Nothing AndAlso Not GlobalVarsModule.ActiveMainForm.IsDisposed Then
-                Try
-                    GlobalVarsModule.ActiveMainForm.Close()
-                    GlobalVarsModule.ActiveMainForm.Dispose()
-                Catch
-
-                End Try
+                GlobalVarsModule.ActiveMainForm.Close()
+                GlobalVarsModule.ActiveMainForm.Dispose()
                 GlobalVarsModule.ActiveMainForm = Nothing
             End If
 
 
             Me.Hide()
-
             If GlobalVarsModule.loginform Is Nothing OrElse GlobalVarsModule.loginform.IsDisposed Then
                 GlobalVarsModule.loginform = New login()
             End If
 
-            Try
-                GlobalVarsModule.loginform.txtuser.Clear()
-                GlobalVarsModule.loginform.txtpass.Clear()
-            Catch
-            End Try
-
+            GlobalVarsModule.loginform.txtuser.Clear()
+            GlobalVarsModule.loginform.txtpass.Clear()
             GlobalVarsModule.loginform.Show()
             GlobalVarsModule.loginform.BringToFront()
-        End If
 
-        GlobalVarsModule.StopAutoRefresh()
-
+        Catch ex As Exception
+            MessageBox.Show("Logout failed: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
+
 
 
 
@@ -736,9 +729,6 @@ Public Class MainForm
 
     End Sub
 
-    Private Sub EditInfoToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditInfoToolStripMenuItem.Click
-        Superadmin.ShowDialog()
-    End Sub
 
     Private Sub btn_reserve_MouseHover(sender As Object, e As EventArgs) Handles btn_reserve.MouseHover
         Cursor = Cursors.Hand
@@ -896,11 +886,11 @@ Public Class MainForm
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub EditInfoToolStripMenuItem_MouseHover(sender As Object, e As EventArgs) Handles EditInfoToolStripMenuItem.MouseHover
+    Private Sub EditInfoToolStripMenuItem_MouseHover(sender As Object, e As EventArgs)
         Cursor = Cursors.Hand
     End Sub
 
-    Private Sub EditInfoToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs) Handles EditInfoToolStripMenuItem.MouseLeave
+    Private Sub EditInfoToolStripMenuItem_MouseLeave(sender As Object, e As EventArgs)
         Cursor = Cursors.Default
     End Sub
 
@@ -910,10 +900,6 @@ Public Class MainForm
 
     Private Sub btnlogoutt_MouseLeave(sender As Object, e As EventArgs) Handles btnlogoutt.MouseLeave
         Cursor = Cursors.Default
-    End Sub
-
-    Private Sub EditsToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles EditsToolStripMenuItem1.Click
-        Borrowereditsinfo.ShowDialog()
     End Sub
 
 
@@ -1200,7 +1186,7 @@ Public Class MainForm
                 If GlobalVarsModule.CurrentUserRole = "Borrower" Then
 
                     Me.Hide()
-                    BorrowerLoginForm.Show()
+                    login.Show()
                 Else
                     Return
                 End If
@@ -1404,5 +1390,17 @@ Public Class MainForm
 
     Private Sub btntotalbooks_MouseLeave(sender As Object, e As EventArgs) Handles btntotalbooks.MouseLeave
         Cursor = Cursors.Default
+    End Sub
+
+    Private Sub BorrowerAccountToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowerAccountToolStripMenuItem.Click
+        Borrowereditsinfo.ShowDialog()
+    End Sub
+
+    Private Sub MyAccountToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MyAccountToolStripMenuItem.Click
+        Superadmin.ShowDialog()
+    End Sub
+
+    Private Sub BorrowerAccountToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles BorrowerAccountToolStripMenuItem1.Click
+        Borrowereditsinfo.ShowDialog()
     End Sub
 End Class

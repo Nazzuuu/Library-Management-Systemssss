@@ -289,14 +289,13 @@ Public Class BorrowerCreateAccount
     End Function
 
     Private Sub btnsignup_Click(sender As Object, e As EventArgs) Handles btnsignup.Click
-
-
         Dim IDValue As String = If(rbstudent.Checked, txtlrn.Text.Trim(), txtemployeeno.Text.Trim())
         Dim IDType As String = If(rbstudent.Checked, "LRN", "EmployeeNo")
         Dim Username As String = txtuser.Text.Trim()
-        Dim Password As String = txtpass.Text
+        Dim Password As String = txtpass.Text.Trim()
         Dim Email As String = txtemail.Text.Trim()
         Dim FullName As String = lblfullname.Text.Trim()
+
 
         If String.IsNullOrWhiteSpace(IDValue) Then
             MessageBox.Show($"Please enter your {IDType}.", "Required Field", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -304,7 +303,7 @@ Public Class BorrowerCreateAccount
         End If
 
         If String.IsNullOrWhiteSpace(Username) OrElse String.IsNullOrWhiteSpace(Password) Then
-            MessageBox.Show("Please enter a username and password.", "Required Field", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Please enter both username and password.", "Required Fields", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
@@ -314,8 +313,14 @@ Public Class BorrowerCreateAccount
         End If
 
 
+        If AccountExistsInAllTables(Username, Email) Then
+            MessageBox.Show("The username or email is already taken by another account.", "Duplicate Account", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+
         If CheckIfAccountExists(IDValue, IDType, Username) Then
-            MessageBox.Show("An account already exists for this ID or the Username is already taken.", "Account Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("An account already exists for this ID or username.", "Account Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
@@ -334,14 +339,9 @@ Public Class BorrowerCreateAccount
                 Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
 
                 If rowsAffected > 0 Then
-
                     MessageBox.Show("Account successfully created.", "Registration Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-
                     clear()
-
-                    BorrowerLoginForm.Show()
-
+                    login.Show()
                     Me.Hide()
                 Else
                     MessageBox.Show("Account creation failed. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -350,15 +350,35 @@ Public Class BorrowerCreateAccount
         Catch ex As MySqlException
             MessageBox.Show("A database error occurred during registration: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
+            If con.State = ConnectionState.Open Then con.Close()
         End Try
     End Sub
 
+    Private Function AccountExistsInAllTables(username As String, email As String) As Boolean
+        Dim query As String =
+        "SELECT COUNT(*) FROM (" &
+        "SELECT Username, Email FROM borroweredit_tbl " &
+        "UNION ALL " &
+        "SELECT Username, Email FROM user_staff_tbl " &
+        "UNION ALL " &
+        "SELECT Username, Email FROM superadmin_tbl" &
+        ") AS combined WHERE Username = @Username OR Email = @Email"
+
+        Using con As New MySqlConnection(connectionString)
+            Using cmd As New MySqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@Username", username)
+                cmd.Parameters.AddWithValue("@Email", email)
+                con.Open()
+                Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                Return count > 0
+            End Using
+        End Using
+    End Function
+
+
     Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
 
-        BorrowerLoginForm.Show()
+        login.Show()
         Me.Hide()
     End Sub
 

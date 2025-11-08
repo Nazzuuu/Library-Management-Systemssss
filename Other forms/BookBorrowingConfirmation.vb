@@ -17,11 +17,16 @@ Public Class BookBorrowingConfirmation
     Private Sub NumericUpDown1_Enter(sender As Object, e As EventArgs) Handles NumericUpDown1.Enter
         isNumericEditing = True
         lastNumericValue = NumericUpDown1.Value
+
+
+        PauseAutoRefresh(DataGridView1)
     End Sub
 
     Private Sub NumericUpDown1_Leave(sender As Object, e As EventArgs) Handles NumericUpDown1.Leave
         isNumericEditing = False
-        lastNumericValue = NumericUpDown1.Value
+
+
+        ResumeAutoRefresh(DataGridView1)
     End Sub
 
 
@@ -315,6 +320,8 @@ Public Class BookBorrowingConfirmation
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
+        PauseAutoRefresh(DataGridView1)
+
         If Not isNumericEditing Then
             lastNumericValue = NumericUpDown1.Value
         End If
@@ -352,6 +359,7 @@ Public Class BookBorrowingConfirmation
         Catch ex As Exception
 
         End Try
+
 
     End Sub
 

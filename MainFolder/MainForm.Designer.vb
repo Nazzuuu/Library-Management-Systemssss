@@ -64,11 +64,13 @@ Partial Class MainForm
         PenaltyManagementToolStripMenuItem = New ToolStripMenuItem()
         DepartmentToolStripMenuItem = New ToolStripMenuItem()
         SectionToolStripMenuItem1 = New ToolStripMenuItem()
-        SectionToolStripMenuItem2 = New ToolStripMenuItem()
         GradeToolStripMenuItem1 = New ToolStripMenuItem()
+        SectionToolStripMenuItem2 = New ToolStripMenuItem()
         StrandToolStripMenuItem1 = New ToolStripMenuItem()
         RegisterToolStripMenuItem = New ToolStripMenuItem()
         UserMaintenanceToolStripMenuItem = New ToolStripMenuItem()
+        BorrowerAccountToolStripMenuItem = New ToolStripMenuItem()
+        MyAccountToolStripMenuItem = New ToolStripMenuItem()
         pnl_process = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_Process = New Panel()
         MenuStrip2 = New MenuStrip()
@@ -81,7 +83,6 @@ Partial Class MainForm
         BorrowToolStripMenuItem = New ToolStripMenuItem()
         ReturnToolStripMenuItem = New ToolStripMenuItem()
         BorrowingConfirmationToolStripMenuItem = New ToolStripMenuItem()
-        EditsToolStripMenuItem1 = New ToolStripMenuItem()
         PrintReceiptToolStripMenuItem = New ToolStripMenuItem()
         AttendanceRecordToolStripMenuItem = New ToolStripMenuItem()
         Guna2Elipse3 = New Guna.UI2.WinForms.Guna2Elipse(components)
@@ -92,7 +93,6 @@ Partial Class MainForm
         PenaltyToolStripMenuItem = New ToolStripMenuItem()
         Audit_Trail = New ToolStripMenuItem()
         BorrowingHistoryToolStripMenuItem = New ToolStripMenuItem()
-        EditInfoToolStripMenuItem = New ToolStripMenuItem()
         Panel1 = New Panel()
         Panel_Menuscrip = New Panel()
         lblform = New Label()
@@ -133,6 +133,7 @@ Partial Class MainForm
         lblgmail = New Label()
         Label6 = New Label()
         Panel_dash = New Panel()
+        BorrowerAccountToolStripMenuItem1 = New ToolStripMenuItem()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
         Panel_Process.SuspendLayout()
@@ -185,7 +186,7 @@ Partial Class MainForm
         ' 
         ' MaintenanceToolStripMenuItem
         ' 
-        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BookMaintenanceToolStripMenuItem, PenaltyManagementToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem})
+        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BookMaintenanceToolStripMenuItem, PenaltyManagementToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem, BorrowerAccountToolStripMenuItem, MyAccountToolStripMenuItem})
         MaintenanceToolStripMenuItem.ForeColor = Color.White
         MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
         MaintenanceToolStripMenuItem.Size = New Size(138, 22)
@@ -220,19 +221,19 @@ Partial Class MainForm
         SectionToolStripMenuItem1.Size = New Size(187, 22)
         SectionToolStripMenuItem1.Text = "🏬 Department"
         ' 
-        ' SectionToolStripMenuItem2
-        ' 
-        SectionToolStripMenuItem2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        SectionToolStripMenuItem2.Name = "SectionToolStripMenuItem2"
-        SectionToolStripMenuItem2.Size = New Size(187, 22)
-        SectionToolStripMenuItem2.Text = "📚 Section"
-        ' 
         ' GradeToolStripMenuItem1
         ' 
         GradeToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         GradeToolStripMenuItem1.Name = "GradeToolStripMenuItem1"
         GradeToolStripMenuItem1.Size = New Size(187, 22)
         GradeToolStripMenuItem1.Text = "📶 Grade"
+        ' 
+        ' SectionToolStripMenuItem2
+        ' 
+        SectionToolStripMenuItem2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        SectionToolStripMenuItem2.Name = "SectionToolStripMenuItem2"
+        SectionToolStripMenuItem2.Size = New Size(187, 22)
+        SectionToolStripMenuItem2.Text = "📚 Section"
         ' 
         ' StrandToolStripMenuItem1
         ' 
@@ -253,7 +254,21 @@ Partial Class MainForm
         UserMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         UserMaintenanceToolStripMenuItem.Name = "UserMaintenanceToolStripMenuItem"
         UserMaintenanceToolStripMenuItem.Size = New Size(255, 22)
-        UserMaintenanceToolStripMenuItem.Text = "👨🏻‍💻 User"
+        UserMaintenanceToolStripMenuItem.Text = "👨🏻‍💻 Assts./Staff Account"
+        ' 
+        ' BorrowerAccountToolStripMenuItem
+        ' 
+        BorrowerAccountToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        BorrowerAccountToolStripMenuItem.Name = "BorrowerAccountToolStripMenuItem"
+        BorrowerAccountToolStripMenuItem.Size = New Size(255, 22)
+        BorrowerAccountToolStripMenuItem.Text = "✎ Borrower Account"
+        ' 
+        ' MyAccountToolStripMenuItem
+        ' 
+        MyAccountToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        MyAccountToolStripMenuItem.Name = "MyAccountToolStripMenuItem"
+        MyAccountToolStripMenuItem.Size = New Size(255, 22)
+        MyAccountToolStripMenuItem.Text = "✎ My Account"
         ' 
         ' pnl_process
         ' 
@@ -283,7 +298,7 @@ Partial Class MainForm
         ' 
         ' ProcessStripMenuItem
         ' 
-        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem, BorrowingConfirmationToolStripMenuItem, EditsToolStripMenuItem1, PrintReceiptToolStripMenuItem, AttendanceRecordToolStripMenuItem})
+        ProcessStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {AcquisitionToolStripMenuItem, AccessionToolStripMenuItem, StudentLogsToolStripMenuItem, CirculationToolStripMenuItem, BorrowingConfirmationToolStripMenuItem, PrintReceiptToolStripMenuItem, AttendanceRecordToolStripMenuItem, BorrowerAccountToolStripMenuItem1})
         ProcessStripMenuItem.ForeColor = Color.White
         ProcessStripMenuItem.Name = "ProcessStripMenuItem"
         ProcessStripMenuItem.Size = New Size(102, 22)
@@ -347,13 +362,6 @@ Partial Class MainForm
         BorrowingConfirmationToolStripMenuItem.Size = New Size(278, 22)
         BorrowingConfirmationToolStripMenuItem.Text = "✅ Borrowing Confirmation"
         ' 
-        ' EditsToolStripMenuItem1
-        ' 
-        EditsToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        EditsToolStripMenuItem1.Name = "EditsToolStripMenuItem1"
-        EditsToolStripMenuItem1.Size = New Size(278, 22)
-        EditsToolStripMenuItem1.Text = "✎ Edit Info"
-        ' 
         ' PrintReceiptToolStripMenuItem
         ' 
         PrintReceiptToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -400,7 +408,7 @@ Partial Class MainForm
         ' 
         ' SettingsStripMenuItem
         ' 
-        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, Audit_Trail, BorrowingHistoryToolStripMenuItem, EditInfoToolStripMenuItem})
+        SettingsStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {PenaltyToolStripMenuItem, Audit_Trail, BorrowingHistoryToolStripMenuItem})
         SettingsStripMenuItem.ForeColor = Color.White
         SettingsStripMenuItem.Name = "SettingsStripMenuItem"
         SettingsStripMenuItem.Size = New Size(105, 22)
@@ -426,13 +434,6 @@ Partial Class MainForm
         BorrowingHistoryToolStripMenuItem.Name = "BorrowingHistoryToolStripMenuItem"
         BorrowingHistoryToolStripMenuItem.Size = New Size(236, 22)
         BorrowingHistoryToolStripMenuItem.Text = "📚 Borrowing History"
-        ' 
-        ' EditInfoToolStripMenuItem
-        ' 
-        EditInfoToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        EditInfoToolStripMenuItem.Name = "EditInfoToolStripMenuItem"
-        EditInfoToolStripMenuItem.Size = New Size(236, 22)
-        EditInfoToolStripMenuItem.Text = "✎ Edit Info"
         ' 
         ' Panel1
         ' 
@@ -1055,6 +1056,13 @@ Partial Class MainForm
         Panel_dash.Size = New Size(1015, 391)
         Panel_dash.TabIndex = 17
         ' 
+        ' BorrowerAccountToolStripMenuItem1
+        ' 
+        BorrowerAccountToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        BorrowerAccountToolStripMenuItem1.Name = "BorrowerAccountToolStripMenuItem1"
+        BorrowerAccountToolStripMenuItem1.Size = New Size(278, 22)
+        BorrowerAccountToolStripMenuItem1.Text = "✎ Borrower Account"
+        ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -1145,10 +1153,8 @@ Partial Class MainForm
     Friend WithEvents PenaltyManagementToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PenaltyToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
-    Friend WithEvents EditInfoToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents lblform As Label
     Friend WithEvents btnlogoutt As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents EditsToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents PrintReceiptToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents btn_borrowed As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents dshboard As Guna.UI2.WinForms.Guna2GroupBox
@@ -1184,5 +1190,8 @@ Partial Class MainForm
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents lbltotalbooks As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btntotalbooks As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents BorrowerAccountToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents MyAccountToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents BorrowerAccountToolStripMenuItem1 As ToolStripMenuItem
 
 End Class

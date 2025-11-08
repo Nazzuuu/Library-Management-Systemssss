@@ -29,7 +29,6 @@ Public Class Borrowereditsinfo
         Try
             Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
             If File.Exists(filePath) Then
-
                 Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
                     PictureBox1.Image = New Bitmap(fs)
                 End Using
@@ -39,7 +38,6 @@ Public Class Borrowereditsinfo
         Catch ex As Exception
             MessageBox.Show("Error loading pikit.png: " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-
 
         Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
         Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
@@ -52,21 +50,21 @@ Public Class Borrowereditsinfo
         Dim showAllRecords As Boolean = True
 
 
-        If userRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(borrowerID) Then
+        If userRole = "Librarian" OrElse userRole = "Admin" Then
+            com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl`"
+            showAllRecords = True
+
+        ElseIf userRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(borrowerID) Then
             showAllRecords = False
 
             If borrowerType = "Student" Then
-
                 com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl` WHERE `LRN` = @BorrowerID"
             ElseIf borrowerType = "Teacher" Then
-
                 com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl` WHERE `EmployeeNo` = @BorrowerID"
             End If
         End If
 
-
         If showAllRecords OrElse String.IsNullOrWhiteSpace(com) Then
-
             com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl`"
         End If
 
@@ -77,8 +75,7 @@ Public Class Borrowereditsinfo
             con.Open()
 
             Using cmd As New MySqlCommand(com, con)
-
-                If Not showAllRecords Then
+                If Not showAllRecords AndAlso userRole = "Borrower" Then
                     cmd.Parameters.AddWithValue("@BorrowerID", borrowerID)
                 End If
 
@@ -90,7 +87,6 @@ Public Class Borrowereditsinfo
                 If DataGridView1.Columns.Contains("ID") Then
                     DataGridView1.Columns("ID").Visible = False
                 End If
-
 
                 If userRole = "Borrower" Then
                     If DataGridView1.Columns.Contains("LRN") AndAlso borrowerType = "Teacher" Then
@@ -105,6 +101,7 @@ Public Class Borrowereditsinfo
                 DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
                 DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
             End Using
+
         Catch ex As Exception
             MessageBox.Show("Error loading data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
@@ -115,6 +112,7 @@ Public Class Borrowereditsinfo
 
         clearlahat()
     End Sub
+
 
 
     Public Sub clearlahat()
@@ -143,38 +141,35 @@ Public Class Borrowereditsinfo
     End Sub
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-
         If e.RowIndex < 0 Then Return
 
         Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
-
         selectedBorrowerID = Convert.ToInt32(row.Cells("ID").Value)
-
 
         txtuser.Text = row.Cells("Username").Value.ToString()
         txtpass.Text = row.Cells("Password").Value.ToString()
         txtemail.Text = row.Cells("Email").Value.ToString()
 
-        Dim lrnValue As String = row.Cells("LRN").Value.ToString()
-        Dim empNoValue As String = row.Cells("EmployeeNo").Value.ToString()
+
+        Dim lrnValue As String = If(row.Cells("LRN")?.Value?.ToString(), "").Trim()
+        Dim empNoValue As String = If(row.Cells("EmployeeNo")?.Value?.ToString(), "").Trim()
 
 
-        If Not String.IsNullOrWhiteSpace(lrnValue) Then
-
+        If Not String.IsNullOrEmpty(lrnValue) Then
             txtlrn.Text = lrnValue
             txtlrn.Enabled = False
             txtemployeeno.Text = ""
             txtemployeeno.Enabled = False
             originalIDValue = lrnValue
-        ElseIf Not String.IsNullOrWhiteSpace(empNoValue) Then
 
+        ElseIf Not String.IsNullOrEmpty(empNoValue) Then
             txtemployeeno.Text = empNoValue
             txtemployeeno.Enabled = False
             txtlrn.Text = ""
             txtlrn.Enabled = False
             originalIDValue = empNoValue
-        Else
 
+        Else
             txtlrn.Text = ""
             txtemployeeno.Text = ""
             txtlrn.Enabled = False
@@ -182,11 +177,9 @@ Public Class Borrowereditsinfo
             originalIDValue = String.Empty
         End If
 
-
         txtemail_TextChanged(txtemail, New EventArgs())
-
-
     End Sub
+
 
     Private Function GetOriginalEmail(ByVal ID As Integer) As String
         Dim email As String = ""
@@ -208,6 +201,24 @@ Public Class Borrowereditsinfo
         End Using
         Return email.Trim()
     End Function
+
+    Private Function IsPasswordValid() As Boolean
+        Dim password As String = txtpass.Text.Trim()
+
+        If password.Length < 8 Then
+            MessageBox.Show("Password must be at least 8 characters long.", "Weak Password", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return False
+        End If
+
+        If Not System.Text.RegularExpressions.Regex.IsMatch(password, "(?=.*[A-Z])(?=.*[a-z])(?=.*\d)") Then
+            MessageBox.Show("Password must contain at least one uppercase letter, one lowercase letter, and one number.", "Weak Password", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return False
+        End If
+
+        Return True
+    End Function
+
+
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If selectedBorrowerID = -1 Then
@@ -216,41 +227,79 @@ Public Class Borrowereditsinfo
         End If
 
         Dim newUsername As String = txtuser.Text.Trim()
-        Dim newPassword As String = txtpass.Text
+        Dim newPassword As String = txtpass.Text.Trim()
         Dim newEmail As String = txtemail.Text.Trim()
 
 
-
-        If String.IsNullOrWhiteSpace(newUsername) OrElse String.IsNullOrWhiteSpace(newPassword) Then
-            MessageBox.Show("Username and Password are required.", "Required Fields", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Return
-        End If
-
-        If userexistsu(newUsername, selectedBorrowerID) Then
-            MessageBox.Show("The username '" & newUsername & "' is already taken by another account.", "Duplicate Username", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        If String.IsNullOrWhiteSpace(newUsername) OrElse String.IsNullOrWhiteSpace(newPassword) OrElse String.IsNullOrWhiteSpace(newEmail) Then
+            MessageBox.Show("Username, Password, and Email fields are required.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
 
-        Dim coms As String = "UPDATE `borroweredit_tbl` SET `Username` = @User, `Password` = @Pass, `Email` = @Email WHERE `ID` = @SelectedID"
+        If Not IsPasswordValid() Then
 
-        Dim originalEmail As String = GetOriginalEmail(selectedBorrowerID)
+            Return
+        End If
+
+
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
+        If Not emailRegex.IsMatch(newEmail) Then
+            MessageBox.Show("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", "Invalid Email", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
 
         Using con As New MySqlConnection(connectionString)
             Try
                 con.Open()
-                Using commandsu As New MySqlCommand(coms, con)
 
+
+                Dim checkBorrower As New MySqlCommand("SELECT COUNT(*) FROM borroweredit_tbl WHERE (Username = @Username OR Email = @Email) AND ID <> @ID", con)
+                checkBorrower.Parameters.AddWithValue("@Username", newUsername)
+                checkBorrower.Parameters.AddWithValue("@Email", newEmail)
+                checkBorrower.Parameters.AddWithValue("@ID", selectedBorrowerID)
+                Dim borrowerCount As Integer = Convert.ToInt32(checkBorrower.ExecuteScalar())
+
+                If borrowerCount > 0 Then
+                    MessageBox.Show("The username or email already exists. Please use a different one.", "Duplicate Found", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+
+
+                Dim checkStaff As New MySqlCommand("SELECT COUNT(*) FROM user_staff_tbl WHERE Username = @Username OR Email = @Email", con)
+                checkStaff.Parameters.AddWithValue("@Username", newUsername)
+                checkStaff.Parameters.AddWithValue("@Email", newEmail)
+                Dim staffCount As Integer = Convert.ToInt32(checkStaff.ExecuteScalar())
+
+                If staffCount > 0 Then
+                    MessageBox.Show("The username or email already exists. Please use a different one.", "Duplicate Found", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+
+
+                Dim checkAdmin As New MySqlCommand("SELECT COUNT(*) FROM superadmin_tbl WHERE Username = @Username OR Email = @Email", con)
+                checkAdmin.Parameters.AddWithValue("@Username", newUsername)
+                checkAdmin.Parameters.AddWithValue("@Email", newEmail)
+                Dim adminCount As Integer = Convert.ToInt32(checkAdmin.ExecuteScalar())
+
+                If adminCount > 0 Then
+                    MessageBox.Show("The username or email already exists. Please use a different one.", "Duplicate Found", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+
+
+                Dim coms As String = "UPDATE borroweredit_tbl SET Username = @User, Password = @Pass, Email = @Email WHERE ID = @SelectedID"
+                Dim originalEmail As String = GetOriginalEmail(selectedBorrowerID)
+
+                Using commandsu As New MySqlCommand(coms, con)
                     commandsu.Parameters.AddWithValue("@User", newUsername)
                     commandsu.Parameters.AddWithValue("@Pass", newPassword)
                     commandsu.Parameters.AddWithValue("@Email", newEmail)
                     commandsu.Parameters.AddWithValue("@SelectedID", selectedBorrowerID)
 
-
                     Dim rowsAffected As Integer = commandsu.ExecuteNonQuery()
 
                     If rowsAffected > 0 Then
-
 
                         If originalEmail.Equals(MainForm.lblgmail.Text.Trim(), StringComparison.OrdinalIgnoreCase) Then
                             MainForm.lblgmail.Text = newEmail
@@ -262,12 +311,17 @@ Public Class Borrowereditsinfo
                         MessageBox.Show("Update failed or no changes were made.", "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     End If
                 End Using
+
             Catch ex As MySqlException
                 MessageBox.Show("Database Error during update: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Finally
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
             End Try
         End Using
-
     End Sub
+
 
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
@@ -459,7 +513,7 @@ Public Class Borrowereditsinfo
         MainForm.AccessionToolStripMenuItem.HideDropDown()
         MainForm.PrintReceiptToolStripMenuItem.HideDropDown()
         MainForm.AttendanceRecordToolStripMenuItem.HideDropDown()
-        MainForm.EditsToolStripMenuItem1.HideDropDown()
+        MainForm.BorrowerAccountToolStripMenuItem.HideDropDown()
         MainForm.ProcessStripMenuItem.ForeColor = Color.Gray
     End Sub
 
@@ -501,8 +555,11 @@ Public Class Borrowereditsinfo
 
                 lbllrn.Visible = True
                 txtlrn.Visible = True
-                lblemp.Visible = False
-                txtemployeeno.Visible = False
+                lblemp.Visible = True
+                txtemployeeno.Visible = True
+
+                lblemp.Location = New Point(29, 114)
+                txtemployeeno.Location = New Point(29, 136)
 
         End Select
 

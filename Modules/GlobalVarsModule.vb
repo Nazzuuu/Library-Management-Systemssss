@@ -5,7 +5,8 @@ Imports System.Threading.Tasks
 
 Module GlobalVarsModule
 
-
+    Public GlobalAutoRefreshTimer As Timer
+    Public ShouldShowMainFormNextLogin As Boolean = False
 
     Private _connectionString As String =
         $"Server={My.Settings.Server};Database={My.Settings.Database};Uid={My.Settings.Username};Pwd={My.Settings.Password};"
@@ -32,7 +33,7 @@ Module GlobalVarsModule
     Public CurrentEmployeeID As String = ""
     Public GlobalEmail As String = ""
     Public ActiveMainForm As MainForm = Nothing
-    Public ActiveBorrowerLoginForm As BorrowerLoginForm
+
     Public connectdatabase As ServerConnection
     Public loginform As login
 
@@ -309,7 +310,7 @@ Module GlobalVarsModule
         Dim t As New Timer() With {.Interval = intervalMs}
         AddHandler t.Tick, Async Sub(sender As Object, e As EventArgs)
                                Try
-                                   SkipRefreshIfSearching(grid)
+                                   temporarynorefresh(grid)
 
                                    Dim selectedColumn As String = ""
                                    Dim selectedValue As Object = Nothing
@@ -330,7 +331,7 @@ Module GlobalVarsModule
     End Sub
 
 
-    Public Sub SkipRefreshIfSearching(grid As DataGridView)
+    Public Sub temporarynorefresh(grid As DataGridView)
         Try
             If TypeOf grid.FindForm() Is Form Then
                 Dim parentForm = DirectCast(grid.FindForm(), Form)
@@ -352,6 +353,23 @@ Module GlobalVarsModule
     End Sub
 
 
+    Public Sub PauseAutoRefresh(grid As DataGridView)
+        Try
+            If refreshTimers.ContainsKey(grid) Then
+                refreshTimers(grid).Stop()
+            End If
+        Catch
+        End Try
+    End Sub
+
+    Public Sub ResumeAutoRefresh(grid As DataGridView)
+        Try
+            If refreshTimers.ContainsKey(grid) Then
+                refreshTimers(grid).Start()
+            End If
+        Catch
+        End Try
+    End Sub
 
     Private Sub HideStandardColumns(grid As DataGridView)
         Dim colsToHide() As String = {"ID", "CurrentIP", "is_logged_in"}
@@ -416,7 +434,6 @@ Module GlobalVarsModule
 
         End Try
     End Sub
-
 
 
 End Module
