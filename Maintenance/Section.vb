@@ -11,6 +11,7 @@ Public Class Section
 
         refreshsecs()
         AddHandler cbgrade.DropDown, AddressOf RefreshComboBoxes
+        AddHandler cbstrand.DropDown, AddressOf RefreshComboBoxes
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
         AddHandler cbdepartment.SelectedIndexChanged, AddressOf cbdepartment_SelectedIndexChanged
 
@@ -27,6 +28,7 @@ Public Class Section
         Try
             AutoRefreshComboBox(cbdepartment, "SELECT ID, Department FROM department_tbl ORDER BY Department", "Department", "ID")
             AutoRefreshComboBox(cbgrade, "SELECT ID, Grade FROM grade_tbl ORDER BY Grade", "Grade", "ID")
+            AutoRefreshComboBox(cbstrand, "SELECT ID, Strand FROM strand_tbl ORDER BY Strand", "Strand", "ID")
             cbgrade.Enabled = False
         Catch ex As Exception
             Debug.WriteLine("Auto-refresh ComboBox failed: " & ex.Message)
@@ -42,6 +44,7 @@ Public Class Section
 
         AutoRefreshComboBox(cbdepartment, "SELECT ID, Department FROM department_tbl ORDER BY Department", "Department", "ID")
         AutoRefreshComboBox(cbgrade, "SELECT ID, Grade FROM grade_tbl ORDER BY Grade", "Grade", "ID")
+        AutoRefreshComboBox(cbstrand, "SELECT ID, Strand FROM strand_tbl ORDER BY Strand", "Strand", "ID")
 
     End Sub
 
@@ -55,7 +58,31 @@ Public Class Section
                 Case "cbdepartment"
                     query = "SELECT Department FROM department_tbl ORDER BY Department"
                 Case "cbgrade"
-                    query = "SELECT Grade FROM grade_tbl ORDER BY Grade"
+
+                    Dim selectedDept As String = ""
+                    Try
+                        If cbdepartment IsNot Nothing AndAlso cbdepartment.SelectedIndex <> -1 Then
+                            selectedDept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
+                        End If
+                    Catch
+                        selectedDept = ""
+                    End Try
+
+                    If Not String.IsNullOrEmpty(selectedDept) Then
+                        Select Case selectedDept.ToLower()
+                            Case "junior high school"
+                                query = "SELECT ID, Grade FROM grade_tbl WHERE Grade BETWEEN 7 AND 10 ORDER BY CAST(Grade AS UNSIGNED)"
+                            Case "senior high school"
+                                query = "SELECT ID, Grade FROM grade_tbl WHERE Grade BETWEEN 11 AND 12 ORDER BY CAST(Grade AS UNSIGNED)"
+                            Case "elementary"
+                                query = "SELECT ID, Grade FROM grade_tbl WHERE Grade BETWEEN 1 AND 6 ORDER BY CAST(Grade AS UNSIGNED)"
+                            Case Else
+                                query = "SELECT ID, Grade FROM grade_tbl ORDER BY CAST(Grade AS UNSIGNED)"
+                        End Select
+                    Else
+
+                        query = "SELECT ID, Grade FROM grade_tbl ORDER BY CAST(Grade AS UNSIGNED)"
+                    End If
             End Select
 
             If query <> "" Then
@@ -63,13 +90,23 @@ Public Class Section
                 Dim da As New MySqlDataAdapter(query, con)
                 da.Fill(dt)
 
-                cb.DataSource = dt
-                cb.DisplayMember = dt.Columns(0).ColumnName
-                cb.ValueMember = dt.Columns(0).ColumnName
-                cb.SelectedIndex = -1
+
+                If dt.Columns.Contains("Grade") Then
+                    cb.DataSource = dt
+                    cb.DisplayMember = "Grade"
+                    cb.ValueMember = If(dt.Columns.Contains("ID"), "ID", "Grade")
+                    cb.SelectedIndex = -1
+                Else
+
+                    cb.DataSource = dt
+                    cb.DisplayMember = dt.Columns(0).ColumnName
+                    cb.ValueMember = dt.Columns(0).ColumnName
+                    cb.SelectedIndex = -1
+                End If
             End If
         End Using
     End Sub
+
 
 
     Private Sub cbdepartment_DropDown(sender As Object, e As EventArgs) Handles cbdepartment.DropDown
@@ -87,6 +124,15 @@ Public Class Section
             cbgradesu()
         Catch ex As Exception
             Debug.WriteLine("Error refreshing grade combo: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cbstrand_DropDown(sender As Object, e As EventArgs) Handles cbstrand.DropDown
+        Try
+            cbstrand.DataSource = Nothing
+            cbstrandsu()
+        Catch ex As Exception
+            Debug.WriteLine("Error refreshing strand combo: " & ex.Message)
         End Try
     End Sub
 
