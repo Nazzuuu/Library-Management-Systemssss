@@ -1,12 +1,14 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.ComponentModel
 Imports System.Net
 Imports System.Net.Sockets
 Imports System.Threading.Tasks
+Imports MySql.Data.MySqlClient
 
 Module GlobalVarsModule
 
     Public GlobalAutoRefreshTimer As Timer
     Public ShouldShowMainFormNextLogin As Boolean = False
+
 
     Private _connectionString As String =
         $"Server={My.Settings.Server};Database={My.Settings.Database};Uid={My.Settings.Username};Pwd={My.Settings.Password};"
@@ -16,6 +18,61 @@ Module GlobalVarsModule
             Return _connectionString
         End Get
     End Property
+
+
+    Public WithEvents dbRefreshTimer_MD5 As New Timer() With {.Interval = 3000}
+    Public lastTableCounts_MD5 As New Dictionary(Of String, String)
+    Public monitoredTables_MD5 As New List(Of String) From {
+        "book_tbl", "author_tbl", "genre_tbl", "publisher_tbl", "language_tbl", "supplier_tbl", "shelf_tbl"
+    }
+
+    Public Sub InitializeDatabaseMonitor()
+        Try
+            If Not dbRefreshTimer_MD5.Enabled Then
+                dbRefreshTimer_MD5.Start()
+            End If
+        Catch
+        End Try
+    End Sub
+
+    Private Sub dbRefreshTimer_MD5_Tick(sender As Object, e As EventArgs) Handles dbRefreshTimer_MD5.Tick
+        Try
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+
+                Dim changesDetected As Boolean = False
+
+                For Each tableName As String In monitoredTables_MD5
+
+                    Dim com As New MySqlCommand($"SELECT MD5(GROUP_CONCAT(CONCAT_WS('|', *))) FROM `{tableName}`", con)
+                    Dim currentHash As String = Convert.ToString(com.ExecuteScalar())
+
+                    If String.IsNullOrEmpty(currentHash) Then
+                        currentHash = ""
+                    End If
+
+                    If lastTableCounts_MD5.ContainsKey(tableName) Then
+
+                        If lastTableCounts_MD5(tableName).ToString() <> currentHash Then
+                            changesDetected = True
+                            lastTableCounts_MD5(tableName) = currentHash
+                        End If
+                    Else
+                        lastTableCounts_MD5(tableName) = currentHash
+                        changesDetected = True
+                    End If
+                Next
+
+                If changesDetected Then
+                    RaiseEvent DatabaseUpdated()
+                End If
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine("dbRefreshTimer_MD5_Tick error: " & ex.Message)
+        End Try
+    End Sub
+
+
 
 
 
@@ -36,6 +93,7 @@ Module GlobalVarsModule
 
     Public connectdatabase As ServerConnection
     Public loginform As login
+
 
 
     Public Function GetLocalIPAddress() As String
@@ -225,11 +283,13 @@ Module GlobalVarsModule
 
     Public Sub StartAutoRefresh()
         dbRefreshTimer.Start()
+        AddHandler DatabaseUpdated, AddressOf GlobalComboBoxUpdater
     End Sub
 
     Public Sub StopAutoRefresh()
         dbRefreshTimer.Stop()
     End Sub
+
 
 
     Private Sub dbRefreshTimer_Tick(sender As Object, e As EventArgs) Handles dbRefreshTimer.Tick
@@ -240,28 +300,40 @@ Module GlobalVarsModule
                 Dim changesDetected As Boolean = False
 
                 For Each tableName As String In monitoredTables
-                    Dim com As New MySqlCommand($"SELECT COUNT(*) FROM `{tableName}`", con)
-                    Dim currentCount As Integer = Convert.ToInt32(com.ExecuteScalar())
+                    ' ✅ Gumamit ng MD5 hash para malaman kung may UPDATE kahit walang dagdag/bawas
+                    Dim com As New MySqlCommand($"SELECT MD5(GROUP_CONCAT(CONCAT_WS('|', *))) FROM `{tableName}`", con)
+                    Dim currentHash As String = Convert.ToString(com.ExecuteScalar())
+
+                    If String.IsNullOrEmpty(currentHash) Then
+                        currentHash = ""
+                    End If
 
                     If lastTableCounts.ContainsKey(tableName) Then
-                        If lastTableCounts(tableName) <> currentCount Then
+                        ' lastTableCounts ngayon nagho-hold ng hash (hindi count)
+                        If lastTableCounts(tableName).ToString() <> currentHash Then
                             changesDetected = True
-                            lastTableCounts(tableName) = currentCount
+                            lastTableCounts(tableName) = currentHash
                         End If
                     Else
-                        lastTableCounts(tableName) = currentCount
+                        lastTableCounts(tableName) = currentHash
+                        changesDetected = True
                     End If
                 Next
 
-
+                ' ✅ Trigger event kung may changes (add, delete, o update)
                 If changesDetected Then
                     RaiseEvent DatabaseUpdated()
                 End If
             End Using
-        Catch ex As Exception
 
+
+
+        Catch ex As Exception
+            Debug.WriteLine("dbRefreshTimer_Tick error: " & ex.Message)
         End Try
     End Sub
+
+
 
     Public Async Function LoadToGridAsync(grid As DataGridView, query As String) As Task
         Await Task.Run(Sub()
@@ -434,6 +506,87 @@ Module GlobalVarsModule
 
         End Try
     End Sub
+
+
+
+    Private comboSources As New Dictionary(Of ComboBox, String)
+
+
+    Public Sub AutoRefreshComboBox(cb As ComboBox, query As String, displayMember As String, valueMember As String)
+        Try
+
+            If comboSources.ContainsKey(cb) Then
+                comboSources(cb) = query
+            Else
+                comboSources.Add(cb, query)
+            End If
+
+
+            RefreshComboBox(cb, query, displayMember, valueMember)
+        Catch ex As Exception
+        End Try
+    End Sub
+
+
+    Private Sub RefreshComboBox(cb As ComboBox, query As String, displayMember As String, valueMember As String)
+        Try
+            Using con As New MySqlConnection(connectionString)
+                Using adap As New MySqlDataAdapter(query, con)
+                    Dim dt As New DataTable()
+                    adap.Fill(dt)
+
+                    Dim prevValue As Object = cb.SelectedValue
+
+                    cb.DataSource = dt
+                    cb.DisplayMember = displayMember
+                    cb.ValueMember = valueMember
+                    cb.SelectedIndex = -1
+
+
+                    If prevValue IsNot Nothing Then
+                        For Each row As DataRow In dt.Rows
+                            If row(valueMember).ToString() = prevValue.ToString() Then
+                                cb.SelectedValue = prevValue
+                                Exit For
+                            End If
+                        Next
+                    End If
+                End Using
+            End Using
+        Catch
+        End Try
+    End Sub
+
+
+    Private Sub GlobalComboBoxUpdater()
+        Try
+            For Each pair In comboSources.ToList()
+                Dim cb As ComboBox = pair.Key
+                Dim query As String = pair.Value
+
+
+                If cb Is Nothing OrElse cb.IsDisposed Then
+                    comboSources.Remove(cb)
+                    Continue For
+                End If
+
+
+                Dim displayMember As String = cb.DisplayMember
+                Dim valueMember As String = cb.ValueMember
+                RefreshComboBox(cb, query, displayMember, valueMember)
+            Next
+        Catch
+        End Try
+    End Sub
+
+    Public Function IsInDesignMode(ctrl As Control) As Boolean
+        Try
+            Return (LicenseManager.UsageMode = LicenseUsageMode.Designtime) OrElse
+                   (ctrl IsNot Nothing AndAlso ctrl.Site IsNot Nothing AndAlso ctrl.Site.DesignMode)
+        Catch
+            Return False
+        End Try
+    End Function
 
 
 End Module

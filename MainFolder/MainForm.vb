@@ -1,9 +1,13 @@
 ﻿Imports Microsoft.VisualBasic.ApplicationServices
 Imports System.Drawing
 Imports MySql.Data.MySqlClient
+Imports System.ComponentModel
+
 Public Class MainForm
     Public BorrowerEditsInfoForm As Borrowereditsinfo
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        If GlobalVarsModule.IsInDesignMode(Me) Then Return
 
         GlobalVarsModule.ActiveMainForm = Me
 
@@ -25,7 +29,7 @@ Public Class MainForm
         loadsu()
 
         GlobalVarsModule.StartAutoRefresh()
-
+        GlobalVarsModule.InitializeDatabaseMonitor()
 
     End Sub
 

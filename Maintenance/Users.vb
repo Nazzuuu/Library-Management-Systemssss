@@ -562,14 +562,44 @@ Public Class Users
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim role As String = selectedRow.Cells("Role").Value.ToString()
+            Dim staffName As String = $"{selectedRow.Cells("LastName").Value}, {selectedRow.Cells("FirstName").Value} ({role})"
+
+
+            Dim conCheck As New MySqlConnection(GlobalVarsModule.connectionString)
+            Dim isLoggedIn As Boolean = False
+
+            Try
+                conCheck.Open()
+                Dim checkCmd As New MySqlCommand("SELECT is_logged_in FROM user_staff_tbl WHERE ID = @id", conCheck)
+                checkCmd.Parameters.AddWithValue("@id", ID)
+
+                Dim result As Object = checkCmd.ExecuteScalar()
+                If result IsNot Nothing AndAlso Convert.ToInt32(result) = 1 Then
+                    isLoggedIn = True
+                End If
+
+            Catch ex As Exception
+                MsgBox("Error checking login status: " & ex.Message, vbCritical)
+                Return
+            Finally
+                conCheck.Close()
+            End Try
+
+
+            If isLoggedIn Then
+                MsgBox($"Cannot delete {staffName} because this account is currently logged in on another device.", vbExclamation, "Delete Blocked")
+                Exit Sub
+            End If
+
+
             Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this staff member?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
 
             If dialogResult = DialogResult.Yes Then
 
                 Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim staffName As String = $"{selectedRow.Cells("LastName").Value}, {selectedRow.Cells("FirstName").Value} ({selectedRow.Cells("Role").Value})"
 
                 Try
                     con.Open()
@@ -594,15 +624,12 @@ Public Class Users
                     LoadStaffData()
                     clearfields()
 
-
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-
                         Dim reset As New MySqlCommand("ALTER TABLE `user_staff_tbl` AUTO_INCREMENT = 1", con)
                         reset.ExecuteNonQuery()
-
                     End If
 
                 Catch ex As Exception
@@ -613,9 +640,9 @@ Public Class Users
                     End If
                 End Try
             End If
-
         End If
     End Sub
+
 
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 

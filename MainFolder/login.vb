@@ -2,6 +2,7 @@
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 Imports Guna.UI2.WinForms
 Imports MySql.Data.MySqlClient
+Imports System.ComponentModel
 
 Public Class login
 
@@ -400,6 +401,8 @@ TryBorrower:
 
 
     Private Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        If GlobalVarsModule.IsInDesignMode(Me) Then Return
 
         TopMost = True
         MainForm.Refresh()

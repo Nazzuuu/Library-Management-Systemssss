@@ -544,7 +544,7 @@ Partial Class MainForm
         ' Guna2CirclePictureBox1
         ' 
         Guna2CirclePictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        Guna2CirclePictureBox1.Image = Library_Management_Systemssss.My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n1
+        Guna2CirclePictureBox1.Image = My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n1
         Guna2CirclePictureBox1.ImageRotate = 0F
         Guna2CirclePictureBox1.Location = New Point(92, 2)
         Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"

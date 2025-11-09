@@ -43,6 +43,7 @@ Public Class Book
         refreshbook()
         DisablePaste_AllTextBoxes()
 
+
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
@@ -55,8 +56,6 @@ Public Class Book
 
 
         LoadBookData()
-
-
         SetupGridStyle()
 
 
@@ -85,6 +84,17 @@ Public Class Book
         Dim query As String = "SELECT * FROM `book_tbl` ORDER BY ID DESC"
         Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
         SetupGridStyle()
+
+
+        Try
+            AutoRefreshComboBox(cbauthor, "SELECT ID, AuthorName FROM author_tbl", "AuthorName", "ID")
+            AutoRefreshComboBox(cbgenre, "SELECT ID, GenreName FROM genre_tbl", "GenreName", "ID")
+            AutoRefreshComboBox(cbpublisher, "SELECT ID, PublisherName FROM publisher_tbl", "PublisherName", "ID")
+            AutoRefreshComboBox(cblanguage, "SELECT ID, LanguageName FROM language_tbl", "LanguageName", "ID")
+        Catch ex As Exception
+            Debug.WriteLine("ComboBox refresh failed: " & ex.Message)
+        End Try
+
     End Sub
 
 
@@ -167,21 +177,7 @@ Public Class Book
         cblanguage.SelectedIndex = -1
     End Sub
 
-    'Public Sub cbcategoryy()
 
-    '    Dim con As New MySqlConnection(connectionString)
-    '    Dim com As String = "SELECT ID, Category FROM category_tbl"
-    '    Dim adap As New MySqlDataAdapter(com, con)
-    '    Dim dt As New DataTable
-
-    '    adap.Fill(dt)
-
-    '    cbcategory.DataSource = dt
-    '    cbcategory.DisplayMember = "Category"
-    '    cbcategory.ValueMember = "ID"
-    '    cbcategory.SelectedIndex = -1
-
-    'End Sub
 
     Private Sub Book_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         DataGridView1.ClearSelection()
@@ -1209,5 +1205,42 @@ Public Class Book
             e.Cancel = True
         End If
     End Sub
+
+    Private Sub cbgenre_DropDown(sender As Object, e As EventArgs) Handles cbgenre.DropDown
+        Try
+            cbgenre.DataSource = Nothing
+            cbgenree()
+        Catch ex As Exception
+            Debug.WriteLine("Error refreshing genre combo: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cbauthor_DropDown(sender As Object, e As EventArgs) Handles cbauthor.DropDown
+        Try
+            cbauthor.DataSource = Nothing
+            cbauthorr()
+        Catch ex As Exception
+            Debug.WriteLine("Error refreshing author combo: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cbpublisher_DropDown(sender As Object, e As EventArgs) Handles cbpublisher.DropDown
+        Try
+            cbpublisher.DataSource = Nothing
+            cbpublisherr()
+        Catch ex As Exception
+            Debug.WriteLine("Error refreshing publisher combo: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cblanguage_DropDown(sender As Object, e As EventArgs) Handles cblanguage.DropDown
+        Try
+            cblanguage.DataSource = Nothing
+            cblang()
+        Catch ex As Exception
+            Debug.WriteLine("Error refreshing language combo: " & ex.Message)
+        End Try
+    End Sub
+
 
 End Class

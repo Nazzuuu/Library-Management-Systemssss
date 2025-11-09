@@ -7,21 +7,6 @@ Public Class Accession
 
     Private ReadOnly connectionString As String = GlobalVarsModule.connectionString
 
-    Public Sub shelfsu()
-
-        Dim con As New MySqlConnection(connectionString)
-        Dim com As String = "SELECT ID, Shelf FROM `shelf_tbl`"
-        Dim adap As New MySqlDataAdapter(com, con)
-        Dim dt As New DataTable
-
-        adap.Fill(dt)
-
-        cbshelf.DataSource = dt
-        cbshelf.DisplayMember = "Shelf"
-        cbshelf.ValueMember = "ID"
-        cbshelf.SelectedIndex = -1
-
-    End Sub
 
     Public Sub clearlahat()
 
@@ -40,14 +25,25 @@ Public Class Accession
         rbborrowable.Checked = False
         rbforlibraryonly.Checked = False
 
-
         CheckBox1.Checked = False
-
-
 
     End Sub
 
+    Public Sub shelfsu()
 
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT ID, Shelf FROM `shelf_tbl`"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim dt As New DataTable
+
+        adap.Fill(dt)
+
+        cbshelf.DataSource = dt
+        cbshelf.DisplayMember = "Shelf"
+        cbshelf.ValueMember = "ID"
+        cbshelf.SelectedIndex = -1
+
+    End Sub
 
     Private Sub Accession_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         DataGridView1.ClearSelection()
@@ -70,7 +66,6 @@ Public Class Accession
         txtbarcodes.Enabled = False
         txttransactionno.Enabled = False
         txtsuppliername.Enabled = False
-
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildAccessionQuery(""), 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
@@ -116,6 +111,14 @@ Public Class Accession
         btnview.Enabled = True
         btnview.Visible = True
         shelfsu()
+
+
+        Try
+            AutoRefreshComboBox(cbshelf, "SELECT ID, Shelf FROM shelf_tbl", "Shelf", "ID")
+        Catch ex As Exception
+            Debug.WriteLine("Auto-refresh shelf ComboBox failed: " & ex.Message)
+        End Try
+
         DataGridView1.ClearSelection()
 
         For Each form In Application.OpenForms
@@ -133,10 +136,15 @@ Public Class Accession
             Dim query As String = BuildAccessionQuery("")
             Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
             DataGridView1.ClearSelection()
-        Catch
+
+
+            shelfsu()
+            AutoRefreshComboBox(cbshelf, "SELECT ID, Shelf FROM shelf_tbl", "Shelf", "ID")
+
+        Catch ex As Exception
+            Debug.WriteLine("OnDatabaseUpdated error: " & ex.Message)
         End Try
     End Sub
-
 
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
 

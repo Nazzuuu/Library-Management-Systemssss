@@ -52,13 +52,27 @@ Public Class Acquisition
         End Try
 
         cbsupplierr()
+
+
+        Try
+            AutoRefreshComboBox(cbsuppliername, "SELECT ID, SupplierName FROM supplier_tbl", "SupplierName", "ID")
+        Catch ex As Exception
+            Debug.WriteLine("Auto-refresh supplier ComboBox failed: " & ex.Message)
+        End Try
     End Sub
+
 
     Private Async Sub OnDatabaseUpdated()
         Try
             Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `acquisition_tbl`")
             DataGridView1.ClearSelection()
-        Catch
+
+
+            cbsupplierr()
+            AutoRefreshComboBox(cbsuppliername, "SELECT ID, SupplierName FROM supplier_tbl", "SupplierName", "ID")
+
+        Catch ex As Exception
+            Debug.WriteLine("OnDatabaseUpdated error: " & ex.Message)
         End Try
     End Sub
 
@@ -76,6 +90,15 @@ Public Class Acquisition
         cbsuppliername.DisplayMember = "SupplierName"
         cbsuppliername.ValueMember = "ID"
         cbsuppliername.SelectedIndex = -1
+    End Sub
+
+    Private Sub cbsuppliername_DropDown(sender As Object, e As EventArgs) Handles cbsuppliername.DropDown
+        Try
+            cbsuppliername.DataSource = Nothing
+            cbsupplierr()
+        Catch ex As Exception
+            Debug.WriteLine("Error refreshing supplier combo: " & ex.Message)
+        End Try
     End Sub
 
 
