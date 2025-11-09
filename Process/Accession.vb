@@ -50,8 +50,10 @@ Public Class Accession
     End Sub
 
     Private Sub Acession_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
         DisablePaste_AllTextBoxes()
         RefreshAccessionData()
+        AddHandler cbshelf.DropDown, AddressOf RefreshComboBoxes
 
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
@@ -69,6 +71,30 @@ Public Class Accession
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildAccessionQuery(""), 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+    End Sub
+
+    Private Sub RefreshComboBoxes(sender As Object, e As EventArgs)
+        Dim cb As ComboBox = DirectCast(sender, ComboBox)
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Dim query As String = ""
+
+            Select Case cb.Name.ToLower()
+                Case "cbshelf"
+                    query = "SELECT Shelf FROM shelf_tbl ORDER BY Shelf"
+            End Select
+
+            If query <> "" Then
+                Dim dt As New DataTable()
+                Dim da As New MySqlDataAdapter(query, con)
+                da.Fill(dt)
+
+                cb.DataSource = dt
+                cb.DisplayMember = dt.Columns(0).ColumnName
+                cb.ValueMember = dt.Columns(0).ColumnName
+                cb.SelectedIndex = -1
+            End If
+        End Using
     End Sub
 
     Private Function BuildAccessionQuery(Optional filterStatus As String = "") As String

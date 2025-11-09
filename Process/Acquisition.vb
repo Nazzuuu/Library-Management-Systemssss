@@ -32,11 +32,34 @@ Public Class Acquisition
             DateTimePicker1.Value = DateTimePicker1.MaxDate
         End If
 
-
+        AddHandler cbsuppliername.DropDown, AddressOf RefreshComboBoxes
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `acquisition_tbl`", 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
+    Private Sub RefreshComboBoxes(sender As Object, e As EventArgs)
+        Dim cb As ComboBox = DirectCast(sender, ComboBox)
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Dim query As String = ""
+
+            Select Case cb.Name.ToLower()
+                Case "cbsuppliername"
+                    query = "SELECT SupplierName FROM supplier_tbl ORDER BY SupplierName"
+            End Select
+
+            If query <> "" Then
+                Dim dt As New DataTable()
+                Dim da As New MySqlDataAdapter(query, con)
+                da.Fill(dt)
+
+                cb.DataSource = dt
+                cb.DisplayMember = dt.Columns(0).ColumnName
+                cb.ValueMember = dt.Columns(0).ColumnName
+                cb.SelectedIndex = -1
+            End If
+        End Using
+    End Sub
     Public Sub refreshData()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `acquisition_tbl`"

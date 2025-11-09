@@ -43,6 +43,10 @@ Public Class Book
         refreshbook()
         DisablePaste_AllTextBoxes()
 
+        AddHandler cbauthor.DropDown, AddressOf RefreshComboBoxes
+        AddHandler cbgenre.DropDown, AddressOf RefreshComboBoxes
+        AddHandler cbpublisher.DropDown, AddressOf RefreshComboBoxes
+        AddHandler cblanguage.DropDown, AddressOf RefreshComboBoxes
 
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
@@ -72,6 +76,35 @@ Public Class Book
 
     End Sub
 
+    Private Sub RefreshComboBoxes(sender As Object, e As EventArgs)
+        Dim cb As ComboBox = DirectCast(sender, ComboBox)
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Dim query As String = ""
+
+            Select Case cb.Name.ToLower()
+                Case "cbauthor"
+                    query = "SELECT AuthorName FROM author_tbl ORDER BY AuthorName"
+                Case "cbgenre"
+                    query = "SELECT Genre FROM genre_tbl ORDER BY Genre"
+                Case "cbpublisher"
+                    query = "SELECT PublisherName FROM publisher_tbl ORDER BY PublisherName"
+                Case "cblanguage"
+                    query = "SELECT Language FROM language_tbl ORDER BY Language"
+            End Select
+
+            If query <> "" Then
+                Dim dt As New DataTable()
+                Dim da As New MySqlDataAdapter(query, con)
+                da.Fill(dt)
+
+                cb.DataSource = dt
+                cb.DisplayMember = dt.Columns(0).ColumnName
+                cb.ValueMember = dt.Columns(0).ColumnName
+                cb.SelectedIndex = -1
+            End If
+        End Using
+    End Sub
 
 
     Private Sub LoadBookData()

@@ -163,9 +163,9 @@ Public Class login
                             activeMain.MyAccountToolStripMenuItem.Visible = False
                             activeMain.BorrowerAccountToolStripMenuItem.Visible = False
                             activeMain.BorrowerAccountToolStripMenuItem1.Visible = False
-                            activeMain.BorrowToolStripMenuItem.Visible = False
-                            activeMain.AcquisitionToolStripMenuItem.Visible = False
-                            activeMain.AccessionToolStripMenuItem.Visible = False
+                            'activeMain.BorrowToolStripMenuItem.Visible = False
+                            'activeMain.AcquisitionToolStripMenuItem.Visible = False
+                            'activeMain.AccessionToolStripMenuItem.Visible = False
 
                             For Each form In Application.OpenForms
                                 If TypeOf form Is Penalty Then
