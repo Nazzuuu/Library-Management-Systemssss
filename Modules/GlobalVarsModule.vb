@@ -23,7 +23,7 @@ Module GlobalVarsModule
     Public WithEvents dbRefreshTimer_MD5 As New Timer() With {.Interval = 3000}
     Public lastTableCounts_MD5 As New Dictionary(Of String, String)
     Public monitoredTables_MD5 As New List(Of String) From {
-        "book_tbl", "author_tbl", "genre_tbl", "publisher_tbl", "language_tbl", "supplier_tbl", "shelf_tbl"
+        "book_tbl", "author_tbl", "genre_tbl", "publisher_tbl", "language_tbl", "supplier_tbl", "shelf_tbl", "section_tbl"
     }
 
     Public Sub InitializeDatabaseMonitor()

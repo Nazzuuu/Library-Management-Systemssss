@@ -1,14 +1,20 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Data
+﻿Imports System.Data
+Imports System.Security.Policy
+Imports MySql.Data.MySqlClient
 
 Public Class Section
+
     Private Sub Section_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         DisablePaste_AllTextBoxes()
         TopMost = True
         Me.Refresh()
 
         refreshsecs()
+        AddHandler cbgrade.DropDown, AddressOf RefreshComboBoxes
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+        AddHandler cbdepartment.SelectedIndexChanged, AddressOf cbdepartment_SelectedIndexChanged
+
+        cbgrade.Enabled = False
     End Sub
 
     Public Sub refreshsecs()
@@ -17,6 +23,14 @@ Public Class Section
         SetupGridStyle()
         cbdeptss()
         clearlahat()
+
+        Try
+            AutoRefreshComboBox(cbdepartment, "SELECT ID, Department FROM department_tbl ORDER BY Department", "Department", "ID")
+            AutoRefreshComboBox(cbgrade, "SELECT ID, Grade FROM grade_tbl ORDER BY Grade", "Grade", "ID")
+            cbgrade.Enabled = False
+        Catch ex As Exception
+            Debug.WriteLine("Auto-refresh ComboBox failed: " & ex.Message)
+        End Try
     End Sub
 
     Private Async Sub OnDatabaseUpdated()
@@ -25,6 +39,55 @@ Public Class Section
         SetupGridStyle()
         cbdeptss()
         clearlahat()
+
+        AutoRefreshComboBox(cbdepartment, "SELECT ID, Department FROM department_tbl ORDER BY Department", "Department", "ID")
+        AutoRefreshComboBox(cbgrade, "SELECT ID, Grade FROM grade_tbl ORDER BY Grade", "Grade", "ID")
+
+    End Sub
+
+    Private Sub RefreshComboBoxes(sender As Object, e As EventArgs)
+        Dim cb As ComboBox = DirectCast(sender, ComboBox)
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Dim query As String = ""
+
+            Select Case cb.Name.ToLower()
+                Case "cbdepartment"
+                    query = "SELECT Department FROM department_tbl ORDER BY Department"
+                Case "cbgrade"
+                    query = "SELECT Grade FROM grade_tbl ORDER BY Grade"
+            End Select
+
+            If query <> "" Then
+                Dim dt As New DataTable()
+                Dim da As New MySqlDataAdapter(query, con)
+                da.Fill(dt)
+
+                cb.DataSource = dt
+                cb.DisplayMember = dt.Columns(0).ColumnName
+                cb.ValueMember = dt.Columns(0).ColumnName
+                cb.SelectedIndex = -1
+            End If
+        End Using
+    End Sub
+
+
+    Private Sub cbdepartment_DropDown(sender As Object, e As EventArgs) Handles cbdepartment.DropDown
+        Try
+            cbdepartment.DataSource = Nothing
+            cbdeptss()
+        Catch ex As Exception
+            Debug.WriteLine("Error refreshing department combo: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cbgrade_DropDown(sender As Object, e As EventArgs) Handles cbgrade.DropDown
+        Try
+            cbgrade.DataSource = Nothing
+            cbgradesu()
+        Catch ex As Exception
+            Debug.WriteLine("Error refreshing grade combo: " & ex.Message)
+        End Try
     End Sub
 
     Private Sub SetupGridStyle()
@@ -580,6 +643,11 @@ Public Class Section
     End Sub
 
     Private Sub cbdepartment_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbdepartment.SelectedIndexChanged
+
+        If cbdepartment.SelectedValue Is Nothing OrElse cbdepartment.SelectedIndex = -1 Then
+            cbgrade.Enabled = False
+            Exit Sub
+        End If
 
         If cbdepartment.SelectedIndex <> -1 Then
             Dim selectedDept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
