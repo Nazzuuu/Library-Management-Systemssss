@@ -85,6 +85,7 @@ Partial Class MainForm
         BorrowingConfirmationToolStripMenuItem = New ToolStripMenuItem()
         PrintReceiptToolStripMenuItem = New ToolStripMenuItem()
         AttendanceRecordToolStripMenuItem = New ToolStripMenuItem()
+        BorrowerAccountToolStripMenuItem1 = New ToolStripMenuItem()
         Guna2Elipse3 = New Guna.UI2.WinForms.Guna2Elipse(components)
         pnl_report = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_Studentlogs = New Panel()
@@ -133,7 +134,6 @@ Partial Class MainForm
         lblgmail = New Label()
         Label6 = New Label()
         Panel_dash = New Panel()
-        BorrowerAccountToolStripMenuItem1 = New ToolStripMenuItem()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
         Panel_Process.SuspendLayout()
@@ -254,21 +254,21 @@ Partial Class MainForm
         UserMaintenanceToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         UserMaintenanceToolStripMenuItem.Name = "UserMaintenanceToolStripMenuItem"
         UserMaintenanceToolStripMenuItem.Size = New Size(255, 22)
-        UserMaintenanceToolStripMenuItem.Text = "👨🏻‍💻 Assts./Staff Account"
+        UserMaintenanceToolStripMenuItem.Text = ChrW(55358) & ChrW(56785) & "‍🏫 Assts./Staff Account"
         ' 
         ' BorrowerAccountToolStripMenuItem
         ' 
         BorrowerAccountToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         BorrowerAccountToolStripMenuItem.Name = "BorrowerAccountToolStripMenuItem"
         BorrowerAccountToolStripMenuItem.Size = New Size(255, 22)
-        BorrowerAccountToolStripMenuItem.Text = "✎ Borrower Account"
+        BorrowerAccountToolStripMenuItem.Text = ChrW(55358) & ChrW(57002) & " Borrower Account"
         ' 
         ' MyAccountToolStripMenuItem
         ' 
         MyAccountToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         MyAccountToolStripMenuItem.Name = "MyAccountToolStripMenuItem"
         MyAccountToolStripMenuItem.Size = New Size(255, 22)
-        MyAccountToolStripMenuItem.Text = "✎ My Account"
+        MyAccountToolStripMenuItem.Text = ChrW(55358) & ChrW(56785) & "‍💻 My Account"
         ' 
         ' pnl_process
         ' 
@@ -375,6 +375,13 @@ Partial Class MainForm
         AttendanceRecordToolStripMenuItem.Name = "AttendanceRecordToolStripMenuItem"
         AttendanceRecordToolStripMenuItem.Size = New Size(278, 22)
         AttendanceRecordToolStripMenuItem.Text = "⌛Time-in/Out Record"
+        ' 
+        ' BorrowerAccountToolStripMenuItem1
+        ' 
+        BorrowerAccountToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        BorrowerAccountToolStripMenuItem1.Name = "BorrowerAccountToolStripMenuItem1"
+        BorrowerAccountToolStripMenuItem1.Size = New Size(278, 22)
+        BorrowerAccountToolStripMenuItem1.Text = ChrW(55358) & ChrW(57002) & " Borrower Account"
         ' 
         ' Guna2Elipse3
         ' 
@@ -537,7 +544,7 @@ Partial Class MainForm
         ' Guna2CirclePictureBox1
         ' 
         Guna2CirclePictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        Guna2CirclePictureBox1.Image = My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n1
+        Guna2CirclePictureBox1.Image = Library_Management_Systemssss.My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n1
         Guna2CirclePictureBox1.ImageRotate = 0F
         Guna2CirclePictureBox1.Location = New Point(92, 2)
         Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
@@ -1055,13 +1062,6 @@ Partial Class MainForm
         Panel_dash.Name = "Panel_dash"
         Panel_dash.Size = New Size(1015, 391)
         Panel_dash.TabIndex = 17
-        ' 
-        ' BorrowerAccountToolStripMenuItem1
-        ' 
-        BorrowerAccountToolStripMenuItem1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        BorrowerAccountToolStripMenuItem1.Name = "BorrowerAccountToolStripMenuItem1"
-        BorrowerAccountToolStripMenuItem1.Size = New Size(278, 22)
-        BorrowerAccountToolStripMenuItem1.Text = "✎ Borrower Account"
         ' 
         ' MainForm
         ' 
