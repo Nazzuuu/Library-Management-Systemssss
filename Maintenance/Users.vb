@@ -120,25 +120,26 @@ Public Class Users
         Try
             Dim refreshQuery As String = ""
 
+
             Select Case GlobalVarsModule.GlobalRole
                 Case "Staff", "Assistant Librarian"
                     refreshQuery =
-                "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
-                "FROM user_staff_tbl WHERE ID = '" & GlobalVarsModule.CurrentEmployeeID & "'"
+                    "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
+                    "FROM user_staff_tbl WHERE ID = '" & GlobalVarsModule.CurrentEmployeeID & "'"
 
                 Case Else
                     refreshQuery =
-                "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
-                "FROM user_staff_tbl"
+                    "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
+                    "FROM user_staff_tbl"
             End Select
 
+            Me.Tag = refreshQuery
 
-            Dim localQuery As String = refreshQuery
 
-            GlobalVarsModule.AutoRefreshGrid(DataGridView1, localQuery, 2000)
+            GlobalVarsModule.AutoRefreshGrid(DataGridView1, Me.Tag.ToString(), 2000)
 
         Catch ex As Exception
-
+            MessageBox.Show("Error initializing Users form: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 

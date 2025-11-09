@@ -44,7 +44,6 @@ Partial Class login
         Panel_btnlogin = New Panel()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         PictureBox1 = New PictureBox()
-        LinkLabel1 = New LinkLabel()
         LinkLabel2 = New LinkLabel()
         Label4 = New Label()
         Panel1.SuspendLayout()
@@ -213,19 +212,6 @@ Partial Class login
         PictureBox1.TabIndex = 8
         PictureBox1.TabStop = False
         ' 
-        ' LinkLabel1
-        ' 
-        LinkLabel1.ActiveLinkColor = Color.RosyBrown
-        LinkLabel1.AutoSize = True
-        LinkLabel1.Font = New Font("Baskerville Old Face", 11.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
-        LinkLabel1.LinkColor = Color.HotPink
-        LinkLabel1.Location = New Point(12, 68)
-        LinkLabel1.Name = "LinkLabel1"
-        LinkLabel1.Size = New Size(133, 17)
-        LinkLabel1.TabIndex = 13
-        LinkLabel1.TabStop = True
-        LinkLabel1.Text = "Connect to Database"
-        ' 
         ' LinkLabel2
         ' 
         LinkLabel2.AutoSize = True
@@ -257,7 +243,6 @@ Partial Class login
         ControlBox = False
         Controls.Add(LinkLabel2)
         Controls.Add(Label4)
-        Controls.Add(LinkLabel1)
         Controls.Add(PictureBox1)
         Controls.Add(Panel_btnlogin)
         Controls.Add(Panel1)
@@ -293,7 +278,6 @@ Partial Class login
     Friend WithEvents Guna2ControlBox1 As Guna.UI2.WinForms.Guna2ControlBox
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
-    Friend WithEvents LinkLabel1 As LinkLabel
     Friend WithEvents LinkLabel2 As LinkLabel
     Friend WithEvents Label4 As Label
 End Class

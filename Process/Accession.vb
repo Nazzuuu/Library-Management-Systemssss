@@ -142,6 +142,7 @@ Public Class Accession
 
         If CheckBox1.Checked Then
 
+            PauseAutoRefresh(DataGridView1)
 
             RefreshAccessionData("Available")
 
@@ -172,7 +173,7 @@ Public Class Accession
 
         Else
 
-
+            ResumeAutoRefresh(DataGridView1)
             RefreshAccessionData()
 
 

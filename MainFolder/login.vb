@@ -403,7 +403,7 @@ TryBorrower:
 
         TopMost = True
         MainForm.Refresh()
-
+        Me.KeyPreview = True
         txtpass.PasswordChar = "•"
 
 
@@ -499,6 +499,7 @@ TryBorrower:
 
     End Sub
 
+
     Private Sub btnlogin_MouseHover(sender As Object, e As EventArgs) Handles btnlogin.MouseHover
 
         Cursor = Cursors.Hand
@@ -524,12 +525,20 @@ TryBorrower:
 
     End Sub
 
-    Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
-        ServerConnection.Show
-
-    End Sub
-
     Private Sub LinkLabel2_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel2.LinkClicked
         BorrowerCreateAccount.Show()
+    End Sub
+
+    Private Sub login_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        If e.Control AndAlso e.Shift AndAlso e.KeyCode = Keys.Enter Then
+            Try
+                Dim serverForm As New ServerConnection()
+                serverForm.Show()
+                serverForm.BringToFront()
+            Catch ex As Exception
+                MessageBox.Show("Unable to open Server Connection form: " & ex.Message,
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
     End Sub
 End Class

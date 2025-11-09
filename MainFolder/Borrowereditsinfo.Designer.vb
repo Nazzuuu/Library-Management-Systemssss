@@ -41,6 +41,8 @@ Partial Class Borrowereditsinfo
         Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2Elipse4 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
         btnclear = New Guna.UI2.WinForms.Guna2Button()
@@ -58,8 +60,11 @@ Partial Class Borrowereditsinfo
         Label1 = New Label()
         txtpass = New Guna.UI2.WinForms.Guna2TextBox()
         txtuser = New Guna.UI2.WinForms.Guna2TextBox()
+        searchicon = New PictureBox()
+        txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(searchicon, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Guna2Elipse4
@@ -94,7 +99,7 @@ Partial Class Borrowereditsinfo
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
-        DataGridView1.Location = New Point(29, 254)
+        DataGridView1.Location = New Point(29, 266)
         DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
@@ -129,7 +134,7 @@ Partial Class Borrowereditsinfo
         btnclear.FillColor = Color.Empty
         btnclear.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclear.Location = New Point(161, 193)
+        btnclear.Location = New Point(161, 210)
         btnclear.Name = "btnclear"
         btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnclear.Size = New Size(90, 27)
@@ -149,7 +154,7 @@ Partial Class Borrowereditsinfo
         btnedit.FillColor = Color.Empty
         btnedit.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnedit.Location = New Point(29, 193)
+        btnedit.Location = New Point(29, 210)
         btnedit.Name = "btnedit"
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnedit.Size = New Size(90, 27)
@@ -161,7 +166,7 @@ Partial Class Borrowereditsinfo
         lbldomain.AutoSize = True
         lbldomain.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         lbldomain.ForeColor = SystemColors.WindowFrame
-        lbldomain.Location = New Point(433, 57)
+        lbldomain.Location = New Point(433, 74)
         lbldomain.Name = "lbldomain"
         lbldomain.Size = New Size(101, 13)
         lbldomain.TabIndex = 146
@@ -172,7 +177,7 @@ Partial Class Borrowereditsinfo
         Label7.AutoSize = True
         Label7.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(296, 52)
+        Label7.Location = New Point(296, 69)
         Label7.Name = "Label7"
         Label7.Size = New Size(56, 18)
         Label7.TabIndex = 145
@@ -192,7 +197,7 @@ Partial Class Borrowereditsinfo
         txtemail.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtemail.ForeColor = Color.Black
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemail.Location = New Point(296, 74)
+        txtemail.Location = New Point(296, 91)
         txtemail.Margin = New Padding(5)
         txtemail.MaxLength = 20
         txtemail.Name = "txtemail"
@@ -207,7 +212,7 @@ Partial Class Borrowereditsinfo
         lblpassword.AutoSize = True
         lblpassword.Font = New Font("Tahoma", 8.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
         lblpassword.ForeColor = SystemColors.WindowFrame
-        lblpassword.Location = New Point(568, 105)
+        lblpassword.Location = New Point(568, 122)
         lblpassword.Name = "lblpassword"
         lblpassword.Size = New Size(97, 13)
         lblpassword.TabIndex = 5
@@ -218,7 +223,7 @@ Partial Class Borrowereditsinfo
         lblemp.AutoSize = True
         lblemp.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         lblemp.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblemp.Location = New Point(29, 114)
+        lblemp.Location = New Point(29, 141)
         lblemp.Name = "lblemp"
         lblemp.Size = New Size(112, 18)
         lblemp.TabIndex = 141
@@ -238,7 +243,7 @@ Partial Class Borrowereditsinfo
         txtemployeeno.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtemployeeno.ForeColor = Color.Black
         txtemployeeno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemployeeno.Location = New Point(29, 136)
+        txtemployeeno.Location = New Point(29, 163)
         txtemployeeno.Margin = New Padding(5)
         txtemployeeno.MaxLength = 8
         txtemployeeno.Name = "txtemployeeno"
@@ -253,7 +258,7 @@ Partial Class Borrowereditsinfo
         lbllrn.AutoSize = True
         lbllrn.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         lbllrn.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbllrn.Location = New Point(29, 52)
+        lbllrn.Location = New Point(29, 69)
         lbllrn.Name = "lbllrn"
         lbllrn.Size = New Size(48, 18)
         lbllrn.TabIndex = 139
@@ -273,7 +278,7 @@ Partial Class Borrowereditsinfo
         txtlrn.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlrn.Location = New Point(29, 74)
+        txtlrn.Location = New Point(29, 91)
         txtlrn.Margin = New Padding(5)
         txtlrn.MaxLength = 13
         txtlrn.Name = "txtlrn"
@@ -287,7 +292,7 @@ Partial Class Borrowereditsinfo
         ' 
         PictureBox1.BackColor = Color.White
         PictureBox1.BackgroundImageLayout = ImageLayout.Zoom
-        PictureBox1.Location = New Point(767, 79)
+        PictureBox1.Location = New Point(767, 96)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(28, 18)
         PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
@@ -299,7 +304,7 @@ Partial Class Borrowereditsinfo
         Label2.AutoSize = True
         Label2.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(566, 51)
+        Label2.Location = New Point(566, 68)
         Label2.Name = "Label2"
         Label2.Size = New Size(81, 18)
         Label2.TabIndex = 136
@@ -310,7 +315,7 @@ Partial Class Borrowereditsinfo
         Label1.AutoSize = True
         Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(296, 114)
+        Label1.Location = New Point(296, 141)
         Label1.Name = "Label1"
         Label1.Size = New Size(87, 18)
         Label1.TabIndex = 135
@@ -330,7 +335,7 @@ Partial Class Borrowereditsinfo
         txtpass.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtpass.ForeColor = Color.Black
         txtpass.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtpass.Location = New Point(566, 74)
+        txtpass.Location = New Point(566, 91)
         txtpass.Margin = New Padding(5)
         txtpass.Name = "txtpass"
         txtpass.PlaceholderText = ""
@@ -353,7 +358,7 @@ Partial Class Borrowereditsinfo
         txtuser.Font = New Font("Calibri", 9.75F, FontStyle.Bold Or FontStyle.Italic)
         txtuser.ForeColor = Color.Black
         txtuser.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtuser.Location = New Point(296, 136)
+        txtuser.Location = New Point(296, 163)
         txtuser.Margin = New Padding(5)
         txtuser.MaxLength = 15
         txtuser.Name = "txtuser"
@@ -363,11 +368,47 @@ Partial Class Borrowereditsinfo
         txtuser.Size = New Size(238, 28)
         txtuser.TabIndex = 3
         ' 
+        ' searchicon
+        ' 
+        searchicon.BackColor = Color.White
+        searchicon.BackgroundImage = My.Resources.Resources.magnifier
+        searchicon.BackgroundImageLayout = ImageLayout.Stretch
+        searchicon.Location = New Point(456, 19)
+        searchicon.Name = "searchicon"
+        searchicon.Size = New Size(28, 18)
+        searchicon.TabIndex = 150
+        searchicon.TabStop = False
+        ' 
+        ' txtsearch
+        ' 
+        txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        txtsearch.BorderRadius = 16
+        txtsearch.CustomizableEdges = CustomizableEdges15
+        txtsearch.DefaultText = ""
+        txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
+        txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
+        txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
+        txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.ForeColor = Color.Black
+        txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
+        txtsearch.Location = New Point(29, 13)
+        txtsearch.Margin = New Padding(4)
+        txtsearch.Name = "txtsearch"
+        txtsearch.PlaceholderText = "Search"
+        txtsearch.SelectedText = ""
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges16
+        txtsearch.Size = New Size(466, 30)
+        txtsearch.TabIndex = 149
+        ' 
         ' Borrowereditsinfo
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(833, 487)
+        Controls.Add(searchicon)
+        Controls.Add(txtsearch)
         Controls.Add(btnclear)
         Controls.Add(btnedit)
         Controls.Add(lbldomain)
@@ -394,6 +435,7 @@ Partial Class Borrowereditsinfo
         Text = "Borrowereditsinfo"
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
+        CType(searchicon, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -415,4 +457,6 @@ Partial Class Borrowereditsinfo
     Friend WithEvents Label1 As Label
     Friend WithEvents txtpass As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents txtuser As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents searchicon As PictureBox
+    Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
 End Class

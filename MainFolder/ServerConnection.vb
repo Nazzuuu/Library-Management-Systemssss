@@ -41,7 +41,7 @@ Public Class ServerConnection
                     PictureBox1.Image = New Bitmap(fs)
                 End Using
             Else
-                MessageBox.Show("Image file not found: pikit.png sa ServerConnection.", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show("Image file not found: pikit.png in ServerConnection.", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
         Catch ex As Exception
             MessageBox.Show("Error loading pikit.png for ServerConnection Form: " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -62,8 +62,9 @@ Public Class ServerConnection
         Try
             Using con As New MySqlConnection(testConnectionString)
                 con.Open()
-                MessageBox.Show("✅ Connection successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show("Connection successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 con.Close()
+                Me.Close()
 
                 UpdateIPInDatabase(testConnectionString)
 
@@ -83,8 +84,7 @@ Public Class ServerConnection
 
         GlobalVarsModule.RefreshConnectionString()
 
-        MessageBox.Show("✅ Settings saved successfully!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
+        MessageBox.Show("Saved successfully!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         UpdateIPInDatabase(GlobalVarsModule.connectionString)
 

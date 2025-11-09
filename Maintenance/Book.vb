@@ -590,7 +590,7 @@ Public Class Book
                 com.Parameters.AddWithValue("@booktitle", newBookTitle)
                 com.Parameters.AddWithValue("@author", cbauthor.Text)
                 com.Parameters.AddWithValue("@genre", cbgenre.Text)
-                'com.Parameters.AddWithValue("@category", cbcategory.Text)
+
                 com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
                 com.Parameters.AddWithValue("@language", cblanguage.Text)
                 com.Parameters.AddWithValue("@yearpublished", yearsu)
@@ -623,9 +623,13 @@ Public Class Book
 
                 Dim comReserve As New MySqlCommand("UPDATE `reservecopiess_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
                 comReserve.Parameters.AddWithValue("@newBookTitle", newBookTitle)
-                comReserve.Parameters.AddWithValue("oldBookTitle", oldBookTitle)
+                comReserve.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
                 comReserve.ExecuteNonQuery()
 
+                Dim availsus As New MySqlCommand("UPDATE `available_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
+                availsus.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+                availsus.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+                availsus.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
 
@@ -649,11 +653,17 @@ Public Class Book
                         Dim load = DirectCast(form, AuditTrail)
                         load.refreshaudit()
                     End If
+
+                    If TypeOf form Is AvailableBooks Then
+                        Dim load = DirectCast(form, AvailableBooks)
+                        load.refreshavail()
+                    End If
                 Next
 
                 MsgBox("Book updated successfully", vbInformation)
                 clear()
                 LoadBookData()
+                AvailableBooks.refreshavail()
 
             Catch ex As Exception
                 MsgBox(ex.Message, vbCritical)

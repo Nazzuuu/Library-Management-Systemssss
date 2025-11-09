@@ -79,7 +79,7 @@ Public Class Section
         Dim grade = ""
         Dim secs = ""
         Dim strand = ""
-        Dim entryDescription As String = "" ' For Audit Log
+        Dim entryDescription As String = ""
 
         If cbdepartment.SelectedIndex <> -1 Then
             dept = cbdepartment.GetItemText(cbdepartment.SelectedItem)
@@ -719,9 +719,28 @@ Public Class Section
         End If
     End Sub
 
-    Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles rbjhs.CheckedChanged
-
+    Private Sub rbelem_CheckedChanged(sender As Object, e As EventArgs) Handles rbelem.CheckedChanged
         Dim dt = DirectCast(DataGridView1.DataSource, DataTable)
+
+
+        PauseAutoRefresh(DataGridView1)
+
+        If dt IsNot Nothing AndAlso rbelem.Checked Then
+            dt.DefaultView.RowFilter = "Department = 'Elementary'"
+        ElseIf dt IsNot Nothing AndAlso Not rbjhs.Checked AndAlso Not rbshs.Checked AndAlso Not rbelem.Checked Then
+            dt.DefaultView.RowFilter = ""
+        End If
+
+
+        If Not rbelem.Checked AndAlso Not rbjhs.Checked AndAlso Not rbshs.Checked Then
+            ResumeAutoRefresh(DataGridView1)
+        End If
+    End Sub
+
+    Private Sub rbjhs_CheckedChanged(sender As Object, e As EventArgs) Handles rbjhs.CheckedChanged
+        Dim dt = DirectCast(DataGridView1.DataSource, DataTable)
+
+        PauseAutoRefresh(DataGridView1)
 
         If dt IsNot Nothing AndAlso rbjhs.Checked Then
             dt.DefaultView.RowFilter = "Department = 'Junior High School'"
@@ -729,11 +748,15 @@ Public Class Section
             dt.DefaultView.RowFilter = ""
         End If
 
+        If Not rbelem.Checked AndAlso Not rbjhs.Checked AndAlso Not rbshs.Checked Then
+            ResumeAutoRefresh(DataGridView1)
+        End If
     End Sub
 
-    Private Sub RadioButton2_CheckedChanged(sender As Object, e As EventArgs) Handles rbshs.CheckedChanged
-
+    Private Sub rbshs_CheckedChanged(sender As Object, e As EventArgs) Handles rbshs.CheckedChanged
         Dim dt = DirectCast(DataGridView1.DataSource, DataTable)
+
+        PauseAutoRefresh(DataGridView1)
 
         If dt IsNot Nothing AndAlso rbshs.Checked Then
             dt.DefaultView.RowFilter = "Department = 'Senior High School'"
@@ -741,23 +764,11 @@ Public Class Section
             dt.DefaultView.RowFilter = ""
         End If
 
-    End Sub
-
-    Private Sub Section_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
-        If e.KeyCode = Keys.Escape Then
-            Me.Close()
+        If Not rbelem.Checked AndAlso Not rbjhs.Checked AndAlso Not rbshs.Checked Then
+            ResumeAutoRefresh(DataGridView1)
         End If
     End Sub
 
-    Private Sub rbelem_CheckedChanged(sender As Object, e As EventArgs) Handles rbelem.CheckedChanged
-        Dim dt = DirectCast(DataGridView1.DataSource, DataTable)
-
-        If dt IsNot Nothing AndAlso rbelem.Checked Then
-            dt.DefaultView.RowFilter = "Department = 'Elementary'"
-        ElseIf dt IsNot Nothing AndAlso Not rbjhs.Checked AndAlso Not rbshs.Checked AndAlso Not rbelem.Checked Then
-            dt.DefaultView.RowFilter = ""
-        End If
-    End Sub
 
     Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
         If e.RowIndex >= 0 Then

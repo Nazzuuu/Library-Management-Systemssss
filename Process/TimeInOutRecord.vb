@@ -128,12 +128,11 @@ Public Class TimeInOutRecord
 
         If chkSelectAll.Checked Then
 
+            PauseAutoRefresh(DataGridView1)
 
             DataGridView1.MultiSelect = True
             DataGridView1.SelectAll()
-
             DataGridView1.Enabled = False
-
 
             lblnote.Visible = True
             lblmessage.Visible = True
@@ -141,20 +140,21 @@ Public Class TimeInOutRecord
 
         Else
 
+            ResumeAutoRefresh(DataGridView1)
 
             DataGridView1.ClearSelection()
             DataGridView1.MultiSelect = False
             DataGridView1.CurrentCell = Nothing
-
+            DataGridView1.ReadOnly = True
+            DataGridView1.Enabled = True
 
             lblnote.Visible = True
             lblmessage.Visible = True
             lblmessage.Text = "Select and delete record."
-            DataGridView1.ReadOnly = True
-            DataGridView1.Enabled = True
-
         End If
+
     End Sub
+
 
     Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
 
@@ -311,6 +311,22 @@ Public Class TimeInOutRecord
             refreshtimeoutrecrod()
         Else
             MessageBox.Show("Deletion failed or no valid records were deleted.", "Deletion Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+
+    End Sub
+
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        HandleAutoRefreshPause(DataGridView1, txtsearch)
+
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        If dt IsNot Nothing Then
+            If txtsearch.Text.Trim() <> "" Then
+                Dim filter As String = String.Format("FullName LIKE '*{0}*'", txtsearch.Text.Trim())
+                dt.DefaultView.RowFilter = filter
+            Else
+                dt.DefaultView.RowFilter = ""
+            End If
         End If
 
     End Sub

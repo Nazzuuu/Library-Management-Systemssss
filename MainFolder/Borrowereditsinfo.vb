@@ -530,6 +530,8 @@ Public Class Borrowereditsinfo
 
                 lblemp.Visible = False
                 txtemployeeno.Visible = False
+                txtsearch.Visible = False
+                searchicon.Visible = False
 
                 lbllrn.Location = New Point(29, 52)
                 txtlrn.Location = New Point(29, 74)
@@ -541,7 +543,8 @@ Public Class Borrowereditsinfo
 
                 lbllrn.Visible = False
                 txtlrn.Visible = False
-
+                txtsearch.Visible = False
+                searchicon.Visible = False
 
                 lblemp.Visible = True
                 txtemployeeno.Visible = True
@@ -558,8 +561,10 @@ Public Class Borrowereditsinfo
                 lblemp.Visible = True
                 txtemployeeno.Visible = True
 
-                lblemp.Location = New Point(29, 114)
-                txtemployeeno.Location = New Point(29, 136)
+                lblemp.Location = New Point(29, 141)
+                txtemployeeno.Location = New Point(29, 163)
+                txtsearch.Visible = True
+                searchicon.Visible = True
 
         End Select
 
@@ -611,4 +616,19 @@ Public Class Borrowereditsinfo
 
     End Sub
 
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        HandleAutoRefreshPause(DataGridView1, txtsearch)
+
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        If dt IsNot Nothing Then
+            If txtsearch.Text.Trim() <> "" Then
+                Dim filter As String = String.Format("Username LIKE '*{0}*' OR LRN LIKE '*{0}*' OR Employeeno LIKE '*{0}*'", txtsearch.Text.Trim())
+                dt.DefaultView.RowFilter = filter
+            Else
+                dt.DefaultView.RowFilter = ""
+            End If
+        End If
+
+    End Sub
 End Class
