@@ -3,6 +3,9 @@ Imports System.Drawing
 
 Public Class SelectBarcode
 
+    Private isFormReady As Boolean = False
+    Private currentFilter As String = "All"
+
     Private Sub SelectBarcode_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         cbfilter.Items.Clear()
@@ -13,15 +16,15 @@ Public Class SelectBarcode
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildSelectBarcodeQuery(cbfilter.SelectedItem.ToString()), 2000)
 
-
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
-
 
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         DataGridView1.ClearSelection()
         DataGridView1.AllowUserToAddRows = False
+
+        isFormReady = True
     End Sub
 
 
@@ -79,7 +82,6 @@ Public Class SelectBarcode
         Try
             con.Open()
 
-
             Dim insertQuery As String = "
                 INSERT INTO selectbarcode_tbl (Barcode, BookTitle)
                 SELECT b.Barcode, b.BookTitle 
@@ -92,7 +94,6 @@ Public Class SelectBarcode
             Using cmdInsert As New MySqlCommand(insertQuery, con)
                 cmdInsert.ExecuteNonQuery()
             End Using
-
 
             Dim query As String = BuildSelectBarcodeQuery(filter)
             Dim adap As New MySqlDataAdapter(query, con)
@@ -120,8 +121,8 @@ Public Class SelectBarcode
 
     Private Async Sub OnDatabaseUpdated()
         Try
-            Dim filter As String = If(cbfilter.SelectedItem IsNot Nothing, cbfilter.SelectedItem.ToString(), "All")
-            Dim query As String = BuildSelectBarcodeQuery(filter)
+
+            Dim query As String = BuildSelectBarcodeQuery(currentFilter)
             Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
 
             If DataGridView1.Columns.Contains("ID") Then DataGridView1.Columns("ID").Visible = False
@@ -133,14 +134,24 @@ Public Class SelectBarcode
         End Try
     End Sub
 
+
     Private Sub selectbarcode_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         DataGridView1.ClearSelection()
     End Sub
 
 
     Private Sub cbfilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbfilter.SelectedIndexChanged
-        Dim selectedFilter As String = cbfilter.SelectedItem.ToString()
-        LoadAndSyncBarcodes(selectedFilter)
+        If Not isFormReady Then Exit Sub
+
+        If cbfilter.SelectedItem IsNot Nothing Then
+            currentFilter = cbfilter.SelectedItem.ToString()
+            LoadAndSyncBarcodes(currentFilter)
+
+            Dim query As String = BuildSelectBarcodeQuery(currentFilter)
+            If IsHandleCreated Then
+                GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
+            End If
+        End If
     End Sub
 
 

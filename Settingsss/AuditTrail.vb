@@ -23,10 +23,10 @@ Public Class AuditTrail
     End Sub
 
 
-    ' 🟢 Ilagay dito ang async initialization para walang Invoke error
+
     Private Async Sub AuditTrail_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         Try
-            Await Task.Delay(300) ' small delay to ensure handle exists
+            Await Task.Delay(300)
 
             GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `audit_trail_tbl` ORDER BY DateTime DESC", 2000)
             AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated_Audit
@@ -89,14 +89,12 @@ Public Class AuditTrail
     End Sub
 
 
-    '======================= FILTERING ==========================
     Private Sub cbfilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbfilter.SelectedIndexChanged
         If Not isFormReady Then Exit Sub
         If cbfilter.SelectedItem IsNot Nothing Then
             Dim selectedValue As String = cbfilter.SelectedItem.ToString()
             refreshaudit(selectedValue)
 
-            ' 🟢 Update the auto-refresh query to follow the selected filter
             Dim query As String
             If selectedValue = "All" Then
                 query = "SELECT * FROM `audit_trail_tbl` ORDER BY DateTime DESC"
@@ -104,7 +102,6 @@ Public Class AuditTrail
                 query = "SELECT * FROM `audit_trail_tbl` WHERE Role = '" & selectedValue & "' ORDER BY DateTime DESC"
             End If
 
-            ' Restart AutoRefreshGrid safely
             If IsHandleCreated Then
                 GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
             End If

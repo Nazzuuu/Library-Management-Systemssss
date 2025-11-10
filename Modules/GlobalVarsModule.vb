@@ -588,5 +588,25 @@ Module GlobalVarsModule
         End Try
     End Function
 
+    Public Function IsDatabaseConnected() As Boolean
+        Try
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+                Return True
+            End Using
+        Catch
+            Return False
+        End Try
+    End Function
+
+    Private Function SafeCellValue(row As DataGridViewRow, columnName As String) As String
+        Try
+            If row.Cells(columnName).Value IsNot Nothing Then
+                Return row.Cells(columnName).Value.ToString()
+            End If
+        Catch
+        End Try
+        Return ""
+    End Function
 
 End Module

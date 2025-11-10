@@ -883,49 +883,94 @@ Public Class Section
         End If
     End Sub
 
+    Private Function SafeCellValue(row As DataGridViewRow, columnName As String) As String
+        Try
+            If row.Cells(columnName).Value IsNot Nothing Then
+                Return row.Cells(columnName).Value.ToString()
+            End If
+        Catch
+        End Try
+        Return ""
+    End Function
 
     Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-        If e.RowIndex >= 0 Then
-            Dim row = DataGridView1.Rows(e.RowIndex)
+        If e.RowIndex < 0 Then Exit Sub
+
+        Dim connected As Boolean = IsDatabaseConnected()
+
+        Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
 
-            RemoveHandler cbdepartment.SelectedIndexChanged, AddressOf cbdepartment_SelectedIndexChanged
-            RemoveHandler cbgrade.SelectedIndexChanged, AddressOf cbgrade_SelectedIndexChanged
+        RemoveHandler cbdepartment.SelectedIndexChanged, AddressOf cbdepartment_SelectedIndexChanged
+        RemoveHandler cbgrade.SelectedIndexChanged, AddressOf cbgrade_SelectedIndexChanged
 
+        Try
 
-            Dim deptValue As String = row.Cells("Department").Value.ToString()
-            Dim gradeValue As String = row.Cells("GradeLevel").Value.ToString()
-            Dim sectionValue = row.Cells("Section").Value
-            Dim strandValue = row.Cells("Strand").Value
+            Dim deptValue As String = SafeCellValue(row, "Department")
+            Dim gradeValue As String = SafeCellValue(row, "GradeLevel")
+            Dim sectionValue As String = SafeCellValue(row, "Section")
+            Dim strandValue As String = SafeCellValue(row, "Strand")
 
+            If connected Then
 
-            cbdepartment.Text = deptValue
+                cbdepartment.Text = deptValue
+                cbdepartment_SelectedIndexChanged(cbdepartment, EventArgs.Empty)
 
+                cbgrade.Text = gradeValue
 
-            cbdepartment_SelectedIndexChanged(cbdepartment, EventArgs.Empty)
+                If deptValue = "Junior High School" OrElse deptValue = "Elementary" Then
+                    txtsection.Visible = True
+                    cbstrand.Visible = False
+                    lbl_sectionandstrand.Text = "Section:"
+                    txtsection.Text = sectionValue
+                    txtsection.Enabled = True
+                    cbstrand.Enabled = False
 
-            cbgrade.Text = gradeValue
+                ElseIf deptValue = "Senior High School" Then
+                    cbstrand.Visible = True
+                    txtsection.Visible = False
+                    lbl_sectionandstrand.Text = "Strand:"
+                    cbstrand.Text = strandValue
+                    cbstrand.Enabled = True
+                    txtsection.Enabled = False
+                End If
 
-            If deptValue = "Junior High School" OrElse deptValue = "Elementary" Then
-                txtsection.Visible = True
-                cbstrand.Visible = False
-                lbl_sectionandstrand.Text = "Section:"
-                txtsection.Text = If(IsDBNull(sectionValue), "", sectionValue.ToString())
-                txtsection.Enabled = True
-                cbstrand.Enabled = False
-            ElseIf deptValue = "Senior High School" Then
-                cbstrand.Visible = True
-                txtsection.Visible = False
-                lbl_sectionandstrand.Text = "Strand:"
-                cbstrand.Text = If(IsDBNull(strandValue), "", strandValue.ToString())
-                cbstrand.Enabled = True
-                txtsection.Enabled = False
+            Else
+
+                MessageBox.Show("Database not connected. Showing local grid data only.",
+                            "Offline Mode", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                cbdepartment.Text = deptValue
+                cbgrade.Text = gradeValue
+
+                If deptValue = "Junior High School" OrElse deptValue = "Elementary" Then
+                    txtsection.Visible = True
+                    cbstrand.Visible = False
+                    lbl_sectionandstrand.Text = "Section:"
+                    txtsection.Text = sectionValue
+                    txtsection.Enabled = True
+                    cbstrand.Enabled = False
+
+                ElseIf deptValue = "Senior High School" Then
+                    cbstrand.Visible = True
+                    txtsection.Visible = False
+                    lbl_sectionandstrand.Text = "Strand:"
+                    cbstrand.Text = strandValue
+                    cbstrand.Enabled = True
+                    txtsection.Enabled = False
+                End If
             End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error loading section details: " & ex.Message,
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
 
             AddHandler cbdepartment.SelectedIndexChanged, AddressOf cbdepartment_SelectedIndexChanged
             AddHandler cbgrade.SelectedIndexChanged, AddressOf cbgrade_SelectedIndexChanged
-        End If
+        End Try
     End Sub
+
 
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover

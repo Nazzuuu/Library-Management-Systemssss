@@ -957,23 +957,68 @@ Public Class Book
         End If
     End Sub
 
+    Private Function SafeCellValue(row As DataGridViewRow, columnName As String) As String
+        Try
+            If row.Cells(columnName).Value IsNot Nothing Then
+                Return row.Cells(columnName).Value.ToString()
+            End If
+        Catch
+        End Try
+        Return ""
+    End Function
+
+
     Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex < 0 Then Exit Sub
+
+
+        Dim connected As Boolean = IsDatabaseConnected()
+
+
+        Try
+            If cbauthor.DataSource Is Nothing OrElse cbauthor.Items.Count = 0 Then
+                AutoRefreshComboBox(cbauthor, "SELECT ID, AuthorName FROM author_tbl ORDER BY AuthorName", "AuthorName", "ID")
+            End If
+            If cbgenre.DataSource Is Nothing OrElse cbgenre.Items.Count = 0 Then
+                AutoRefreshComboBox(cbgenre, "SELECT ID, Genre FROM genre_tbl ORDER BY Genre", "Genre", "ID")
+            End If
+            If cbpublisher.DataSource Is Nothing OrElse cbpublisher.Items.Count = 0 Then
+                AutoRefreshComboBox(cbpublisher, "SELECT ID, PublisherName FROM publisher_tbl ORDER BY PublisherName", "PublisherName", "ID")
+            End If
+            If cblanguage.DataSource Is Nothing OrElse cblanguage.Items.Count = 0 Then
+                AutoRefreshComboBox(cblanguage, "SELECT ID, Language FROM language_tbl ORDER BY Language", "Language", "ID")
+            End If
+        Catch ex As Exception
+            Debug.WriteLine("Error auto-refreshing combos: " & ex.Message)
+        End Try
+
+        Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+
+        Try
+
+            txtbooktitle.Text = SafeCellValue(row, "BookTitle")
+            cbauthor.Text = SafeCellValue(row, "Author")
+            cbgenre.Text = SafeCellValue(row, "Genre")
+            txtyearr.Text = SafeCellValue(row, "YearPublished")
+            cbpublisher.Text = SafeCellValue(row, "Publisher")
+            cblanguage.Text = SafeCellValue(row, "Language")
+        Catch ex As Exception
+            MessageBox.Show("Error loading row data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
 
         If e.RowIndex >= 0 AndAlso Not DataGridView1.Rows(e.RowIndex).IsNewRow Then
 
             isbarcode = True
 
-            Dim row = DataGridView1.Rows(e.RowIndex)
-
-            Dim barcodeValue As String = row.Cells("Barcode").Value.ToString
+            Dim barcodeValue As String = SafeCellValue(row, "Barcode")
             lblrandom.Text = barcodeValue
 
             Dim isbnn = row.Cells("ISBN").Value
+            Dim hasISBN As Boolean = Not IsDBNull(isbnn) AndAlso Not String.IsNullOrEmpty(isbnn.ToString)
 
-
-            Dim isbnonleh As Boolean = Not IsDBNull(isbnn) AndAlso Not String.IsNullOrEmpty(isbnn.ToString)
-
-            If Not isbnonleh Then
+            If Not hasISBN Then
                 rbgenerate.Checked = True
                 txtisbn.Enabled = False
                 txtisbn.Text = ""
@@ -983,32 +1028,20 @@ Public Class Book
                 txtisbn.Text = isbnn.ToString
             End If
 
+
             If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
-
                 picbarcode.Image = GenerateBarcodeImage(barcodeValue, picbarcode.Width, picbarcode.Height)
-            ElseIf isbnonleh AndAlso (String.IsNullOrEmpty(barcodeValue) OrElse barcodeValue = "0000000000000") Then
-
+            ElseIf hasISBN AndAlso (String.IsNullOrEmpty(barcodeValue) OrElse barcodeValue = "0000000000000") Then
                 picbarcode.Image = GenerateBarcodeImage("0000000000000", picbarcode.Width, picbarcode.Height)
-
                 lblrandom.Text = "0000000000000"
             Else
-
                 picbarcode.Image = Nothing
             End If
 
-            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
-            cbauthor.Text = row.Cells("Author").Value.ToString
-            cbgenre.Text = row.Cells("Genre").Value.ToString
-            txtyearr.Text = row.Cells("YearPublished").Value.ToString
-            cbpublisher.Text = row.Cells("Publisher").Value.ToString
-            cblanguage.Text = row.Cells("Language").Value.ToString
-
-
             rbgenerate.Enabled = False
-
             isbarcode = False
-
         End If
+
     End Sub
 
     Private Sub txtbooktitle_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtbooktitle.KeyPress
