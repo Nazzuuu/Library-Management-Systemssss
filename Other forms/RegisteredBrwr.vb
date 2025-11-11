@@ -152,7 +152,7 @@ Public Class RegisteredBrwr
     Public Sub ludeyngborrower()
 
         ListView1.Items.Clear()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim searchText As String = txtsearch.Text.Trim()
 
         Dim com As String = "SELECT * FROM `borrower_tbl`"
@@ -222,7 +222,7 @@ Public Class RegisteredBrwr
         End If
 
         Dim timedInBorrowers As New List(Of String)
-        Dim con2 As New MySqlConnection(connectionString)
+        Dim con2 As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
             con2.Open()

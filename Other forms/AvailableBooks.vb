@@ -92,7 +92,7 @@ Public Class AvailableBooks
 
     Public Sub counts()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
             con.Open()

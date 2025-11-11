@@ -31,7 +31,7 @@ Public Class BookBorrowingConfirmation
 
 
     Public Sub refreshconfirmation()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DaysLimit, DueDate, TransactionReceipt, Status FROM `confimation_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim ds As New DataSet
@@ -258,7 +258,7 @@ Public Class BookBorrowingConfirmation
 
 
     Public Sub InsertPrintReceipt(ByVal borrowerType As String, ByVal borrowerName As String, ByVal borrowedDate As String, ByVal transactionReceiptID As String, ByVal bookCount As Integer, ByVal dueDate As String)
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
             con.Open()
@@ -431,7 +431,7 @@ Public Class BookBorrowingConfirmation
         Dim identifierValue As String = ""
         Dim identifierColumn As String = ""
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Dim comIdentifier As String = "SELECT LRN, EmployeeNo FROM `borrowing_tbl` WHERE `TransactionReceipt` = @TID LIMIT 1"
 
@@ -566,7 +566,7 @@ Public Class BookBorrowingConfirmation
     End Sub
 
     Private Sub LoadBookList(transactionReceiptID As String)
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
 
         Dim comExistingBooks As String = "SELECT t1.AccessionID, t2.BookTitle FROM `borrowing_tbl` t1 " &

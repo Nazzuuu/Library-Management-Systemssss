@@ -5,7 +5,7 @@ Imports System.Collections.Generic
 
 Public Class TransactionNumber
 
-    Private Const connectionString As String = "Server=localhost;Database=laybsisu_dbs;Uid=root;Pwd=;"
+    'Private Const connectionString As String = "Server=localhost;Database=laybsisu_dbs;Uid=root;Pwd=;"
 
     Public Sub LoadTransactions()
         SearchTransactions(Nothing)
@@ -16,7 +16,7 @@ Public Class TransactionNumber
         ListView1.Items.Clear()
         ListView1.View = View.Details
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String
         Dim isSearching As Boolean = Not String.IsNullOrEmpty(searchText)
 
@@ -78,7 +78,7 @@ Public Class TransactionNumber
 
     Public Function CheckIfAccessionIsComplete(ByVal tranNo As String, ByVal bookTitle As String) As Boolean
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim totalRequiredQuantity As Integer = 0
         Dim totalCopiesFound As Integer = 0
 
@@ -140,7 +140,7 @@ Public Class TransactionNumber
                 accessionForm.txttransactionno.Text = selectedTransactionNo
                 accessionForm.txtbooktitle.Text = selectedBookTitle
 
-                Dim con As New MySqlConnection(connectionString)
+                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim quantity As Integer = 0
                 Dim isbn As String = ""
                 Dim suppliername As String = ""

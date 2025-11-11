@@ -194,7 +194,7 @@ Public Class ReserveCopies
 
                 transaction.Commit()
 
-                ' --- Audit Log ---
+
                 GlobalVarsModule.LogAudit(
                     actionType:="UPDATE",
                     formName:="RESERVE COPIES FORM",
@@ -209,7 +209,6 @@ Public Class ReserveCopies
                         DirectCast(form, AuditTrail).refreshaudit()
                     End If
                 Next
-                ' --- End Audit Log ---
 
                 MessageBox.Show($"Accession ID {accID} has been successfully pushed back to the accession form and is now Available.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 reserveload()
