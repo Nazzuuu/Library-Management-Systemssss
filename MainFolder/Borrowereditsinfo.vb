@@ -533,8 +533,8 @@ Public Class Borrowereditsinfo
                 txtsearch.Visible = False
                 searchicon.Visible = False
 
-                lbllrn.Location = New Point(29, 52)
-                txtlrn.Location = New Point(29, 74)
+                lbllrn.Location = New Point(29, 69)
+                txtlrn.Location = New Point(29, 91)
                 Borrowing.lblnotesu.Text = "Input your LRN."
 
             Case "TEACHER"

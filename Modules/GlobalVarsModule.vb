@@ -335,6 +335,33 @@ Module GlobalVarsModule
 
 
 
+    'Public Async Function LoadToGridAsync(grid As DataGridView, query As String) As Task
+    '    Await Task.Run(Sub()
+    '                       Try
+    '                           Using con As New MySqlConnection(connectionString)
+    '                               Using adap As New MySqlDataAdapter(query, con)
+    '                                   Dim ds As New DataSet()
+    '                                   adap.Fill(ds)
+    '                                   Dim dt As DataTable = ds.Tables(0)
+
+    '                                   grid.Invoke(Sub()
+    '                                                   grid.DataSource = dt
+    '                                               End Sub)
+    '                               End Using
+    '                           End Using
+    '                       Catch ex As MySqlException
+    '                           grid.Invoke(Sub()
+
+    '                                       End Sub)
+    '                       Catch ex As Exception
+    '                           grid.Invoke(Sub()
+
+    '                                       End Sub)
+    '                       End Try
+    '                   End Sub)
+    'End Function
+
+
     Public Async Function LoadToGridAsync(grid As DataGridView, query As String) As Task
         Await Task.Run(Sub()
                            Try
@@ -344,19 +371,54 @@ Module GlobalVarsModule
                                        adap.Fill(ds)
                                        Dim dt As DataTable = ds.Tables(0)
 
-                                       grid.Invoke(Sub()
-                                                       grid.DataSource = dt
-                                                   End Sub)
+
+                                       If grid Is Nothing OrElse grid.IsDisposed Then
+                                           Exit Sub
+                                       End If
+
+                                       If grid.IsHandleCreated Then
+                                           Try
+                                               grid.Invoke(Sub()
+                                                               If Not grid.IsDisposed Then
+                                                                   grid.DataSource = dt
+                                                               End If
+                                                           End Sub)
+                                           Catch ex As InvalidOperationException
+
+                                           End Try
+                                       Else
+                                           AddHandler grid.HandleCreated, Sub()
+                                                                              Try
+                                                                                  If Not grid.IsDisposed Then
+                                                                                      grid.Invoke(Sub()
+                                                                                                      grid.DataSource = dt
+                                                                                                  End Sub)
+                                                                                  End If
+                                                                              Catch
+
+                                                                              End Try
+                                                                          End Sub
+                                       End If
                                    End Using
                                End Using
                            Catch ex As MySqlException
-                               grid.Invoke(Sub()
+                               If grid IsNot Nothing AndAlso grid.IsHandleCreated AndAlso Not grid.IsDisposed Then
+                                   Try
+                                       grid.Invoke(Sub()
 
-                                           End Sub)
+                                                   End Sub)
+                                   Catch
+                                   End Try
+                               End If
                            Catch ex As Exception
-                               grid.Invoke(Sub()
+                               If grid IsNot Nothing AndAlso grid.IsHandleCreated AndAlso Not grid.IsDisposed Then
+                                   Try
+                                       grid.Invoke(Sub()
 
-                                           End Sub)
+                                                   End Sub)
+                                   Catch
+                                   End Try
+                               End If
                            End Try
                        End Sub)
     End Function
