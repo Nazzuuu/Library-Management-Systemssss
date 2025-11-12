@@ -64,11 +64,11 @@ Public Class ServerConnection
                 con.Open()
                 MessageBox.Show("Connection successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 con.Close()
-                Me.Close()
+                Me.Hide()
 
                 UpdateIPInDatabase(testConnectionString)
 
-
+                login.Show()
             End Using
         Catch ex As Exception
             MessageBox.Show("❌ Connection failed: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -89,11 +89,11 @@ Public Class ServerConnection
         UpdateIPInDatabase(GlobalVarsModule.connectionString)
 
 
-        Dim result = MessageBox.Show("Do you want to test the new connection?",
-                                     "Test Connection", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-        If result = DialogResult.Yes Then
-            btnconnect.PerformClick()
-        End If
+        'Dim result = MessageBox.Show("Do you want to test the new connection?",
+        '                             "Test Connection", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        'If result = DialogResult.Yes Then
+        '    btnconnect.PerformClick()
+        'End If
     End Sub
 
     Private Sub btncancel_Click(sender As Object, e As EventArgs) Handles btncancel.Click
