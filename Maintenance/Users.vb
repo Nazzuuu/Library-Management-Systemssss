@@ -590,7 +590,7 @@ Public Class Users
 
 
             If isLoggedIn Then
-                MsgBox($"Cannot delete {staffName} because this account is currently logged in on another device.", vbExclamation, "Delete Blocked")
+                MsgBox($"Cannot delete {staffName}. This account is currently logged in on another device.", vbExclamation, "Delete Blocked")
                 Exit Sub
             End If
 
