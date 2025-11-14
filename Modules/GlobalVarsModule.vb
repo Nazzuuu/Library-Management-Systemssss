@@ -300,7 +300,7 @@ Module GlobalVarsModule
                 Dim changesDetected As Boolean = False
 
                 For Each tableName As String In monitoredTables
-                    ' ✅ Gumamit ng MD5 hash para malaman kung may UPDATE kahit walang dagdag/bawas
+
                     Dim com As New MySqlCommand($"SELECT MD5(GROUP_CONCAT(CONCAT_WS('|', *))) FROM `{tableName}`", con)
                     Dim currentHash As String = Convert.ToString(com.ExecuteScalar())
 
@@ -309,7 +309,7 @@ Module GlobalVarsModule
                     End If
 
                     If lastTableCounts.ContainsKey(tableName) Then
-                        ' lastTableCounts ngayon nagho-hold ng hash (hindi count)
+
                         If lastTableCounts(tableName).ToString() <> currentHash Then
                             changesDetected = True
                             lastTableCounts(tableName) = currentHash
@@ -320,7 +320,7 @@ Module GlobalVarsModule
                     End If
                 Next
 
-                ' ✅ Trigger event kung may changes (add, delete, o update)
+
                 If changesDetected Then
                     RaiseEvent DatabaseUpdated()
                 End If

@@ -10,10 +10,27 @@ Public Class Borrowereditsinfo
     Private originalIDValue As String = String.Empty
 
     Private Sub Borrowereditinfo_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        refresheditt()
-        DataGridView1.Columns("LRN").Visible = False
-        DataGridView1.Columns("EmployeeNo").Visible = False
+
+        If DataGridView1.Columns.Contains("LRN") Then
+            DataGridView1.Columns("LRN").Visible = False
+        End If
+
+        If DataGridView1.Columns.Contains("EmployeeNo") Then
+            DataGridView1.Columns("EmployeeNo").Visible = False
+        End If
+
         DisablePaste_AllTextBoxes()
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+
+        refresheditt()
+
+    End Sub
+
+
+
+    Private Async Sub OnDatabaseUpdated()
+        Dim query As String = "SELECT * FROM `borroweredit_tbl` ORDER BY ID DESC"
+        Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
     End Sub
 
     Private Sub borroweredit_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
@@ -24,6 +41,9 @@ Public Class Borrowereditsinfo
 
     Public Sub refresheditt()
 
+
+        Dim query As String = "SELECT * FROM `borroweredit_tbl` ORDER BY ID DESC"
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
         txtpass.PasswordChar = "•"
 
         Try
@@ -45,7 +65,7 @@ Public Class Borrowereditsinfo
 
         visibilitysus(borrowerType)
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = ""
         Dim showAllRecords As Boolean = True
 
@@ -111,6 +131,7 @@ Public Class Borrowereditsinfo
         End Try
 
         clearlahat()
+
     End Sub
 
 
@@ -185,7 +206,7 @@ Public Class Borrowereditsinfo
         Dim email As String = ""
         Dim query As String = "SELECT Email FROM `borroweredit_tbl` WHERE ID = @ID"
 
-        Using con As New MySqlConnection(connectionString)
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
             Using cmd As New MySqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@ID", ID)
                 Try
@@ -249,7 +270,7 @@ Public Class Borrowereditsinfo
             Return
         End If
 
-        Using con As New MySqlConnection(connectionString)
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
             Try
                 con.Open()
 
@@ -457,7 +478,7 @@ Public Class Borrowereditsinfo
         Dim exists As Boolean = False
         Dim sql As String = "SELECT 1 FROM `borroweredit_tbl` WHERE `Username` = @User AND `ID` <> @CurrentID LIMIT 1"
 
-        Using con As New MySqlConnection(connectionString)
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
             Try
                 con.Open()
                 Using cmd As New MySqlCommand(sql, con)
@@ -480,7 +501,7 @@ Public Class Borrowereditsinfo
         Dim exists As Boolean = False
         Dim sql As String = $"SELECT 1 FROM `borroweredit_tbl` WHERE `{IDColumn}` = @ID AND `ID` <> @CurrentID LIMIT 1"
 
-        Using con As New MySqlConnection(connectionString)
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
             Try
                 con.Open()
                 Using cmd As New MySqlCommand(sql, con)

@@ -10,7 +10,7 @@ Public Class Users
     Private isBackspacing As Boolean = False
 
     Public Sub LoadStaffData()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `user_staff_tbl`"
         Dim adapp As New MySqlDataAdapter(com, con)
         Dim dt As New DataSet
