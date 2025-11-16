@@ -73,6 +73,7 @@ Public Class Superadmin
         Dim lastName As String = txtlname.Text.Trim()
         Dim user As String = txtusername.Text.Trim()
         Dim contact As String = txtcontact.Text.Trim()
+        Dim adr As String = txtaddress.Text.Trim()
 
         If firstName.Length < 2 Then
             MessageBox.Show("First Name must be 2 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -89,6 +90,10 @@ Public Class Superadmin
             Return
         End If
 
+        If adr.Length <= 5 Then
+            MessageBox.Show("Address must be valid, atleast 5 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
 
         Dim email As String = txtemail.Text.Trim()
         If Not String.IsNullOrEmpty(email) Then
@@ -181,6 +186,16 @@ Public Class Superadmin
         Dim contact As String = txtcontact.Text.Trim()
         Dim adr As String = txtaddress.Text.Trim
 
+        Dim editedEmail As String = txtemail.Text.Trim()
+        Dim editedFirstName As String = txtfname.Text.Trim()
+        Dim editedLastName As String = txtlname.Text.Trim()
+
+
+        If String.IsNullOrEmpty(txtusername.Text.Trim) OrElse String.IsNullOrEmpty(txtpassword.Text.Trim) OrElse String.IsNullOrEmpty(txtfname.Text.Trim) OrElse String.IsNullOrEmpty(txtlname.Text.Trim) Then
+            MessageBox.Show("Please fill out all required fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
         Dim email As String = txtemail.Text.Trim()
         If Not String.IsNullOrEmpty(email) Then
             Dim emailRegex As New Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
@@ -240,7 +255,7 @@ Public Class Superadmin
             Return
         End If
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As New MySqlCommand("UPDATE superadmin_tbl SET Username = @username, Password = @password, FirstName = @fname, LastName = @lname, MiddleName = @mname, ContactNumber = @contact, Address = @address, Email = @email, Gender = @gender, Role = @role WHERE ID = @id", con)
 
         com.Parameters.AddWithValue("@id", superadminId)
@@ -259,10 +274,25 @@ Public Class Superadmin
             con.Open()
             com.ExecuteNonQuery()
 
+            If GlobalVarsModule.GlobalEmail.Equals(editedEmail, StringComparison.OrdinalIgnoreCase) Then
+
+
+                GlobalVarsModule.GlobalFullname = $"{editedFirstName} {editedLastName}".Trim()
+
+                For Each form As Form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+
+                        Dim mainForm As MainForm = DirectCast(form, MainForm)
+                        mainForm.lblgmail.Text = GlobalVarsModule.GlobalFullname
+                    End If
+                Next
+            End If
 
             If MainForm.lblgmail.Text = selectedRow.Cells("Email").Value.ToString Then
                 MainForm.lblgmail.Text = txtemail.Text.Trim
             End If
+
+
 
             MessageBox.Show("Librarian account successfully updated!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Superadmin_Load(sender, e)

@@ -7,7 +7,9 @@ Public Class Penalty
 
     Private connectionString As String = GlobalVarsModule.connectionString
     Private originalCalculatedFee As Decimal = 0.00
-    Private Const ABSOLUTE_MIN_FEE As Decimal = 50.0
+    Private Const ABSOLUTE_MIN_FEE As Decimal = 100
+    Private minimumRequiredFee As Decimal = 0.00
+    Private currentAccessionID As String = String.Empty
 
     Private Sub Penalty_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         DisablePaste_AllTextBoxes()
@@ -249,6 +251,8 @@ Public Class Penalty
 
     Private Function CalculateTotalPenaltyFee(ByVal transactionNo As String, ByVal allAccessionIDs As List(Of String)) As Decimal
         Dim totalFee As Decimal = 0.00
+        minimumRequiredFee = 0.00
+
         Dim con As New MySqlConnection(connectionString)
 
         Dim query As String = "SELECT `Status`, `BookTotal`, `ReturnedBook` FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
@@ -284,12 +288,21 @@ Public Class Penalty
                                     Dim bookPrice As Decimal = GetBookPriceByAccessionID(currentAccessionID)
 
                                     currentFee += bookPrice
+
+
+                                    minimumRequiredFee += bookPrice
+
+
                                     accessIDIndex += 1
                                 Else
 
                                     Dim bookTitleForPrice As String = reader("ReturnedBook").ToString().Trim()
                                     Dim bookPrice As Decimal = GetBookPriceByBookTitle(bookTitleForPrice)
                                     currentFee += bookPrice
+
+
+                                    minimumRequiredFee += bookPrice
+
                                 End If
                             Next
                         End If
@@ -509,10 +522,36 @@ Public Class Penalty
         End If
     End Sub
 
+    Private Function ValidateDisregardedFee() As Boolean
+        If chkdisregard.Checked Then
+            Dim userEnteredFee As Decimal
+
+
+            If Not Decimal.TryParse(txtfee.Text, userEnteredFee) Then
+                MessageBox.Show("Invalid format entered for Penalty Fee. Please enter a valid number.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                txtfee.Focus()
+                Return False
+            End If
+
+
+            If userEnteredFee < minimumRequiredFee Then
+                MessageBox.Show("The entered fee is below the minimum required amount of " & minimumRequiredFee.ToString("N2") & ". Cannot proceed.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                txtfee.Focus()
+                Return False
+            End If
+        End If
+
+        Return True
+    End Function
+
     Private Sub btnpenalized_Click(sender As Object, e As EventArgs) Handles btnpenalized.Click
 
         If lbltransactionreceipt.Text = ".." Then
             MessageBox.Show("Please select a transaction first.", "Missing Details", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        If Not ValidateDisregardedFee() Then
             Return
         End If
 

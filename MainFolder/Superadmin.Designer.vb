@@ -331,9 +331,9 @@ Partial Class Superadmin
         Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Label6.Location = New Point(360, 178)
         Label6.Name = "Label6"
-        Label6.Size = New Size(130, 16)
+        Label6.Size = New Size(66, 16)
         Label6.TabIndex = 117
-        Label6.Text = "Address (Optional)"
+        Label6.Text = "Address:"
         ' 
         ' txtaddress
         ' 

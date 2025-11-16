@@ -191,10 +191,19 @@ Public Class Returning
                 MessageBox.Show("Please select the level of damage (Minor, Major, Irreparable).", "Damage Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return
             End If
-            bookStatus = "Damaged (" & cbdamage.SelectedItem.ToString() & ")"
-            newAccessionStatus = "Damaged"
+
+            Dim selectedDamage As String = cbdamage.SelectedItem.ToString()
+
+            bookStatus = "Damaged (" & selectedDamage & ")"
             bookStatusDescription = "Damaged"
             borrowerStatus = "NOT PENALIZED"
+
+
+            If selectedDamage.Equals("Minor", StringComparison.OrdinalIgnoreCase) Then
+                newAccessionStatus = "Available"
+            Else
+                newAccessionStatus = "Damaged"
+            End If
 
         ElseIf rblost.Checked Then
             bookStatus = "Lost"
@@ -318,9 +327,9 @@ Public Class Returning
                     End If
                 End Using
 
-                Dim deletePenalty As String = "DELETE FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
+                Dim deletereceipt As String = "DELETE FROM `printreceipt_tbl` WHERE `TransactionReceipt` = @transNo"
 
-                Using deletePenalty_cmd As New MySqlCommand(deletePenalty, con, trans)
+                Using deletePenalty_cmd As New MySqlCommand(deletereceipt, con, trans)
                     deletePenalty_cmd.Parameters.AddWithValue("@transNo", TransactionNo)
                     deletePenalty_cmd.ExecuteNonQuery()
                 End Using
@@ -462,10 +471,19 @@ Public Class Returning
                     MessageBox.Show("Please select the level of damage (Minor, Major, Irreparable).", "Damage Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     Return
                 End If
-                bookStatus = "Damaged (" & cbdamage.SelectedItem.ToString() & ")"
-                newAccessionStatus = "Damaged"
+
+                Dim selectedDamage As String = cbdamage.SelectedItem.ToString()
+
+                bookStatus = "Damaged (" & selectedDamage & ")"
                 bookStatusDescription = "Damaged"
                 borrowerStatus = "NOT PENALIZED"
+
+
+                If selectedDamage.Equals("Minor", StringComparison.OrdinalIgnoreCase) Then
+                    newAccessionStatus = "Available"
+                Else
+                    newAccessionStatus = "Damaged"
+                End If
 
             ElseIf rblost.Checked Then
                 bookStatus = "Lost"

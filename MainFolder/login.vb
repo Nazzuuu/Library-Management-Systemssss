@@ -39,11 +39,11 @@ Public Class login
 
         Using con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim comsus As String =
-                "SELECT ID, Username, Password, Email, Role, CurrentIP, is_logged_in, 'superadmin_tbl' AS SourceTable " &
-                "FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
-                "UNION ALL " &
-                "SELECT ID, Username, Password, Email, Role, CurrentIP, is_logged_in, 'user_staff_tbl' AS SourceTable " &
-                "FROM user_staff_tbl WHERE Username = @username AND Password = @password"
+              "SELECT ID, Username, Password, Email, Role, CurrentIP, is_logged_in, FirstName, LastName, 'superadmin_tbl' AS SourceTable " & 
+             "FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
+             "UNION ALL " &
+             "SELECT ID, Username, Password, Email, Role, CurrentIP, is_logged_in, FirstName, LastName, 'user_staff_tbl' AS SourceTable " & 
+             "FROM user_staff_tbl WHERE Username = @username AND Password = @password"
 
             Using com As New MySqlCommand(comsus, con)
                 com.Parameters.AddWithValue("@username", User)
@@ -53,6 +53,7 @@ Public Class login
                     con.Open()
 
                     Dim role As String = ""
+                    Dim userFullName As String = ""
                     Dim userEmail As String = ""
                     Dim employeeID As String = ""
                     Dim activeIP As String = ""
@@ -67,6 +68,11 @@ Public Class login
                             activeIP = If(IsDBNull(lahatngrole("CurrentIP")), "", lahatngrole("CurrentIP").ToString()).Trim()
                             isLoggedInStatus = If(IsDBNull(lahatngrole("is_logged_in")), 0, Convert.ToInt32(lahatngrole("is_logged_in")))
                             updateTable = lahatngrole("SourceTable").ToString()
+
+                            Dim firstName As String = If(IsDBNull(lahatngrole("FirstName")), "", lahatngrole("FirstName").ToString()).Trim()
+                            Dim lastName As String = If(IsDBNull(lahatngrole("LastName")), "", lahatngrole("LastName").ToString()).Trim()
+                            userFullName = $"{firstName} {lastName}".Trim()
+
                         Else
                             lahatngrole.Close()
                             con.Close()
@@ -103,6 +109,7 @@ Public Class login
                     GlobalVarsModule.GlobalEmail = userEmail
                     GlobalVarsModule.CurrentUserID = employeeID
                     GlobalVarsModule.CurrentEmployeeID = employeeID
+                    GlobalVarsModule.GlobalFullName = userFullName
 
                     GlobalVarsModule.LogAudit("LOGIN SUCCESS", "LOGIN FORM",
                         $"User '{User}' ({role}) successfully logged in from IP: {currentDeviceIP}.")
@@ -126,7 +133,7 @@ Public Class login
 
                     Me.Hide()
 
-                    activeMain.lblgmail.Text = userEmail
+                    activeMain.lblgmail.Text = userFullName
                     activeMain.lblform.Text = "MAIN FORM"
 
                     Select Case role

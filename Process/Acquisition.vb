@@ -247,7 +247,7 @@ Public Class Acquisition
         End If
 
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
 
         If String.IsNullOrWhiteSpace(txtbooktitle.Text) OrElse String.IsNullOrWhiteSpace(txtbookprice.Text) Then
@@ -271,6 +271,11 @@ Public Class Acquisition
         If deyts.Date > DateTime.Today.Date Then
             MsgBox("You cannot select a future date.", vbExclamation)
             Exit Sub
+        End If
+
+        If String.IsNullOrWhiteSpace(cbsuppliername.Text) Then
+            MessageBox.Show("Please select or enter the Supplier Name.", "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
         End If
 
         Dim purmatdeyt As String = deyts.ToString("yyyy-MM-dd")
@@ -380,6 +385,11 @@ Public Class Acquisition
 
         If DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a record to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        If String.IsNullOrWhiteSpace(cbsuppliername.Text) Then
+            MessageBox.Show("Please select or enter the Supplier Name.", "Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 

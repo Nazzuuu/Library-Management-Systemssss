@@ -385,6 +385,10 @@ Public Class Users
         Dim contact As String = txtcontactnumber.Text.Trim()
         Dim address As String = txtaddress.Text.Trim()
 
+        Dim editedEmail As String = txtemail.Text.Trim()
+        Dim editedFirstName As String = txtfname.Text.Trim()
+        Dim editedLastName As String = txtlname.Text.Trim()
+
         Dim gender As String = ""
 
         If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(address) Then
@@ -540,9 +544,24 @@ Public Class Users
                 End If
             Next
 
-            If MainForm.lblgmail.Text = DataGridView1.CurrentRow.Cells("Email").Value.ToString Then
+            If GlobalVarsModule.GlobalEmail.Equals(editedEmail, StringComparison.OrdinalIgnoreCase) Then
+
+
+                GlobalVarsModule.GlobalFullname = $"{editedFirstName} {editedLastName}".Trim()
+
+                For Each form As Form In Application.OpenForms
+                    If TypeOf form Is MainForm Then
+
+                        Dim mainForm As MainForm = DirectCast(form, MainForm)
+                        mainForm.lblgmail.Text = GlobalVarsModule.GlobalFullname
+                    End If
+                Next
+            End If
+
+            If MainForm.lblgmail.Text = selectedRow.Cells("Email").Value.ToString Then
                 MainForm.lblgmail.Text = txtemail.Text.Trim
             End If
+
 
             MsgBox("User updated successfully!", vbInformation)
             LoadStaffData()

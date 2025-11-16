@@ -487,7 +487,7 @@ Partial Class Borrowing
         txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlrn.Location = New Point(30, 168)
-        txtlrn.MaxLength = 13
+        txtlrn.MaxLength = 12
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
         txtlrn.SelectedText = ""

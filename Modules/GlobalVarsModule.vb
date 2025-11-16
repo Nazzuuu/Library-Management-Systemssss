@@ -89,6 +89,7 @@ Module GlobalVarsModule
     Public GlobalRole As String = ""
     Public CurrentEmployeeID As String = ""
     Public GlobalEmail As String = ""
+    Public GlobalFullname As String = ""
     Public ActiveMainForm As MainForm = Nothing
 
     Public connectdatabase As ServerConnection
