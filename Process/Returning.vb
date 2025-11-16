@@ -318,6 +318,13 @@ Public Class Returning
                     End If
                 End Using
 
+                Dim deletePenalty As String = "DELETE FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
+
+                Using deletePenalty_cmd As New MySqlCommand(deletePenalty, con, trans)
+                    deletePenalty_cmd.Parameters.AddWithValue("@transNo", TransactionNo)
+                    deletePenalty_cmd.ExecuteNonQuery()
+                End Using
+
                 If Not String.IsNullOrWhiteSpace(accessionID) Then
                     Dim update_accession_com As String = "UPDATE `acession_tbl` SET `Status` = @newStatus WHERE `AccessionID` = @accessionId"
                     Using update_accession_cmd As New MySqlCommand(update_accession_com, con, trans)
@@ -730,7 +737,6 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
 
         Catch ex As Exception
             trans?.Rollback()
-            MessageBox.Show("Error during book status edit: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then
                 con.Close()
