@@ -39,10 +39,10 @@ Public Class login
 
         Using con As New MySqlConnection(GlobalVarsModule.connectionString)
             Dim comsus As String =
-              "SELECT ID, Username, Password, Email, Role, CurrentIP, is_logged_in, FirstName, LastName, 'superadmin_tbl' AS SourceTable " & 
+              "SELECT ID, Username, Password, Email, Role, CurrentIP, is_logged_in, FirstName, LastName, 'superadmin_tbl' AS SourceTable " &
              "FROM superadmin_tbl WHERE Username = @username AND Password = @password " &
              "UNION ALL " &
-             "SELECT ID, Username, Password, Email, Role, CurrentIP, is_logged_in, FirstName, LastName, 'user_staff_tbl' AS SourceTable " & 
+             "SELECT ID, Username, Password, Email, Role, CurrentIP, is_logged_in, FirstName, LastName, 'user_staff_tbl' AS SourceTable " &
              "FROM user_staff_tbl WHERE Username = @username AND Password = @password"
 
             Using com As New MySqlCommand(comsus, con)
@@ -109,7 +109,7 @@ Public Class login
                     GlobalVarsModule.GlobalEmail = userEmail
                     GlobalVarsModule.CurrentUserID = employeeID
                     GlobalVarsModule.CurrentEmployeeID = employeeID
-                    GlobalVarsModule.GlobalFullName = userFullName
+                    GlobalVarsModule.GlobalFullname = userFullName
 
                     GlobalVarsModule.LogAudit("LOGIN SUCCESS", "LOGIN FORM",
                         $"User '{User}' ({role}) successfully logged in from IP: {currentDeviceIP}.")
@@ -550,5 +550,18 @@ TryBorrower:
                             "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         End If
+    End Sub
+
+
+    Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs) Handles Guna2ControlBox1.Click
+
+        Dim passwordForm As New LibrarianPassword()
+
+        If passwordForm.ShowDialog() = DialogResult.OK Then
+            Application.Exit()
+        Else
+
+        End If
+
     End Sub
 End Class

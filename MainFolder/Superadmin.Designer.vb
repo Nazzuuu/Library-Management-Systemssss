@@ -605,7 +605,7 @@ Partial Class Superadmin
         Name = "Superadmin"
         ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
-        Text = "Superadmin"
+        Text = "Librarian Account"
         TopMost = True
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
