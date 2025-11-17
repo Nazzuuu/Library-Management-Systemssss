@@ -163,7 +163,7 @@ Partial Class Users
         ' PictureBox1
         ' 
         PictureBox1.BackColor = Color.White
-        PictureBox1.BackgroundImage = Library_Management_Systemssss.My.Resources.Resources.magnifier
+        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
         PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
         PictureBox1.Location = New Point(881, 23)
         PictureBox1.Name = "PictureBox1"
