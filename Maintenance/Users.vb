@@ -564,8 +564,13 @@ Public Class Users
 
 
             MsgBox("User updated successfully!", vbInformation)
+
+
+
             LoadStaffData()
             clearfields()
+
+            GlobalVarsModule.ResumeAutoRefresh(DataGridView1)
 
         Catch ex As Exception
             MsgBox("Error updating staff member: " & ex.Message, vbCritical)
@@ -642,6 +647,7 @@ Public Class Users
                     MsgBox("User deleted successfully.", vbInformation)
                     LoadStaffData()
                     clearfields()
+                    GlobalVarsModule.ResumeAutoRefresh(DataGridView1)
 
                     Dim count As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl`", con)
                     Dim rowCount As Long = CLng(count.ExecuteScalar())
@@ -667,6 +673,8 @@ Public Class Users
 
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+
+            GlobalVarsModule.PauseAutoRefresh(DataGridView1)
 
             txtfname.Text = If(IsDBNull(row.Cells("FirstName").Value), String.Empty, row.Cells("FirstName").Value.ToString())
             txtlname.Text = If(IsDBNull(row.Cells("LastName").Value), String.Empty, row.Cells("LastName").Value.ToString())
@@ -726,6 +734,8 @@ Public Class Users
     End Sub
 
     Public Sub clearfields()
+
+        GlobalVarsModule.ResumeAutoRefresh(DataGridView1)
 
         txtfname.Text = ""
         txtlname.Text = ""

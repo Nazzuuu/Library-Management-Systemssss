@@ -163,7 +163,7 @@ Partial Class Users
         ' PictureBox1
         ' 
         PictureBox1.BackColor = Color.White
-        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
+        PictureBox1.BackgroundImage = Library_Management_Systemssss.My.Resources.Resources.magnifier
         PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
         PictureBox1.Location = New Point(881, 23)
         PictureBox1.Name = "PictureBox1"
@@ -305,9 +305,9 @@ Partial Class Users
         groupbox.BorderRadius = 9
         groupbox.BorderThickness = 2
         groupbox.Controls.Add(lblnote)
-        groupbox.Controls.Add(lblmessagesu)
         groupbox.Controls.Add(Label10)
         groupbox.Controls.Add(txtaddress)
+        groupbox.Controls.Add(lblmessagesu)
         groupbox.Controls.Add(PictureBox2)
         groupbox.Controls.Add(lblpassword)
         groupbox.Controls.Add(Panel1)
@@ -353,7 +353,7 @@ Partial Class Users
         lblnote.AutoSize = True
         lblnote.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblnote.ForeColor = Color.Black
-        lblnote.Location = New Point(916, 230)
+        lblnote.Location = New Point(957, 30)
         lblnote.Name = "lblnote"
         lblnote.Size = New Size(42, 16)
         lblnote.TabIndex = 129
@@ -364,7 +364,7 @@ Partial Class Users
         lblmessagesu.AutoSize = True
         lblmessagesu.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblmessagesu.ForeColor = Color.Red
-        lblmessagesu.Location = New Point(964, 231)
+        lblmessagesu.Location = New Point(1005, 31)
         lblmessagesu.Name = "lblmessagesu"
         lblmessagesu.Size = New Size(296, 16)
         lblmessagesu.TabIndex = 128
@@ -432,7 +432,7 @@ Partial Class Users
         Panel1.Controls.Add(rbassistant)
         Panel1.Controls.Add(rbstaff)
         Panel1.Controls.Add(lblrolesu)
-        Panel1.Location = New Point(938, 14)
+        Panel1.Location = New Point(916, 216)
         Panel1.Name = "Panel1"
         Panel1.Size = New Size(341, 44)
         Panel1.TabIndex = 80
@@ -604,7 +604,7 @@ Partial Class Users
         rbmale.AutoSize = True
         rbmale.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbmale.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbmale.Location = New Point(740, 227)
+        rbmale.Location = New Point(756, 229)
         rbmale.Name = "rbmale"
         rbmale.Size = New Size(55, 20)
         rbmale.TabIndex = 70
@@ -617,7 +617,7 @@ Partial Class Users
         rbfemale.AutoSize = True
         rbfemale.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         rbfemale.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbfemale.Location = New Point(818, 227)
+        rbfemale.Location = New Point(834, 229)
         rbfemale.Name = "rbfemale"
         rbfemale.Size = New Size(69, 20)
         rbfemale.TabIndex = 69
@@ -630,7 +630,7 @@ Partial Class Users
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(658, 227)
+        Label4.Location = New Point(674, 229)
         Label4.Name = "Label4"
         Label4.Size = New Size(58, 16)
         Label4.TabIndex = 61
