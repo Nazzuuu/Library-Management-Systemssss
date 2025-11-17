@@ -112,7 +112,7 @@ Partial Class Author
         txtauthor.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtauthor.Location = New Point(36, 48)
         txtauthor.Margin = New Padding(3, 5, 3, 5)
-        txtauthor.MaxLength = 20
+        txtauthor.MaxLength = 100
         txtauthor.Name = "txtauthor"
         txtauthor.PlaceholderText = ""
         txtauthor.SelectedText = ""

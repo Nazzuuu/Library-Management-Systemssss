@@ -735,7 +735,7 @@ Partial Class Borrower
         txtlname.ForeColor = Color.Black
         txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlname.Location = New Point(30, 154)
-        txtlname.MaxLength = 15
+        txtlname.MaxLength = 50
         txtlname.Name = "txtlname"
         txtlname.PlaceholderText = ""
         txtlname.SelectedText = ""
@@ -758,7 +758,7 @@ Partial Class Borrower
         txtfname.ForeColor = Color.Black
         txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfname.Location = New Point(30, 88)
-        txtfname.MaxLength = 15
+        txtfname.MaxLength = 50
         txtfname.Name = "txtfname"
         txtfname.PlaceholderText = ""
         txtfname.SelectedText = ""

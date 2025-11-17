@@ -25,8 +25,6 @@ Partial Class Penalty
         components = New ComponentModel.Container()
         Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
@@ -39,11 +37,12 @@ Partial Class Penalty
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Guna2GroupBox3 = New Guna.UI2.WinForms.Guna2GroupBox()
         lbltransactionreceipt = New Label()
-        btnpenalized = New Guna.UI2.WinForms.Guna2Button()
         Guna2GroupBox4 = New Guna.UI2.WinForms.Guna2GroupBox()
         DataGridView1 = New DataGridView()
         PictureBox1 = New PictureBox()
@@ -68,6 +67,7 @@ Partial Class Penalty
         Label1 = New Label()
         Guna2GroupBox2 = New Guna.UI2.WinForms.Guna2GroupBox()
         chkdisregard = New CheckBox()
+        btnpenalized = New Guna.UI2.WinForms.Guna2Button()
         lblbookstatus = New Label()
         Label21 = New Label()
         lbldetails = New Label()
@@ -128,26 +128,6 @@ Partial Class Penalty
         lbltransactionreceipt.Size = New Size(15, 16)
         lbltransactionreceipt.TabIndex = 106
         lbltransactionreceipt.Text = ".."
-        ' 
-        ' btnpenalized
-        ' 
-        btnpenalized.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnpenalized.BorderRadius = 9
-        btnpenalized.BorderThickness = 1
-        btnpenalized.CustomizableEdges = CustomizableEdges7
-        btnpenalized.DisabledState.BorderColor = Color.DarkGray
-        btnpenalized.DisabledState.CustomBorderColor = Color.DarkGray
-        btnpenalized.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnpenalized.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnpenalized.FillColor = Color.Empty
-        btnpenalized.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btnpenalized.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnpenalized.Location = New Point(444, 238)
-        btnpenalized.Name = "btnpenalized"
-        btnpenalized.ShadowDecoration.CustomizableEdges = CustomizableEdges8
-        btnpenalized.Size = New Size(123, 27)
-        btnpenalized.TabIndex = 96
-        btnpenalized.Text = "PENALIZED"
         ' 
         ' Guna2GroupBox4
         ' 
@@ -276,7 +256,7 @@ Partial Class Penalty
         Guna2GroupBox1.FillColor = SystemColors.Control
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.Transparent
-        Guna2GroupBox1.Location = New Point(38, 47)
+        Guna2GroupBox1.Location = New Point(38, 51)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         Guna2GroupBox1.Size = New Size(592, 218)
@@ -515,6 +495,26 @@ Partial Class Penalty
         chkdisregard.TabIndex = 106
         chkdisregard.Text = "Disregard (New Fee)"
         chkdisregard.UseVisualStyleBackColor = True
+        ' 
+        ' btnpenalized
+        ' 
+        btnpenalized.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnpenalized.BorderRadius = 9
+        btnpenalized.BorderThickness = 1
+        btnpenalized.CustomizableEdges = CustomizableEdges7
+        btnpenalized.DisabledState.BorderColor = Color.DarkGray
+        btnpenalized.DisabledState.CustomBorderColor = Color.DarkGray
+        btnpenalized.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btnpenalized.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btnpenalized.FillColor = Color.Empty
+        btnpenalized.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
+        btnpenalized.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnpenalized.Location = New Point(444, 238)
+        btnpenalized.Name = "btnpenalized"
+        btnpenalized.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        btnpenalized.Size = New Size(123, 27)
+        btnpenalized.TabIndex = 96
+        btnpenalized.Text = "PENALIZED"
         ' 
         ' lblbookstatus
         ' 

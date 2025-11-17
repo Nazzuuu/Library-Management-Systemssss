@@ -149,7 +149,7 @@ Partial Class Supplier
         txtaddress.ForeColor = Color.Black
         txtaddress.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaddress.Location = New Point(35, 121)
-        txtaddress.MaxLength = 20
+        txtaddress.MaxLength = 100
         txtaddress.Name = "txtaddress"
         txtaddress.PlaceholderText = ""
         txtaddress.SelectedText = ""
@@ -183,7 +183,7 @@ Partial Class Supplier
         txtsupplier.ForeColor = Color.Black
         txtsupplier.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsupplier.Location = New Point(35, 62)
-        txtsupplier.MaxLength = 15
+        txtsupplier.MaxLength = 50
         txtsupplier.Name = "txtsupplier"
         txtsupplier.PlaceholderText = ""
         txtsupplier.SelectedText = ""

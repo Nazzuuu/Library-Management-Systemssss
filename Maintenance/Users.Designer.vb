@@ -397,7 +397,7 @@ Partial Class Users
         txtaddress.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaddress.Location = New Point(324, 164)
         txtaddress.Margin = New Padding(3, 5, 3, 5)
-        txtaddress.MaxLength = 20
+        txtaddress.MaxLength = 100
         txtaddress.Name = "txtaddress"
         txtaddress.PlaceholderText = ""
         txtaddress.SelectedText = ""
@@ -557,7 +557,7 @@ Partial Class Users
         txtlname.ForeColor = Color.Black
         txtlname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlname.Location = New Point(25, 164)
-        txtlname.MaxLength = 15
+        txtlname.MaxLength = 40
         txtlname.Name = "txtlname"
         txtlname.PlaceholderText = ""
         txtlname.SelectedText = ""
@@ -580,7 +580,7 @@ Partial Class Users
         txtfname.ForeColor = Color.Black
         txtfname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtfname.Location = New Point(25, 95)
-        txtfname.MaxLength = 15
+        txtfname.MaxLength = 40
         txtfname.Name = "txtfname"
         txtfname.PlaceholderText = ""
         txtfname.SelectedText = ""
@@ -696,7 +696,7 @@ Partial Class Users
         txtemail.ForeColor = Color.Black
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemail.Location = New Point(658, 95)
-        txtemail.MaxLength = 20
+        txtemail.MaxLength = 100
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""
@@ -752,7 +752,7 @@ Partial Class Users
         txtusername.ForeColor = Color.Black
         txtusername.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtusername.Location = New Point(975, 95)
-        txtusername.MaxLength = 20
+        txtusername.MaxLength = 100
         txtusername.Name = "txtusername"
         txtusername.PlaceholderText = ""
         txtusername.SelectedText = ""

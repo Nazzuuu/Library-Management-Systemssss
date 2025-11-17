@@ -170,6 +170,7 @@ Public Class login
                             activeMain.MyAccountToolStripMenuItem.Visible = False
                             activeMain.BorrowerAccountToolStripMenuItem.Visible = False
                             activeMain.BorrowerAccountToolStripMenuItem1.Visible = False
+                            activeMain.BorrowerAccountToolStripMenuItem.Visible = True
                             'activeMain.BorrowToolStripMenuItem.Visible = False
                             'activeMain.AcquisitionToolStripMenuItem.Visible = False
                             'activeMain.AccessionToolStripMenuItem.Visible = False

@@ -186,7 +186,7 @@ Partial Class Borrowereditsinfo
         ' txtemail
         ' 
         txtemail.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtemail.BorderRadius = 14
+        txtemail.BorderRadius = 9
         txtemail.CustomizableEdges = CustomizableEdges5
         txtemail.DefaultText = ""
         txtemail.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
@@ -232,7 +232,7 @@ Partial Class Borrowereditsinfo
         ' txtemployeeno
         ' 
         txtemployeeno.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtemployeeno.BorderRadius = 14
+        txtemployeeno.BorderRadius = 9
         txtemployeeno.CustomizableEdges = CustomizableEdges7
         txtemployeeno.DefaultText = ""
         txtemployeeno.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
@@ -267,7 +267,7 @@ Partial Class Borrowereditsinfo
         ' txtlrn
         ' 
         txtlrn.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtlrn.BorderRadius = 14
+        txtlrn.BorderRadius = 9
         txtlrn.CustomizableEdges = CustomizableEdges9
         txtlrn.DefaultText = ""
         txtlrn.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
@@ -324,7 +324,7 @@ Partial Class Borrowereditsinfo
         ' txtpass
         ' 
         txtpass.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtpass.BorderRadius = 14
+        txtpass.BorderRadius = 9
         txtpass.CustomizableEdges = CustomizableEdges11
         txtpass.DefaultText = ""
         txtpass.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
@@ -347,7 +347,7 @@ Partial Class Borrowereditsinfo
         ' txtuser
         ' 
         txtuser.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        txtuser.BorderRadius = 14
+        txtuser.BorderRadius = 9
         txtuser.CustomizableEdges = CustomizableEdges13
         txtuser.DefaultText = ""
         txtuser.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))

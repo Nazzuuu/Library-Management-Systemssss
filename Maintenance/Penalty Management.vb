@@ -423,5 +423,7 @@ Public Class Penalty_Management
 
     End Sub
 
+    Private Sub txtdescription_TextChanged(sender As Object, e As EventArgs) Handles txtdescription.TextChanged
 
+    End Sub
 End Class

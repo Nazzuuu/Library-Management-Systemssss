@@ -99,7 +99,7 @@ Partial Class Language
         txtlanguage.ForeColor = Color.Black
         txtlanguage.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtlanguage.Location = New Point(36, 47)
-        txtlanguage.MaxLength = 15
+        txtlanguage.MaxLength = 50
         txtlanguage.Name = "txtlanguage"
         txtlanguage.PlaceholderText = ""
         txtlanguage.SelectedText = ""
