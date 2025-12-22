@@ -23,14 +23,12 @@ Partial Class BookBorrowingConfirmation
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -41,17 +39,33 @@ Partial Class BookBorrowingConfirmation
         Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Guna2GroupBox3 = New Guna.UI2.WinForms.Guna2GroupBox()
-        Guna2GroupBox4 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
-        lbltransactionreceipt = New Label()
-        btndecline = New Guna.UI2.WinForms.Guna2Button()
-        btnclear = New Guna.UI2.WinForms.Guna2Button()
-        btnconfirm = New Guna.UI2.WinForms.Guna2Button()
-        PictureBox1 = New PictureBox()
+        Guna2GroupBox2 = New Guna.UI2.WinForms.Guna2GroupBox()
+        lblaccessionid = New Label()
+        Label18 = New Label()
+        lblisbnbarcode = New Label()
+        Label11 = New Label()
+        lbldetails = New Label()
+        Label6 = New Label()
+        Label8 = New Label()
+        Label9 = New Label()
+        lblborroweddate = New Label()
+        lblbooktotal = New Label()
+        cbbooks = New ComboBox()
+        Label7 = New Label()
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
+        PictureBox1 = New PictureBox()
+        btnconfirm = New Guna.UI2.WinForms.Guna2Button()
+        btnclear = New Guna.UI2.WinForms.Guna2Button()
+        btndecline = New Guna.UI2.WinForms.Guna2Button()
+        lbltransactionreceipt = New Label()
+        Guna2GroupBox4 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Guna2GroupBox3 = New Guna.UI2.WinForms.Guna2GroupBox()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         lblstrand = New Label()
         lblsection = New Label()
@@ -70,75 +84,20 @@ Partial Class BookBorrowingConfirmation
         lblfullname = New Label()
         lblemployeeno = New Label()
         Label1 = New Label()
-        Label7 = New Label()
-        Guna2GroupBox2 = New Guna.UI2.WinForms.Guna2GroupBox()
         Label4 = New Label()
-        NumericUpDown1 = New NumericUpDown()
-        lblaccessionid = New Label()
-        Label18 = New Label()
-        lblisbnbarcode = New Label()
-        Label11 = New Label()
-        lbldetails = New Label()
-        Label6 = New Label()
         lblduedate = New Label()
-        Label8 = New Label()
-        Label17 = New Label()
-        Label9 = New Label()
-        lblborroweddate = New Label()
-        lblbooktotal = New Label()
-        cbbooks = New ComboBox()
-        Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        Guna2GroupBox3.SuspendLayout()
-        Guna2GroupBox4.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
-        CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
-        Guna2GroupBox1.SuspendLayout()
         Guna2GroupBox2.SuspendLayout()
-        CType(NumericUpDown1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
+        Guna2GroupBox4.SuspendLayout()
+        Guna2GroupBox3.SuspendLayout()
+        Guna2GroupBox1.SuspendLayout()
         SuspendLayout()
         ' 
-        ' Guna2GroupBox3
+        ' Guna2Elipse1
         ' 
-        Guna2GroupBox3.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2GroupBox3.BorderRadius = 8
-        Guna2GroupBox3.BorderThickness = 2
-        Guna2GroupBox3.Controls.Add(Guna2GroupBox4)
-        Guna2GroupBox3.Controls.Add(lbltransactionreceipt)
-        Guna2GroupBox3.Controls.Add(btndecline)
-        Guna2GroupBox3.Controls.Add(btnclear)
-        Guna2GroupBox3.Controls.Add(btnconfirm)
-        Guna2GroupBox3.Controls.Add(PictureBox1)
-        Guna2GroupBox3.Controls.Add(txtsearch)
-        Guna2GroupBox3.Controls.Add(Guna2GroupBox1)
-        Guna2GroupBox3.Controls.Add(Label7)
-        Guna2GroupBox3.Controls.Add(Guna2GroupBox2)
-        Guna2GroupBox3.CustomBorderColor = Color.Transparent
-        Guna2GroupBox3.CustomizableEdges = CustomizableEdges15
-        Guna2GroupBox3.FillColor = SystemColors.Control
-        Guna2GroupBox3.Font = New Font("Segoe UI", 9F)
-        Guna2GroupBox3.ForeColor = Color.Transparent
-        Guna2GroupBox3.Location = New Point(20, 15)
-        Guna2GroupBox3.Name = "Guna2GroupBox3"
-        Guna2GroupBox3.ShadowDecoration.CustomizableEdges = CustomizableEdges16
-        Guna2GroupBox3.Size = New Size(1333, 626)
-        Guna2GroupBox3.TabIndex = 94
-        ' 
-        ' Guna2GroupBox4
-        ' 
-        Guna2GroupBox4.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2GroupBox4.BorderRadius = 8
-        Guna2GroupBox4.BorderThickness = 2
-        Guna2GroupBox4.Controls.Add(DataGridView1)
-        Guna2GroupBox4.CustomBorderColor = Color.Transparent
-        Guna2GroupBox4.CustomizableEdges = CustomizableEdges1
-        Guna2GroupBox4.FillColor = SystemColors.Control
-        Guna2GroupBox4.Font = New Font("Segoe UI", 9F)
-        Guna2GroupBox4.ForeColor = Color.Transparent
-        Guna2GroupBox4.Location = New Point(40, 337)
-        Guna2GroupBox4.Name = "Guna2GroupBox4"
-        Guna2GroupBox4.ShadowDecoration.CustomizableEdges = CustomizableEdges2
-        Guna2GroupBox4.Size = New Size(1250, 248)
-        Guna2GroupBox4.TabIndex = 103
+        Guna2Elipse1.BorderRadius = 9
+        Guna2Elipse1.TargetControl = DataGridView1
         ' 
         ' DataGridView1
         ' 
@@ -189,93 +148,170 @@ Partial Class BookBorrowingConfirmation
         DataGridView1.Size = New Size(1204, 198)
         DataGridView1.TabIndex = 26
         ' 
-        ' lbltransactionreceipt
+        ' Guna2GroupBox2
         ' 
-        lbltransactionreceipt.AutoSize = True
-        lbltransactionreceipt.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lbltransactionreceipt.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbltransactionreceipt.Location = New Point(834, 20)
-        lbltransactionreceipt.Name = "lbltransactionreceipt"
-        lbltransactionreceipt.Size = New Size(141, 16)
-        lbltransactionreceipt.TabIndex = 102
-        lbltransactionreceipt.Text = "Transaction Receipt:"
+        Guna2GroupBox2.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2GroupBox2.BorderRadius = 8
+        Guna2GroupBox2.BorderThickness = 2
+        Guna2GroupBox2.Controls.Add(lblduedate)
+        Guna2GroupBox2.Controls.Add(Label4)
+        Guna2GroupBox2.Controls.Add(lblaccessionid)
+        Guna2GroupBox2.Controls.Add(Label18)
+        Guna2GroupBox2.Controls.Add(lblisbnbarcode)
+        Guna2GroupBox2.Controls.Add(Label11)
+        Guna2GroupBox2.Controls.Add(lbldetails)
+        Guna2GroupBox2.Controls.Add(Label6)
+        Guna2GroupBox2.Controls.Add(Label8)
+        Guna2GroupBox2.Controls.Add(Label9)
+        Guna2GroupBox2.Controls.Add(lblborroweddate)
+        Guna2GroupBox2.Controls.Add(lblbooktotal)
+        Guna2GroupBox2.Controls.Add(cbbooks)
+        Guna2GroupBox2.CustomBorderColor = Color.Transparent
+        Guna2GroupBox2.CustomizableEdges = CustomizableEdges1
+        Guna2GroupBox2.FillColor = SystemColors.Control
+        Guna2GroupBox2.Font = New Font("Segoe UI", 9F)
+        Guna2GroupBox2.ForeColor = Color.Transparent
+        Guna2GroupBox2.Location = New Point(698, 49)
+        Guna2GroupBox2.Name = "Guna2GroupBox2"
+        Guna2GroupBox2.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        Guna2GroupBox2.Size = New Size(592, 240)
+        Guna2GroupBox2.TabIndex = 92
         ' 
-        ' btndecline
+        ' lblaccessionid
         ' 
-        btndecline.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btndecline.BorderRadius = 9
-        btndecline.BorderThickness = 1
-        btndecline.CustomizableEdges = CustomizableEdges3
-        btndecline.DisabledState.BorderColor = Color.DarkGray
-        btndecline.DisabledState.CustomBorderColor = Color.DarkGray
-        btndecline.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btndecline.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btndecline.FillColor = Color.Empty
-        btndecline.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btndecline.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btndecline.Location = New Point(185, 300)
-        btndecline.Name = "btndecline"
-        btndecline.ShadowDecoration.CustomizableEdges = CustomizableEdges4
-        btndecline.Size = New Size(98, 27)
-        btndecline.TabIndex = 101
-        btndecline.Text = "DECLINE"
+        lblaccessionid.AutoSize = True
+        lblaccessionid.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblaccessionid.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblaccessionid.Location = New Point(124, 61)
+        lblaccessionid.Name = "lblaccessionid"
+        lblaccessionid.Size = New Size(15, 16)
+        lblaccessionid.TabIndex = 98
+        lblaccessionid.Text = ".."
         ' 
-        ' btnclear
+        ' Label18
         ' 
-        btnclear.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclear.BorderRadius = 9
-        btnclear.BorderThickness = 1
-        btnclear.CustomizableEdges = CustomizableEdges5
-        btnclear.DisabledState.BorderColor = Color.DarkGray
-        btnclear.DisabledState.CustomBorderColor = Color.DarkGray
-        btnclear.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnclear.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnclear.FillColor = Color.Empty
-        btnclear.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnclear.Location = New Point(317, 300)
-        btnclear.Name = "btnclear"
-        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges6
-        btnclear.Size = New Size(112, 27)
-        btnclear.TabIndex = 97
-        btnclear.Text = "CLEAR"
+        Label18.AutoSize = True
+        Label18.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label18.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label18.Location = New Point(23, 61)
+        Label18.Name = "Label18"
+        Label18.Size = New Size(91, 16)
+        Label18.TabIndex = 97
+        Label18.Text = "AccessionID:"
         ' 
-        ' btnconfirm
+        ' lblisbnbarcode
         ' 
-        btnconfirm.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnconfirm.BorderRadius = 9
-        btnconfirm.BorderThickness = 1
-        btnconfirm.CustomizableEdges = CustomizableEdges7
-        btnconfirm.DisabledState.BorderColor = Color.DarkGray
-        btnconfirm.DisabledState.CustomBorderColor = Color.DarkGray
-        btnconfirm.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnconfirm.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnconfirm.FillColor = Color.Empty
-        btnconfirm.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
-        btnconfirm.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnconfirm.Location = New Point(41, 300)
-        btnconfirm.Name = "btnconfirm"
-        btnconfirm.ShadowDecoration.CustomizableEdges = CustomizableEdges8
-        btnconfirm.Size = New Size(112, 27)
-        btnconfirm.TabIndex = 96
-        btnconfirm.Text = "CONFIRM"
+        lblisbnbarcode.AutoSize = True
+        lblisbnbarcode.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblisbnbarcode.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblisbnbarcode.Location = New Point(124, 29)
+        lblisbnbarcode.Name = "lblisbnbarcode"
+        lblisbnbarcode.Size = New Size(15, 16)
+        lblisbnbarcode.TabIndex = 64
+        lblisbnbarcode.Text = ".."
         ' 
-        ' PictureBox1
+        ' Label11
         ' 
-        PictureBox1.BackColor = Color.White
-        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
-        PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        PictureBox1.Location = New Point(482, 20)
-        PictureBox1.Name = "PictureBox1"
-        PictureBox1.Size = New Size(20, 18)
-        PictureBox1.TabIndex = 93
-        PictureBox1.TabStop = False
+        Label11.AutoSize = True
+        Label11.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label11.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label11.Location = New Point(23, 28)
+        Label11.Name = "Label11"
+        Label11.Size = New Size(102, 16)
+        Label11.TabIndex = 63
+        Label11.Text = "ISBN/Barcode:"
+        ' 
+        ' lbldetails
+        ' 
+        lbldetails.AutoSize = True
+        lbldetails.Font = New Font("Tahoma", 12F, FontStyle.Bold)
+        lbldetails.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lbldetails.Location = New Point(323, 22)
+        lbldetails.Name = "lbldetails"
+        lbldetails.Size = New Size(118, 19)
+        lbldetails.TabIndex = 49
+        lbldetails.Text = "Book Details:"
+        ' 
+        ' Label6
+        ' 
+        Label6.AutoSize = True
+        Label6.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label6.Location = New Point(23, 122)
+        Label6.Name = "Label6"
+        Label6.Size = New Size(85, 16)
+        Label6.TabIndex = 50
+        Label6.Text = "View Books:"
+        ' 
+        ' Label8
+        ' 
+        Label8.AutoSize = True
+        Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label8.Location = New Point(23, 91)
+        Label8.Name = "Label8"
+        Label8.Size = New Size(79, 16)
+        Label8.TabIndex = 51
+        Label8.Text = "Book Total:"
+        ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label9.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label9.Location = New Point(23, 155)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(110, 16)
+        Label9.TabIndex = 52
+        Label9.Text = "Borrowed Date:"
+        ' 
+        ' lblborroweddate
+        ' 
+        lblborroweddate.AutoSize = True
+        lblborroweddate.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblborroweddate.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblborroweddate.Location = New Point(146, 155)
+        lblborroweddate.Name = "lblborroweddate"
+        lblborroweddate.Size = New Size(15, 16)
+        lblborroweddate.TabIndex = 60
+        lblborroweddate.Text = ".."
+        ' 
+        ' lblbooktotal
+        ' 
+        lblbooktotal.AutoSize = True
+        lblbooktotal.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblbooktotal.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblbooktotal.Location = New Point(146, 91)
+        lblbooktotal.Name = "lblbooktotal"
+        lblbooktotal.Size = New Size(15, 16)
+        lblbooktotal.TabIndex = 58
+        lblbooktotal.Text = ".."
+        ' 
+        ' cbbooks
+        ' 
+        cbbooks.DropDownStyle = ComboBoxStyle.DropDownList
+        cbbooks.FormattingEnabled = True
+        cbbooks.Location = New Point(146, 122)
+        cbbooks.Name = "cbbooks"
+        cbbooks.Size = New Size(224, 23)
+        cbbooks.TabIndex = 59
+        ' 
+        ' Label7
+        ' 
+        Label7.AutoSize = True
+        Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label7.Location = New Point(698, 20)
+        Label7.Name = "Label7"
+        Label7.Size = New Size(141, 16)
+        Label7.TabIndex = 43
+        Label7.Text = "Transaction Receipt:"
         ' 
         ' txtsearch
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges9
+        txtsearch.CustomizableEdges = CustomizableEdges3
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -290,9 +326,134 @@ Partial Class BookBorrowingConfirmation
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Borrower"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtsearch.Size = New Size(479, 30)
         txtsearch.TabIndex = 94
+        ' 
+        ' PictureBox1
+        ' 
+        PictureBox1.BackColor = Color.White
+        PictureBox1.BackgroundImage = My.Resources.Resources.magnifier
+        PictureBox1.BackgroundImageLayout = ImageLayout.Stretch
+        PictureBox1.Location = New Point(482, 20)
+        PictureBox1.Name = "PictureBox1"
+        PictureBox1.Size = New Size(20, 18)
+        PictureBox1.TabIndex = 93
+        PictureBox1.TabStop = False
+        ' 
+        ' btnconfirm
+        ' 
+        btnconfirm.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnconfirm.BorderRadius = 9
+        btnconfirm.BorderThickness = 1
+        btnconfirm.CustomizableEdges = CustomizableEdges5
+        btnconfirm.DisabledState.BorderColor = Color.DarkGray
+        btnconfirm.DisabledState.CustomBorderColor = Color.DarkGray
+        btnconfirm.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btnconfirm.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btnconfirm.FillColor = Color.Empty
+        btnconfirm.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
+        btnconfirm.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnconfirm.Location = New Point(41, 300)
+        btnconfirm.Name = "btnconfirm"
+        btnconfirm.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        btnconfirm.Size = New Size(112, 27)
+        btnconfirm.TabIndex = 96
+        btnconfirm.Text = "CONFIRM"
+        ' 
+        ' btnclear
+        ' 
+        btnclear.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnclear.BorderRadius = 9
+        btnclear.BorderThickness = 1
+        btnclear.CustomizableEdges = CustomizableEdges7
+        btnclear.DisabledState.BorderColor = Color.DarkGray
+        btnclear.DisabledState.CustomBorderColor = Color.DarkGray
+        btnclear.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btnclear.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btnclear.FillColor = Color.Empty
+        btnclear.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
+        btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnclear.Location = New Point(317, 300)
+        btnclear.Name = "btnclear"
+        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        btnclear.Size = New Size(112, 27)
+        btnclear.TabIndex = 97
+        btnclear.Text = "CLEAR"
+        ' 
+        ' btndecline
+        ' 
+        btndecline.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btndecline.BorderRadius = 9
+        btndecline.BorderThickness = 1
+        btndecline.CustomizableEdges = CustomizableEdges9
+        btndecline.DisabledState.BorderColor = Color.DarkGray
+        btndecline.DisabledState.CustomBorderColor = Color.DarkGray
+        btndecline.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btndecline.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btndecline.FillColor = Color.Empty
+        btndecline.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
+        btndecline.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btndecline.Location = New Point(185, 300)
+        btndecline.Name = "btndecline"
+        btndecline.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        btndecline.Size = New Size(98, 27)
+        btndecline.TabIndex = 101
+        btndecline.Text = "DECLINE"
+        ' 
+        ' lbltransactionreceipt
+        ' 
+        lbltransactionreceipt.AutoSize = True
+        lbltransactionreceipt.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lbltransactionreceipt.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lbltransactionreceipt.Location = New Point(834, 20)
+        lbltransactionreceipt.Name = "lbltransactionreceipt"
+        lbltransactionreceipt.Size = New Size(141, 16)
+        lbltransactionreceipt.TabIndex = 102
+        lbltransactionreceipt.Text = "Transaction Receipt:"
+        ' 
+        ' Guna2GroupBox4
+        ' 
+        Guna2GroupBox4.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2GroupBox4.BorderRadius = 8
+        Guna2GroupBox4.BorderThickness = 2
+        Guna2GroupBox4.Controls.Add(DataGridView1)
+        Guna2GroupBox4.CustomBorderColor = Color.Transparent
+        Guna2GroupBox4.CustomizableEdges = CustomizableEdges11
+        Guna2GroupBox4.FillColor = SystemColors.Control
+        Guna2GroupBox4.Font = New Font("Segoe UI", 9F)
+        Guna2GroupBox4.ForeColor = Color.Transparent
+        Guna2GroupBox4.Location = New Point(40, 337)
+        Guna2GroupBox4.Name = "Guna2GroupBox4"
+        Guna2GroupBox4.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        Guna2GroupBox4.Size = New Size(1250, 248)
+        Guna2GroupBox4.TabIndex = 103
+        ' 
+        ' Guna2GroupBox3
+        ' 
+        Guna2GroupBox3.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2GroupBox3.BorderRadius = 8
+        Guna2GroupBox3.BorderThickness = 2
+        Guna2GroupBox3.Controls.Add(Guna2GroupBox4)
+        Guna2GroupBox3.Controls.Add(lbltransactionreceipt)
+        Guna2GroupBox3.Controls.Add(btndecline)
+        Guna2GroupBox3.Controls.Add(btnclear)
+        Guna2GroupBox3.Controls.Add(btnconfirm)
+        Guna2GroupBox3.Controls.Add(PictureBox1)
+        Guna2GroupBox3.Controls.Add(txtsearch)
+        Guna2GroupBox3.Controls.Add(Guna2GroupBox1)
+        Guna2GroupBox3.Controls.Add(Label7)
+        Guna2GroupBox3.Controls.Add(Guna2GroupBox2)
+        Guna2GroupBox3.CustomBorderColor = Color.Transparent
+        Guna2GroupBox3.CustomizableEdges = CustomizableEdges15
+        Guna2GroupBox3.FillColor = SystemColors.Control
+        Guna2GroupBox3.Font = New Font("Segoe UI", 9F)
+        Guna2GroupBox3.ForeColor = Color.Transparent
+        Guna2GroupBox3.Location = New Point(20, 15)
+        Guna2GroupBox3.Name = "Guna2GroupBox3"
+        Guna2GroupBox3.ShadowDecoration.CustomizableEdges = CustomizableEdges16
+        Guna2GroupBox3.Size = New Size(1333, 626)
+        Guna2GroupBox3.TabIndex = 94
         ' 
         ' Guna2GroupBox1
         ' 
@@ -317,13 +478,13 @@ Partial Class BookBorrowingConfirmation
         Guna2GroupBox1.Controls.Add(lblemployeeno)
         Guna2GroupBox1.Controls.Add(Label1)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges11
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges13
         Guna2GroupBox1.FillColor = SystemColors.Control
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.Transparent
         Guna2GroupBox1.Location = New Point(38, 49)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         Guna2GroupBox1.Size = New Size(592, 240)
         Guna2GroupBox1.TabIndex = 91
         ' 
@@ -514,211 +675,27 @@ Partial Class BookBorrowingConfirmation
         Label1.TabIndex = 44
         Label1.Text = "Borrower Details:"
         ' 
-        ' Label7
-        ' 
-        Label7.AutoSize = True
-        Label7.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label7.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label7.Location = New Point(698, 20)
-        Label7.Name = "Label7"
-        Label7.Size = New Size(141, 16)
-        Label7.TabIndex = 43
-        Label7.Text = "Transaction Receipt:"
-        ' 
-        ' Guna2GroupBox2
-        ' 
-        Guna2GroupBox2.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2GroupBox2.BorderRadius = 8
-        Guna2GroupBox2.BorderThickness = 2
-        Guna2GroupBox2.Controls.Add(Label4)
-        Guna2GroupBox2.Controls.Add(NumericUpDown1)
-        Guna2GroupBox2.Controls.Add(lblaccessionid)
-        Guna2GroupBox2.Controls.Add(Label18)
-        Guna2GroupBox2.Controls.Add(lblisbnbarcode)
-        Guna2GroupBox2.Controls.Add(Label11)
-        Guna2GroupBox2.Controls.Add(lbldetails)
-        Guna2GroupBox2.Controls.Add(Label6)
-        Guna2GroupBox2.Controls.Add(lblduedate)
-        Guna2GroupBox2.Controls.Add(Label8)
-        Guna2GroupBox2.Controls.Add(Label17)
-        Guna2GroupBox2.Controls.Add(Label9)
-        Guna2GroupBox2.Controls.Add(lblborroweddate)
-        Guna2GroupBox2.Controls.Add(lblbooktotal)
-        Guna2GroupBox2.Controls.Add(cbbooks)
-        Guna2GroupBox2.CustomBorderColor = Color.Transparent
-        Guna2GroupBox2.CustomizableEdges = CustomizableEdges13
-        Guna2GroupBox2.FillColor = SystemColors.Control
-        Guna2GroupBox2.Font = New Font("Segoe UI", 9F)
-        Guna2GroupBox2.ForeColor = Color.Transparent
-        Guna2GroupBox2.Location = New Point(698, 49)
-        Guna2GroupBox2.Name = "Guna2GroupBox2"
-        Guna2GroupBox2.ShadowDecoration.CustomizableEdges = CustomizableEdges14
-        Guna2GroupBox2.Size = New Size(592, 240)
-        Guna2GroupBox2.TabIndex = 92
-        ' 
         ' Label4
         ' 
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(24, 186)
+        Label4.Location = New Point(24, 189)
         Label4.Name = "Label4"
-        Label4.Size = New Size(78, 16)
-        Label4.TabIndex = 100
-        Label4.Text = "Limit Days:"
-        ' 
-        ' NumericUpDown1
-        ' 
-        NumericUpDown1.Location = New Point(108, 186)
-        NumericUpDown1.Name = "NumericUpDown1"
-        NumericUpDown1.Size = New Size(120, 23)
-        NumericUpDown1.TabIndex = 99
-        ' 
-        ' lblaccessionid
-        ' 
-        lblaccessionid.AutoSize = True
-        lblaccessionid.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lblaccessionid.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblaccessionid.Location = New Point(124, 61)
-        lblaccessionid.Name = "lblaccessionid"
-        lblaccessionid.Size = New Size(15, 16)
-        lblaccessionid.TabIndex = 98
-        lblaccessionid.Text = ".."
-        ' 
-        ' Label18
-        ' 
-        Label18.AutoSize = True
-        Label18.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label18.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label18.Location = New Point(23, 61)
-        Label18.Name = "Label18"
-        Label18.Size = New Size(91, 16)
-        Label18.TabIndex = 97
-        Label18.Text = "AccessionID:"
-        ' 
-        ' lblisbnbarcode
-        ' 
-        lblisbnbarcode.AutoSize = True
-        lblisbnbarcode.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lblisbnbarcode.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblisbnbarcode.Location = New Point(124, 29)
-        lblisbnbarcode.Name = "lblisbnbarcode"
-        lblisbnbarcode.Size = New Size(15, 16)
-        lblisbnbarcode.TabIndex = 64
-        lblisbnbarcode.Text = ".."
-        ' 
-        ' Label11
-        ' 
-        Label11.AutoSize = True
-        Label11.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label11.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label11.Location = New Point(23, 28)
-        Label11.Name = "Label11"
-        Label11.Size = New Size(102, 16)
-        Label11.TabIndex = 63
-        Label11.Text = "ISBN/Barcode:"
-        ' 
-        ' lbldetails
-        ' 
-        lbldetails.AutoSize = True
-        lbldetails.Font = New Font("Tahoma", 12F, FontStyle.Bold)
-        lbldetails.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbldetails.Location = New Point(323, 22)
-        lbldetails.Name = "lbldetails"
-        lbldetails.Size = New Size(118, 19)
-        lbldetails.TabIndex = 49
-        lbldetails.Text = "Book Details:"
-        ' 
-        ' Label6
-        ' 
-        Label6.AutoSize = True
-        Label6.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label6.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label6.Location = New Point(23, 122)
-        Label6.Name = "Label6"
-        Label6.Size = New Size(85, 16)
-        Label6.TabIndex = 50
-        Label6.Text = "View Books:"
+        Label4.Size = New Size(72, 16)
+        Label4.TabIndex = 99
+        Label4.Text = "Due Date:"
         ' 
         ' lblduedate
         ' 
         lblduedate.AutoSize = True
         lblduedate.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblduedate.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblduedate.Location = New Point(325, 189)
+        lblduedate.Location = New Point(102, 191)
         lblduedate.Name = "lblduedate"
         lblduedate.Size = New Size(15, 16)
-        lblduedate.TabIndex = 62
+        lblduedate.TabIndex = 100
         lblduedate.Text = ".."
-        ' 
-        ' Label8
-        ' 
-        Label8.AutoSize = True
-        Label8.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label8.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label8.Location = New Point(23, 91)
-        Label8.Name = "Label8"
-        Label8.Size = New Size(79, 16)
-        Label8.TabIndex = 51
-        Label8.Text = "Book Total:"
-        ' 
-        ' Label17
-        ' 
-        Label17.AutoSize = True
-        Label17.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label17.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label17.Location = New Point(243, 189)
-        Label17.Name = "Label17"
-        Label17.Size = New Size(72, 16)
-        Label17.TabIndex = 61
-        Label17.Text = "Due Date:"
-        ' 
-        ' Label9
-        ' 
-        Label9.AutoSize = True
-        Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label9.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label9.Location = New Point(23, 155)
-        Label9.Name = "Label9"
-        Label9.Size = New Size(110, 16)
-        Label9.TabIndex = 52
-        Label9.Text = "Borrowed Date:"
-        ' 
-        ' lblborroweddate
-        ' 
-        lblborroweddate.AutoSize = True
-        lblborroweddate.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lblborroweddate.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblborroweddate.Location = New Point(146, 155)
-        lblborroweddate.Name = "lblborroweddate"
-        lblborroweddate.Size = New Size(15, 16)
-        lblborroweddate.TabIndex = 60
-        lblborroweddate.Text = ".."
-        ' 
-        ' lblbooktotal
-        ' 
-        lblbooktotal.AutoSize = True
-        lblbooktotal.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lblbooktotal.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblbooktotal.Location = New Point(146, 91)
-        lblbooktotal.Name = "lblbooktotal"
-        lblbooktotal.Size = New Size(15, 16)
-        lblbooktotal.TabIndex = 58
-        lblbooktotal.Text = ".."
-        ' 
-        ' cbbooks
-        ' 
-        cbbooks.DropDownStyle = ComboBoxStyle.DropDownList
-        cbbooks.FormattingEnabled = True
-        cbbooks.Location = New Point(146, 122)
-        cbbooks.Name = "cbbooks"
-        cbbooks.Size = New Size(224, 23)
-        cbbooks.TabIndex = 59
-        ' 
-        ' Guna2Elipse1
-        ' 
-        Guna2Elipse1.BorderRadius = 9
-        Guna2Elipse1.TargetControl = DataGridView1
         ' 
         ' BookBorrowingConfirmation
         ' 
@@ -733,24 +710,40 @@ Partial Class BookBorrowingConfirmation
         Name = "BookBorrowingConfirmation"
         StartPosition = FormStartPosition.CenterScreen
         Text = "BookBorrowingConfirmation"
-        Guna2GroupBox3.ResumeLayout(False)
-        Guna2GroupBox3.PerformLayout()
-        Guna2GroupBox4.ResumeLayout(False)
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
-        CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
-        Guna2GroupBox1.ResumeLayout(False)
-        Guna2GroupBox1.PerformLayout()
         Guna2GroupBox2.ResumeLayout(False)
         Guna2GroupBox2.PerformLayout()
-        CType(NumericUpDown1, ComponentModel.ISupportInitialize).EndInit()
+        CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
+        Guna2GroupBox4.ResumeLayout(False)
+        Guna2GroupBox3.ResumeLayout(False)
+        Guna2GroupBox3.PerformLayout()
+        Guna2GroupBox1.ResumeLayout(False)
+        Guna2GroupBox1.PerformLayout()
         ResumeLayout(False)
     End Sub
-
-    Friend WithEvents Guna2GroupBox3 As Guna.UI2.WinForms.Guna2GroupBox
-    Friend WithEvents btndecline As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents btnconfirm As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
+    Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents Guna2GroupBox2 As Guna.UI2.WinForms.Guna2GroupBox
+    Friend WithEvents lblaccessionid As Label
+    Friend WithEvents Label18 As Label
+    Friend WithEvents lblisbnbarcode As Label
+    Friend WithEvents Label11 As Label
+    Friend WithEvents lbldetails As Label
+    Friend WithEvents Label6 As Label
+    Friend WithEvents Label8 As Label
+    Friend WithEvents Label9 As Label
+    Friend WithEvents lblborroweddate As Label
+    Friend WithEvents lblbooktotal As Label
+    Friend WithEvents cbbooks As ComboBox
+    Friend WithEvents Label7 As Label
     Friend WithEvents txtsearch As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents btnconfirm As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents btnclear As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents btndecline As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents lbltransactionreceipt As Label
+    Friend WithEvents Guna2GroupBox4 As Guna.UI2.WinForms.Guna2GroupBox
+    Friend WithEvents Guna2GroupBox3 As Guna.UI2.WinForms.Guna2GroupBox
     Friend WithEvents Guna2GroupBox1 As Guna.UI2.WinForms.Guna2GroupBox
     Friend WithEvents lblstrand As Label
     Friend WithEvents lblsection As Label
@@ -769,26 +762,6 @@ Partial Class BookBorrowingConfirmation
     Friend WithEvents lblfullname As Label
     Friend WithEvents lblemployeeno As Label
     Friend WithEvents Label1 As Label
-    Friend WithEvents Label7 As Label
-    Friend WithEvents Guna2GroupBox2 As Guna.UI2.WinForms.Guna2GroupBox
-    Friend WithEvents lblaccessionid As Label
-    Friend WithEvents Label18 As Label
-    Friend WithEvents lblisbnbarcode As Label
-    Friend WithEvents Label11 As Label
-    Friend WithEvents lbldetails As Label
-    Friend WithEvents Label6 As Label
     Friend WithEvents lblduedate As Label
-    Friend WithEvents Label8 As Label
-    Friend WithEvents Label17 As Label
-    Friend WithEvents Label9 As Label
-    Friend WithEvents lblbooktotal As Label
-    Friend WithEvents cbbooks As ComboBox
-    Friend WithEvents lbltransactionreceipt As Label
-    Friend WithEvents btnclear As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents lblborroweddate As Label
-    Friend WithEvents Guna2GroupBox4 As Guna.UI2.WinForms.Guna2GroupBox
-    Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Label4 As Label
-    Friend WithEvents NumericUpDown1 As NumericUpDown
-    Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
 End Class

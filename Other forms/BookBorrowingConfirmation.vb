@@ -10,29 +10,13 @@ Public Class BookBorrowingConfirmation
     Private lastNumericValue As Decimal = 0
     Private Sub BookBorrowingConfirmation_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshconfirmation()
-        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DaysLimit, DueDate, TransactionReceipt, Status FROM `confimation_tbl`", 2000)
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DueDate,  TransactionReceipt, Status FROM `confimation_tbl`", 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
-    Private Sub NumericUpDown1_Enter(sender As Object, e As EventArgs) Handles NumericUpDown1.Enter
-        isNumericEditing = True
-        lastNumericValue = NumericUpDown1.Value
-
-
-        PauseAutoRefresh(DataGridView1)
-    End Sub
-
-    Private Sub NumericUpDown1_Leave(sender As Object, e As EventArgs) Handles NumericUpDown1.Leave
-        isNumericEditing = False
-
-
-        ResumeAutoRefresh(DataGridView1)
-    End Sub
-
-
     Public Sub refreshconfirmation()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim com As String = "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DaysLimit, DueDate, TransactionReceipt, Status FROM `confimation_tbl`"
+        Dim com As String = "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DueDate, TransactionReceipt, Status FROM `confimation_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim ds As New DataSet
 
@@ -45,7 +29,7 @@ Public Class BookBorrowingConfirmation
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
         Catch ex As Exception
-            MessageBox.Show("Error refreshing confirmation data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
         Finally
             If con.State = ConnectionState.Open Then con.Close()
         End Try
@@ -53,13 +37,28 @@ Public Class BookBorrowingConfirmation
 
     Private Async Sub OnDatabaseUpdated()
         Try
-            Dim query As String = "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DaysLimit, DueDate, TransactionReceipt, Status FROM `confimation_tbl`"
+            Dim query As String = "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DueDate, TransactionReceipt, Status FROM `confimation_tbl`"
             Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
             DataGridView1.ClearSelection()
         Catch
         End Try
     End Sub
 
+
+    Private Sub ComputeDueDate(userRole As String)
+        Dim daysToAdd As Integer = 0
+        Dim currentDate As DateTime = DateTime.Now
+
+        If userRole = "Student" Then
+            daysToAdd = studentLimit
+        ElseIf userRole = "Teacher" Then
+            daysToAdd = teacherLimit
+        End If
+
+        Dim dueDate As DateTime = currentDate.AddDays(daysToAdd)
+        lblduedate.Text = dueDate.ToString("MMM dd, yyyy")
+
+    End Sub
 
     Private Sub pendingstats(accessionID As String, status As String)
         Try
@@ -92,26 +91,6 @@ Public Class BookBorrowingConfirmation
         End If
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-        Dim gridDueDate As String = ""
-        If DataGridView1.Columns.Contains("DueDate") Then
-            Dim cellVal = selectedRow.Cells("DueDate").Value
-            If Not IsDBNull(cellVal) AndAlso cellVal IsNot Nothing Then
-                gridDueDate = cellVal.ToString().Trim()
-            Else
-                gridDueDate = ""
-            End If
-        End If
-
-        If String.IsNullOrWhiteSpace(lblduedate.Text) OrElse lblduedate.Text = "--" OrElse String.IsNullOrWhiteSpace(gridDueDate) Then
-            MsgBox("Please set a valid Due Date before confirming the borrowing transaction.", vbExclamation, "Missing Due Date")
-            Exit Sub
-        End If
-
-
-        If NumericUpDown1.Value <= 0 Then
-            MsgBox("Please set a valid Limit Days (must be greater than zero) before confirming the borrowing transaction.", vbExclamation, "Missing Limit Days")
-            Exit Sub
-        End If
 
         Dim idToConfirm As Integer = CInt(selectedRow.Cells("ID").Value)
         Dim transactionReceiptID As String = selectedRow.Cells("TransactionReceipt").Value.ToString()
@@ -122,33 +101,28 @@ Public Class BookBorrowingConfirmation
         Dim con As New MySqlConnection(connectionString)
 
         Dim finalBorrowedDate As String = selectedRow.Cells("BorrowedDate").Value.ToString()
-        Dim finalDueDate As String = lblduedate.Text
+
+        Dim bDate As DateTime = Convert.ToDateTime(finalBorrowedDate)
+        Dim daysToAdd As Integer = 0
+
+        If borrowerType.ToLower() = "student" Then
+            daysToAdd = studentLimit
+        ElseIf borrowerType.ToLower() = "teacher" Then
+            daysToAdd = teacherLimit
+        End If
+
+        Dim finalDueDate As DateTime = bDate.AddDays(daysToAdd)
+
         Dim finalLRN As String = If(lbllrn.Text = "--", "", lbllrn.Text)
         Dim finalEmpNo As String = If(lblemployeeno.Text = "--", "", lblemployeeno.Text)
-
-        Dim dbDueDate As String = ""
-        Try
-            dbDueDate = DateTime.Parse(finalDueDate).ToString("yyyy-MM-dd")
-        Catch
-            If DataGridView1.Columns.Contains("DueDate") Then
-                Dim cellVal = selectedRow.Cells("DueDate").Value
-                If Not IsDBNull(cellVal) AndAlso cellVal IsNot Nothing Then
-                    dbDueDate = DateTime.Parse(cellVal.ToString()).ToString("yyyy-MM-dd")
-                Else
-                    dbDueDate = DateTime.Now.ToString("yyyy-MM-dd")
-                End If
-            Else
-                dbDueDate = DateTime.Now.ToString("yyyy-MM-dd")
-            End If
-        End Try
-
         Dim bookDetailsList As New List(Of Dictionary(Of String, String))
         Dim totalBooksConfirmed As Integer = 0
 
         Try
             con.Open()
 
-            Dim comGetBooks As String = "SELECT AccessionID, BookTitle, ISBN, Barcode FROM `borrowing_tbl` WHERE `TransactionReceipt` = @TID AND AccessionID IS NOT NULL"
+
+            Dim comGetBooks As String = "SELECT AccessionID, BookTitle, ISBN, Barcode, Shelf FROM `borrowing_tbl` WHERE `TransactionReceipt` = @TID AND AccessionID IS NOT NULL"
             Using cmdGetBooks As New MySqlCommand(comGetBooks, con)
                 cmdGetBooks.Parameters.AddWithValue("@TID", transactionReceiptID)
                 Dim reader As MySqlDataReader = cmdGetBooks.ExecuteReader()
@@ -158,6 +132,7 @@ Public Class BookBorrowingConfirmation
                     bookData.Add("BookTitle", reader("BookTitle").ToString())
                     bookData.Add("ISBN", reader("ISBN").ToString())
                     bookData.Add("Barcode", reader("Barcode").ToString())
+                    bookData.Add("Shelf", reader("Shelf").ToString())
                     bookDetailsList.Add(bookData)
                 End While
                 reader.Close()
@@ -173,6 +148,7 @@ Public Class BookBorrowingConfirmation
                 Dim finalBookTitle As String = bookData("BookTitle")
                 Dim finalISBN As String = bookData("ISBN")
                 Dim finalBarcode As String = bookData("Barcode")
+                Dim finalShelf As String = bookData("Shelf")
 
                 Dim checkHistoryCom As String = "SELECT COUNT(*) FROM borrowinghistory_tbl WHERE TransactionReceipt = @TID AND AccessionID = @ACCID AND Status = 'Granted'"
                 Using cmdCheckHistory As New MySqlCommand(checkHistoryCom, con)
@@ -180,8 +156,10 @@ Public Class BookBorrowingConfirmation
                     cmdCheckHistory.Parameters.AddWithValue("@ACCID", finalAccessionID)
 
                     If CInt(cmdCheckHistory.ExecuteScalar()) = 0 Then
-                        Dim insertHistoryCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, BorrowedDate, DueDate, TransactionReceipt, Status) " &
-                                                     "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @BDate, @DDate, @TransactionReceipt, @Status)"
+
+
+                        Dim insertHistoryCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt, Status) " &
+                                                     "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt, @Status)"
 
                         Using cmdHistory As New MySqlCommand(insertHistoryCom, con)
                             cmdHistory.Parameters.AddWithValue("@Borrower", borrowerType)
@@ -192,8 +170,9 @@ Public Class BookBorrowingConfirmation
                             cmdHistory.Parameters.AddWithValue("@ISBN", finalISBN)
                             cmdHistory.Parameters.AddWithValue("@Barcode", finalBarcode)
                             cmdHistory.Parameters.AddWithValue("@AccessionID", finalAccessionID)
-                            cmdHistory.Parameters.AddWithValue("@BDate", finalBorrowedDate)
-                            cmdHistory.Parameters.AddWithValue("@DDate", dbDueDate)
+                            cmdHistory.Parameters.AddWithValue("@Shelf", finalShelf)
+                            cmdHistory.Parameters.AddWithValue("@BDate", bDate)
+                            cmdHistory.Parameters.AddWithValue("@DDate", finalDueDate)
                             cmdHistory.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
                             cmdHistory.Parameters.AddWithValue("@Status", "Granted")
 
@@ -237,7 +216,7 @@ Public Class BookBorrowingConfirmation
                 End If
             Next
 
-            InsertPrintReceipt(borrowerType, borrowerName, finalBorrowedDate, transactionReceiptID, borrowedBookCount, dbDueDate)
+            InsertPrintReceipt(borrowerType, borrowerName, finalBorrowedDate, transactionReceiptID, borrowedBookCount, finalDueDate.ToString("yyyy-MM-dd"))
 
             MsgBox(totalBooksConfirmed.ToString() & " books successfully GRANTED and recorded. Proceed to Print Receipt.", vbInformation, "Success")
 
@@ -247,6 +226,7 @@ Public Class BookBorrowingConfirmation
             If con.State = ConnectionState.Open Then con.Close()
             refreshconfirmation()
             ClearDetails()
+            lblduedate.Text = "--"
         End Try
     End Sub
 
@@ -257,23 +237,23 @@ Public Class BookBorrowingConfirmation
 
 
 
-    Public Sub InsertPrintReceipt(ByVal borrowerType As String, ByVal borrowerName As String, ByVal borrowedDate As String, ByVal transactionReceiptID As String, ByVal bookCount As Integer, ByVal dueDate As String)
+    Public Sub InsertPrintReceipt(ByVal borrowerType As String, ByVal borrowerName As String, ByVal borrowedDate As String, ByVal transactionReceiptID As String, ByVal bookCount As Integer, ByVal DueDatess As String)
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
             con.Open()
 
-            Dim insertCom As String = "INSERT INTO printreceipt_tbl (Borrower, Name, BorrowedDate, TransactionReceipt, BorrowedBookCount, DueDate, IsPrinted) " &
-                                  "VALUES (@Borrower, @Name, @BDate, @TID, @BookCount, @DDate, @IsPrinted)"
+
+            Dim insertCom As String = "INSERT INTO printreceipt_tbl (Borrower, Name, BorrowedDate, DueDate, TransactionReceipt, BorrowedBookCount, IsPrinted) " &
+                                  "VALUES (@Borrower, @Name, @BDate, @DDate, @TID, @BookCount, @IsPrinted)"
 
             Using cmdInsert As New MySqlCommand(insertCom, con)
                 cmdInsert.Parameters.AddWithValue("@Borrower", borrowerType)
                 cmdInsert.Parameters.AddWithValue("@Name", borrowerName)
                 cmdInsert.Parameters.AddWithValue("@BDate", borrowedDate)
+                cmdInsert.Parameters.AddWithValue("@DDate", DueDatess)
                 cmdInsert.Parameters.AddWithValue("@TID", transactionReceiptID)
                 cmdInsert.Parameters.AddWithValue("@BookCount", bookCount)
-                cmdInsert.Parameters.AddWithValue("@DDate", dueDate)
-
                 cmdInsert.Parameters.AddWithValue("@IsPrinted", False)
 
                 cmdInsert.ExecuteNonQuery()
@@ -321,45 +301,40 @@ Public Class BookBorrowingConfirmation
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
         PauseAutoRefresh(DataGridView1)
-
-        If Not isNumericEditing Then
-            lastNumericValue = NumericUpDown1.Value
-        End If
-
         LoadBorrowerDetails()
 
-
         Try
-            If NumericUpDown1 IsNot Nothing Then
+            If e.RowIndex >= 0 Then
+                Dim selectedRow As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+                Dim borrowerType As String = selectedRow.Cells("Borrower").Value.ToString()
+                Dim borrowedDate As DateTime = Convert.ToDateTime(selectedRow.Cells("BorrowedDate").Value)
+                Dim daysToAdd As Integer = 0
 
-                Dim originalValue As Decimal = NumericUpDown1.Value
-                Dim newValue As Decimal = originalValue
-
-
-                If originalValue < NumericUpDown1.Maximum Then
-                    NumericUpDown1.Value += 1
-                    NumericUpDown1.Value = originalValue
-                ElseIf originalValue > NumericUpDown1.Minimum Then
-                    NumericUpDown1.Value -= 1
-                    NumericUpDown1.Value = originalValue
+                If borrowerType.ToLower() = "student" Then
+                    daysToAdd = studentLimit
+                ElseIf borrowerType.ToLower() = "teacher" Then
+                    daysToAdd = teacherLimit
                 End If
+
+                Dim dueDate As DateTime = borrowedDate.AddDays(daysToAdd)
+
+                lblduedate.Text = dueDate.ToString("MMM dd, yyyy")
+
+                selectedRow.Cells("DueDate").Value = dueDate.ToString("MMM dd, yyyy")
+
             End If
         Catch ex As Exception
-
+            lblduedate.Text = "--"
         End Try
 
         Try
             If cbbooks.Items.Count > 1 Then
-
                 cbbooks.SelectedIndex = 1
             ElseIf cbbooks.Items.Count > 0 Then
-
                 cbbooks.SelectedIndex = 0
             End If
         Catch ex As Exception
-
         End Try
-
 
     End Sub
 
@@ -382,7 +357,6 @@ Public Class BookBorrowingConfirmation
         lbltransactionreceipt.Text = transactionReceiptID
         lblbooktotal.Text = selectedRow.Cells("BorrowedBookCount").Value.ToString
         lblfullname.Text = nameValue
-        Dim currentDaysLimit As Integer = If(IsDBNull(selectedRow.Cells("DaysLimit").Value) OrElse String.IsNullOrWhiteSpace(selectedRow.Cells("DaysLimit").Value.ToString), 0, CInt(selectedRow.Cells("DaysLimit").Value))
         Dim borrowedDateStr As String = selectedRow.Cells("BorrowedDate").Value.ToString()
 
 
@@ -395,7 +369,7 @@ Public Class BookBorrowingConfirmation
         lblisbnbarcode.Text = "--"
         lblaccessionid.Text = "--"
         lblborroweddate.Text = "--"
-        lblduedate.Text = "--"
+
 
         Dim defaultLimitDays As Integer = 0
         Select Case borrowerType.ToLower()
@@ -407,26 +381,6 @@ Public Class BookBorrowingConfirmation
                 defaultLimitDays = 999
         End Select
 
-
-        If Me.Controls.Find("NumericUpDown1", True).Length > 0 Then
-            Dim numControl As NumericUpDown = DirectCast(Me.Controls.Find("NumericUpDown1", True)(0), NumericUpDown)
-
-            Dim finalDaysLimit As Integer = 0
-
-            numControl.Minimum = 1
-            numControl.Maximum = If(defaultLimitDays > 0, defaultLimitDays, 999)
-
-            If currentDaysLimit > 0 AndAlso currentDaysLimit <= defaultLimitDays Then
-                numControl.Value = currentDaysLimit
-                finalDaysLimit = currentDaysLimit
-            Else
-                numControl.Value = defaultLimitDays
-                finalDaysLimit = defaultLimitDays
-            End If
-
-            CalculateAndDisplayDueDate(finalDaysLimit, borrowedDateStr)
-
-        End If
 
         Dim identifierValue As String = ""
         Dim identifierColumn As String = ""
@@ -482,37 +436,6 @@ Public Class BookBorrowingConfirmation
     End Sub
 
 
-    Private Sub CalculateAndDisplayDueDate(ByVal daysLimit As Decimal, ByVal borrowedDateStr As String)
-        Try
-            Dim borrowedDate As DateTime = DateTime.Parse(borrowedDateStr)
-            Dim dueDate As DateTime = borrowedDate.AddDays(CInt(daysLimit))
-
-            lblduedate.Text = dueDate.ToString("MMMM-dd-yyyy")
-
-
-            If DataGridView1.SelectedRows.Count > 0 Then
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-
-                selectedRow.Cells("DueDate").Value = dueDate.ToString("yyyy-MM-dd")
-                selectedRow.Cells("DaysLimit").Value = CInt(daysLimit)
-            End If
-
-        Catch ex As Exception
-            lblduedate.Text = "-- Invalid Date --"
-        End Try
-    End Sub
-
-
-    Private Sub NumericUpDown1_ValueChanged(sender As Object, e As EventArgs) Handles NumericUpDown1.ValueChanged
-        If DataGridView1.SelectedRows.Count > 0 Then
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim borrowedDateStr As String = selectedRow.Cells("BorrowedDate").Value.ToString()
-            Dim daysLimit As Decimal = NumericUpDown1.Value
-
-
-            CalculateAndDisplayDueDate(daysLimit, borrowedDateStr)
-        End If
-    End Sub
 
     Private Sub LoadFullBorrowerInfo(con As MySqlConnection, identifierColumn As String, identifierValue As String, borrowerType As String)
 
@@ -626,7 +549,6 @@ Public Class BookBorrowingConfirmation
             lbldetails.Visible = False
 
 
-            Dim currentDueDate As String = lblduedate.Text
 
             Dim con As New MySqlConnection(connectionString)
             Try
@@ -639,9 +561,6 @@ Public Class BookBorrowingConfirmation
             End Try
 
 
-            If Not String.IsNullOrWhiteSpace(currentDueDate) AndAlso currentDueDate <> "-- Invalid Date --" AndAlso currentDueDate <> "--" Then
-                lblduedate.Text = currentDueDate
-            End If
 
         Else
 
@@ -650,7 +569,6 @@ Public Class BookBorrowingConfirmation
                 lblisbnbarcode.Text = "--"
                 currentBookTitle = ""
                 lblborroweddate.Text = "--"
-                lblduedate.Text = "--"
                 lbldetails.Visible = True
             End If
         End If
@@ -694,7 +612,7 @@ Public Class BookBorrowingConfirmation
         Dim transactionReceiptID As String = lbltransactionreceipt.Text
 
 
-        Dim comDates As String = "SELECT `BorrowedDate`, `DueDate` FROM `borrowing_tbl` WHERE `AccessionID` = @AccessionID AND `TransactionReceipt` = @TID LIMIT 1"
+        Dim comDates As String = "SELECT `BorrowedDate` FROM `borrowing_tbl` WHERE `AccessionID` = @AccessionID AND `TransactionReceipt` = @TID LIMIT 1"
 
         Try
             If con.State <> ConnectionState.Open Then con.Open()
@@ -716,16 +634,16 @@ Public Class BookBorrowingConfirmation
 
                 If readerDates.Read() Then
                     lblborroweddate.Text = readerDates("BorrowedDate").ToString()
-                    lblduedate.Text = readerDates("DueDate").ToString()
+
                 Else
 
                     If DataGridView1.SelectedRows.Count > 0 Then
                         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
                         lblborroweddate.Text = selectedRow.Cells("BorrowedDate").Value.ToString()
-                        lblduedate.Text = selectedRow.Cells("DueDate").Value.ToString()
+
                     Else
                         lblborroweddate.Text = "--"
-                        lblduedate.Text = "--"
+
                     End If
                 End If
                 readerDates.Close()
@@ -756,7 +674,7 @@ Public Class BookBorrowingConfirmation
         lblisbnbarcode.Text = "--"
         lblaccessionid.Text = "--"
         lblborroweddate.Text = "--"
-        lblduedate.Text = "--"
+
 
         currentBookTitle = ""
         lbldetails.Visible = False
@@ -792,7 +710,7 @@ Public Class BookBorrowingConfirmation
         Dim borrowerName As String = selectedRow.Cells("Name").Value.ToString
         Dim borrowedDate As String = selectedRow.Cells("BorrowedDate").Value.ToString
 
-        Dim finalDueDate As String = selectedRow.Cells("DueDate").Value.ToString
+
 
         Dim finalLRN As String = If(lbllrn.Text = "--", "", lbllrn.Text)
         Dim finalEmpNo As String = If(lblemployeeno.Text = "--", "", lblemployeeno.Text)
@@ -834,7 +752,7 @@ Public Class BookBorrowingConfirmation
                 pendingstats(finalAccessionID, "Available")
 
 
-                Dim insertHistoryCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, BorrowedDate, DueDate, TransactionReceipt, Status) " &
+                Dim insertHistoryCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, BorrowedDate, TransactionReceipt, Status) " &
                                              "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @BDate, @DDate, @TransactionReceipt, @Status)"
 
                 Using cmdHistory As New MySqlCommand(insertHistoryCom, con)
@@ -847,10 +765,6 @@ Public Class BookBorrowingConfirmation
                     cmdHistory.Parameters.AddWithValue("@Barcode", finalBarcode)
                     cmdHistory.Parameters.AddWithValue("@AccessionID", finalAccessionID)
                     cmdHistory.Parameters.AddWithValue("@BDate", borrowedDate)
-
-
-                    cmdHistory.Parameters.AddWithValue("@DDate", finalDueDate)
-
                     cmdHistory.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
                     cmdHistory.Parameters.AddWithValue("@Status", "Declined")
                     cmdHistory.ExecuteNonQuery()

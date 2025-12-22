@@ -134,6 +134,7 @@ Partial Class MainForm
         lblgmail = New Label()
         Label6 = New Label()
         Panel_dash = New Panel()
+        DurationMaintenanceToolStripMenuItem = New ToolStripMenuItem()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
         Panel_Process.SuspendLayout()
@@ -186,7 +187,7 @@ Partial Class MainForm
         ' 
         ' MaintenanceToolStripMenuItem
         ' 
-        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BookMaintenanceToolStripMenuItem, PenaltyManagementToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem, BorrowerAccountToolStripMenuItem, MyAccountToolStripMenuItem})
+        MaintenanceToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {BookMaintenanceToolStripMenuItem, PenaltyManagementToolStripMenuItem, DepartmentToolStripMenuItem, RegisterToolStripMenuItem, UserMaintenanceToolStripMenuItem, BorrowerAccountToolStripMenuItem, MyAccountToolStripMenuItem, DurationMaintenanceToolStripMenuItem})
         MaintenanceToolStripMenuItem.ForeColor = Color.White
         MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
         MaintenanceToolStripMenuItem.Size = New Size(138, 22)
@@ -1063,6 +1064,12 @@ Partial Class MainForm
         Panel_dash.Size = New Size(1015, 391)
         Panel_dash.TabIndex = 17
         ' 
+        ' DurationMaintenanceToolStripMenuItem
+        ' 
+        DurationMaintenanceToolStripMenuItem.Name = "DurationMaintenanceToolStripMenuItem"
+        DurationMaintenanceToolStripMenuItem.Size = New Size(255, 22)
+        DurationMaintenanceToolStripMenuItem.Text = "DurationMaintenance"
+        ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -1193,5 +1200,6 @@ Partial Class MainForm
     Friend WithEvents BorrowerAccountToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents MyAccountToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents BorrowerAccountToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents DurationMaintenanceToolStripMenuItem As ToolStripMenuItem
 
 End Class

@@ -3,10 +3,9 @@
 Module db_laybsis
     Public con As MySqlConnection
 
-    ' 🔹 Open or reuse connection
     Public Sub Koneksyon()
         Try
-            ' Refresh latest connection string before connecting
+
             GlobalVarsModule.RefreshConnectionString()
 
             If con IsNot Nothing AndAlso con.State = ConnectionState.Open Then Exit Sub
@@ -28,7 +27,7 @@ Module db_laybsis
         End Try
     End Sub
 
-    ' 🔹 Check if connected
+
     Public Function IsConnected() As Boolean
         Try
             Return (con IsNot Nothing AndAlso con.State = ConnectionState.Open)
@@ -37,7 +36,7 @@ Module db_laybsis
         End Try
     End Function
 
-    ' 🔹 Close connection safely
+
     Public Sub CloseConnection()
         Try
             If con IsNot Nothing AndAlso con.State = ConnectionState.Open Then con.Close()

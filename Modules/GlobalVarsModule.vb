@@ -3,7 +3,7 @@ Imports System.Net
 Imports System.Net.Sockets
 Imports System.Threading.Tasks
 Imports MySql.Data.MySqlClient
-
+Imports System.IO
 Module GlobalVarsModule
 
     Public GlobalAutoRefreshTimer As Timer
@@ -68,7 +68,7 @@ Module GlobalVarsModule
                 End If
             End Using
         Catch ex As Exception
-            Debug.WriteLine("dbRefreshTimer_MD5_Tick error: " & ex.Message)
+
         End Try
     End Sub
 
@@ -95,7 +95,26 @@ Module GlobalVarsModule
     Public connectdatabase As ServerConnection
     Public loginform As login
 
+    Public studentLimit As Integer = 1
+    Public teacherLimit As Integer = 1
+    Public filePath As String = Application.StartupPath & "\duration_settings.txt"
 
+
+    Public Sub LoadDurationSettings()
+        Try
+            If File.Exists(filePath) Then
+                Dim lines() As String = File.ReadAllLines(filePath)
+                If lines.Length >= 2 Then
+                    studentLimit = Val(lines(0))
+                    teacherLimit = Val(lines(1))
+                End If
+            End If
+        Catch ex As Exception
+
+            studentLimit = 1
+            teacherLimit = 1
+        End Try
+    End Sub
 
     Public Function GetLocalIPAddress() As String
         Try
@@ -330,7 +349,7 @@ Module GlobalVarsModule
 
 
         Catch ex As Exception
-            Debug.WriteLine("dbRefreshTimer_Tick error: " & ex.Message)
+
         End Try
     End Sub
 

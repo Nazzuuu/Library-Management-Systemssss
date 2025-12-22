@@ -13,12 +13,15 @@ Public Class Borrowing
     Private lastProcessedText As String = ""
 
     Private Sub Borrowing_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        refreshborrowingsu()
+
 
         timerSystemDate.Interval = 1000
         timerSystemDate.Start()
 
+        refreshborrowingsu()
+
         btntimein.Visible = False
+        DataGridView1.ClearSelection()
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildBorrowingQuery(), 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
@@ -54,14 +57,16 @@ Public Class Borrowing
                 DataGridView1.EnableHeadersVisualStyles = False
                 DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
                 DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                DataGridView1.ClearSelection()
             End Using
         Catch ex As Exception
             MessageBox.Show("Error loading borrowing records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then con.Close()
+            ClearBookFields()
         End Try
 
-        ClearBookFields()
+
     End Sub
 
     Private Function BuildBorrowingQuery() As String
@@ -183,6 +188,8 @@ Public Class Borrowing
         txtbarcode.Enabled = False
         txtshelf.Enabled = False
         txtaccessionid.Enabled = False
+        rbstudent.Checked = False
+        rbteacher.Checked = False
 
 
         txtlrn.Text = ""
@@ -209,14 +216,20 @@ Public Class Borrowing
         txtbarcode.Text = ""
         txtaccessionid.Text = ""
         txtshelf.Text = ""
+        txtlrn.Text = ""
+        txtemployee.Text = ""
 
-
+        txtlrn.Enabled = False
+        txtemployee.Enabled = False
         txtname.Enabled = False
         txtsus.Enabled = False
         txtisbn.Enabled = False
         txtbarcode.Enabled = False
         txtshelf.Enabled = False
         txtaccessionid.Enabled = False
+
+        rbstudent.Checked = False
+        rbteacher.Checked = False
 
     End Sub
 
@@ -926,6 +939,7 @@ Public Class Borrowing
             txtaccessionid.Text = row.Cells("AccessionID").Value.ToString()
 
             txtshelf.Text = row.Cells("Shelf").Value.ToString()
+            lbltransac.Text = row.Cells("TransactionReceipt").Value.ToString()
 
 
             If row.Cells("BorrowedDate").Value IsNot DBNull.Value Then
@@ -938,12 +952,35 @@ Public Class Borrowing
 
             isLoadingData = False
 
-            If rbstudent.Checked Then
-                txtlrn_TextChanged(txtlrn, EventArgs.Empty)
-            ElseIf rbteacher.Checked Then
-                txtemployee_TextChanged(txtemployee, EventArgs.Empty)
-            End If
+            If Not String.IsNullOrWhiteSpace(lbltransac.Text) Then
+                Try
+                    Dim writer As New ZXing.BarcodeWriter(Of Bitmap)() With {
+                        .Format = ZXing.BarcodeFormat.CODE_128,
+                        .Renderer = New BitmapRenderer()
+                    }
 
+                    writer.Options = New ZXing.Common.EncodingOptions With {
+                        .Height = picbarcode.Height,
+                        .Width = picbarcode.Width,
+                        .PureBarcode = False,
+                        .Margin = 10
+                    }
+
+                    Dim bmp As Bitmap = writer.Write(lbltransac.Text)
+
+                    If picbarcode.Image IsNot Nothing Then
+                        picbarcode.Image.Dispose()
+                    End If
+                    picbarcode.Image = bmp
+
+                Catch ex As Exception
+                    MessageBox.Show("Error displaying barcode image: " & ex.Message,
+                                    "Barcode Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+            Else
+                If picbarcode.Image IsNot Nothing Then picbarcode.Image.Dispose()
+                picbarcode.Image = Nothing
+            End If
 
         End If
 
@@ -1078,7 +1115,10 @@ Public Class Borrowing
             txtlrn.Visible = True
             rbstudent.Visible = True
 
-            rbstudent.Checked = True
+            txtemployee.Enabled = False
+            txtlrn.Enabled = False
+
+
 
         End If
 

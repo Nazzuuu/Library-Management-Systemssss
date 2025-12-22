@@ -30,6 +30,7 @@ Public Class MainForm
 
         GlobalVarsModule.StartAutoRefresh()
         GlobalVarsModule.InitializeDatabaseMonitor()
+        LoadDurationSettings()
 
     End Sub
 
@@ -1406,5 +1407,9 @@ Public Class MainForm
 
     Private Sub BorrowerAccountToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles BorrowerAccountToolStripMenuItem1.Click
         Borrowereditsinfo.ShowDialog()
+    End Sub
+
+    Private Sub DurationMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DurationMaintenanceToolStripMenuItem.Click
+        DurationForm.ShowDialog()
     End Sub
 End Class

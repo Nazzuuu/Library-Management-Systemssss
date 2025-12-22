@@ -192,7 +192,7 @@ Public Class AvailableBooks
 
 
                 DataGridView1.ClearSelection()
-                Me.Close()
+                Me.Dispose()
 
 
                 Accession.btnview.Visible = False
