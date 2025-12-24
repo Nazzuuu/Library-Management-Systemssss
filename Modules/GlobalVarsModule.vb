@@ -444,7 +444,7 @@ Module GlobalVarsModule
     End Function
 
 
-    Private refreshTimers As New Dictionary(Of DataGridView, Timer)
+    Public refreshTimers As New Dictionary(Of DataGridView, Timer)
 
     Public Async Sub AutoRefreshGrid(grid As DataGridView, query As String, Optional intervalMs As Integer = 2000)
         Try
@@ -690,5 +690,9 @@ Module GlobalVarsModule
         End Try
         Return ""
     End Function
+
+    Public Sub TriggerDatabaseUpdated()
+        RaiseEvent DatabaseUpdated()
+    End Sub
 
 End Module

@@ -619,17 +619,17 @@ Public Class MainForm
 
         Panel_dash.Controls.Clear()
 
-        With Acquisition
+        With Acquisition2
             .TopMost = True
             .TopLevel = False
             .BringToFront()
-            Panel_dash.Controls.Add(Acquisition)
+            Panel_dash.Controls.Add(Acquisition2)
 
 
             .Show()
 
-            Acquisition.DataGridView1.ClearSelection()
-            Acquisition.DataGridView1.CurrentCell = Nothing
+            Acquisition2.DataGridView1.ClearSelection()
+            Acquisition2.DataGridView1.CurrentCell = Nothing
 
 
         End With

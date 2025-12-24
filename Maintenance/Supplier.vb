@@ -142,6 +142,13 @@ Public Class Supplier
                 End If
             Next
 
+            For Each form In Application.OpenForms
+                If TypeOf form Is AcquistionDetails Then
+                    Dim acqdet = DirectCast(form, AcquistionDetails)
+                    acqdet.supplieracq()
+                End If
+            Next
+
             MsgBox("Supplier added successfully", vbInformation)
             Supplier_Load(sender, e)
 
@@ -268,6 +275,14 @@ Public Class Supplier
                     End If
 
                 Next
+
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AcquistionDetails Then
+                        Dim acqdet = DirectCast(form, AcquistionDetails)
+                        acqdet.supplieracq()
+                    End If
+                Next
+
                 MsgBox("Updated successfully", vbInformation)
                 Supplier_Load(sender, e)
             Catch ex As Exception
@@ -333,6 +348,13 @@ Public Class Supplier
                         If TypeOf form Is Acquisition Then
                             Dim acq = DirectCast(form, Acquisition)
                             acq.cbsupplierr()
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AcquistionDetails Then
+                            Dim acqdet = DirectCast(form, AcquistionDetails)
+                            acqdet.supplieracq()
                         End If
                     Next
 

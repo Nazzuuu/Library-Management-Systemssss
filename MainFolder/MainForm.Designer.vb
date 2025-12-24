@@ -71,6 +71,7 @@ Partial Class MainForm
         UserMaintenanceToolStripMenuItem = New ToolStripMenuItem()
         BorrowerAccountToolStripMenuItem = New ToolStripMenuItem()
         MyAccountToolStripMenuItem = New ToolStripMenuItem()
+        DurationMaintenanceToolStripMenuItem = New ToolStripMenuItem()
         pnl_process = New Guna.UI2.WinForms.Guna2Elipse(components)
         Panel_Process = New Panel()
         MenuStrip2 = New MenuStrip()
@@ -134,7 +135,6 @@ Partial Class MainForm
         lblgmail = New Label()
         Label6 = New Label()
         Panel_dash = New Panel()
-        DurationMaintenanceToolStripMenuItem = New ToolStripMenuItem()
         Panel_maintenance.SuspendLayout()
         MenuStrip1.SuspendLayout()
         Panel_Process.SuspendLayout()
@@ -270,6 +270,12 @@ Partial Class MainForm
         MyAccountToolStripMenuItem.Name = "MyAccountToolStripMenuItem"
         MyAccountToolStripMenuItem.Size = New Size(255, 22)
         MyAccountToolStripMenuItem.Text = ChrW(55358) & ChrW(56785) & "‍💻 My Account"
+        ' 
+        ' DurationMaintenanceToolStripMenuItem
+        ' 
+        DurationMaintenanceToolStripMenuItem.Name = "DurationMaintenanceToolStripMenuItem"
+        DurationMaintenanceToolStripMenuItem.Size = New Size(255, 22)
+        DurationMaintenanceToolStripMenuItem.Text = "DurationMaintenance"
         ' 
         ' pnl_process
         ' 
@@ -1063,12 +1069,6 @@ Partial Class MainForm
         Panel_dash.Name = "Panel_dash"
         Panel_dash.Size = New Size(1015, 391)
         Panel_dash.TabIndex = 17
-        ' 
-        ' DurationMaintenanceToolStripMenuItem
-        ' 
-        DurationMaintenanceToolStripMenuItem.Name = "DurationMaintenanceToolStripMenuItem"
-        DurationMaintenanceToolStripMenuItem.Size = New Size(255, 22)
-        DurationMaintenanceToolStripMenuItem.Text = "DurationMaintenance"
         ' 
         ' MainForm
         ' 
