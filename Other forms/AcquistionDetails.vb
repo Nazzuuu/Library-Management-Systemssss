@@ -135,14 +135,6 @@ Public Class AcquistionDetails
         End Try
     End Sub
 
-    'Private Sub cbsuppliername_DropDown(sender As Object, e As EventArgs) Handles cbsupplierdonator.DropDown
-    '    Try
-    '        cbsupplierdonator.DataSource = Nothing
-    '        supplieracq()
-    '    Catch ex As Exception
-    '        Debug.WriteLine("Error refreshing supplier combo: " & ex.Message)
-    '    End Try
-    'End Sub
 
     Public Sub supplieracq()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
@@ -687,13 +679,49 @@ Public Class AcquistionDetails
         End If
     End Sub
 
+    Private Function balidisyun() As Boolean
+        If String.IsNullOrEmpty(SelectedAcquisitionID) Then Return False
 
+        Try
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                con.Open()
+
+
+                Dim originalDate As DateTime
+                Dim checksu As String = "SELECT DateAcquired FROM acquisition_tbl WHERE ID=@id"
+                Using cmdsuss As New MySqlCommand(checksu, con)
+                    cmdsuss.Parameters.AddWithValue("@id", SelectedAcquisitionID)
+                    Dim result = cmdsuss.ExecuteScalar()
+                    If result Is Nothing OrElse IsDBNull(result) Then Return True
+                    originalDate = Convert.ToDateTime(result)
+                End Using
+
+
+                If originalDate.Date < DateTime.Today Then
+
+                    If DateTimePicker1.Value.Date >= DateTime.Today Then
+                        MessageBox.Show("This is a past record. Updating to the current or a future date is not allowed.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return False
+                    End If
+                End If
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Validation Error: " & ex.Message)
+            Return False
+        End Try
+
+        Return True
+    End Function
     Private Sub btnupdate_Click(sender As Object, e As EventArgs) Handles btnupdate.Click
+
+        If Not balidisyun() Then Exit Sub
         If String.IsNullOrEmpty(SelectedAcquisitionID) Then Return
 
         Try
             Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                 con.Open()
+
+
                 Dim isPurchased As Boolean = (cbacquistiontype.Text = "PURCHASED")
 
                 Dim sql As String = "UPDATE acquisition_tbl SET " &
@@ -722,15 +750,52 @@ Public Class AcquistionDetails
                 End Using
             End Using
 
+            GlobalVarsModule.LogAudit(
+             actionType:="UPDATE",
+             formName:="ACQUISITION FORM",
+             description:=$"Updated Acquisition Record for Book: {txtbooktitle.Text} (ID: {SelectedAcquisitionID})",
+             recordID:=SelectedAcquisitionID
+         )
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    Dim load = DirectCast(form, AuditTrail)
+                    load.refreshaudit()
+                End If
+            Next
+
             MessageBox.Show("Record Updated Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             GlobalVarsModule.TriggerDatabaseUpdated()
             Me.Close()
         Catch ex As Exception
+
             MessageBox.Show("Update Error: " & ex.Message)
+
         End Try
+
     End Sub
 
     Private Sub txtbookprice_TextChanged(sender As Object, e As EventArgs) Handles txtbookprice.TextChanged
         CalculateTotal()
+    End Sub
+
+    Private Sub AcquistionDetails_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+
+        If bookCount > 1 Then
+            Dim result As DialogResult = MessageBox.Show(
+            "You have multiple book panels open. Closing this form will discard all added book and reset to Book 1. " & vbCrLf & vbCrLf &
+            "Are you sure you want to close?",
+            "Confirm Exit",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Warning)
+
+            If result = DialogResult.No Then
+                e.Cancel = True
+            Else
+
+                bookCount = 1
+                addedPanels.Clear()
+            End If
+        End If
     End Sub
 End Class

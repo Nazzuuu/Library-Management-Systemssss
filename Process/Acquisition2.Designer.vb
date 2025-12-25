@@ -89,7 +89,7 @@ Partial Class Acquisition2
         Label9.AutoSize = True
         Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label9.ForeColor = Color.Red
-        Label9.Location = New Point(1094, 89)
+        Label9.Location = New Point(1154, 71)
         Label9.Name = "Label9"
         Label9.Size = New Size(129, 16)
         Label9.TabIndex = 111
@@ -100,7 +100,7 @@ Partial Class Acquisition2
         Label12.AutoSize = True
         Label12.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label12.ForeColor = Color.Black
-        Label12.Location = New Point(1046, 88)
+        Label12.Location = New Point(1106, 70)
         Label12.Name = "Label12"
         Label12.Size = New Size(42, 16)
         Label12.TabIndex = 110
@@ -119,7 +119,7 @@ Partial Class Acquisition2
         Guna2Button1.FillColor = Color.Empty
         Guna2Button1.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
         Guna2Button1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2Button1.Location = New Point(25, 78)
+        Guna2Button1.Location = New Point(25, 71)
         Guna2Button1.Name = "Guna2Button1"
         Guna2Button1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         Guna2Button1.Size = New Size(234, 27)

@@ -150,7 +150,7 @@ Public Class Book
 
     Public Sub cbauthorr()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT `ID`, `AuthorName` FROM `author_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -166,7 +166,7 @@ Public Class Book
 
     Public Sub cbgenree()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT ID, Genre FROM genre_tbl"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -182,7 +182,7 @@ Public Class Book
 
     Public Sub cbpublisherr()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT ID, PublisherName FROM `publisher_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -198,7 +198,7 @@ Public Class Book
 
     Public Sub cblang()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT `ID`, `Language` FROM `language_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -403,6 +403,13 @@ Public Class Book
         Dim booktitle As String = txtbooktitle.Text.Trim()
         Dim yearsu As String = txtyearr.Text.Trim
         Dim bookID As Integer = 0
+        Dim currentYear As Integer = Date.Now.Year
+        Dim inputYear As Integer
+
+        If Not Integer.TryParse(yearsu, inputYear) OrElse inputYear > currentYear OrElse inputYear < 1700 Then
+            MsgBox("Invalid Year. Please enter a valid year", vbExclamation, "Validation Error")
+            Exit Sub
+        End If
 
         If rbgenerate.Checked Then
             isbn = DBNull.Value
@@ -435,18 +442,10 @@ Public Class Book
                 Exit Sub
             End If
 
-            If String.IsNullOrEmpty(CStr(isbn)) Then
-                MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
-                Exit Sub
-            End If
-
-
             Dim isbnString As String = CStr(isbn).Replace("-", "").Replace(" ", "")
 
-
-            If Not System.Text.RegularExpressions.Regex.IsMatch(isbnString, "^(978|979)\d{10}$") Then
-
-                MsgBox("ISBN must start with '978' or '979'.", vbExclamation, "ISBN Format Error")
+            If Not System.Text.RegularExpressions.Regex.IsMatch(isbnString, "^97[1-9]\d{10}$") Then
+                MsgBox("Invalid ISBN format.", vbExclamation, "Validation Error")
                 Exit Sub
             End If
 
@@ -476,9 +475,6 @@ Public Class Book
             Exit Sub
         End If
 
-
-
-
         Try
             con.Open()
 
@@ -496,11 +492,11 @@ Public Class Book
             bookID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-            actionType:="ADD",
-            formName:="BOOK FORM",
-            description:=$"Added new Book: {booktitle}",
-            recordID:=bookID.ToString()
-        )
+        actionType:="ADD",
+        formName:="BOOK FORM",
+        description:=$"Added new Book: {booktitle}",
+        recordID:=bookID.ToString()
+    )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -529,6 +525,13 @@ Public Class Book
             Dim oldBookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
             Dim newBookTitle As String = txtbooktitle.Text.Trim()
             Dim yearsu As String = txtyearr.Text.Trim
+            Dim currentYear As Integer = Date.Now.Year
+            Dim inputYear As Integer
+
+            If Not Integer.TryParse(yearsu, inputYear) OrElse inputYear > currentYear OrElse inputYear < 1700 Then
+                MsgBox("Invalid Year. Please enter a valid year", vbExclamation, "Validation Error")
+                Exit Sub
+            End If
 
             If String.IsNullOrEmpty(newBookTitle) OrElse cbauthor.SelectedIndex = -1 OrElse cbgenre.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
                 MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
@@ -572,18 +575,11 @@ Public Class Book
                     Exit Sub
                 End If
 
-                If String.IsNullOrEmpty(CStr(isbnValue)) Then
-                    MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
-                    Exit Sub
-                End If
-
-
                 Dim isbnString As String = CStr(isbnValue).Replace("-", "").Replace(" ", "")
 
 
-                If Not System.Text.RegularExpressions.Regex.IsMatch(isbnString, "^(978|979)\d{10}$") Then
-
-                    MsgBox("ISBN must start with '978' or '979'.", vbExclamation, "ISBN Format Error")
+                If Not System.Text.RegularExpressions.Regex.IsMatch(isbnString, "^97[1-9]\d{10}$") Then
+                    MsgBox("Invalid ISBN format.", vbExclamation, "Validation Error")
                     Exit Sub
                 End If
 
@@ -627,13 +623,13 @@ Public Class Book
                 com.ExecuteNonQuery()
 
                 GlobalVarsModule.LogAudit(
-                actionType:="UPDATE",
-                formName:="BOOK FORM",
-                description:=$"Updated Book Title from '{oldBookTitle}' to '{newBookTitle}' (ID: {bookID})",
-                recordID:=bookID.ToString(),
-                oldValue:=oldBookTitle,
-                newValue:=newBookTitle
-            )
+            actionType:="UPDATE",
+            formName:="BOOK FORM",
+            description:=$"Updated Book Title from '{oldBookTitle}' to '{newBookTitle}' (ID: {bookID})",
+            recordID:=bookID.ToString(),
+            oldValue:=oldBookTitle,
+            newValue:=newBookTitle
+        )
 
                 Dim comAcquisition As New MySqlCommand("UPDATE `acquisition_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
                 comAcquisition.Parameters.AddWithValue("@newBookTitle", newBookTitle)
