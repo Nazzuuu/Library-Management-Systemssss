@@ -243,11 +243,6 @@ Public Class AcquistionDetails
         txttransactionno.Text = "T-" & newTransactionNo.ToString("D5")
     End Sub
 
-    Private Sub AcquistionDetails_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
-        If e.KeyCode = Keys.Escape Then
-            Me.Hide()
-        End If
-    End Sub
 
     Private Sub AcquistionDetails_VisibleChanged(sender As Object, e As EventArgs) Handles Me.VisibleChanged
         If Me.Visible Then
@@ -263,19 +258,18 @@ Public Class AcquistionDetails
     Private Sub DuplicateBookPanel()
         bookCount += 1
 
-
         Dim isPurchased As Boolean = (cbacquistiontype.SelectedItem IsNot Nothing AndAlso cbacquistiontype.SelectedItem.ToString() = "PURCHASED")
 
         Dim newPanel As New Guna.UI2.WinForms.Guna2Panel With {
-        .Size = Panel_Duplicate.Size,
-        .BorderColor = Panel_Duplicate.BorderColor,
-        .BorderThickness = Panel_Duplicate.BorderThickness,
-        .BorderRadius = Panel_Duplicate.BorderRadius,
-        .CustomBorderColor = Panel_Duplicate.CustomBorderColor,
-        .FillColor = Panel_Duplicate.FillColor,
-        .BackColor = Panel_Duplicate.BackColor,
-        .Name = "Panel_Book_" & bookCount
-    }
+     .Size = Panel_Duplicate.Size,
+     .BorderColor = Panel_Duplicate.BorderColor,
+     .BorderThickness = Panel_Duplicate.BorderThickness,
+     .BorderRadius = Panel_Duplicate.BorderRadius,
+     .CustomBorderColor = Panel_Duplicate.CustomBorderColor,
+     .FillColor = Panel_Duplicate.FillColor,
+     .BackColor = Panel_Duplicate.BackColor,
+     .Name = "Panel_Book_" & bookCount
+ }
 
         For Each ctrl As Control In Panel_Duplicate.Controls
             Dim newCtrl As Control = Nothing
@@ -336,6 +330,45 @@ Public Class AcquistionDetails
                 End If
                 newCtrl = c
 
+            ElseIf TypeOf ctrl Is Guna.UI2.WinForms.Guna2Button Then
+                Dim o = DirectCast(ctrl, Guna.UI2.WinForms.Guna2Button)
+                Dim c As New Guna.UI2.WinForms.Guna2Button()
+
+
+                c.Text = o.Text
+                c.Font = o.Font
+                c.ForeColor = o.ForeColor
+                c.Size = o.Size
+                c.Location = o.Location
+
+
+                c.FillColor = o.FillColor
+                c.BorderRadius = o.BorderRadius
+                c.BorderColor = o.BorderColor
+                c.BorderThickness = o.BorderThickness
+                c.CustomBorderColor = o.CustomBorderColor
+
+
+                c.Image = o.Image
+                c.ImageSize = o.ImageSize
+                c.ImageAlign = o.ImageAlign
+
+
+                c.HoverState.FillColor = o.HoverState.FillColor
+                c.HoverState.BorderColor = o.HoverState.BorderColor
+                c.HoverState.ForeColor = o.HoverState.ForeColor
+                c.PressedColor = o.PressedColor
+
+
+                c.Visible = o.Visible
+                c.Enabled = o.Enabled
+
+                newCtrl = c
+
+                If ctrl.Name = "btnselectsu" Then
+                    AddHandler c.Click, AddressOf btnselectsu_Click
+                End If
+
             ElseIf TypeOf ctrl Is Label Then
                 newCtrl = New Label()
             End If
@@ -345,6 +378,11 @@ Public Class AcquistionDetails
                 newCtrl.ForeColor = ctrl.ForeColor : newCtrl.Name = ctrl.Name
 
                 If ctrl.Name = "lblbooknumber" Then newCtrl.Text = "Book " & bookCount
+
+                If newCtrl.Name = "btnselectsu" Then
+                    newCtrl.Enabled = False
+                End If
+
                 If ctrl.Name = "lblremove" Then
                     newCtrl.Text = "REMOVE" : newCtrl.Visible = True : newCtrl.Cursor = Cursors.Hand
                     AddHandler newCtrl.Click, AddressOf RemovePanel_Click
@@ -365,17 +403,31 @@ Public Class AcquistionDetails
 
         Dim txtIsbn As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txtisbn")
         Dim txtBarcode As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txtbarcode")
+        Dim btnselectsu As Guna.UI2.WinForms.Guna2Button = panel.Controls("btnselectsu")
 
         If cb.SelectedItem IsNot Nothing Then
+
+            If btnselectsu IsNot Nothing Then btnselectsu.Visible = True
+
             If cb.SelectedItem.ToString() = "ISBN" Then
                 txtIsbn.Enabled = True
                 txtBarcode.Enabled = False
-
                 txtBarcode.Text = ""
-            Else
+
+
+                If btnselectsu IsNot Nothing Then
+                    btnselectsu.Enabled = False
+                End If
+
+            ElseIf cb.SelectedItem.ToString() = "BARCODE" Then
                 txtBarcode.Enabled = True
                 txtIsbn.Enabled = False
                 txtIsbn.Text = ""
+
+
+                If btnselectsu IsNot Nothing Then
+                    btnselectsu.Enabled = True
+                End If
             End If
         End If
     End Sub
@@ -443,6 +495,9 @@ Public Class AcquistionDetails
         Me.Controls.Remove(panel)
         panel.Dispose()
         ResetLayout()
+
+        bookCount = addedPanels.Count
+
     End Sub
 
     Private Sub ResetLayout()
@@ -659,10 +714,12 @@ Public Class AcquistionDetails
         If cbisbnbarcode.Text = "ISBN" Then
             txtisbn.Enabled = True
             txtbarcode.Enabled = False
+            btnselectsu.Enabled = False
             txtbarcode.Clear()
         ElseIf cbisbnbarcode.Text = "BARCODE" Then
             txtisbn.Enabled = False
             txtbarcode.Enabled = True
+            btnselectsu.Enabled = True
             txtisbn.Clear()
         End If
     End Sub
@@ -797,5 +854,9 @@ Public Class AcquistionDetails
                 addedPanels.Clear()
             End If
         End If
+    End Sub
+
+    Private Sub btnselectsu_Click(sender As Object, e As EventArgs) Handles btnselectsu.Click
+        SelectBarcode.ShowDialog()
     End Sub
 End Class
