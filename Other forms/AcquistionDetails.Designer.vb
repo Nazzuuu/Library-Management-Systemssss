@@ -36,6 +36,8 @@ Partial Class AcquistionDetails
         Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -58,8 +60,6 @@ Partial Class AcquistionDetails
         Dim CustomizableEdges38 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges35 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges36 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Panel_Transaction = New Guna.UI2.WinForms.Guna2Panel()
         txttransactionno = New Guna.UI2.WinForms.Guna2TextBox()
         Label12 = New Label()
@@ -72,6 +72,7 @@ Partial Class AcquistionDetails
         Label3 = New Label()
         txtdonor = New Guna.UI2.WinForms.Guna2TextBox()
         Panel_Duplicate = New Guna.UI2.WinForms.Guna2Panel()
+        btnselectsu = New Guna.UI2.WinForms.Guna2Button()
         numupdown = New Guna.UI2.WinForms.Guna2NumericUpDown()
         lblremove = New Label()
         Label11 = New Label()
@@ -93,7 +94,6 @@ Partial Class AcquistionDetails
         btnaddanotherbook = New Guna.UI2.WinForms.Guna2Button()
         Panel_buttons = New Guna.UI2.WinForms.Guna2Panel()
         btnupdate = New Guna.UI2.WinForms.Guna2Button()
-        btnselectsu = New Guna.UI2.WinForms.Guna2Button()
         Panel_Transaction.SuspendLayout()
         Panel_Duplicate.SuspendLayout()
         CType(numupdown, ComponentModel.ISupportInitialize).BeginInit()
@@ -313,6 +313,27 @@ Partial Class AcquistionDetails
         Panel_Duplicate.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         Panel_Duplicate.Size = New Size(1014, 357)
         Panel_Duplicate.TabIndex = 1
+        ' 
+        ' btnselectsu
+        ' 
+        btnselectsu.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnselectsu.BorderRadius = 9
+        btnselectsu.BorderThickness = 1
+        btnselectsu.CustomizableEdges = CustomizableEdges13
+        btnselectsu.DisabledState.BorderColor = Color.DarkGray
+        btnselectsu.DisabledState.CustomBorderColor = Color.DarkGray
+        btnselectsu.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        btnselectsu.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        btnselectsu.Enabled = False
+        btnselectsu.FillColor = Color.Empty
+        btnselectsu.Font = New Font("Tahoma", 8.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnselectsu.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        btnselectsu.Location = New Point(415, 113)
+        btnselectsu.Name = "btnselectsu"
+        btnselectsu.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        btnselectsu.Size = New Size(114, 27)
+        btnselectsu.TabIndex = 132
+        btnselectsu.Text = "Select Barcode"
         ' 
         ' numupdown
         ' 
@@ -650,27 +671,6 @@ Partial Class AcquistionDetails
         btnupdate.Size = New Size(195, 27)
         btnupdate.TabIndex = 76
         btnupdate.Text = "UPDATE"
-        ' 
-        ' btnselectsu
-        ' 
-        btnselectsu.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnselectsu.BorderRadius = 9
-        btnselectsu.BorderThickness = 1
-        btnselectsu.CustomizableEdges = CustomizableEdges13
-        btnselectsu.DisabledState.BorderColor = Color.DarkGray
-        btnselectsu.DisabledState.CustomBorderColor = Color.DarkGray
-        btnselectsu.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnselectsu.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnselectsu.Enabled = False
-        btnselectsu.FillColor = Color.Empty
-        btnselectsu.Font = New Font("Tahoma", 8.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnselectsu.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnselectsu.Location = New Point(415, 113)
-        btnselectsu.Name = "btnselectsu"
-        btnselectsu.ShadowDecoration.CustomizableEdges = CustomizableEdges14
-        btnselectsu.Size = New Size(114, 27)
-        btnselectsu.TabIndex = 132
-        btnselectsu.Text = "Select Barcode"
         ' 
         ' AcquistionDetails
         ' 

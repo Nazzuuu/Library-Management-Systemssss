@@ -76,6 +76,7 @@ Public Class Acquisition2
             .btnsubmitall.Visible = True
             .btnaddanotherbook.Visible = True
             .lblsubmitcounts.Visible = True
+            .cbisbnbarcode.Enabled = True
             .Show()
         End With
 
@@ -166,6 +167,8 @@ Public Class Acquisition2
                     .btnaddanotherbook.Visible = False
                     .txttotalcost.Enabled = False
                     .txtbooktitle.Enabled = False
+                    .btnselectsu.Enabled = False
+                    .cbisbnbarcode.Enabled = False
 
 
                     .ShowDialog()

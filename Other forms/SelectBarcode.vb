@@ -5,7 +5,7 @@ Public Class SelectBarcode
 
     Private isFormReady As Boolean = False
     Private currentFilter As String = "All"
-
+    Public Property TargetTextBox As Guna.UI2.WinForms.Guna2TextBox
     Private Sub SelectBarcode_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         cbfilter.Items.Clear()
@@ -169,17 +169,33 @@ Public Class SelectBarcode
     End Sub
 
 
+    'Private Sub DataGridView1_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellDoubleClick
+    '    If e.RowIndex >= 0 Then
+    '        Dim selectedBarcode As String = DataGridView1.Rows(e.RowIndex).Cells("Barcode").Value.ToString()
+
+    '        If Application.OpenForms().OfType(Of AcquistionDetails).Any() Then
+    '            Dim f As AcquistionDetails = Application.OpenForms().OfType(Of AcquistionDetails).First()
+    '            f.txtbarcode.Text = selectedBarcode
+    '        End If
+
+    '        Me.Close()
+    '    End If
+    'End Sub
+
     Private Sub DataGridView1_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellDoubleClick
+
         If e.RowIndex >= 0 Then
+
             Dim selectedBarcode As String = DataGridView1.Rows(e.RowIndex).Cells("Barcode").Value.ToString()
 
-            If Application.OpenForms().OfType(Of Acquisition).Any() Then
-                Dim f As Acquisition = Application.OpenForms().OfType(Of Acquisition).First()
-                f.txtbarcodes.Text = selectedBarcode
+            If TargetTextBox IsNot Nothing Then
+                TargetTextBox.Text = selectedBarcode
             End If
 
             Me.Close()
+
         End If
+
     End Sub
 
 

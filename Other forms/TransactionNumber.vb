@@ -5,8 +5,6 @@ Imports System.Collections.Generic
 
 Public Class TransactionNumber
 
-    'Private Const connectionString As String = "Server=localhost;Database=laybsisu_dbs;Uid=root;Pwd=;"
-
     Public Sub LoadTransactions()
         SearchTransactions(Nothing)
     End Sub
@@ -145,11 +143,12 @@ Public Class TransactionNumber
                 Dim isbn As String = ""
                 Dim suppliername As String = ""
                 Dim barcode As String = ""
+                Dim donor As String = ""
 
                 Try
                     con.Open()
 
-                    Dim com As String = "SELECT Quantity, ISBN, SupplierName, Barcode FROM acquisition_tbl WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle"
+                    Dim com As String = "SELECT Quantity, ISBN, SupplierName, Barcode, Donor FROM acquisition_tbl WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle"
                     Using comsu As New MySqlCommand(com, con)
                         comsu.Parameters.AddWithValue("@TransactionNo", selectedTransactionNo)
                         comsu.Parameters.AddWithValue("@BookTitle", selectedBookTitle)
@@ -160,6 +159,7 @@ Public Class TransactionNumber
                             isbn = reader("ISBN").ToString()
                             suppliername = reader("SupplierName").ToString()
                             barcode = reader("Barcode").ToString()
+                            donor = reader("Donor").ToString()
                         End If
                         reader.Close()
                     End Using
@@ -224,6 +224,7 @@ Public Class TransactionNumber
                 accessionForm.txtisbn.Text = isbn
                 accessionForm.txtsuppliername.Text = suppliername
                 accessionForm.txtbarcodes.Text = barcode
+                accessionForm.txtdonor.Text = donor
 
                 Me.Close()
             Else

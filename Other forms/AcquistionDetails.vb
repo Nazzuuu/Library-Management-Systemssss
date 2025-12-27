@@ -652,6 +652,12 @@ Public Class AcquistionDetails
                         cmd.ExecuteNonQuery()
                     End Using
 
+                    GlobalVarsModule.LogAudit(
+                    actionType:="INSERT",
+                    formName:="ACQUISITION FORM",
+                    description:=$"Added New Acquisition Record for Book: {title} (ISBN: {isbn}, TransNo: {transNo})",
+                    recordID:=transNo
+                    )
 
                     Dim newRow As DataRow = dt.NewRow()
                     newRow("ISBN") = isbn
@@ -715,12 +721,12 @@ Public Class AcquistionDetails
             txtisbn.Enabled = True
             txtbarcode.Enabled = False
             btnselectsu.Enabled = False
-            txtbarcode.Clear()
+            txtbarcode.Text = ""
         ElseIf cbisbnbarcode.Text = "BARCODE" Then
             txtisbn.Enabled = False
             txtbarcode.Enabled = True
             btnselectsu.Enabled = True
-            txtisbn.Clear()
+            txtisbn.Text = ""
         End If
     End Sub
 
@@ -857,6 +863,12 @@ Public Class AcquistionDetails
     End Sub
 
     Private Sub btnselectsu_Click(sender As Object, e As EventArgs) Handles btnselectsu.Click
+
+        Dim btn = DirectCast(sender, Guna.UI2.WinForms.Guna2Button)
+        Dim targetPanel = DirectCast(btn.Parent, Guna.UI2.WinForms.Guna2Panel)
+
+        SelectBarcode.TargetTextBox = targetPanel.Controls("txtbarcode")
         SelectBarcode.ShowDialog()
+
     End Sub
 End Class

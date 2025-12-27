@@ -16,6 +16,7 @@ Public Class Accession
         txtaccessionid.Text = ""
         txtsuppliername.Text = ""
         txttransactionno.Text = ""
+        txtdonor.Text = ""
 
         cbshelf.DataSource = Nothing
         shelfsu()
@@ -238,6 +239,7 @@ Public Class Accession
         txtaccessionid.Text = ""
         txtsuppliername.Text = ""
         txttransactionno.Text = ""
+        txtdonor.Text = ""
 
         btnview.Visible = True
 
@@ -325,12 +327,13 @@ Public Class Accession
                         Dim bookTitle As String = reader("BookTitle").ToString()
                         Dim shelf As String = reader("Shelf").ToString()
                         Dim supplierName As String = reader("SupplierName").ToString()
+                        Dim donor As String = reader("Donor").ToString()
 
                         reader.Close()
 
 
-                        Dim ins As String = "INSERT INTO `reservecopiess_tbl` (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                            "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, 'Reserved')"
+                        Dim ins As String = "INSERT INTO `reservecopiess_tbl` (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Donor`, `Status`) " &
+                                            "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Donor, 'Reserved')"
                         Using insx As New MySqlCommand(ins, con, transaction)
 
                             insx.Parameters.AddWithValue("@TransactionNo", tranNo)
@@ -340,6 +343,7 @@ Public Class Accession
                             insx.Parameters.AddWithValue("@BookTitle", bookTitle)
                             insx.Parameters.AddWithValue("@Shelf", shelf)
                             insx.Parameters.AddWithValue("@SupplierName", supplierName)
+                            insx.Parameters.AddWithValue("@Donor", donor)
                             insx.ExecuteNonQuery()
                         End Using
 
@@ -469,8 +473,8 @@ Public Class Accession
                         End If
                     End Using
 
-                    Dim com As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                   "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
+                    Dim com As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Donor`, `Status`) " &
+                                   "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Donor, @Status)"
 
                     Using comsu As New MySqlCommand(com, con, transaction)
                         comsu.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
@@ -481,6 +485,7 @@ Public Class Accession
                         comsu.Parameters.AddWithValue("@BookTitle", cleanedBookTitle)
                         comsu.Parameters.AddWithValue("@Shelf", cbshelf.Text)
                         comsu.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
+                        comsu.Parameters.AddWithValue("@Donor", txtdonor.Text)
 
                         comsu.Parameters.AddWithValue("@Status", statusValue)
                         comsu.ExecuteNonQuery()
@@ -589,6 +594,7 @@ Public Class Accession
         oldValues.Add("BookTitle", selectedRow.Cells("BookTitle").Value)
         oldValues.Add("Shelf", selectedRow.Cells("Shelf").Value)
         oldValues.Add("SupplierName", selectedRow.Cells("SupplierName").Value)
+        oldValues.Add("Donor", selectedRow.Cells("Donor").Value)
         oldValues.Add("Status", selectedRow.Cells("Status").Value)
 
 
@@ -664,6 +670,7 @@ Public Class Accession
                              "`BookTitle` = @BookTitle, " &
                              "`Shelf` = @Shelf, " &
                              "`SupplierName` = @SupplierName, " &
+                             "`Donor` = @Donor, " &
                              "`Status` = @Status " &
                              "WHERE `ID` = @ID"
 
@@ -675,6 +682,7 @@ Public Class Accession
                 command.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
                 command.Parameters.AddWithValue("@Shelf", cbshelf.Text)
                 command.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
+                command.Parameters.AddWithValue("@Donor", txtdonor.Text)
                 command.Parameters.AddWithValue("@Status", newStatusValue)
                 command.Parameters.AddWithValue("@ID", ID)
 
@@ -731,6 +739,7 @@ Public Class Accession
             newValues.Add("BookTitle", txtbooktitle.Text)
             newValues.Add("Shelf", cbshelf.Text)
             newValues.Add("SupplierName", txtsuppliername.Text)
+            newValues.Add("Donor", txtdonor.Text)
             newValues.Add("Status", newStatusValue)
 
             For Each kvp In newValues
@@ -782,6 +791,7 @@ Public Class Accession
         End Try
 
     End Sub
+
 
     Private Sub btndeleteall_Click(sender As Object, e As EventArgs) Handles btndeleteall.Click
 
