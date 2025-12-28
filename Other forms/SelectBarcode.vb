@@ -186,10 +186,21 @@ Public Class SelectBarcode
 
         If e.RowIndex >= 0 Then
 
+            Dim status As String = DataGridView1.Rows(e.RowIndex).Cells("Status").Value.ToString()
+
+
+            If status = "Used" Then
+
+                MessageBox.Show("The selected barcode is already used.", "Barcode Used", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+                Return
+            End If
+
             Dim selectedBarcode As String = DataGridView1.Rows(e.RowIndex).Cells("Barcode").Value.ToString()
 
             If TargetTextBox IsNot Nothing Then
                 TargetTextBox.Text = selectedBarcode
+
             End If
 
             Me.Close()
