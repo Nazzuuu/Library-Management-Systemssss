@@ -202,7 +202,7 @@ Public Class Accession
             cbshelf.Enabled = False
 
             btnview.Visible = True
-            btnshelf.Enabled = False
+
             clearna()
 
 
@@ -226,7 +226,6 @@ Public Class Accession
             rbborrowable.Enabled = True
             rbforlibraryonly.Enabled = True
             cbshelf.Enabled = True
-            btnshelf.Enabled = True
 
         End If
     End Sub
@@ -996,17 +995,7 @@ Public Class Accession
 
     End Sub
 
-    Private Sub btnshelf_Click(sender As Object, e As EventArgs) Handles btnshelf.Click
-        Shelf.ShowDialog()
-    End Sub
 
-    Private Sub btnshelf_MouseHover(sender As Object, e As EventArgs) Handles btnshelf.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
-
-    Private Sub btnshelf_MouseLeave(sender As Object, e As EventArgs) Handles btnshelf.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
         Cursor = Cursors.Hand

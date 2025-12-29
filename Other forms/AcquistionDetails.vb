@@ -377,7 +377,11 @@ Public Class AcquistionDetails
                 newCtrl.Size = ctrl.Size : newCtrl.Location = ctrl.Location : newCtrl.Font = ctrl.Font
                 newCtrl.ForeColor = ctrl.ForeColor : newCtrl.Name = ctrl.Name
 
-                If ctrl.Name = "lblbooknumber" Then newCtrl.Text = "Book " & bookCount
+                If ctrl.Name = "lblbooknumber" Then
+                    newCtrl.Text = "Book " & bookCount
+                    DirectCast(newCtrl, Label).AutoSize = True
+                End If
+
 
                 If newCtrl.Name = "btnselectsu" Then
                     newCtrl.Enabled = False
@@ -524,6 +528,9 @@ Public Class AcquistionDetails
     End Sub
 
     Private Sub UpdateLabels()
+
+        bookCount = addedPanels.Count
+
         For i As Integer = 0 To addedPanels.Count - 1
             For Each ctrl As Control In addedPanels(i).Controls
                 If ctrl.Name = "lblbooknumber" Then
@@ -844,10 +851,10 @@ Public Class AcquistionDetails
 
     Private Sub AcquistionDetails_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
 
-        If bookCount > 1 Then
+
+        If addedPanels.Count > 1 Then
             Dim result As DialogResult = MessageBox.Show(
-            "You have multiple book panels open. Closing this form will discard all added book and reset to Book 1. " & vbCrLf & vbCrLf &
-            "Are you sure you want to close?",
+            "You have multiple book panels open. Closing this form will discard all added books and reset to Book 1.",
             "Confirm Exit",
             MessageBoxButtons.YesNo,
             MessageBoxIcon.Warning)
@@ -856,8 +863,7 @@ Public Class AcquistionDetails
                 e.Cancel = True
             Else
 
-                bookCount = 1
-                addedPanels.Clear()
+                clearlahatsu(False)
             End If
         End If
     End Sub

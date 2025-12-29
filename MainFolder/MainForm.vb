@@ -1412,4 +1412,28 @@ Public Class MainForm
     Private Sub DurationMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DurationMaintenanceToolStripMenuItem.Click
         DurationForm.ShowDialog()
     End Sub
+
+    Private Sub AuthorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AuthorToolStripMenuItem.Click
+        Author.ShowDialog()
+    End Sub
+
+    Private Sub genre_click(sender As Object, e As EventArgs) Handles GenreToolStripMenuItem.Click
+        Genre.ShowDialog()
+    End Sub
+
+    Private Sub publisher_click(sender As Object, e As EventArgs) Handles PublisherToolStripMenuItem.Click
+        Publisher.ShowDialog()
+    End Sub
+
+    Private Sub language_click(sender As Object, e As EventArgs) Handles LanguageToolStripMenuItem.Click
+        Language.ShowDialog()
+    End Sub
+
+    Private Sub bookshelves_click(sender As Object, e As EventArgs) Handles BookShelvesToolStripMenuItem.Click
+        Shelf.ShowDialog()
+    End Sub
+
+    Private Sub supplier_click(sender As Object, e As EventArgs) Handles SupplierToolStripMenuItem.Click
+        Supplier.ShowDialog()
+    End Sub
 End Class

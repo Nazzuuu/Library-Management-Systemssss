@@ -77,7 +77,7 @@ Public Class Acquisition2
             .btnaddanotherbook.Visible = True
             .lblsubmitcounts.Visible = True
             .cbisbnbarcode.Enabled = True
-            .Show()
+            .ShowDialog()
         End With
 
     End Sub

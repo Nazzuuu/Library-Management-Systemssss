@@ -1095,53 +1095,53 @@ Public Class Book
     End Sub
 
 
-    Private Sub btnaddauthor_Click(sender As Object, e As EventArgs) Handles btnaddauthor.Click
-        Author.ShowDialog()
+    Private Sub btnaddauthor_Click(sender As Object, e As EventArgs)
+        Author.ShowDialog
     End Sub
 
-    Private Sub btnaddgenre_Click(sender As Object, e As EventArgs) Handles btnaddgenre.Click
-        Genre.ShowDialog()
+    Private Sub btnaddgenre_Click(sender As Object, e As EventArgs)
+        Genre.ShowDialog
     End Sub
 
-    Private Sub btnaddpublisher_Click(sender As Object, e As EventArgs) Handles btnaddpublisher.Click
-        Publisher.ShowDialog()
+    Private Sub btnaddpublisher_Click(sender As Object, e As EventArgs)
+        Publisher.ShowDialog
     End Sub
 
-    Private Sub btnaddlangauge_Click(sender As Object, e As EventArgs) Handles btnaddlangauge.Click
-        Language.ShowDialog()
+    Private Sub btnaddlangauge_Click(sender As Object, e As EventArgs)
+        Language.ShowDialog
     End Sub
 
-    Private Sub btnaddauthor_MouseHover(sender As Object, e As EventArgs) Handles btnaddauthor.MouseHover
+    Private Sub btnaddauthor_MouseHover(sender As Object, e As EventArgs)
         Cursor = Cursors.Hand
     End Sub
 
-    Private Sub btnaddauthor_MouseLeave(sender As Object, e As EventArgs) Handles btnaddauthor.MouseLeave
+    Private Sub btnaddauthor_MouseLeave(sender As Object, e As EventArgs)
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btnaddgenre_MouseHover(sender As Object, e As EventArgs) Handles btnaddgenre.MouseHover
+    Private Sub btnaddgenre_MouseHover(sender As Object, e As EventArgs)
         Cursor = Cursors.Hand
     End Sub
 
-    Private Sub btnaddgenre_MouseLeave(sender As Object, e As EventArgs) Handles btnaddgenre.MouseLeave
+    Private Sub btnaddgenre_MouseLeave(sender As Object, e As EventArgs)
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btnaddpublisher_MouseHover(sender As Object, e As EventArgs) Handles btnaddpublisher.MouseHover
+    Private Sub btnaddpublisher_MouseHover(sender As Object, e As EventArgs)
         Cursor = Cursors.Hand
     End Sub
 
-    Private Sub btnaddpublisher_MouseLeave(sender As Object, e As EventArgs) Handles btnaddpublisher.MouseLeave
+    Private Sub btnaddpublisher_MouseLeave(sender As Object, e As EventArgs)
         Cursor = Cursors.Default
     End Sub
 
 
 
-    Private Sub btnaddlangauge_MouseHover(sender As Object, e As EventArgs) Handles btnaddlangauge.MouseHover
+    Private Sub btnaddlangauge_MouseHover(sender As Object, e As EventArgs)
         Cursor = Cursors.Hand
     End Sub
 
-    Private Sub btnaddlangauge_MouseLeave(sender As Object, e As EventArgs) Handles btnaddlangauge.MouseLeave
+    Private Sub btnaddlangauge_MouseLeave(sender As Object, e As EventArgs)
         Cursor = Cursors.Default
     End Sub
 

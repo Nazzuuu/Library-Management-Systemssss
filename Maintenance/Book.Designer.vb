@@ -23,11 +23,10 @@ Partial Class Book
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges37 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges38 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Book))
         Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -36,6 +35,10 @@ Partial Class Book
         Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -44,10 +47,6 @@ Partial Class Book
         Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges21 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
@@ -58,23 +57,11 @@ Partial Class Book
         Dim CustomizableEdges26 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges27 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges29 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges30 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges31 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges32 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges33 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges34 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges35 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges36 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_book = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         txtyearr = New Guna.UI2.WinForms.Guna2TextBox()
         Label12 = New Label()
         Label13 = New Label()
-        btnaddlangauge = New Guna.UI2.WinForms.Guna2Button()
-        btnaddpublisher = New Guna.UI2.WinForms.Guna2Button()
-        btnaddgenre = New Guna.UI2.WinForms.Guna2Button()
-        btnaddauthor = New Guna.UI2.WinForms.Guna2Button()
         btnprint = New Guna.UI2.WinForms.Guna2Button()
         picbarcode = New PictureBox()
         Label10 = New Label()
@@ -102,11 +89,6 @@ Partial Class Book
         Label3 = New Label()
         Label2 = New Label()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
-        authortooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
-        genretooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
-        categorytooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
-        publishertooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
-        languagetooltip = New Guna.UI2.WinForms.Guna2HtmlToolTip()
         panel_book.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
         CType(picbarcode, ComponentModel.ISupportInitialize).BeginInit()
@@ -133,10 +115,6 @@ Partial Class Book
         Guna2GroupBox1.Controls.Add(txtyearr)
         Guna2GroupBox1.Controls.Add(Label12)
         Guna2GroupBox1.Controls.Add(Label13)
-        Guna2GroupBox1.Controls.Add(btnaddlangauge)
-        Guna2GroupBox1.Controls.Add(btnaddpublisher)
-        Guna2GroupBox1.Controls.Add(btnaddgenre)
-        Guna2GroupBox1.Controls.Add(btnaddauthor)
         Guna2GroupBox1.Controls.Add(btnprint)
         Guna2GroupBox1.Controls.Add(picbarcode)
         Guna2GroupBox1.Controls.Add(Label10)
@@ -163,13 +141,13 @@ Partial Class Book
         Guna2GroupBox1.Controls.Add(Label3)
         Guna2GroupBox1.Controls.Add(Label2)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges37
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges29
         Guna2GroupBox1.FillColor = Color.Transparent
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = SystemColors.Control
         Guna2GroupBox1.Location = New Point(12, 13)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges38
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges30
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
@@ -218,92 +196,12 @@ Partial Class Book
         Label13.TabIndex = 107
         Label13.Text = "Select Row before clicking [Edit] or [Delete]."
         ' 
-        ' btnaddlangauge
-        ' 
-        btnaddlangauge.BackgroundImage = CType(resources.GetObject("btnaddlangauge.BackgroundImage"), Image)
-        btnaddlangauge.BackgroundImageLayout = ImageLayout.Zoom
-        btnaddlangauge.BorderRadius = 5
-        btnaddlangauge.CustomizableEdges = CustomizableEdges3
-        btnaddlangauge.DisabledState.BorderColor = Color.DarkGray
-        btnaddlangauge.DisabledState.CustomBorderColor = Color.DarkGray
-        btnaddlangauge.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnaddlangauge.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnaddlangauge.FillColor = Color.Empty
-        btnaddlangauge.Font = New Font("Tahoma", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnaddlangauge.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnaddlangauge.Location = New Point(1011, 112)
-        btnaddlangauge.Name = "btnaddlangauge"
-        btnaddlangauge.ShadowDecoration.CustomizableEdges = CustomizableEdges4
-        btnaddlangauge.Size = New Size(36, 32)
-        btnaddlangauge.TabIndex = 83
-        languagetooltip.SetToolTip(btnaddlangauge, "ADD LANGUAGE")
-        ' 
-        ' btnaddpublisher
-        ' 
-        btnaddpublisher.BackgroundImage = CType(resources.GetObject("btnaddpublisher.BackgroundImage"), Image)
-        btnaddpublisher.BackgroundImageLayout = ImageLayout.Zoom
-        btnaddpublisher.BorderRadius = 5
-        btnaddpublisher.CustomizableEdges = CustomizableEdges5
-        btnaddpublisher.DisabledState.BorderColor = Color.DarkGray
-        btnaddpublisher.DisabledState.CustomBorderColor = Color.DarkGray
-        btnaddpublisher.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnaddpublisher.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnaddpublisher.FillColor = Color.Empty
-        btnaddpublisher.Font = New Font("Tahoma", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnaddpublisher.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnaddpublisher.Location = New Point(1011, 185)
-        btnaddpublisher.Name = "btnaddpublisher"
-        btnaddpublisher.ShadowDecoration.CustomizableEdges = CustomizableEdges6
-        btnaddpublisher.Size = New Size(36, 32)
-        btnaddpublisher.TabIndex = 82
-        publishertooltip.SetToolTip(btnaddpublisher, "ADD PUBLISHER")
-        ' 
-        ' btnaddgenre
-        ' 
-        btnaddgenre.BackgroundImage = CType(resources.GetObject("btnaddgenre.BackgroundImage"), Image)
-        btnaddgenre.BackgroundImageLayout = ImageLayout.Zoom
-        btnaddgenre.BorderRadius = 5
-        btnaddgenre.CustomizableEdges = CustomizableEdges7
-        btnaddgenre.DisabledState.BorderColor = Color.DarkGray
-        btnaddgenre.DisabledState.CustomBorderColor = Color.DarkGray
-        btnaddgenre.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnaddgenre.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnaddgenre.FillColor = Color.Empty
-        btnaddgenre.Font = New Font("Tahoma", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnaddgenre.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnaddgenre.Location = New Point(638, 186)
-        btnaddgenre.Name = "btnaddgenre"
-        btnaddgenre.ShadowDecoration.CustomizableEdges = CustomizableEdges8
-        btnaddgenre.Size = New Size(36, 32)
-        btnaddgenre.TabIndex = 80
-        genretooltip.SetToolTip(btnaddgenre, "ADD GENRE")
-        ' 
-        ' btnaddauthor
-        ' 
-        btnaddauthor.BackgroundImage = CType(resources.GetObject("btnaddauthor.BackgroundImage"), Image)
-        btnaddauthor.BackgroundImageLayout = ImageLayout.Zoom
-        btnaddauthor.BorderRadius = 5
-        btnaddauthor.CustomizableEdges = CustomizableEdges9
-        btnaddauthor.DisabledState.BorderColor = Color.DarkGray
-        btnaddauthor.DisabledState.CustomBorderColor = Color.DarkGray
-        btnaddauthor.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnaddauthor.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnaddauthor.FillColor = Color.Empty
-        btnaddauthor.Font = New Font("Tahoma", 15.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnaddauthor.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnaddauthor.Location = New Point(638, 116)
-        btnaddauthor.Name = "btnaddauthor"
-        btnaddauthor.ShadowDecoration.CustomizableEdges = CustomizableEdges10
-        btnaddauthor.Size = New Size(36, 32)
-        btnaddauthor.TabIndex = 79
-        authortooltip.SetToolTip(btnaddauthor, "ADD AUTHOR")
-        ' 
         ' btnprint
         ' 
         btnprint.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnprint.BorderRadius = 9
         btnprint.BorderThickness = 1
-        btnprint.CustomizableEdges = CustomizableEdges11
+        btnprint.CustomizableEdges = CustomizableEdges3
         btnprint.DisabledState.BorderColor = Color.DarkGray
         btnprint.DisabledState.CustomBorderColor = Color.DarkGray
         btnprint.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -313,7 +211,7 @@ Partial Class Book
         btnprint.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnprint.Location = New Point(548, 242)
         btnprint.Name = "btnprint"
-        btnprint.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        btnprint.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnprint.Size = New Size(173, 27)
         btnprint.TabIndex = 78
         btnprint.Text = "PRINT ALL BARCODE"
@@ -388,7 +286,7 @@ Partial Class Book
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges13
+        txtsearch.CustomizableEdges = CustomizableEdges5
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -403,7 +301,7 @@ Partial Class Book
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Book Title"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         txtsearch.Size = New Size(889, 30)
         txtsearch.TabIndex = 9
         ' 
@@ -412,7 +310,7 @@ Partial Class Book
         btnclear.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnclear.BorderRadius = 9
         btnclear.BorderThickness = 1
-        btnclear.CustomizableEdges = CustomizableEdges15
+        btnclear.CustomizableEdges = CustomizableEdges7
         btnclear.DisabledState.BorderColor = Color.DarkGray
         btnclear.DisabledState.CustomBorderColor = Color.DarkGray
         btnclear.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -422,7 +320,7 @@ Partial Class Book
         btnclear.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnclear.Location = New Point(417, 242)
         btnclear.Name = "btnclear"
-        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges16
+        btnclear.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         btnclear.Size = New Size(90, 27)
         btnclear.TabIndex = 46
         btnclear.Text = "CLEAR"
@@ -433,10 +331,10 @@ Partial Class Book
         Guna2GradientPanel1.BorderRadius = 9
         Guna2GradientPanel1.BorderThickness = 2
         Guna2GradientPanel1.Controls.Add(DataGridView1)
-        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges17
+        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges9
         Guna2GradientPanel1.Location = New Point(25, 289)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
-        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges18
+        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges10
         Guna2GradientPanel1.Size = New Size(1283, 320)
         Guna2GradientPanel1.TabIndex = 45
         ' 
@@ -493,7 +391,7 @@ Partial Class Book
         btndelete.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btndelete.BorderRadius = 9
         btndelete.BorderThickness = 1
-        btndelete.CustomizableEdges = CustomizableEdges19
+        btndelete.CustomizableEdges = CustomizableEdges11
         btndelete.DisabledState.BorderColor = Color.DarkGray
         btndelete.DisabledState.CustomBorderColor = Color.DarkGray
         btndelete.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -503,7 +401,7 @@ Partial Class Book
         btndelete.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btndelete.Location = New Point(288, 242)
         btndelete.Name = "btndelete"
-        btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges20
+        btndelete.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         btndelete.Size = New Size(90, 27)
         btndelete.TabIndex = 44
         btndelete.Text = "DELETE"
@@ -513,7 +411,7 @@ Partial Class Book
         btnedit.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnedit.BorderRadius = 9
         btnedit.BorderThickness = 1
-        btnedit.CustomizableEdges = CustomizableEdges21
+        btnedit.CustomizableEdges = CustomizableEdges13
         btnedit.DisabledState.BorderColor = Color.DarkGray
         btnedit.DisabledState.CustomBorderColor = Color.DarkGray
         btnedit.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -523,7 +421,7 @@ Partial Class Book
         btnedit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnedit.Location = New Point(158, 242)
         btnedit.Name = "btnedit"
-        btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges22
+        btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         btnedit.Size = New Size(90, 27)
         btnedit.TabIndex = 43
         btnedit.Text = "EDIT"
@@ -533,7 +431,7 @@ Partial Class Book
         btnadd.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnadd.BorderRadius = 9
         btnadd.BorderThickness = 1
-        btnadd.CustomizableEdges = CustomizableEdges23
+        btnadd.CustomizableEdges = CustomizableEdges15
         btnadd.DisabledState.BorderColor = Color.DarkGray
         btnadd.DisabledState.CustomBorderColor = Color.DarkGray
         btnadd.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -543,7 +441,7 @@ Partial Class Book
         btnadd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnadd.Location = New Point(30, 242)
         btnadd.Name = "btnadd"
-        btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges24
+        btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         btnadd.Size = New Size(90, 27)
         btnadd.TabIndex = 42
         btnadd.Text = "ADD"
@@ -563,7 +461,7 @@ Partial Class Book
         ' 
         txtbooktitle.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtbooktitle.BorderRadius = 12
-        txtbooktitle.CustomizableEdges = CustomizableEdges25
+        txtbooktitle.CustomizableEdges = CustomizableEdges17
         txtbooktitle.DefaultText = ""
         txtbooktitle.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtbooktitle.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -578,7 +476,7 @@ Partial Class Book
         txtbooktitle.Name = "txtbooktitle"
         txtbooktitle.PlaceholderText = ""
         txtbooktitle.SelectedText = ""
-        txtbooktitle.ShadowDecoration.CustomizableEdges = CustomizableEdges26
+        txtbooktitle.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         txtbooktitle.Size = New Size(232, 33)
         txtbooktitle.TabIndex = 2
         ' 
@@ -597,7 +495,7 @@ Partial Class Book
         ' 
         txtisbn.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtisbn.BorderRadius = 12
-        txtisbn.CustomizableEdges = CustomizableEdges27
+        txtisbn.CustomizableEdges = CustomizableEdges19
         txtisbn.DefaultText = ""
         txtisbn.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtisbn.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -612,7 +510,7 @@ Partial Class Book
         txtisbn.Name = "txtisbn"
         txtisbn.PlaceholderText = ""
         txtisbn.SelectedText = ""
-        txtisbn.ShadowDecoration.CustomizableEdges = CustomizableEdges28
+        txtisbn.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         txtisbn.Size = New Size(232, 33)
         txtisbn.TabIndex = 1
         ' 
@@ -621,7 +519,7 @@ Partial Class Book
         cblanguage.BackColor = Color.Transparent
         cblanguage.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         cblanguage.BorderRadius = 12
-        cblanguage.CustomizableEdges = CustomizableEdges29
+        cblanguage.CustomizableEdges = CustomizableEdges21
         cblanguage.DrawMode = DrawMode.OwnerDrawFixed
         cblanguage.DropDownStyle = ComboBoxStyle.DropDownList
         cblanguage.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
@@ -631,7 +529,7 @@ Partial Class Book
         cblanguage.ItemHeight = 30
         cblanguage.Location = New Point(759, 111)
         cblanguage.Name = "cblanguage"
-        cblanguage.ShadowDecoration.CustomizableEdges = CustomizableEdges30
+        cblanguage.ShadowDecoration.CustomizableEdges = CustomizableEdges22
         cblanguage.Size = New Size(232, 36)
         cblanguage.TabIndex = 7
         ' 
@@ -640,7 +538,7 @@ Partial Class Book
         cbpublisher.BackColor = Color.Transparent
         cbpublisher.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         cbpublisher.BorderRadius = 12
-        cbpublisher.CustomizableEdges = CustomizableEdges31
+        cbpublisher.CustomizableEdges = CustomizableEdges23
         cbpublisher.DrawMode = DrawMode.OwnerDrawFixed
         cbpublisher.DropDownStyle = ComboBoxStyle.DropDownList
         cbpublisher.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
@@ -650,7 +548,7 @@ Partial Class Book
         cbpublisher.ItemHeight = 30
         cbpublisher.Location = New Point(759, 182)
         cbpublisher.Name = "cbpublisher"
-        cbpublisher.ShadowDecoration.CustomizableEdges = CustomizableEdges32
+        cbpublisher.ShadowDecoration.CustomizableEdges = CustomizableEdges24
         cbpublisher.Size = New Size(232, 36)
         cbpublisher.TabIndex = 6
         ' 
@@ -659,7 +557,7 @@ Partial Class Book
         cbgenre.BackColor = Color.Transparent
         cbgenre.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         cbgenre.BorderRadius = 12
-        cbgenre.CustomizableEdges = CustomizableEdges33
+        cbgenre.CustomizableEdges = CustomizableEdges25
         cbgenre.DrawMode = DrawMode.OwnerDrawFixed
         cbgenre.DropDownStyle = ComboBoxStyle.DropDownList
         cbgenre.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
@@ -669,7 +567,7 @@ Partial Class Book
         cbgenre.ItemHeight = 30
         cbgenre.Location = New Point(384, 182)
         cbgenre.Name = "cbgenre"
-        cbgenre.ShadowDecoration.CustomizableEdges = CustomizableEdges34
+        cbgenre.ShadowDecoration.CustomizableEdges = CustomizableEdges26
         cbgenre.Size = New Size(232, 36)
         cbgenre.TabIndex = 4
         ' 
@@ -678,7 +576,7 @@ Partial Class Book
         cbauthor.BackColor = Color.Transparent
         cbauthor.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         cbauthor.BorderRadius = 12
-        cbauthor.CustomizableEdges = CustomizableEdges35
+        cbauthor.CustomizableEdges = CustomizableEdges27
         cbauthor.DrawMode = DrawMode.OwnerDrawFixed
         cbauthor.DropDownStyle = ComboBoxStyle.DropDownList
         cbauthor.FocusedColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
@@ -688,7 +586,7 @@ Partial Class Book
         cbauthor.ItemHeight = 30
         cbauthor.Location = New Point(384, 112)
         cbauthor.Name = "cbauthor"
-        cbauthor.ShadowDecoration.CustomizableEdges = CustomizableEdges36
+        cbauthor.ShadowDecoration.CustomizableEdges = CustomizableEdges28
         cbauthor.Size = New Size(232, 36)
         cbauthor.TabIndex = 3
         ' 
@@ -741,46 +639,6 @@ Partial Class Book
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
-        ' authortooltip
-        ' 
-        authortooltip.AllowLinksHandling = True
-        authortooltip.AutomaticDelay = 100
-        authortooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
-        authortooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        authortooltip.MaximumSize = New Size(0, 0)
-        ' 
-        ' genretooltip
-        ' 
-        genretooltip.AllowLinksHandling = True
-        genretooltip.AutomaticDelay = 100
-        genretooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
-        genretooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        genretooltip.MaximumSize = New Size(0, 0)
-        ' 
-        ' categorytooltip
-        ' 
-        categorytooltip.AllowLinksHandling = True
-        categorytooltip.AutomaticDelay = 100
-        categorytooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
-        categorytooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        categorytooltip.MaximumSize = New Size(0, 0)
-        ' 
-        ' publishertooltip
-        ' 
-        publishertooltip.AllowLinksHandling = True
-        publishertooltip.AutomaticDelay = 100
-        publishertooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
-        publishertooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        publishertooltip.MaximumSize = New Size(0, 0)
-        ' 
-        ' languagetooltip
-        ' 
-        languagetooltip.AllowLinksHandling = True
-        languagetooltip.AutomaticDelay = 100
-        languagetooltip.Font = New Font("Tahoma", 8.25F, FontStyle.Bold)
-        languagetooltip.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        languagetooltip.MaximumSize = New Size(0, 0)
-        ' 
         ' Book
         ' 
         AutoScaleDimensions = New SizeF(7F, 13F)
@@ -832,15 +690,6 @@ Partial Class Book
     Friend WithEvents picbarcode As PictureBox
     Friend WithEvents lblrandom As Label
     Friend WithEvents btnprint As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents btnaddauthor As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents btnaddlangauge As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents btnaddpublisher As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents btnaddgenre As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents authortooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
-    Friend WithEvents genretooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
-    Friend WithEvents categorytooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
-    Friend WithEvents publishertooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
-    Friend WithEvents languagetooltip As Guna.UI2.WinForms.Guna2HtmlToolTip
     Friend WithEvents Label12 As Label
     Friend WithEvents Label13 As Label
     Friend WithEvents txtyearr As Guna.UI2.WinForms.Guna2TextBox
