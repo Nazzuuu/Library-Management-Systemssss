@@ -506,7 +506,7 @@ Module GlobalVarsModule
         End Try
     End Sub
 
-
+    'ito sa radiobutton/checkbox---pang pause yan bes''
     Public Sub PauseAutoRefresh(grid As DataGridView)
         Try
             If refreshTimers.ContainsKey(grid) Then
@@ -516,6 +516,7 @@ Module GlobalVarsModule
         End Try
     End Sub
 
+    ''ito sa textbox---pang resume yan bes :p''
     Public Sub ResumeAutoRefresh(grid As DataGridView)
         Try
             If refreshTimers.ContainsKey(grid) Then
@@ -572,6 +573,7 @@ Module GlobalVarsModule
         End If
     End Sub
 
+    'ito sa search textbox pang pause''
     Public Sub HandleAutoRefreshPause(grid As DataGridView, txtSearch As Control)
         Try
             If refreshTimers.ContainsKey(grid) Then

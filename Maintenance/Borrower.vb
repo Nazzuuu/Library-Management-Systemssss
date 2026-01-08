@@ -126,7 +126,7 @@ Public Class Borrower
     End Sub
 
     Public Sub cbgradee()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT ID, Grade FROM `grade_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -145,7 +145,7 @@ Public Class Borrower
     End Sub
 
     Public Sub cbsecs()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT ID, Section FROM `section_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -164,7 +164,7 @@ Public Class Borrower
     End Sub
 
     Public Sub cbdepts()
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT ID, Department FROM `department_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -185,7 +185,7 @@ Public Class Borrower
 
     Public Sub cbstrandd()
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT ID, Strand FROM `strand_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
         Dim dt As New DataTable
@@ -347,11 +347,11 @@ Public Class Borrower
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-        actionType:="ADD",
-        formName:="BORROWER FORM",
-        description:=$"Added new {borrowerType}: {fullName}",
-        recordID:=newID.ToString()
-        )
+            actionType:="ADD",
+            formName:="BORROWER FORM",
+            description:=$"Added new {borrowerType}: {fullName}",
+            recordID:=newID.ToString()
+            )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -563,13 +563,13 @@ Public Class Borrower
                 Dim newValueLog As String = $"Name: {newFullName}, Type: {borrowerType}, LRN: {If(lrn Is DBNull.Value, "N/A", lrn)}, EmployeeNo: {If(employeeNo Is DBNull.Value, "N/A", employeeNo)}, Contact: {contactNumber}"
 
                 GlobalVarsModule.LogAudit(
-            actionType:="UPDATE",
-            formName:="BORROWER FORM",
-            description:=auditDescription,
-            recordID:=ID.ToString(),
-            oldValue:=oldValueLog,
-            newValue:=newValueLog
-            )
+                actionType:="UPDATE",
+                formName:="BORROWER FORM",
+                description:=auditDescription,
+                recordID:=ID.ToString(),
+                oldValue:=oldValueLog,
+                newValue:=newValueLog
+                )
 
                 For Each form In Application.OpenForms
                     If TypeOf form Is AuditTrail Then

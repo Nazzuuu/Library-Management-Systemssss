@@ -233,16 +233,17 @@ TryBorrower:
         Dim currentDeviceIP_borrower As String = GlobalVarsModule.GetLocalIPAddress()
 
         Using con_borrower As New MySqlConnection(GlobalVarsModule.connectionString)
+
             Dim sql_borrower As String =
-        "SELECT Username, Password, Email, " &
-        "CASE WHEN LRN IS NOT NULL AND LRN <> '0' AND LRN <> '' THEN 'Student' " &
-        "     WHEN EmployeeNo IS NOT NULL AND EmployeeNo <> '0' AND EmployeeNo <> '' THEN 'Teacher' " &
-        "     ELSE 'Unknown' END AS BorrowerType, " &
-        "IFNULL(LRN, EmployeeNo) AS BorrowerID, " &
-        "IFNULL(CurrentIP, '0.0.0.0') AS CurrentIP, " &
-        "IFNULL(is_logged_in, 0) AS is_logged_in " &
-        "FROM borroweredit_tbl " &
-        "WHERE BINARY TRIM(Username)=@User AND BINARY TRIM(Password)=@Pass LIMIT 1"
+            "SELECT Username, Password, Email, " &
+            "CASE WHEN LRN IS NOT NULL AND LRN <> '0' AND LRN <> '' THEN 'Student' " &
+            "     WHEN EmployeeNo IS NOT NULL AND EmployeeNo <> '0' AND EmployeeNo <> '' THEN 'Teacher' " &
+            "     ELSE 'Unknown' END AS BorrowerType, " &
+            "IFNULL(LRN, EmployeeNo) AS BorrowerID, " &
+            "IFNULL(CurrentIP, '0.0.0.0') AS CurrentIP, " &
+            "IFNULL(is_logged_in, 0) AS is_logged_in " &
+            "FROM borroweredit_tbl " &
+            "WHERE BINARY TRIM(Username)=@User AND BINARY TRIM(Password)=@Pass LIMIT 1"
 
             Using cmd_borrower As New MySqlCommand(sql_borrower, con_borrower)
                 cmd_borrower.Parameters.AddWithValue("@User", Username_borrower)

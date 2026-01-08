@@ -135,7 +135,7 @@ Partial Class Accession
         DataGridView1.Cursor = Cursors.Hand
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
-        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9.0F)
+        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
         DataGridViewCellStyle2.ForeColor = SystemColors.Control
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
@@ -147,7 +147,7 @@ Partial Class Accession
         DataGridView1.ReadOnly = True
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle3.BackColor = SystemColors.Control
-        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9.0F)
+        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
         DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
         DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
@@ -156,7 +156,7 @@ Partial Class Accession
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
         DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle4.Font = New Font("Tahoma", 9.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
@@ -174,7 +174,7 @@ Partial Class Accession
         txtsuppliername.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsuppliername.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsuppliername.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsuppliername.Font = New Font("Segoe UI", 9.0F)
+        txtsuppliername.Font = New Font("Segoe UI", 9F)
         txtsuppliername.ForeColor = Color.Black
         txtsuppliername.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsuppliername.Location = New Point(669, 172)
@@ -207,7 +207,7 @@ Partial Class Accession
         txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
+        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
@@ -314,7 +314,7 @@ Partial Class Accession
         txtisbn.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtisbn.Font = New Font("Segoe UI", 9.0F)
+        txtisbn.Font = New Font("Segoe UI", 9F)
         txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Location = New Point(348, 98)
@@ -411,7 +411,7 @@ Partial Class Accession
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
         Guna2GroupBox1.CustomizableEdges = CustomizableEdges33
         Guna2GroupBox1.FillColor = Color.Transparent
-        Guna2GroupBox1.Font = New Font("Segoe UI", 9.0F)
+        Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = SystemColors.Control
         Guna2GroupBox1.Location = New Point(12, 13)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
@@ -442,7 +442,7 @@ Partial Class Accession
         txtdonor.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtdonor.Enabled = False
         txtdonor.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtdonor.Font = New Font("Segoe UI", 9.0F)
+        txtdonor.Font = New Font("Segoe UI", 9F)
         txtdonor.ForeColor = Color.Black
         txtdonor.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtdonor.Location = New Point(996, 172)
@@ -620,7 +620,7 @@ Partial Class Accession
         txttransactionno.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txttransactionno.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txttransactionno.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txttransactionno.Font = New Font("Segoe UI", 9.0F)
+        txttransactionno.Font = New Font("Segoe UI", 9F)
         txttransactionno.ForeColor = Color.Black
         txttransactionno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txttransactionno.Location = New Point(30, 95)
@@ -662,7 +662,7 @@ Partial Class Accession
         txtbarcodes.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbarcodes.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbarcodes.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbarcodes.Font = New Font("Segoe UI", 9.0F)
+        txtbarcodes.Font = New Font("Segoe UI", 9F)
         txtbarcodes.ForeColor = Color.Black
         txtbarcodes.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbarcodes.Location = New Point(669, 95)
@@ -725,7 +725,7 @@ Partial Class Accession
         txtbooktitle.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbooktitle.Font = New Font("Segoe UI", 9.0F)
+        txtbooktitle.Font = New Font("Segoe UI", 9F)
         txtbooktitle.ForeColor = Color.Black
         txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Location = New Point(348, 166)
@@ -747,7 +747,7 @@ Partial Class Accession
         txtaccessionid.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtaccessionid.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtaccessionid.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtaccessionid.Font = New Font("Segoe UI", 9.0F)
+        txtaccessionid.Font = New Font("Segoe UI", 9F)
         txtaccessionid.ForeColor = Color.Black
         txtaccessionid.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtaccessionid.Location = New Point(30, 169)
@@ -777,7 +777,7 @@ Partial Class Accession
         ' 
         ' Accession
         ' 
-        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
+        AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1370, 700)
         Controls.Add(panel_accession)
