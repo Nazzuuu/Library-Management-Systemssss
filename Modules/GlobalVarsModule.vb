@@ -4,6 +4,7 @@ Imports System.Net.Sockets
 Imports System.Threading.Tasks
 Imports MySql.Data.MySqlClient
 Imports System.IO
+Imports System.Net.Mail
 Module GlobalVarsModule
 
     Public GlobalAutoRefreshTimer As Timer
@@ -695,6 +696,93 @@ Module GlobalVarsModule
 
     Public Sub TriggerDatabaseUpdated()
         RaiseEvent DatabaseUpdated()
+    End Sub
+
+    'di patapos toh mauumay na ko agad. iwan ko muna yan diyan''
+
+    Public Sub SendOverdueBorrowerNotifications()
+
+        Dim sql As String =
+        "SELECT be.Email, bw.Name, bw.DueDate " &
+        "FROM borrowing_tbl bw " &
+        "JOIN borrower_tbl br ON bw.LRN = br.LRN OR bw.EmployeeNo = br.EmployeeNo " &
+        "JOIN borroweredit_tbl be ON bw.LRN = be.LRN OR bw.EmployeeNo = be.EmployeeNo " &
+        "JOIN acession_tbl ac ON bw.AccessionID = ac.AccessionID " &
+        "WHERE bw.DueDate < CURDATE() AND ac.Status = 'overdue'"
+
+        Using con As New MySqlConnection(connectionString)
+            Using cmd As New MySqlCommand(sql, con)
+                con.Open()
+
+                Using rdr = cmd.ExecuteReader()
+                    While rdr.Read()
+
+                        Dim email As String = rdr("Email").ToString()
+                        Dim fullname As String = rdr("Name").ToString()
+                        Dim duedate As String = Convert.ToDateTime(rdr("DueDate")).ToShortDateString()
+
+                        Dim body As String =
+                        "Hello " & fullname & "," & vbCrLf & vbCrLf &
+                        "Our records show that you currently have an overdue book." & vbCrLf &
+                        "Due Date: " & duedate & vbCrLf & vbCrLf &
+                        "Please return the book immediately to avoid penalties." & vbCrLf & vbCrLf &
+                        "MDA-LMS Library"
+
+                        SendEmailNotification_Global(email, "MDA-LMS Overdue Notice", body)
+
+                    End While
+                End Using
+
+            End Using
+        End Using
+
+    End Sub
+
+
+    Private Sub SendEmailNotification_Global(targetEmail As String, subject As String, body As String)
+
+        Dim fromEmail As String = ""
+        Dim appPassword As String = ""
+
+        GetEmailConfig_Global(fromEmail, appPassword)
+
+        Dim mail As New MailMessage()
+        mail.From = New MailAddress(fromEmail, "MDA-LMS Library")
+        mail.To.Add(targetEmail)
+        mail.Subject = subject
+        mail.Body = body
+
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+
+        Dim smtp As New SmtpClient("smtp.gmail.com")
+        smtp.Port = 587
+        smtp.EnableSsl = True
+        smtp.UseDefaultCredentials = False
+        smtp.Credentials = New NetworkCredential(fromEmail, appPassword)
+        smtp.DeliveryMethod = SmtpDeliveryMethod.Network
+
+        smtp.Send(mail)
+
+    End Sub
+
+
+
+    Private Sub GetEmailConfig_Global(ByRef email As String, ByRef password As String)
+
+        Dim sql As String = "SELECT Email, AppPassword FROM email_config LIMIT 1"
+
+        Using con As New MySqlConnection(connectionString)
+            Using cmd As New MySqlCommand(sql, con)
+                con.Open()
+                Using rdr = cmd.ExecuteReader()
+                    If rdr.Read() Then
+                        email = rdr("Email").ToString()
+                        password = rdr("AppPassword").ToString()
+                    End If
+                End Using
+            End Using
+        End Using
+
     End Sub
 
 End Module

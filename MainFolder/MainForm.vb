@@ -31,6 +31,7 @@ Public Class MainForm
         GlobalVarsModule.StartAutoRefresh()
         GlobalVarsModule.InitializeDatabaseMonitor()
         LoadDurationSettings()
+        SendOverdueBorrowerNotifications()
 
     End Sub
 
@@ -258,6 +259,8 @@ Public Class MainForm
     Private Sub MaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles MaintenanceToolStripMenuItem.Click
 
         loadsu()
+        SendOverdueBorrowerNotifications()
+
 
         MaintenanceToolStripMenuItem.ForeColor = Color.DarkGray
 
@@ -338,6 +341,8 @@ Public Class MainForm
     Private Sub ActiveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles Audit_Trail.Click
 
         loadsu()
+        SendOverdueBorrowerNotifications()
+
         SettingsStripMenuItem.ForeColor = Color.White
 
         Dim lumabasna As Boolean = False
@@ -391,6 +396,8 @@ Public Class MainForm
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ProcessStripMenuItem.Click
 
         loadsu()
+        SendOverdueBorrowerNotifications()
+
 
         ProcessStripMenuItem.ShowDropDown()
 
