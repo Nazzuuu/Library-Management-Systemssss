@@ -5,8 +5,6 @@ Imports MySql.Data.MySqlClient
 Public Class Borrowereditsinfo
 
     Private selectedBorrowerID As Integer = -1
-
-
     Private originalIDValue As String = String.Empty
 
     Private Sub Borrowereditinfo_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -27,22 +25,51 @@ Public Class Borrowereditsinfo
     End Sub
 
 
-
     Private Async Sub OnDatabaseUpdated()
-        Dim query As String = "SELECT * FROM `borroweredit_tbl` ORDER BY ID DESC"
+
+        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
+        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
+        Dim userRole As String = GlobalVarsModule.CurrentUserRole
+
+        Dim query As String = ""
+
+        If userRole = "Borrower" Then
+            If borrowerType = "Student" Then
+                query = "SELECT * FROM borroweredit_tbl WHERE LRN='" & borrowerID & "' ORDER BY ID DESC"
+            ElseIf borrowerType = "Teacher" Then
+                query = "SELECT * FROM borroweredit_tbl WHERE EmployeeNo='" & borrowerID & "' ORDER BY ID DESC"
+            End If
+        Else
+            query = "SELECT * FROM borroweredit_tbl ORDER BY ID DESC"
+        End If
+
         Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+
     End Sub
 
+
     Private Sub borroweredit_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-
         DataGridView1.ClearSelection()
-
     End Sub
 
     Public Sub refresheditt()
 
+        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
+        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
+        Dim userRole As String = GlobalVarsModule.CurrentUserRole
 
-        Dim query As String = "SELECT * FROM `borroweredit_tbl` ORDER BY ID DESC"
+        Dim query As String = ""
+
+        If userRole = "Borrower" Then
+            If borrowerType = "Student" Then
+                query = "SELECT * FROM borroweredit_tbl WHERE LRN='" & borrowerID & "' ORDER BY ID DESC"
+            ElseIf borrowerType = "Teacher" Then
+                query = "SELECT * FROM borroweredit_tbl WHERE EmployeeNo='" & borrowerID & "' ORDER BY ID DESC"
+            End If
+        Else
+            query = "SELECT * FROM borroweredit_tbl ORDER BY ID DESC"
+        End If
+
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
         txtpass.PasswordChar = "•"
 
@@ -52,40 +79,23 @@ Public Class Borrowereditsinfo
                 Using fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
                     PictureBox1.Image = New Bitmap(fs)
                 End Using
-            Else
-                MessageBox.Show("Image file not found: pikit.png sa refresheditt.", "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
-        Catch ex As Exception
-            MessageBox.Show("Error loading pikit.png: " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Catch
         End Try
-
-        Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
-        Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
-        Dim userRole As String = GlobalVarsModule.CurrentUserRole
 
         visibilitysus(borrowerType)
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = ""
-        Dim showAllRecords As Boolean = True
 
-
-        If userRole = "Librarian" OrElse userRole = "Admin" Then
-            com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl`"
-            showAllRecords = True
-
-        ElseIf userRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(borrowerID) Then
-            showAllRecords = False
-
+        If userRole = "Borrower" Then
             If borrowerType = "Student" Then
-                com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl` WHERE `LRN` = @BorrowerID"
-            ElseIf borrowerType = "Teacher" Then
-                com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl` WHERE `EmployeeNo` = @BorrowerID"
+                com = "SELECT ID, LRN, EmployeeNo, Username, Password, Email FROM borroweredit_tbl WHERE LRN=@BorrowerID"
+            Else
+                com = "SELECT ID, LRN, EmployeeNo, Username, Password, Email FROM borroweredit_tbl WHERE EmployeeNo=@BorrowerID"
             End If
-        End If
-
-        If showAllRecords OrElse String.IsNullOrWhiteSpace(com) Then
-            com = "SELECT `ID`, `LRN`, `EmployeeNo`, `Username`, `Password`, `Email` FROM `borroweredit_tbl`"
+        Else
+            com = "SELECT ID, LRN, EmployeeNo, Username, Password, Email FROM borroweredit_tbl"
         End If
 
         Dim adap As New MySqlDataAdapter()
@@ -93,9 +103,9 @@ Public Class Borrowereditsinfo
 
         Try
             con.Open()
-
             Using cmd As New MySqlCommand(com, con)
-                If Not showAllRecords AndAlso userRole = "Borrower" Then
+
+                If userRole = "Borrower" Then
                     cmd.Parameters.AddWithValue("@BorrowerID", borrowerID)
                 End If
 
@@ -109,10 +119,10 @@ Public Class Borrowereditsinfo
                 End If
 
                 If userRole = "Borrower" Then
-                    If DataGridView1.Columns.Contains("LRN") AndAlso borrowerType = "Teacher" Then
+                    If borrowerType = "Teacher" Then
                         DataGridView1.Columns("LRN").Visible = False
                     End If
-                    If DataGridView1.Columns.Contains("EmployeeNo") AndAlso borrowerType = "Student" Then
+                    If borrowerType = "Student" Then
                         DataGridView1.Columns("EmployeeNo").Visible = False
                     End If
                 End If
@@ -120,21 +130,16 @@ Public Class Borrowereditsinfo
                 DataGridView1.EnableHeadersVisualStyles = False
                 DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
                 DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-            End Using
 
-        Catch ex As Exception
-            MessageBox.Show("Error loading data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Using
+        Catch
         Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
+            con.Close()
         End Try
 
         clearlahat()
 
     End Sub
-
-
 
     Public Sub clearlahat()
         txtemployeeno.Enabled = False
@@ -148,10 +153,8 @@ Public Class Borrowereditsinfo
         selectedBorrowerID = -1
         originalIDValue = String.Empty
 
-
         lbldomain.ForeColor = Color.Black
         lbldomain.Text = "Name@domain.com"
-
 
         If Not lblpassword Is Nothing Then
             lblpassword.Text = ""
@@ -171,10 +174,8 @@ Public Class Borrowereditsinfo
         txtpass.Text = row.Cells("Password").Value.ToString()
         txtemail.Text = row.Cells("Email").Value.ToString()
 
-
         Dim lrnValue As String = If(row.Cells("LRN")?.Value?.ToString(), "").Trim()
         Dim empNoValue As String = If(row.Cells("EmployeeNo")?.Value?.ToString(), "").Trim()
-
 
         If Not String.IsNullOrEmpty(lrnValue) Then
             txtlrn.Text = lrnValue
@@ -189,13 +190,6 @@ Public Class Borrowereditsinfo
             txtlrn.Text = ""
             txtlrn.Enabled = False
             originalIDValue = empNoValue
-
-        Else
-            txtlrn.Text = ""
-            txtemployeeno.Text = ""
-            txtlrn.Enabled = False
-            txtemployeeno.Enabled = False
-            originalIDValue = String.Empty
         End If
 
         txtemail_TextChanged(txtemail, New EventArgs())

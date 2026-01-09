@@ -1,6 +1,8 @@
 ﻿Imports System.Data
 Imports System.IO
 Imports MySql.Data.MySqlClient
+Imports System.Net
+Imports System.Net.Mail
 
 Public Class BorrowerCreateAccount
 
@@ -288,7 +290,9 @@ Public Class BorrowerCreateAccount
         Return exists
     End Function
 
+
     Private Sub btnsignup_Click(sender As Object, e As EventArgs) Handles btnsignup.Click
+
         Dim IDValue As String = If(rbstudent.Checked, txtlrn.Text.Trim(), txtemployeeno.Text.Trim())
         Dim IDType As String = If(rbstudent.Checked, "LRN", "EmployeeNo")
         Dim Username As String = txtuser.Text.Trim()
@@ -307,20 +311,50 @@ Public Class BorrowerCreateAccount
             Return
         End If
 
+
+        If paswurdstringth(Password) < 4 Then
+            MessageBox.Show("The password you entered is too weak or invalid. Please use a stronger password.", "Invalid Password", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
         If FullName = "Borrower Full Name: Not Found" OrElse FullName = "Error retrieving data" OrElse FullName = "Borrower Full Name:" Then
             MessageBox.Show($"No borrower found with the entered {IDType}.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 
-
         If AccountExistsInAllTables(Username, Email) Then
-            MessageBox.Show("The username or email is already taken by another account.", "Duplicate Account", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("This email or username is already registered. Please login instead or use another email/username.", "Account Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
 
         If CheckIfAccountExists(IDValue, IDType, Username) Then
             MessageBox.Show("An account already exists for this ID or username.", "Account Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim generatedOTP As String = GenerateOTP()
+
+        If SendVerificationEmail(Email, generatedOTP) Then
+
+            Me.Hide()
+            login.Hide()
+
+            Dim userOTP As String = InputBox("A verification code has been sent to " & Email & ". Please enter the 6-digit code below:", "Email Verification")
+
+            If String.IsNullOrWhiteSpace(userOTP) Then
+                MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Me.Show()
+                Return
+            End If
+
+            If userOTP <> generatedOTP Then
+                MessageBox.Show("Invalid verification code. Registration cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Me.Show()
+                Return
+            End If
+
+        Else
             Return
         End If
 
@@ -345,14 +379,18 @@ Public Class BorrowerCreateAccount
                     Me.Hide()
                 Else
                     MessageBox.Show("Account creation failed. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Me.Show()
                 End If
             End Using
         Catch ex As MySqlException
             MessageBox.Show("A database error occurred during registration: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Me.Show()
         Finally
             If con.State = ConnectionState.Open Then con.Close()
         End Try
     End Sub
+
+
 
     Private Function AccountExistsInAllTables(username As String, email As String) As Boolean
         Dim query As String =
@@ -439,6 +477,61 @@ Public Class BorrowerCreateAccount
         End If
 
     End Sub
+
+    ''send email verification :p'''
+    Private Function GenerateOTP() As String
+        Dim rand As New Random()
+        Return rand.Next(100000, 999999).ToString()
+    End Function
+
+    Private Sub GetEmailConfig(ByRef email As String, ByRef password As String)
+        Dim sql As String = "SELECT Email, AppPassword FROM email_config LIMIT 1"
+
+        Using con As New MySqlConnection(connectionString)
+            Using cmd As New MySqlCommand(sql, con)
+                con.Open()
+                Using rdr = cmd.ExecuteReader()
+                    If rdr.Read() Then
+                        email = rdr("Email").ToString()
+                        password = rdr("AppPassword").ToString()
+                    End If
+                End Using
+            End Using
+        End Using
+    End Sub
+
+
+    Private Function SendVerificationEmail(targetEmail As String, otpCode As String) As Boolean
+        Try
+            Dim fromEmail As String = ""
+            Dim appPassword As String = ""
+
+            GetEmailConfig(fromEmail, appPassword)
+
+            Dim mail As New MailMessage()
+            mail.From = New MailAddress(fromEmail, "MDA-LMS Support")
+            mail.To.Add(targetEmail)
+            mail.Subject = "MDA-LMS Account Verification Code"
+            mail.Body = "Your verification code is: " & otpCode & vbCrLf & vbCrLf & "Please enter this code to complete your registration."
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+
+            Dim smtp As New SmtpClient("smtp.gmail.com")
+            smtp.Port = 587
+            smtp.EnableSsl = True
+            smtp.UseDefaultCredentials = False
+            smtp.Credentials = New NetworkCredential(fromEmail, appPassword)
+            smtp.DeliveryMethod = SmtpDeliveryMethod.Network
+
+            smtp.Send(mail)
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show("Failed to send email: " & ex.Message)
+            Return False
+        End Try
+    End Function
+
 
 
 End Class
