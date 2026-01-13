@@ -28,6 +28,8 @@ Public Class Borrowing
     End Sub
 
     Public Sub refreshborrowingsu()
+
+
         Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
         Dim borrowerID As String = GlobalVarsModule.CurrentBorrowerID
 
@@ -58,6 +60,7 @@ Public Class Borrowing
                 DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
                 DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
                 DataGridView1.ClearSelection()
+
             End Using
         Catch ex As Exception
             MessageBox.Show("Error loading borrowing records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)

@@ -101,10 +101,9 @@ Public Class BookBorrowingConfirmation
         Dim con As New MySqlConnection(connectionString)
 
         Dim finalBorrowedDate As String = selectedRow.Cells("BorrowedDate").Value.ToString()
-
         Dim bDate As DateTime = Convert.ToDateTime(finalBorrowedDate)
-        Dim daysToAdd As Integer = 0
 
+        Dim daysToAdd As Integer = 0
         If borrowerType.ToLower() = "student" Then
             daysToAdd = studentLimit
         ElseIf borrowerType.ToLower() = "teacher" Then
@@ -115,17 +114,33 @@ Public Class BookBorrowingConfirmation
 
         Dim finalLRN As String = If(lbllrn.Text = "--", "", lbllrn.Text)
         Dim finalEmpNo As String = If(lblemployeeno.Text = "--", "", lblemployeeno.Text)
+
         Dim bookDetailsList As New List(Of Dictionary(Of String, String))
         Dim totalBooksConfirmed As Integer = 0
 
         Try
             con.Open()
 
+            Dim updateDueSql As String =
+            "UPDATE borrowing_tbl 
+             SET DueDate = @DueDate 
+             WHERE TransactionReceipt = @TID"
 
-            Dim comGetBooks As String = "SELECT AccessionID, BookTitle, ISBN, Barcode, Shelf FROM `borrowing_tbl` WHERE `TransactionReceipt` = @TID AND AccessionID IS NOT NULL"
+            Using cmdUpdateDue As New MySqlCommand(updateDueSql, con)
+                cmdUpdateDue.Parameters.AddWithValue("@DueDate", finalDueDate)
+                cmdUpdateDue.Parameters.AddWithValue("@TID", transactionReceiptID)
+                cmdUpdateDue.ExecuteNonQuery()
+            End Using
+
+            Dim comGetBooks As String =
+            "SELECT AccessionID, BookTitle, ISBN, Barcode, Shelf 
+             FROM borrowing_tbl 
+             WHERE TransactionReceipt = @TID AND AccessionID IS NOT NULL"
+
             Using cmdGetBooks As New MySqlCommand(comGetBooks, con)
                 cmdGetBooks.Parameters.AddWithValue("@TID", transactionReceiptID)
                 Dim reader As MySqlDataReader = cmdGetBooks.ExecuteReader()
+
                 While reader.Read()
                     Dim bookData As New Dictionary(Of String, String)
                     bookData.Add("AccessionID", reader("AccessionID").ToString())
@@ -139,27 +154,35 @@ Public Class BookBorrowingConfirmation
             End Using
 
             If bookDetailsList.Count = 0 Then
-                MsgBox("No books found for this transaction receipt to confirm. Please check the 'borrowing_tbl' data.", vbExclamation, "No Books Found")
+                MsgBox("No books found for this transaction receipt.", vbExclamation)
                 Exit Sub
             End If
 
             For Each bookData In bookDetailsList
+
                 Dim finalAccessionID As String = bookData("AccessionID")
                 Dim finalBookTitle As String = bookData("BookTitle")
                 Dim finalISBN As String = bookData("ISBN")
                 Dim finalBarcode As String = bookData("Barcode")
                 Dim finalShelf As String = bookData("Shelf")
 
-                Dim checkHistoryCom As String = "SELECT COUNT(*) FROM borrowinghistory_tbl WHERE TransactionReceipt = @TID AND AccessionID = @ACCID AND Status = 'Granted'"
+                Dim checkHistoryCom As String =
+                "SELECT COUNT(*) FROM borrowinghistory_tbl 
+                 WHERE TransactionReceipt = @TID 
+                 AND AccessionID = @ACCID 
+                 AND Status = 'Granted'"
+
                 Using cmdCheckHistory As New MySqlCommand(checkHistoryCom, con)
                     cmdCheckHistory.Parameters.AddWithValue("@TID", transactionReceiptID)
                     cmdCheckHistory.Parameters.AddWithValue("@ACCID", finalAccessionID)
 
                     If CInt(cmdCheckHistory.ExecuteScalar()) = 0 Then
 
-
-                        Dim insertHistoryCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt, Status) " &
-                                                     "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt, @Status)"
+                        Dim insertHistoryCom As String =
+                        "INSERT INTO borrowinghistory_tbl 
+                        (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate, DueDate, TransactionReceipt, Status)
+                        VALUES
+                        (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @DDate, @TransactionReceipt, @Status)"
 
                         Using cmdHistory As New MySqlCommand(insertHistoryCom, con)
                             cmdHistory.Parameters.AddWithValue("@Borrower", borrowerType)
@@ -175,17 +198,20 @@ Public Class BookBorrowingConfirmation
                             cmdHistory.Parameters.AddWithValue("@DDate", finalDueDate)
                             cmdHistory.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
                             cmdHistory.Parameters.AddWithValue("@Status", "Granted")
-
                             cmdHistory.ExecuteNonQuery()
+                        End Using
 
-                            pendingstats(finalAccessionID, "Borrowed")
-                            totalBooksConfirmed += 1
+                        pendingstats(finalAccessionID, "Borrowed")
+                        totalBooksConfirmed += 1
 
-                            Dim updateAcquisitionSql As String = "UPDATE acquisition_tbl SET Quantity = Quantity - 1 WHERE BookTitle = @BookTitle AND Quantity > 0"
-                            Using updateAcquisitionCmd As New MySqlCommand(updateAcquisitionSql, con)
-                                updateAcquisitionCmd.Parameters.AddWithValue("@BookTitle", finalBookTitle)
-                                updateAcquisitionCmd.ExecuteNonQuery()
-                            End Using
+                        Dim updateAcquisitionSql As String =
+                        "UPDATE acquisition_tbl 
+                         SET Quantity = Quantity - 1 
+                         WHERE BookTitle = @BookTitle AND Quantity > 0"
+
+                        Using updateAcquisitionCmd As New MySqlCommand(updateAcquisitionSql, con)
+                            updateAcquisitionCmd.Parameters.AddWithValue("@BookTitle", finalBookTitle)
+                            updateAcquisitionCmd.ExecuteNonQuery()
                         End Using
                     End If
                 End Using
@@ -197,38 +223,27 @@ Public Class BookBorrowingConfirmation
                 cmdDeleteConfirm.ExecuteNonQuery()
             End Using
 
-            For Each form In Application.OpenForms
-                If TypeOf form Is Borrowing Then
-                    Dim brwr = DirectCast(form, Borrowing)
-                    brwr.refreshborrowingsu()
-                End If
-            Next
-            For Each form In Application.OpenForms
-                If TypeOf form Is MainForm Then
-                    Dim lbllabel = DirectCast(form, MainForm)
-                    lbllabel.lblborrowcount()
-                End If
-            Next
-            For Each form In Application.OpenForms
-                If TypeOf form Is PrintReceiptForm Then
-                    Dim lblload = DirectCast(form, PrintReceiptForm)
-                    lblload.refreshreceipt()
-                End If
-            Next
-
             InsertPrintReceipt(borrowerType, borrowerName, finalBorrowedDate, transactionReceiptID, borrowedBookCount, finalDueDate.ToString("yyyy-MM-dd"))
 
-            MsgBox(totalBooksConfirmed.ToString() & " books successfully GRANTED and recorded. Proceed to Print Receipt.", vbInformation, "Success")
+            MsgBox(totalBooksConfirmed & " books successfully GRANTED.", vbInformation)
 
         Catch ex As Exception
-            MessageBox.Show("Error granting record: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error granting record: " & ex.Message)
+
         Finally
             If con.State = ConnectionState.Open Then con.Close()
+
             refreshconfirmation()
+
+            DataGridView1.Columns("DueDate").DefaultCellStyle.Format = "MMM dd, yyyy"
+
+
             ClearDetails()
             lblduedate.Text = "--"
         End Try
+
     End Sub
+
 
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
