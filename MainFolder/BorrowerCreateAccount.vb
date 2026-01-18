@@ -300,7 +300,6 @@ Public Class BorrowerCreateAccount
         Dim Email As String = txtemail.Text.Trim()
         Dim FullName As String = lblfullname.Text.Trim()
 
-
         If String.IsNullOrWhiteSpace(IDValue) Then
             MessageBox.Show($"Please enter your {IDType}.", "Required Field", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
@@ -310,7 +309,6 @@ Public Class BorrowerCreateAccount
             MessageBox.Show("Please enter both username and password.", "Required Fields", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
-
 
         If paswurdstringth(Password) < 4 Then
             MessageBox.Show("The password you entered is too weak or invalid. Please use a stronger password.", "Invalid Password", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -327,7 +325,6 @@ Public Class BorrowerCreateAccount
             Return
         End If
 
-
         If CheckIfAccountExists(IDValue, IDType, Username) Then
             MessageBox.Show("An account already exists for this ID or username.", "Account Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
@@ -337,20 +334,21 @@ Public Class BorrowerCreateAccount
 
         If SendVerificationEmail(Email, generatedOTP) Then
 
-            Me.Hide()
-            login.Hide()
 
-            Dim userOTP As String = InputBox("A verification code has been sent to " & Email & ". Please enter the 6-digit code below:", "Email Verification")
+
+            Dim userOTP As String = InputBox(
+            "A verification code has been sent to " & Email & "." & vbCrLf &
+            "Please enter the 6-digit code below:",
+            "Email Verification"
+        )
 
             If String.IsNullOrWhiteSpace(userOTP) Then
                 MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                Me.Show()
                 Return
             End If
 
             If userOTP <> generatedOTP Then
                 MessageBox.Show("Invalid verification code. Registration cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Me.Show()
                 Return
             End If
 
@@ -358,12 +356,13 @@ Public Class BorrowerCreateAccount
             Return
         End If
 
-
         Dim con As New MySqlConnection(connectionString)
-        Dim sql As String = $"INSERT INTO `borroweredit_tbl` (`{IDType}`, `Username`, `Password`, `Email`) VALUES (@ID, @User, @Pass, @Email)"
+        Dim sql As String =
+        $"INSERT INTO `borroweredit_tbl` (`{IDType}`, `Username`, `Password`, `Email`) VALUES (@ID, @User, @Pass, @Email)"
 
         Try
             con.Open()
+
             Using cmd As New MySqlCommand(sql, con)
                 cmd.Parameters.AddWithValue("@ID", IDValue)
                 cmd.Parameters.AddWithValue("@User", Username)
@@ -375,20 +374,22 @@ Public Class BorrowerCreateAccount
                 If rowsAffected > 0 Then
                     MessageBox.Show("Account successfully created.", "Registration Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     clear()
+
                     login.Show()
                     Me.Hide()
                 Else
                     MessageBox.Show("Account creation failed. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Me.Show()
                 End If
             End Using
+
         Catch ex As MySqlException
             MessageBox.Show("A database error occurred during registration: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Me.Show()
         Finally
             If con.State = ConnectionState.Open Then con.Close()
         End Try
+
     End Sub
+
 
 
 

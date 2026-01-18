@@ -42,20 +42,7 @@ Public Class MainForm
 
     Private Sub tmrDateChecker_Tick(sender As Object, e As EventArgs) Handles tmrDateChecker.Tick
 
-        If Date.Today <> lastCheckedDate Then
-
-            OverdueEmailAlreadySent = False
-            LastProcessedDate = Date.MinValue
-            lastCheckedDate = Date.Today
-
-            Task.Run(Sub() SendOverdueBorrowerNotifications())
-
-        Else
-
-            If Not OverdueEmailAlreadySent OrElse LastProcessedDate <> Date.Today Then
-                Task.Run(Sub() SendOverdueBorrowerNotifications())
-            End If
-        End If
+        Task.Run(Sub() SendOverdueBorrowerNotifications())
 
     End Sub
 

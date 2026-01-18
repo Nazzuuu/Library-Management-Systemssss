@@ -695,34 +695,42 @@ Module GlobalVarsModule
     End Function
 
     Public Sub TriggerDatabaseUpdated()
-        RaiseEvent DatabaseUpdated()
-    End Sub
-    Public OverdueEmailAlreadySent As Boolean = False
 
+        RaiseEvent DatabaseUpdated()
+
+    End Sub
+
+    Public OverdueEmailAlreadySent As Boolean = False
     Public LastProcessedDate As Date = Date.MinValue
 
     Public Sub SendOverdueBorrowerNotifications()
 
-        If OverdueEmailAlreadySent AndAlso LastProcessedDate = Date.Today Then
+
+        If LastProcessedDate = Date.Today AndAlso OverdueEmailAlreadySent Then
             Exit Sub
         End If
 
         Dim laptopDate As String = DateTime.Now.ToString("yyyy-MM-dd")
+
         Dim sql As String =
         "SELECT be.Email, bw.Name, bw.DueDate " &
         "FROM borrowing_tbl bw " &
         "JOIN borroweredit_tbl be ON bw.LRN = be.LRN OR bw.EmployeeNo = be.EmployeeNo " &
         "JOIN acession_tbl ac ON bw.AccessionID = ac.AccessionID " &
-        "WHERE bw.DueDate < '" & laptopDate & "' AND (ac.Status = 'borrowed' OR ac.Status = 'overdue')"
+        "WHERE bw.DueDate < '" & laptopDate & "' " &
+        "AND (ac.Status = 'borrowed' OR ac.Status = 'overdue')"
 
         Try
             Using con As New MySqlConnection(connectionString)
                 Using cmd As New MySqlCommand(sql, con)
                     con.Open()
+
                     Using rdr = cmd.ExecuteReader()
                         Dim recordFound As Boolean = False
+
                         While rdr.Read()
                             recordFound = True
+
                             Dim email As String = rdr("Email").ToString()
                             If String.IsNullOrWhiteSpace(email) Then Continue While
 
@@ -739,19 +747,21 @@ Module GlobalVarsModule
                             SendEmailNotification_Global(email, "MDA-LMS Overdue Notice", body)
                         End While
 
-
                         If recordFound Then
                             OverdueEmailAlreadySent = True
                             LastProcessedDate = Date.Today
                         End If
+
                     End Using
                 End Using
             End Using
-        Catch
 
+        Catch
             OverdueEmailAlreadySent = False
         End Try
+
     End Sub
+
 
     Private Sub SendEmailNotification_Global(targetEmail As String, subject As String, body As String)
 
@@ -772,12 +782,16 @@ Module GlobalVarsModule
             End Using
         Catch
         End Try
+
     End Sub
 
+
     Private Sub GetEmailConfig_Global(ByRef email As String, ByRef password As String)
+
         Using con As New MySqlConnection(connectionString)
             Using cmd As New MySqlCommand("SELECT Email, AppPassword FROM email_config LIMIT 1", con)
                 con.Open()
+
                 Using rdr = cmd.ExecuteReader()
                     If rdr.Read() Then
                         email = rdr("Email").ToString()
@@ -786,6 +800,8 @@ Module GlobalVarsModule
                 End Using
             End Using
         End Using
+
     End Sub
+
 
 End Module
