@@ -387,7 +387,7 @@ Partial Class Penalty_Management
         Name = "Penalty_Management"
         ShowIcon = False
         StartPosition = FormStartPosition.CenterScreen
-        Text = "0"
+        Text = "Penalty Management"
         Guna2GradientPanel1.ResumeLayout(False)
         Guna2GradientPanel1.PerformLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()

@@ -6,6 +6,8 @@ Imports System.ComponentModel
 Public Class MainForm
     Public BorrowerEditsInfoForm As Borrowereditsinfo
     Private lastCheckedDate As Date = Date.Today
+    Private allowRealClose As Boolean = False
+
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         If GlobalVarsModule.IsInDesignMode(Me) Then Return
@@ -152,7 +154,21 @@ Public Class MainForm
         End If
 
     End Sub
+
+    Private Sub MainForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+
+
+        If Not allowRealClose AndAlso e.CloseReason = CloseReason.UserClosing Then
+            e.Cancel = True
+            btnlogoutt.PerformClick()
+        End If
+
+    End Sub
+
+
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
+
+        allowRealClose = True
 
         Try
 
@@ -1427,10 +1443,6 @@ Public Class MainForm
         Borrowereditsinfo.ShowDialog()
     End Sub
 
-    Private Sub DurationMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DurationMaintenanceToolStripMenuItem.Click
-        DurationForm.ShowDialog()
-    End Sub
-
     Private Sub AuthorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AuthorToolStripMenuItem.Click
         Author.ShowDialog()
     End Sub
@@ -1453,5 +1465,9 @@ Public Class MainForm
 
     Private Sub supplier_click(sender As Object, e As EventArgs) Handles SupplierToolStripMenuItem.Click
         Supplier.ShowDialog()
+    End Sub
+
+    Private Sub BorrowLimitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowLimitToolStripMenuItem.Click
+        DurationForm.ShowDialog()
     End Sub
 End Class

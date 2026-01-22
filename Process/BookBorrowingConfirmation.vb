@@ -15,6 +15,7 @@ Public Class BookBorrowingConfirmation
     End Sub
 
     Public Sub refreshconfirmation()
+
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT ID, Borrower, Name, BorrowedDate, BorrowedBookCount, DueDate, TransactionReceipt, Status FROM `confimation_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -23,17 +24,26 @@ Public Class BookBorrowingConfirmation
         Try
             con.Open()
             adap.Fill(ds, "info")
+
+            DataGridView1.AutoGenerateColumns = True
             DataGridView1.DataSource = ds.Tables("info")
-            DataGridView1.Columns("ID").Visible = False
+
+
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-        Catch ex As Exception
 
+        Catch ex As Exception
+            MessageBox.Show(ex.Message)
         Finally
             If con.State = ConnectionState.Open Then con.Close()
         End Try
     End Sub
+
 
     Private Async Sub OnDatabaseUpdated()
         Try
@@ -717,7 +727,7 @@ Public Class BookBorrowingConfirmation
         Dim idToDecline As Integer = CInt(selectedRow.Cells("ID").Value)
         Dim transactionReceiptID As String = selectedRow.Cells("TransactionReceipt").Value.ToString
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Dim bookDetailsList As New List(Of Dictionary(Of String, String))
 
