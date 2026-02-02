@@ -5,6 +5,7 @@ Imports System.ComponentModel
 
 Public Class MainForm
     Public BorrowerEditsInfoForm As Borrowereditsinfo
+    Private lastCheckedDate As Date = Date.Today
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         If GlobalVarsModule.IsInDesignMode(Me) Then Return
@@ -31,7 +32,30 @@ Public Class MainForm
         GlobalVarsModule.StartAutoRefresh()
         GlobalVarsModule.InitializeDatabaseMonitor()
         LoadDurationSettings()
-        SendOverdueBorrowerNotifications()
+
+        Dim t As New System.Threading.Thread(AddressOf SendOverdueBorrowerNotifications)
+        t.IsBackground = True
+        t.Start()
+
+    End Sub
+
+
+    Private Sub tmrDateChecker_Tick(sender As Object, e As EventArgs) Handles tmrDateChecker.Tick
+
+        If Date.Today <> lastCheckedDate Then
+
+            OverdueEmailAlreadySent = False
+            LastProcessedDate = Date.MinValue
+            lastCheckedDate = Date.Today
+
+            Task.Run(Sub() SendOverdueBorrowerNotifications())
+
+        Else
+
+            If Not OverdueEmailAlreadySent OrElse LastProcessedDate <> Date.Today Then
+                Task.Run(Sub() SendOverdueBorrowerNotifications())
+            End If
+        End If
 
     End Sub
 

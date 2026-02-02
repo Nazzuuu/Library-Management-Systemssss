@@ -1,7 +1,8 @@
 ﻿Imports System.Data
 Imports System.IO
 Imports MySql.Data.MySqlClient
-
+Imports System.Net
+Imports System.Net.Mail
 Public Class Borrowereditsinfo
 
     Private selectedBorrowerID As Integer = -1
@@ -234,6 +235,7 @@ Public Class Borrowereditsinfo
     End Function
 
 
+
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
 
         If selectedBorrowerID = -1 Then
@@ -253,16 +255,33 @@ Public Class Borrowereditsinfo
 
 
         If Not IsPasswordValid() Then
-
             Return
         End If
-
 
         Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
         If Not emailRegex.IsMatch(newEmail) Then
             MessageBox.Show("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", "Invalid Email", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
+
+        Dim originalEmail As String = GetOriginalEmail(selectedBorrowerID)
+        If Not originalEmail.Equals(newEmail, StringComparison.OrdinalIgnoreCase) Then
+            Dim generatedOTP As String = GenerateOTP()
+            If SendVerificationEmail(newEmail, generatedOTP) Then
+                Dim userOTP As String = InputBox("A verification code has been sent to " & newEmail & ". Please enter the 6-digit code below:", "Email Verification")
+                If String.IsNullOrWhiteSpace(userOTP) Then
+                    MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+                If userOTP <> generatedOTP Then
+                    MessageBox.Show("Invalid verification code. Update cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
+                End If
+            Else
+                Return
+            End If
+        End If
+
 
         Using con As New MySqlConnection(GlobalVarsModule.connectionString)
             Try
@@ -304,7 +323,6 @@ Public Class Borrowereditsinfo
 
 
                 Dim coms As String = "UPDATE borroweredit_tbl SET Username = @User, Password = @Pass, Email = @Email WHERE ID = @SelectedID"
-                Dim originalEmail As String = GetOriginalEmail(selectedBorrowerID)
 
                 Using commandsu As New MySqlCommand(coms, con)
                     commandsu.Parameters.AddWithValue("@User", newUsername)
@@ -646,4 +664,57 @@ Public Class Borrowereditsinfo
         End If
 
     End Sub
+
+
+    Private Function GenerateOTP() As String
+        Dim rand As New Random()
+        Return rand.Next(100000, 999999).ToString()
+    End Function
+
+    Private Sub GetEmailConfig(ByRef email As String, ByRef password As String)
+        Dim sql As String = "SELECT Email, AppPassword FROM email_config LIMIT 1"
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Using cmd As New MySqlCommand(sql, con)
+                con.Open()
+                Using rdr = cmd.ExecuteReader()
+                    If rdr.Read() Then
+                        email = rdr("Email").ToString()
+                        password = rdr("AppPassword").ToString()
+                    End If
+                End Using
+            End Using
+        End Using
+    End Sub
+
+    Private Function SendVerificationEmail(targetEmail As String, otpCode As String) As Boolean
+        Try
+            Dim fromEmail As String = ""
+            Dim appPassword As String = ""
+
+            GetEmailConfig(fromEmail, appPassword)
+
+            Dim mail As New MailMessage()
+            mail.From = New MailAddress(fromEmail, "MDA-LMS Support")
+            mail.To.Add(targetEmail)
+            mail.Subject = "MDA-LMS Account Verification Code"
+            mail.Body = "Your verification code is: " & otpCode & vbCrLf & vbCrLf & "Please enter this code to complete your account update."
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+
+            Dim smtp As New SmtpClient("smtp.gmail.com")
+            smtp.Port = 587
+            smtp.EnableSsl = True
+            smtp.UseDefaultCredentials = False
+            smtp.Credentials = New NetworkCredential(fromEmail, appPassword)
+            smtp.DeliveryMethod = SmtpDeliveryMethod.Network
+
+            smtp.Send(mail)
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show("Failed to send email: " & ex.Message)
+            Return False
+        End Try
+    End Function
 End Class

@@ -413,7 +413,7 @@ TryBorrower:
 
         If GlobalVarsModule.IsInDesignMode(Me) Then Return
 
-        TopMost = True
+        'TopMost = True
         MainForm.Refresh()
         Me.KeyPreview = True
         txtpass.PasswordChar = "•"

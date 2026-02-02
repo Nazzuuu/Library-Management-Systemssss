@@ -199,7 +199,7 @@ Partial Class Borrowereditsinfo
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemail.Location = New Point(296, 91)
         txtemail.Margin = New Padding(5)
-        txtemail.MaxLength = 20
+        txtemail.MaxLength = 50
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""

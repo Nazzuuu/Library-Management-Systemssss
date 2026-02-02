@@ -697,47 +697,61 @@ Module GlobalVarsModule
     Public Sub TriggerDatabaseUpdated()
         RaiseEvent DatabaseUpdated()
     End Sub
+    Public OverdueEmailAlreadySent As Boolean = False
 
-    'di patapos toh mauumay na ko agad. iwan ko muna yan diyan''
+    Public LastProcessedDate As Date = Date.MinValue
 
     Public Sub SendOverdueBorrowerNotifications()
 
+        If OverdueEmailAlreadySent AndAlso LastProcessedDate = Date.Today Then
+            Exit Sub
+        End If
+
+        Dim laptopDate As String = DateTime.Now.ToString("yyyy-MM-dd")
         Dim sql As String =
         "SELECT be.Email, bw.Name, bw.DueDate " &
         "FROM borrowing_tbl bw " &
-        "JOIN borrower_tbl br ON bw.LRN = br.LRN OR bw.EmployeeNo = br.EmployeeNo " &
         "JOIN borroweredit_tbl be ON bw.LRN = be.LRN OR bw.EmployeeNo = be.EmployeeNo " &
         "JOIN acession_tbl ac ON bw.AccessionID = ac.AccessionID " &
-        "WHERE bw.DueDate < CURDATE() AND ac.Status = 'overdue'"
+        "WHERE bw.DueDate < '" & laptopDate & "' AND (ac.Status = 'borrowed' OR ac.Status = 'overdue')"
 
-        Using con As New MySqlConnection(connectionString)
-            Using cmd As New MySqlCommand(sql, con)
-                con.Open()
+        Try
+            Using con As New MySqlConnection(connectionString)
+                Using cmd As New MySqlCommand(sql, con)
+                    con.Open()
+                    Using rdr = cmd.ExecuteReader()
+                        Dim recordFound As Boolean = False
+                        While rdr.Read()
+                            recordFound = True
+                            Dim email As String = rdr("Email").ToString()
+                            If String.IsNullOrWhiteSpace(email) Then Continue While
 
-                Using rdr = cmd.ExecuteReader()
-                    While rdr.Read()
+                            Dim fullname As String = rdr("Name").ToString()
+                            Dim duedate As String = Convert.ToDateTime(rdr("DueDate")).ToShortDateString()
 
-                        Dim email As String = rdr("Email").ToString()
-                        Dim fullname As String = rdr("Name").ToString()
-                        Dim duedate As String = Convert.ToDateTime(rdr("DueDate")).ToShortDateString()
+                            Dim body As String =
+                            "Hello " & fullname & "," & vbCrLf & vbCrLf &
+                            "Our records show that you currently have an overdue book." & vbCrLf &
+                            "Due Date: " & duedate & vbCrLf & vbCrLf &
+                            "Please return the book immediately to avoid penalties." & vbCrLf & vbCrLf &
+                            "Monlimar Development Academy Library Management System (MDA-LMS)"
 
-                        Dim body As String =
-                        "Hello " & fullname & "," & vbCrLf & vbCrLf &
-                        "Our records show that you currently have an overdue book." & vbCrLf &
-                        "Due Date: " & duedate & vbCrLf & vbCrLf &
-                        "Please return the book immediately to avoid penalties." & vbCrLf & vbCrLf &
-                        "MDA-LMS Library"
+                            SendEmailNotification_Global(email, "MDA-LMS Overdue Notice", body)
+                        End While
 
-                        SendEmailNotification_Global(email, "MDA-LMS Overdue Notice", body)
 
-                    End While
+                        If recordFound Then
+                            OverdueEmailAlreadySent = True
+                            LastProcessedDate = Date.Today
+                        End If
+                    End Using
                 End Using
-
             End Using
-        End Using
+        Catch
 
+            OverdueEmailAlreadySent = False
+        End Try
     End Sub
-
 
     Private Sub SendEmailNotification_Global(targetEmail As String, subject As String, body As String)
 
@@ -745,34 +759,24 @@ Module GlobalVarsModule
         Dim appPassword As String = ""
 
         GetEmailConfig_Global(fromEmail, appPassword)
+        If String.IsNullOrWhiteSpace(fromEmail) OrElse String.IsNullOrWhiteSpace(appPassword) Then Exit Sub
 
-        Dim mail As New MailMessage()
-        mail.From = New MailAddress(fromEmail, "MDA-LMS Library")
-        mail.To.Add(targetEmail)
-        mail.Subject = subject
-        mail.Body = body
+        Try
+            Dim mail As New MailMessage(fromEmail, targetEmail, subject, body)
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
 
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
-
-        Dim smtp As New SmtpClient("smtp.gmail.com")
-        smtp.Port = 587
-        smtp.EnableSsl = True
-        smtp.UseDefaultCredentials = False
-        smtp.Credentials = New NetworkCredential(fromEmail, appPassword)
-        smtp.DeliveryMethod = SmtpDeliveryMethod.Network
-
-        smtp.Send(mail)
-
+            Using smtp As New SmtpClient("smtp.gmail.com", 587)
+                smtp.EnableSsl = True
+                smtp.Credentials = New NetworkCredential(fromEmail, appPassword)
+                smtp.Send(mail)
+            End Using
+        Catch
+        End Try
     End Sub
 
-
-
     Private Sub GetEmailConfig_Global(ByRef email As String, ByRef password As String)
-
-        Dim sql As String = "SELECT Email, AppPassword FROM email_config LIMIT 1"
-
         Using con As New MySqlConnection(connectionString)
-            Using cmd As New MySqlCommand(sql, con)
+            Using cmd As New MySqlCommand("SELECT Email, AppPassword FROM email_config LIMIT 1", con)
                 con.Open()
                 Using rdr = cmd.ExecuteReader()
                     If rdr.Read() Then
@@ -782,7 +786,6 @@ Module GlobalVarsModule
                 End Using
             End Using
         End Using
-
     End Sub
 
 End Module

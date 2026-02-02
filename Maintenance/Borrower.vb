@@ -1495,5 +1495,12 @@ Public Class Borrower
     End Sub
 
 
+    Private Sub DataGridView1_MouseHover(sender As Object, e As EventArgs) Handles DataGridView1.MouseHover
+        PauseAutoRefresh(DataGridView1)
+    End Sub
+
+    Private Sub datagridview1_MouseLeave(sender As Object, e As EventArgs) Handles DataGridView1.MouseLeave
+        ResumeAutoRefresh(DataGridView1)
+    End Sub
 
 End Class
