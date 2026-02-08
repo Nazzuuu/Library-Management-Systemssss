@@ -27,28 +27,28 @@ Partial Class AuditTrail
         Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_timein = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         cbfilter = New Guna.UI2.WinForms.Guna2ComboBox()
-        Label3 = New Label()
-        Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
-        Label13 = New Label()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         DataGridView1 = New DataGridView()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
+        Label3 = New Label()
+        Label13 = New Label()
+        Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         panel_timein.SuspendLayout()
         Guna2GroupBox1.SuspendLayout()
-        Guna2Panel1.SuspendLayout()
         Guna2GradientPanel1.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
+        Guna2Panel1.SuspendLayout()
         SuspendLayout()
         ' 
         ' panel_timein
@@ -99,42 +99,6 @@ Partial Class AuditTrail
         cbfilter.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         cbfilter.Size = New Size(169, 36)
         cbfilter.TabIndex = 95
-        ' 
-        ' Label3
-        ' 
-        Label3.AutoSize = True
-        Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(1031, 28)
-        Label3.Name = "Label3"
-        Label3.Size = New Size(53, 16)
-        Label3.TabIndex = 94
-        Label3.Text = "FILTER:"
-        ' 
-        ' Guna2Panel1
-        ' 
-        Guna2Panel1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Guna2Panel1.BorderRadius = 5
-        Guna2Panel1.BorderStyle = Drawing2D.DashStyle.Dash
-        Guna2Panel1.BorderThickness = 2
-        Guna2Panel1.Controls.Add(Label13)
-        Guna2Panel1.CustomizableEdges = CustomizableEdges3
-        Guna2Panel1.Location = New Point(30, 18)
-        Guna2Panel1.Name = "Guna2Panel1"
-        Guna2Panel1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
-        Guna2Panel1.Size = New Size(103, 35)
-        Guna2Panel1.TabIndex = 93
-        ' 
-        ' Label13
-        ' 
-        Label13.AutoSize = True
-        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Label13.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label13.Location = New Point(15, 9)
-        Label13.Name = "Label13"
-        Label13.Size = New Size(73, 16)
-        Label13.TabIndex = 92
-        Label13.Text = "Audit Trail"
         ' 
         ' Guna2GradientPanel1
         ' 
@@ -203,6 +167,42 @@ Partial Class AuditTrail
         Guna2Elipse1.BorderRadius = 9
         Guna2Elipse1.TargetControl = DataGridView1
         ' 
+        ' Label3
+        ' 
+        Label3.AutoSize = True
+        Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label3.Location = New Point(1031, 28)
+        Label3.Name = "Label3"
+        Label3.Size = New Size(53, 16)
+        Label3.TabIndex = 94
+        Label3.Text = "FILTER:"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        Label13.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Label13.Location = New Point(15, 9)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(73, 16)
+        Label13.TabIndex = 92
+        Label13.Text = "Audit Trail"
+        ' 
+        ' Guna2Panel1
+        ' 
+        Guna2Panel1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2Panel1.BorderRadius = 5
+        Guna2Panel1.BorderStyle = Drawing2D.DashStyle.Dash
+        Guna2Panel1.BorderThickness = 2
+        Guna2Panel1.Controls.Add(Label13)
+        Guna2Panel1.CustomizableEdges = CustomizableEdges3
+        Guna2Panel1.Location = New Point(30, 18)
+        Guna2Panel1.Name = "Guna2Panel1"
+        Guna2Panel1.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        Guna2Panel1.Size = New Size(103, 35)
+        Guna2Panel1.TabIndex = 93
+        ' 
         ' AuditTrail
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -219,20 +219,20 @@ Partial Class AuditTrail
         panel_timein.ResumeLayout(False)
         Guna2GroupBox1.ResumeLayout(False)
         Guna2GroupBox1.PerformLayout()
-        Guna2Panel1.ResumeLayout(False)
-        Guna2Panel1.PerformLayout()
         Guna2GradientPanel1.ResumeLayout(False)
         CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
+        Guna2Panel1.ResumeLayout(False)
+        Guna2Panel1.PerformLayout()
         ResumeLayout(False)
     End Sub
 
     Friend WithEvents panel_timein As Panel
     Friend WithEvents Guna2GroupBox1 As Guna.UI2.WinForms.Guna2GroupBox
-    Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
-    Friend WithEvents Label13 As Label
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Guna2Elipse1 As Guna.UI2.WinForms.Guna2Elipse
     Friend WithEvents cbfilter As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
+    Friend WithEvents Label13 As Label
 End Class

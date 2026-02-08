@@ -42,9 +42,11 @@ Public Class MainForm
     End Sub
 
 
+
     Private Sub tmrDateChecker_Tick(sender As Object, e As EventArgs) Handles tmrDateChecker.Tick
 
-        Task.Run(Sub() SendOverdueBorrowerNotifications())
+        'Task.Run(Sub() SendOverdueBorrowerNotifications())
+        SendOverdueBorrowerNotifications()
 
     End Sub
 
@@ -155,20 +157,20 @@ Public Class MainForm
 
     End Sub
 
-    Private Sub MainForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+    'Private Sub MainForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
 
 
-        If Not allowRealClose AndAlso e.CloseReason = CloseReason.UserClosing Then
-            e.Cancel = True
-            btnlogoutt.PerformClick()
-        End If
+    '    If Not allowRealClose AndAlso e.CloseReason = CloseReason.UserClosing Then
+    '        e.Cancel = True
+    '        btnlogoutt.PerformClick()
+    '    End If
 
-    End Sub
+    'End Sub
 
 
     Private Sub btnlogoutt_Click(sender As Object, e As EventArgs) Handles btnlogoutt.Click
 
-        allowRealClose = True
+        'allowRealClose = True
 
         Try
 
@@ -297,7 +299,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users)
-        Panel_dash.Controls.Remove(Acquisition)
+        Panel_dash.Controls.Remove(Acquisition2)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
         Panel_dash.Controls.Remove(Borrowing)
@@ -308,6 +310,8 @@ Public Class MainForm
         Panel_dash.Controls.Remove(BookBorrowingConfirmation)
         Panel_dash.Controls.Remove(Returning)
         Panel_dash.Controls.Remove(AuditTrail)
+        Panel_dash.Controls.Remove(ReportsForm)
+
         Panel_User.Show()
 
         If lumabasna = False Then
@@ -338,7 +342,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users)
-        Panel_dash.Controls.Remove(Acquisition)
+        Panel_dash.Controls.Remove(Acquisition2)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
         Panel_dash.Controls.Remove(Borrowing)
@@ -349,6 +353,8 @@ Public Class MainForm
         Panel_dash.Controls.Remove(BookBorrowingConfirmation)
         Panel_dash.Controls.Remove(Returning)
         Panel_dash.Controls.Remove(AuditTrail)
+        Panel_dash.Controls.Remove(ReportsForm)
+
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -378,7 +384,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users)
-        Panel_dash.Controls.Remove(Acquisition)
+        Panel_dash.Controls.Remove(Acquisition2)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
         Panel_dash.Controls.Remove(Borrowing)
@@ -388,6 +394,8 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Penalty)
         Panel_dash.Controls.Remove(BookBorrowingConfirmation)
         Panel_dash.Controls.Remove(Returning)
+        Panel_dash.Controls.Remove(ReportsForm)
+
 
         If lumabasna = False Then
             Panel_dash.Controls.Add(dshboard)
@@ -436,7 +444,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Book)
         Panel_dash.Controls.Remove(Borrower)
         Panel_dash.Controls.Remove(Users)
-        Panel_dash.Controls.Remove(Acquisition)
+        Panel_dash.Controls.Remove(Acquisition2)
         Panel_dash.Controls.Remove(Accession)
         Panel_dash.Controls.Remove(oras)
         Panel_dash.Controls.Remove(Borrowing)
@@ -447,6 +455,8 @@ Public Class MainForm
         Panel_dash.Controls.Remove(BookBorrowingConfirmation)
         Panel_dash.Controls.Remove(Returning)
         Panel_dash.Controls.Remove(AuditTrail)
+        Panel_dash.Controls.Remove(ReportsForm)
+
         Panel_User.Show()
 
 
@@ -1470,4 +1480,20 @@ Public Class MainForm
     Private Sub BorrowLimitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowLimitToolStripMenuItem.Click
         DurationForm.ShowDialog()
     End Sub
+
+    Private Sub ReportsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportsToolStripMenuItem.Click
+        Panel_dash.Controls.Clear()
+
+        With ReportsForm
+            .TopLevel = False
+            .FormBorderStyle = FormBorderStyle.None
+            .Dock = DockStyle.Fill
+            Panel_dash.Controls.Add(ReportsForm)
+            .BringToFront()
+            .Show()
+        End With
+
+        lblform.Text = "REPORTS"
+    End Sub
+
 End Class

@@ -61,7 +61,7 @@ Public Class BorrowerCreateAccount
     End Sub
 
     Public Sub refreshcreate()
-        TopMost = True
+        'TopMost = True
         txtpass.PasswordChar = "•"
 
         Try
@@ -531,6 +531,7 @@ Public Class BorrowerCreateAccount
             MessageBox.Show("Failed to send email: " & ex.Message)
             Return False
         End Try
+
     End Function
 
 

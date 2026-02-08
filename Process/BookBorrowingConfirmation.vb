@@ -95,6 +95,7 @@ Public Class BookBorrowingConfirmation
 
     Private Sub btnconfirm_Click(sender As Object, e As EventArgs) Handles btnconfirm.Click
 
+
         If DataGridView1.SelectedRows.Count = 0 Then
             MsgBox("Please select a record to confirm.", vbExclamation, "No Selection")
             Exit Sub
@@ -234,6 +235,14 @@ Public Class BookBorrowingConfirmation
             End Using
 
             InsertPrintReceipt(borrowerType, borrowerName, finalBorrowedDate, transactionReceiptID, borrowedBookCount, finalDueDate.ToString("yyyy-MM-dd"))
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is MainForm Then
+                    Dim load = DirectCast(form, MainForm)
+                    load.lblborrowcount()
+                End If
+
+            Next
 
             MsgBox(totalBooksConfirmed & " books successfully GRANTED.", vbInformation)
 

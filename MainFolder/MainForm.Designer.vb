@@ -98,14 +98,10 @@ Partial Class MainForm
         MenuStrip3 = New MenuStrip()
         SettingsStripMenuItem = New ToolStripMenuItem()
         Audit_Trail = New ToolStripMenuItem()
+        BorrowLimitToolStripMenuItem = New ToolStripMenuItem()
         BorrowingHistoryToolStripMenuItem = New ToolStripMenuItem()
         PenaltyToolStripMenuItem = New ToolStripMenuItem()
         ReportsToolStripMenuItem = New ToolStripMenuItem()
-        TransactionReportsToolStripMenuItem = New ToolStripMenuItem()
-        LogHistoryReportsToolStripMenuItem = New ToolStripMenuItem()
-        LostBooksReportsToolStripMenuItem = New ToolStripMenuItem()
-        DamagedBookReportsToolStripMenuItem = New ToolStripMenuItem()
-        BorrowLimitToolStripMenuItem = New ToolStripMenuItem()
         Panel1 = New Panel()
         Panel_Menuscrip = New Panel()
         lblform = New Label()
@@ -190,6 +186,7 @@ Partial Class MainForm
         ' 
         MenuStrip1.BackColor = Color.Transparent
         MenuStrip1.Font = New Font("Tahoma", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        MenuStrip1.ImageScalingSize = New Size(20, 20)
         MenuStrip1.Items.AddRange(New ToolStripItem() {MaintenanceToolStripMenuItem})
         MenuStrip1.Location = New Point(0, 0)
         MenuStrip1.Name = "MenuStrip1"
@@ -344,6 +341,7 @@ Partial Class MainForm
         ' 
         MenuStrip2.BackColor = Color.Transparent
         MenuStrip2.Font = New Font("Tahoma", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        MenuStrip2.ImageScalingSize = New Size(20, 20)
         MenuStrip2.Items.AddRange(New ToolStripItem() {ProcessStripMenuItem})
         MenuStrip2.Location = New Point(0, 0)
         MenuStrip2.Name = "MenuStrip2"
@@ -461,6 +459,7 @@ Partial Class MainForm
         ' 
         MenuStrip3.BackColor = Color.Transparent
         MenuStrip3.Font = New Font("Tahoma", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        MenuStrip3.ImageScalingSize = New Size(20, 20)
         MenuStrip3.Items.AddRange(New ToolStripItem() {SettingsStripMenuItem})
         MenuStrip3.Location = New Point(0, 0)
         MenuStrip3.Name = "MenuStrip3"
@@ -483,6 +482,12 @@ Partial Class MainForm
         Audit_Trail.Size = New Size(236, 22)
         Audit_Trail.Text = "📜 Audit Trail"
         ' 
+        ' BorrowLimitToolStripMenuItem
+        ' 
+        BorrowLimitToolStripMenuItem.Name = "BorrowLimitToolStripMenuItem"
+        BorrowLimitToolStripMenuItem.Size = New Size(236, 22)
+        BorrowLimitToolStripMenuItem.Text = "Borrow Limit"
+        ' 
         ' BorrowingHistoryToolStripMenuItem
         ' 
         BorrowingHistoryToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -499,45 +504,10 @@ Partial Class MainForm
         ' 
         ' ReportsToolStripMenuItem
         ' 
-        ReportsToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {TransactionReportsToolStripMenuItem, LogHistoryReportsToolStripMenuItem, LostBooksReportsToolStripMenuItem, DamagedBookReportsToolStripMenuItem})
         ReportsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         ReportsToolStripMenuItem.Name = "ReportsToolStripMenuItem"
         ReportsToolStripMenuItem.Size = New Size(236, 22)
         ReportsToolStripMenuItem.Text = "Reports"
-        ' 
-        ' TransactionReportsToolStripMenuItem
-        ' 
-        TransactionReportsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        TransactionReportsToolStripMenuItem.Name = "TransactionReportsToolStripMenuItem"
-        TransactionReportsToolStripMenuItem.Size = New Size(249, 22)
-        TransactionReportsToolStripMenuItem.Text = "Transaction Reports"
-        ' 
-        ' LogHistoryReportsToolStripMenuItem
-        ' 
-        LogHistoryReportsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        LogHistoryReportsToolStripMenuItem.Name = "LogHistoryReportsToolStripMenuItem"
-        LogHistoryReportsToolStripMenuItem.Size = New Size(249, 22)
-        LogHistoryReportsToolStripMenuItem.Text = "Log History Reports"
-        ' 
-        ' LostBooksReportsToolStripMenuItem
-        ' 
-        LostBooksReportsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        LostBooksReportsToolStripMenuItem.Name = "LostBooksReportsToolStripMenuItem"
-        LostBooksReportsToolStripMenuItem.Size = New Size(249, 22)
-        LostBooksReportsToolStripMenuItem.Text = "Lost Books Reports"
-        ' 
-        ' DamagedBookReportsToolStripMenuItem
-        ' 
-        DamagedBookReportsToolStripMenuItem.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DamagedBookReportsToolStripMenuItem.Name = "DamagedBookReportsToolStripMenuItem"
-        DamagedBookReportsToolStripMenuItem.Size = New Size(249, 22)
-        DamagedBookReportsToolStripMenuItem.Text = "Damaged Book Reports"
-        ' 
-        ' BorrowLimitToolStripMenuItem
-        ' 
-        BorrowLimitToolStripMenuItem.Name = "BorrowLimitToolStripMenuItem"
-        BorrowLimitToolStripMenuItem.Size = New Size(236, 22)
-        BorrowLimitToolStripMenuItem.Text = "Borrow Limit"
         ' 
         ' Panel1
         ' 
@@ -603,7 +573,7 @@ Partial Class MainForm
         btnlogoutt.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnlogoutt.Size = New Size(116, 27)
         btnlogoutt.TabIndex = 47
-        btnlogoutt.Text = "↩️ LOG-OUT"
+        btnlogoutt.Text = "Log out"
         ' 
         ' btnexit
         ' 
@@ -641,7 +611,7 @@ Partial Class MainForm
         ' Guna2CirclePictureBox1
         ' 
         Guna2CirclePictureBox1.BackgroundImageLayout = ImageLayout.Stretch
-        Guna2CirclePictureBox1.Image = My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n1
+        Guna2CirclePictureBox1.Image = My.Resources.Resources._494886008_1456524912004137_7599027607421552584_n
         Guna2CirclePictureBox1.ImageRotate = 0F
         Guna2CirclePictureBox1.Location = New Point(92, 2)
         Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
@@ -707,7 +677,7 @@ Partial Class MainForm
         dshboard.Location = New Point(35, 42)
         dshboard.Name = "dshboard"
         dshboard.ShadowDecoration.CustomizableEdges = CustomizableEdges33
-        dshboard.Size = New Size(930, 310)
+        dshboard.Size = New Size(930, 309)
         dshboard.TabIndex = 18
         dshboard.TextRenderingHint = Drawing.Text.TextRenderingHint.SystemDefault
         ' 
@@ -1302,10 +1272,6 @@ Partial Class MainForm
     Friend WithEvents BookShelvesToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ReportsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents tmrDateChecker As Timer
-    Friend WithEvents TransactionReportsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents LogHistoryReportsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents LostBooksReportsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents DamagedBookReportsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents BorrowLimitToolStripMenuItem As ToolStripMenuItem
 
 End Class

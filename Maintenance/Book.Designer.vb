@@ -59,10 +59,10 @@ Partial Class Book
         Dim CustomizableEdges28 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
         panel_book = New Panel()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        Guna2Button1 = New Guna.UI2.WinForms.Guna2Button()
         txtyearr = New Guna.UI2.WinForms.Guna2TextBox()
         Label12 = New Label()
         Label13 = New Label()
-        btnprint = New Guna.UI2.WinForms.Guna2Button()
         picbarcode = New PictureBox()
         Label10 = New Label()
         lblrandom = New Label()
@@ -112,10 +112,10 @@ Partial Class Book
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(Guna2Button1)
         Guna2GroupBox1.Controls.Add(txtyearr)
         Guna2GroupBox1.Controls.Add(Label12)
         Guna2GroupBox1.Controls.Add(Label13)
-        Guna2GroupBox1.Controls.Add(btnprint)
         Guna2GroupBox1.Controls.Add(picbarcode)
         Guna2GroupBox1.Controls.Add(Label10)
         Guna2GroupBox1.Controls.Add(lblrandom)
@@ -143,7 +143,7 @@ Partial Class Book
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
         Guna2GroupBox1.CustomizableEdges = CustomizableEdges29
         Guna2GroupBox1.FillColor = Color.Transparent
-        Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
+        Guna2GroupBox1.Font = New Font("Segoe UI", 9.0F)
         Guna2GroupBox1.ForeColor = SystemColors.Control
         Guna2GroupBox1.Location = New Point(12, 13)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
@@ -151,11 +151,31 @@ Partial Class Book
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
         ' 
+        ' Guna2Button1
+        ' 
+        Guna2Button1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2Button1.BorderRadius = 7
+        Guna2Button1.BorderThickness = 1
+        Guna2Button1.CustomizableEdges = CustomizableEdges1
+        Guna2Button1.DisabledState.BorderColor = Color.DarkGray
+        Guna2Button1.DisabledState.CustomBorderColor = Color.DarkGray
+        Guna2Button1.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
+        Guna2Button1.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        Guna2Button1.FillColor = Color.Empty
+        Guna2Button1.Font = New Font("Tahoma", 11.25F, FontStyle.Bold)
+        Guna2Button1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        Guna2Button1.Location = New Point(547, 242)
+        Guna2Button1.Name = "Guna2Button1"
+        Guna2Button1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        Guna2Button1.Size = New Size(152, 27)
+        Guna2Button1.TabIndex = 110
+        Guna2Button1.Text = "EXPORT TO PDF"
+        ' 
         ' txtyearr
         ' 
         txtyearr.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtyearr.BorderRadius = 12
-        txtyearr.CustomizableEdges = CustomizableEdges1
+        txtyearr.CustomizableEdges = CustomizableEdges3
         txtyearr.DefaultText = ""
         txtyearr.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtyearr.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -170,7 +190,7 @@ Partial Class Book
         txtyearr.Name = "txtyearr"
         txtyearr.PlaceholderText = ""
         txtyearr.SelectedText = ""
-        txtyearr.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        txtyearr.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtyearr.Size = New Size(108, 32)
         txtyearr.TabIndex = 109
         ' 
@@ -195,26 +215,6 @@ Partial Class Book
         Label13.Size = New Size(296, 16)
         Label13.TabIndex = 107
         Label13.Text = "Select Row before clicking [Edit] or [Delete]."
-        ' 
-        ' btnprint
-        ' 
-        btnprint.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnprint.BorderRadius = 9
-        btnprint.BorderThickness = 1
-        btnprint.CustomizableEdges = CustomizableEdges3
-        btnprint.DisabledState.BorderColor = Color.DarkGray
-        btnprint.DisabledState.CustomBorderColor = Color.DarkGray
-        btnprint.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnprint.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnprint.FillColor = Color.Empty
-        btnprint.Font = New Font("Tahoma", 8.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnprint.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnprint.Location = New Point(548, 242)
-        btnprint.Name = "btnprint"
-        btnprint.ShadowDecoration.CustomizableEdges = CustomizableEdges4
-        btnprint.Size = New Size(173, 27)
-        btnprint.TabIndex = 78
-        btnprint.Text = "PRINT ALL BARCODE"
         ' 
         ' picbarcode
         ' 
@@ -293,7 +293,7 @@ Partial Class Book
         txtsearch.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtsearch.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtsearch.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        txtsearch.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         txtsearch.ForeColor = Color.Black
         txtsearch.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtsearch.Location = New Point(25, 17)
@@ -358,7 +358,7 @@ Partial Class Book
         DataGridView1.Cursor = Cursors.Hand
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
-        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9.0F)
         DataGridViewCellStyle2.ForeColor = SystemColors.Control
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
@@ -370,7 +370,7 @@ Partial Class Book
         DataGridView1.ReadOnly = True
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
         DataGridViewCellStyle3.BackColor = SystemColors.Control
-        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9.0F)
         DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
         DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
@@ -379,7 +379,7 @@ Partial Class Book
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
         DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopLeft
-        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle4.Font = New Font("Tahoma", 9.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         DataGridViewCellStyle4.ForeColor = Color.Black
         DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
@@ -468,7 +468,7 @@ Partial Class Book
         txtbooktitle.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtbooktitle.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtbooktitle.Font = New Font("Segoe UI", 9F)
+        txtbooktitle.Font = New Font("Segoe UI", 9.0F)
         txtbooktitle.ForeColor = Color.Black
         txtbooktitle.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbooktitle.Location = New Point(30, 185)
@@ -502,7 +502,7 @@ Partial Class Book
         txtisbn.DisabledState.ForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.DisabledState.PlaceholderForeColor = Color.FromArgb(CByte(138), CByte(138), CByte(138))
         txtisbn.FocusedState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtisbn.Font = New Font("Segoe UI", 9F)
+        txtisbn.Font = New Font("Segoe UI", 9.0F)
         txtisbn.ForeColor = Color.Black
         txtisbn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtisbn.Location = New Point(30, 116)
@@ -641,7 +641,7 @@ Partial Class Book
         ' 
         ' Book
         ' 
-        AutoScaleDimensions = New SizeF(7F, 13F)
+        AutoScaleDimensions = New SizeF(7.0F, 13.0F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = SystemColors.Control
         ClientSize = New Size(1370, 607)
@@ -689,8 +689,8 @@ Partial Class Book
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents picbarcode As PictureBox
     Friend WithEvents lblrandom As Label
-    Friend WithEvents btnprint As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Label12 As Label
     Friend WithEvents Label13 As Label
     Friend WithEvents txtyearr As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents Guna2Button1 As Guna.UI2.WinForms.Guna2Button
 End Class

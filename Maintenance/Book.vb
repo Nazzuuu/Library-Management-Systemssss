@@ -7,6 +7,8 @@ Imports ZXing.Windows.Compatibility
 Imports System.Drawing.Printing
 Imports System.Collections.Generic
 Imports System.Data
+Imports System.Diagnostics
+
 
 Public Class Book
 
@@ -217,107 +219,76 @@ Public Class Book
     End Sub
 
 
-
-
-    Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
-
-        Dim g As Graphics = e.Graphics
-
-        Dim TitleFont As New Font("Arial", 8, FontStyle.Bold)
-        Dim TitleBrush As New SolidBrush(Color.Black)
-        Dim TitleLineHeight As Integer = CInt(TitleFont.GetHeight(g)) + 2
-
-
-        Dim TOTAL_ITEM_HEIGHT As Integer = BARCODE_HEIGHT_HM + TitleLineHeight
-        Dim TOTAL_ROW_WIDTH As Integer = (BARCODE_WIDTH_HM * 2) + HORIZONTAL_SPACING_HM
-        Dim CENTER_PADDING_X As Integer = CInt((e.MarginBounds.Width - TOTAL_ROW_WIDTH) / 2)
-
-
-        Dim x_start As Integer = e.MarginBounds.Left + CENTER_PADDING_X
-        Dim y_start As Integer = e.MarginBounds.Top
-
-        Dim x_pos As Integer = x_start
-        Dim y_pos As Integer = y_start
-
-        Dim barcodesPrintedOnPage As Integer = 0
-
-
-        While BarcodeIndex < BarcodeList.Count
-
-
-            Dim currentBarcodeInfo As BarcodeInfo = BarcodeList(BarcodeIndex)
-            Dim barcodeText As String = currentBarcodeInfo.Barcode
-            Dim bookTitle As String = currentBarcodeInfo.Title
-
-
-            If y_pos + TOTAL_ITEM_HEIGHT > e.MarginBounds.Bottom Then
-
-
-
-                If x_pos = x_start Then
-
-
-                    x_pos = x_start + BARCODE_WIDTH_HM + HORIZONTAL_SPACING_HM
-                    y_pos = y_start
-
-                    If y_pos + TOTAL_ITEM_HEIGHT > e.MarginBounds.Bottom Then
-
-                        e.HasMorePages = True
-                        Exit Sub
-                    End If
-
-                Else
-
-                    e.HasMorePages = True
-                    Exit Sub
-                End If
-            End If
-
-            Using barcodeImage As Image = GenerateBarcodeImage(barcodeText, BARCODE_PIXEL_WIDTH, BARCODE_PIXEL_HEIGHT)
-
-                If barcodeImage Is Nothing Then
-                    BarcodeIndex += 1
-                    Continue While
-                End If
-
-
-                g.DrawString(bookTitle, TitleFont, TitleBrush, x_pos, y_pos)
-                g.DrawImage(barcodeImage, x_pos, y_pos + TitleLineHeight, BARCODE_WIDTH_HM, BARCODE_HEIGHT_HM)
-
+    Private Sub ExportPDF_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+        Try
+            BarcodeList.Clear()
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                Dim query As String = "SELECT Barcode, BookTitle FROM book_tbl WHERE Barcode IS NOT NULL AND Barcode <> ''"
+                Dim cmd As New MySqlCommand(query, con)
+                con.Open()
+                Dim reader As MySqlDataReader = cmd.ExecuteReader()
+                While reader.Read()
+                    BarcodeList.Add(New BarcodeInfo With {
+                        .Barcode = reader("Barcode").ToString(),
+                        .Title = reader("BookTitle").ToString()
+                    })
+                End While
             End Using
 
-
-            BarcodeIndex += 1
-            barcodesPrintedOnPage += 1
-
-
-            y_pos += TOTAL_ITEM_HEIGHT + VERTICAL_SPACING_HM
-
-
-
-            If barcodesPrintedOnPage Mod MAX_ROWS_PER_COLUMN = 0 AndAlso x_pos = x_start Then
-
-                x_pos = x_start + BARCODE_WIDTH_HM + HORIZONTAL_SPACING_HM
-                y_pos = y_start
-
+            If BarcodeList.Count = 0 Then
+                MessageBox.Show("No barcodes found.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
             End If
 
+            BarcodeIndex = 0
 
+
+            Dim totalHeight As Integer = (BarcodeList.Count * 130) + 100
+            Dim customPaperSize As New PaperSize("Custom", 350, totalHeight)
+
+            printDoc.DefaultPageSettings.PaperSize = customPaperSize
+            printDoc.DefaultPageSettings.Margins = New Margins(10, 10, 10, 10)
+
+            Dim printPreview As New PrintPreviewDialog()
+            printPreview.Document = printDoc
+            printPreview.WindowState = FormWindowState.Maximized
+            printPreview.ShowDialog()
+
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub printDoc_PrintPage(sender As Object, e As PrintPageEventArgs) Handles printDoc.PrintPage
+
+        Dim x As Integer = 25
+        Dim y As Integer = 20
+        Dim fontTitle As New Font("Arial", 9, FontStyle.Bold)
+
+        While BarcodeIndex < BarcodeList.Count
+            Dim info = BarcodeList(BarcodeIndex)
+
+
+            Dim img As Image = GenerateBarcodeImage(info.Barcode, 280, 100)
+
+
+            e.Graphics.DrawString(info.Title, fontTitle, Brushes.Black, x, y)
+            e.Graphics.DrawImage(img, x, y + 20)
+
+            y += 130
+            BarcodeIndex += 1
+
+            If y > e.PageSettings.PrintableArea.Height - 100 And BarcodeIndex < BarcodeList.Count Then
+                e.HasMorePages = True
+                Return
+            End If
         End While
 
-
-        TitleFont.Dispose()
-        TitleBrush.Dispose()
-
-
-        If BarcodeIndex < BarcodeList.Count Then
-            e.HasMorePages = True
-        Else
-            e.HasMorePages = False
-            BarcodeIndex = 0
-        End If
+        e.HasMorePages = False
 
     End Sub
+
+
 
     Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal width As Integer, ByVal height As Integer) As Image
         Try
@@ -395,6 +366,7 @@ Public Class Book
             Return bmp
         End Try
     End Function
+
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
@@ -791,63 +763,9 @@ Public Class Book
         End If
     End Sub
 
-    Private Sub Printbarcode(sender As Object, e As EventArgs) Handles btnprint.Click
-
-        BarcodeList.Clear()
-        BarcodeIndex = 0
-
-        For Each row As DataGridViewRow In DataGridView1.Rows
-            If Not row.IsNewRow Then
-                Dim barcodeValue As String = If(IsDBNull(row.Cells("Barcode").Value), String.Empty, CStr(row.Cells("Barcode").Value))
-                Dim bookTitleValue As String = If(IsDBNull(row.Cells("BookTitle").Value), "(No Title)", CStr(row.Cells("BookTitle").Value))
-
-                If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
-                    BarcodeList.Add(New BarcodeInfo With {.Barcode = barcodeValue, .Title = bookTitleValue})
-                End If
-            End If
-        Next
-
-        If BarcodeList.Count = 0 Then
-            MessageBox.Show("No barcodes found.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Exit Sub
-        End If
-
-        Try
-            Using pdlg As New PrintDialog With {.Document = printDoc}
-                printDoc.DefaultPageSettings.Landscape = False
-
-                If pdlg.ShowDialog() = DialogResult.OK Then
-
-                    Dim selectedPrinterName As String = pdlg.PrinterSettings.PrinterName.ToLower()
-
-                    If Not (selectedPrinterName.Contains("microsoft") OrElse selectedPrinterName.Contains("epson")) Then
-                        MessageBox.Show("Printer is not compatible. Please use a Microsoft or Epson printer only.", "Printer Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        Exit Sub
-                    End If
-
-                    printDoc.PrinterSettings = pdlg.PrinterSettings
-                    printDoc.Print()
-
-                    MessageBox.Show($"Successfully sent {BarcodeList.Count} barcode labels to '{pdlg.PrinterSettings.PrinterName}'.", "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Else
-                    Exit Sub
-                End If
-            End Using
-
-        Catch ex As System.Drawing.Printing.InvalidPrinterException
-            Dim currentPrinterName As String = If(printDoc.PrinterSettings Is Nothing, "Selected Printer", printDoc.PrinterSettings.PrinterName)
-            MessageBox.Show($"Warning: The selected printer ('{currentPrinterName}') is not connected or ready. Please check the printer connection.", "Printer Not Ready", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        Catch ex As Exception
-            MessageBox.Show("An unexpected error occurred during the print job: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            BarcodeIndex = 0
-        End Try
-
-
-    End Sub
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-        clear()
+        clear
     End Sub
 
     Public Sub clear()
@@ -1177,13 +1095,6 @@ Public Class Book
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btnprint_MouseHover(sender As Object, e As EventArgs) Handles btnprint.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
-
-    Private Sub btnprint_MouseLeave(sender As Object, e As EventArgs) Handles btnprint.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
 
     Private Sub DisablePaste_AllTextBoxes()
         For Each ctrl As Control In Me.Controls
@@ -1311,5 +1222,6 @@ Public Class Book
     Private Sub datagridview1_MouseLeave(sender As Object, e As EventArgs) Handles DataGridView1.MouseLeave
         ResumeAutoRefresh(DataGridView1)
     End Sub
+
 
 End Class
