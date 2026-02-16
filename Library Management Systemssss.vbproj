@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <RootNamespace>Library_Management_Systemssss</RootNamespace>
     <StartupObject>Library_Management_Systemssss.My.MyApplication</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
@@ -18,6 +18,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\Design\rptActivityLogs.rdlc" />
+    <None Remove="Reports\Design\rptBorrowing.rdlc" />
+    <None Remove="Reports\Design\rptDamagedBooks.rdlc" />
+    <None Remove="Reports\Design\rptLostBooks.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\Design\rptActivityLogs.rdlc" />
+    <EmbeddedResource Include="Reports\Design\rptBorrowing.rdlc" />
+    <EmbeddedResource Include="Reports\Design\rptDamagedBooks.rdlc" />
+    <EmbeddedResource Include="Reports\Design\rptLostBooks.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Import Include="System.Data" />
     <Import Include="System.Drawing" />
     <Import Include="System.Windows.Forms" />
@@ -25,6 +39,7 @@
 
   <ItemGroup>
     <PackageReference Include="Guna.UI2.WinForms" Version="2.0.4.7" />
+    <PackageReference Include="ReportViewerCore.WinForms" Version="15.1.33" />
     <PackageReference Include="ZXing.Net" Version="0.16.10" />
     <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.13" />
   </ItemGroup>
@@ -45,6 +60,21 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Update="Reports\DataSets\DataSet_ActivityLogs.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DataSet_ActivityLogs.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="Reports\DataSets\DataSet_Penalty.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DataSet_Penalty.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="Reports\DataSets\dsBorrowing.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>dsBorrowing.xsd</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -64,6 +94,18 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <None Update="Reports\DataSets\DataSet_ActivityLogs.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSet_ActivityLogs.Designer.vb</LastGenOutput>
+    </None>
+    <None Update="Reports\DataSets\DataSet_Penalty.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSet_Penalty.Designer.vb</LastGenOutput>
+    </None>
+    <None Update="Reports\DataSets\dsBorrowing.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>dsBorrowing.Designer.vb</LastGenOutput>
     </None>
     <None Update="Resources\eyeoff.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

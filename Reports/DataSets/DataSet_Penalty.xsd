@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DataSet_Penalty" targetNamespace="http://tempuri.org/DataSet_Penalty.xsd" xmlns:mstns="http://tempuri.org/DataSet_Penalty.xsd" xmlns="http://tempuri.org/DataSet_Penalty.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DataSet_Penalty" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="DataSet_Penalty" msprop:Generator_DataSetName="DataSet_Penalty">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="penalty_tbl" msprop:Generator_RowEvHandlerName="penalty_tblRowChangeEventHandler" msprop:Generator_RowDeletedName="penalty_tblRowDeleted" msprop:Generator_RowDeletingName="penalty_tblRowDeleting" msprop:Generator_RowEvArgName="penalty_tblRowChangeEvent" msprop:Generator_TablePropName="penalty_tbl" msprop:Generator_RowChangedName="penalty_tblRowChanged" msprop:Generator_RowChangingName="penalty_tblRowChanging" msprop:Generator_TableClassName="penalty_tblDataTable" msprop:Generator_RowClassName="penalty_tblRow" msprop:Generator_TableVarName="tablepenalty_tbl" msprop:Generator_UserTableName="penalty_tbl">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Borrower" msprop:Generator_ColumnPropNameInRow="Borrower" msprop:Generator_ColumnPropNameInTable="BorrowerColumn" msprop:Generator_ColumnVarNameInTable="columnBorrower" msprop:Generator_UserColumnName="Borrower" type="xs:string" minOccurs="0" />
+              <xs:element name="LRN" msprop:Generator_ColumnPropNameInRow="LRN" msprop:Generator_ColumnPropNameInTable="LRNColumn" msprop:Generator_ColumnVarNameInTable="columnLRN" msprop:Generator_UserColumnName="LRN" type="xs:string" minOccurs="0" />
+              <xs:element name="EmployeeNo" msprop:Generator_ColumnPropNameInRow="EmployeeNo" msprop:Generator_ColumnPropNameInTable="EmployeeNoColumn" msprop:Generator_ColumnVarNameInTable="columnEmployeeNo" msprop:Generator_UserColumnName="EmployeeNo" type="xs:string" minOccurs="0" />
+              <xs:element name="FullName" msprop:Generator_ColumnPropNameInRow="FullName" msprop:Generator_ColumnPropNameInTable="FullNameColumn" msprop:Generator_ColumnVarNameInTable="columnFullName" msprop:Generator_UserColumnName="FullName" type="xs:string" minOccurs="0" />
+              <xs:element name="Department" msprop:Generator_ColumnPropNameInRow="Department" msprop:Generator_ColumnPropNameInTable="DepartmentColumn" msprop:Generator_ColumnVarNameInTable="columnDepartment" msprop:Generator_UserColumnName="Department" type="xs:string" minOccurs="0" />
+              <xs:element name="ReturnedBook" msprop:Generator_ColumnPropNameInRow="ReturnedBook" msprop:Generator_ColumnPropNameInTable="ReturnedBookColumn" msprop:Generator_ColumnVarNameInTable="columnReturnedBook" msprop:Generator_UserColumnName="ReturnedBook" type="xs:string" minOccurs="0" />
+              <xs:element name="BorrowedDate" msprop:Generator_ColumnPropNameInRow="BorrowedDate" msprop:Generator_ColumnPropNameInTable="BorrowedDateColumn" msprop:Generator_ColumnVarNameInTable="columnBorrowedDate" msprop:Generator_UserColumnName="BorrowedDate" type="xs:string" minOccurs="0" />
+              <xs:element name="DueDate" msprop:Generator_ColumnPropNameInRow="DueDate" msprop:Generator_ColumnPropNameInTable="DueDateColumn" msprop:Generator_ColumnVarNameInTable="columnDueDate" msprop:Generator_UserColumnName="DueDate" type="xs:string" minOccurs="0" />
+              <xs:element name="ReturnDate" msprop:Generator_ColumnPropNameInRow="ReturnDate" msprop:Generator_ColumnPropNameInTable="ReturnDateColumn" msprop:Generator_ColumnVarNameInTable="columnReturnDate" msprop:Generator_UserColumnName="ReturnDate" type="xs:string" minOccurs="0" />
+              <xs:element name="TransactionReceipt" msprop:Generator_ColumnPropNameInRow="TransactionReceipt" msprop:Generator_ColumnPropNameInTable="TransactionReceiptColumn" msprop:Generator_ColumnVarNameInTable="columnTransactionReceipt" msprop:Generator_UserColumnName="TransactionReceipt" type="xs:string" minOccurs="0" />
+              <xs:element name="Status" msprop:Generator_ColumnPropNameInRow="Status" msprop:Generator_ColumnPropNameInTable="StatusColumn" msprop:Generator_ColumnVarNameInTable="columnStatus" msprop:Generator_UserColumnName="Status" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

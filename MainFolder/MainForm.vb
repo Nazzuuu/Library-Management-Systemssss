@@ -1470,4 +1470,20 @@ Public Class MainForm
     Private Sub BorrowLimitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowLimitToolStripMenuItem.Click
         DurationForm.ShowDialog()
     End Sub
+
+    Private Sub ReportsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportsToolStripMenuItem.Click
+        Panel_dash.Controls.Clear()
+
+        With ReportsForm
+            .TopLevel = False
+            .FormBorderStyle = FormBorderStyle.None
+            .Dock = DockStyle.Fill
+            Panel_dash.Controls.Add(ReportsForm)
+            .BringToFront()
+            .Show()
+        End With
+
+        lblform.Text = "REPORTS"
+    End Sub
+
 End Class

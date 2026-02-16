@@ -278,57 +278,66 @@ Public Class RegisteredBrwr
 
     Private Sub TimeInBorrower(selectedItem As ListViewItem)
 
-        If Not IsTimeInMode OrElse selectedItem Is Nothing Then
-            Exit Sub
-        End If
+        If Not IsTimeInMode OrElse selectedItem Is Nothing Then Exit Sub
 
-
+        Dim borrowerType As String = selectedItem.SubItems(0).Text
+        Dim firstName As String = selectedItem.SubItems(1).Text
+        Dim lastName As String = selectedItem.SubItems(2).Text
+        Dim middleInitial As String = selectedItem.SubItems(3).Text
         Dim lrn As String = selectedItem.SubItems(4).Text
         Dim employeeNo As String = selectedItem.SubItems(5).Text
-        Dim currentID As String = If(selectedItem.SubItems(0).Text = "Student", lrn, employeeNo)
+        Dim contactNumber As String = selectedItem.SubItems(6).Text
+        Dim department As String = selectedItem.SubItems(7).Text
+        Dim grade As String = selectedItem.SubItems(8).Text
+        Dim section As String = selectedItem.SubItems(9).Text
+        Dim strand As String = selectedItem.SubItems(10).Text
 
+        Dim currentID As String = If(borrowerType = "Student", lrn, employeeNo)
 
         If selectedItem.BackColor = Color.FromArgb(153, 255, 153) Then
-            MessageBox.Show("This borrower is currently timed in. Please Time Out first before another action.", "Already Timed In", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("This borrower is currently timed in. Please Time Out first.", "Already Timed In", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
-        Dim conInsert As New MySqlConnection(connectionString)
+        Dim insertQuery As String =
+        "INSERT INTO oras_tbl " &
+        "(Borrower, LRN, EmployeeNo, FirstName, LastName, MiddleInitial, Contact, Department, GradeLevel, Section, Strand, TimeIn) " &
+        "VALUES " &
+        "(@Borrower, @LRN, @EmployeeNo, @FirstName, @LastName, @MiddleInitial, @Contact, @Department, @Grade, @Section, @Strand, NOW())"
 
+        Using conInsert As New MySqlConnection(connectionString)
+            Try
+                conInsert.Open()
 
-        Dim comInsert As String = "INSERT INTO `oras_tbl` (`LRN`, `EmployeeNo`, `TimeIn`) VALUES (@lrn, @emp, NOW())"
+                Using cmd As New MySqlCommand(insertQuery, conInsert)
 
-        Try
-            conInsert.Open()
-            Using cmdInsert As New MySqlCommand(comInsert, conInsert)
+                    cmd.Parameters.AddWithValue("@Borrower", borrowerType)
+                    cmd.Parameters.AddWithValue("@LRN", If(String.IsNullOrEmpty(lrn), DBNull.Value, lrn))
+                    cmd.Parameters.AddWithValue("@EmployeeNo", If(String.IsNullOrEmpty(employeeNo), DBNull.Value, employeeNo))
+                    cmd.Parameters.AddWithValue("@FirstName", firstName)
+                    cmd.Parameters.AddWithValue("@LastName", lastName)
+                    cmd.Parameters.AddWithValue("@MiddleInitial", middleInitial)
+                    cmd.Parameters.AddWithValue("@Contact", contactNumber)
+                    cmd.Parameters.AddWithValue("@Department", department)
+                    cmd.Parameters.AddWithValue("@Grade", grade)
+                    cmd.Parameters.AddWithValue("@Section", section)
+                    cmd.Parameters.AddWithValue("@Strand", strand)
 
-
-                cmdInsert.Parameters.AddWithValue("@lrn", If(String.IsNullOrEmpty(lrn), CType(DBNull.Value, Object), lrn))
-                cmdInsert.Parameters.AddWithValue("@emp", If(String.IsNullOrEmpty(employeeNo), CType(DBNull.Value, Object), employeeNo))
-
-                cmdInsert.ExecuteNonQuery()
+                    cmd.ExecuteNonQuery()
+                End Using
 
                 MessageBox.Show($"SUCCESS: Borrower ID {currentID} has been successfully Timed In.", "Time In Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-                oras.btnview.Visible = True
-
                 Dim orasForm As oras = Application.OpenForms.OfType(Of oras)().FirstOrDefault()
-                If orasForm IsNot Nothing Then
-                    orasForm.ludeyngoras()
-                End If
+                If orasForm IsNot Nothing Then orasForm.ludeyngoras()
 
-                Me.IsTimeInSuccessfulAndClosing = True
                 ludeyngborrower()
                 Me.Close()
 
-            End Using
-        Catch ex As Exception
-            MessageBox.Show("Error processing Time In: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            If conInsert.State = ConnectionState.Open Then
-                conInsert.Close()
-            End If
-        End Try
+            Catch ex As Exception
+                MessageBox.Show("Error processing Time In: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
 
     End Sub
 

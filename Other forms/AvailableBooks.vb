@@ -190,6 +190,20 @@ Public Class AvailableBooks
 
                 activeBorrowing.SetupBorrowerFields()
 
+                If activeBorrowing.rbteacher.Checked Then
+
+                    activeBorrowing.txtemployee.Enabled = True
+                    activeBorrowing.txtlrn.Enabled = False
+                    activeBorrowing.txtlrn.Text = ""
+
+                ElseIf activeBorrowing.rbstudent.Checked Then
+
+                    activeBorrowing.txtlrn.Enabled = True
+                    activeBorrowing.txtemployee.Enabled = False
+                    activeBorrowing.txtemployee.Text = ""
+
+                End If
+
 
                 DataGridView1.ClearSelection()
                 Me.Dispose()
