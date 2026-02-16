@@ -220,25 +220,7 @@ Partial Class Book
         Label13.Text = "Select Row before clicking [Edit] or [Delete]."
         ' 
         ' btnprint
-        ' 
-        btnprint.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnprint.BorderRadius = 9
-        btnprint.BorderThickness = 1
-        btnprint.CustomizableEdges = CustomizableEdges5
-        btnprint.DisabledState.BorderColor = Color.DarkGray
-        btnprint.DisabledState.CustomBorderColor = Color.DarkGray
-        btnprint.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
-        btnprint.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
-        btnprint.FillColor = Color.Empty
-        btnprint.Font = New Font("Tahoma", 8.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        btnprint.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        btnprint.Location = New Point(567, 63)
-        btnprint.Name = "btnprint"
-        btnprint.ShadowDecoration.CustomizableEdges = CustomizableEdges6
-        btnprint.Size = New Size(173, 27)
-        btnprint.TabIndex = 78
-        btnprint.Text = "PRINT ALL BARCODE"
-        ' 
+
         ' picbarcode
         ' 
         picbarcode.BackColor = Color.White
