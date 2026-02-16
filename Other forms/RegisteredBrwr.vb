@@ -2,7 +2,7 @@
 Imports System.Drawing
 Imports System.Windows.Forms
 
-
+''otenoten'
 Public Class RegisteredBrwr
     Public Property IsSearchOverride() As Boolean = False
     Public IsInViewMode As Boolean = False
