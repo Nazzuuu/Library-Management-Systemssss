@@ -786,17 +786,25 @@ Public Class Borrower
             If borrowerType = "Student" Then
                 rbstudent.Checked = True
 
+
+                If row.Cells("Department").Value.ToString() = "Senior High School" Then
+                    cbstrand.Visible = True
+                    cbstrand.Location = New Point(942, 285)
+                    lblstrand.Visible = True
+                    lblstrand.Location = New Point(942, 266)
+                Else
+                    cbstrand.Visible = False
+                    lblstrand.Visible = False
+                End If
+
             ElseIf borrowerType = "Teacher" Then
                 rbteacher.Checked = True
 
                 txtemployeeno.Text = If(IsDBNull(row.Cells("EmployeeNo").Value), String.Empty, row.Cells("EmployeeNo").Value.ToString())
                 txtlrn.Text = ""
 
-                cbstrand.Visible = True
-                cbstrand.Location = New Point(942, 285)
-
-                lblstrand.Visible = True
-                lblstrand.Location = New Point(942, 266)
+                cbstrand.Visible = False
+                lblstrand.Visible = False
 
             End If
 

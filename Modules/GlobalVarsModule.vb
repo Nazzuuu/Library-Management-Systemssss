@@ -705,35 +705,33 @@ Module GlobalVarsModule
 
     Public Sub SendOverdueBorrowerNotifications()
 
+        Dim laptopDate As Date = Date.Today
+        Dim laptopDateString As String = laptopDate.ToString("yyyy-MM-dd")
 
-        If LastProcessedDate = Date.Today AndAlso OverdueEmailAlreadySent Then
-            Exit Sub
-        End If
-
-        Dim laptopDate As String = DateTime.Now.ToString("yyyy-MM-dd")
 
         Dim sql As String =
-        "SELECT be.Email, bw.Name, bw.DueDate " &
+        "SELECT bw.BorrowID, be.Email, bw.Name, bw.DueDate " &
         "FROM borrowing_tbl bw " &
         "JOIN borroweredit_tbl be ON bw.LRN = be.LRN OR bw.EmployeeNo = be.EmployeeNo " &
         "JOIN acession_tbl ac ON bw.AccessionID = ac.AccessionID " &
-        "WHERE bw.DueDate < '" & laptopDate & "' " &
-        "AND (ac.Status = 'borrowed' OR ac.Status = 'overdue')"
+        "WHERE bw.DueDate < '" & laptopDateString & "' " &
+        "AND (ac.Status = 'borrowed' OR ac.Status = 'overdue') " &
+        "AND (bw.LastEmailSentDate IS NULL OR bw.LastEmailSentDate <> '" & laptopDateString & "')"
 
         Try
             Using con As New MySqlConnection(connectionString)
+                con.Open()
                 Using cmd As New MySqlCommand(sql, con)
-                    con.Open()
-
                     Using rdr = cmd.ExecuteReader()
-                        Dim recordFound As Boolean = False
+
+
+                        Dim processedIDs As New List(Of String)
 
                         While rdr.Read()
-                            recordFound = True
-
                             Dim email As String = rdr("Email").ToString()
                             If String.IsNullOrWhiteSpace(email) Then Continue While
 
+                            Dim borrowID As String = rdr("BorrowID").ToString()
                             Dim fullname As String = rdr("Name").ToString()
                             Dim duedate As String = Convert.ToDateTime(rdr("DueDate")).ToShortDateString()
 
@@ -744,22 +742,31 @@ Module GlobalVarsModule
                             "Please return the book immediately to avoid penalties." & vbCrLf & vbCrLf &
                             "Monlimar Development Academy Library Management System (MDA-LMS)"
 
+
                             SendEmailNotification_Global(email, "MDA-LMS Overdue Notice", body)
+
+                            processedIDs.Add(borrowID)
+
                         End While
 
-                        If recordFound Then
-                            OverdueEmailAlreadySent = True
-                            LastProcessedDate = Date.Today
-                        End If
+                        rdr.Close()
+
+
+                        For Each id In processedIDs
+                            Dim updateSql As String = "UPDATE borrowing_tbl SET LastEmailSentDate = '" & laptopDateString & "' WHERE BorrowID = @id"
+                            Using updateCmd As New MySqlCommand(updateSql, con)
+                                updateCmd.Parameters.AddWithValue("@id", id)
+                                updateCmd.ExecuteNonQuery()
+                            End Using
+                        Next
 
                     End Using
                 End Using
             End Using
 
-        Catch
-            OverdueEmailAlreadySent = False
-        End Try
+        Catch ex As Exception
 
+        End Try
     End Sub
 
 

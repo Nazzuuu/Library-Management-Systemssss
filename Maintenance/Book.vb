@@ -765,7 +765,7 @@ Public Class Book
 
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-        clear()
+        clear
     End Sub
 
     Public Sub clear()

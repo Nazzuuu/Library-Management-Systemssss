@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="2026-01-26" ReportInfo.Modified="2026-01-26">
+  <Dictionary>
+    <TableDataSource Name="BorrowingHistory" ReferenceName="BorrowingHistory" DataType="System.Data.DataTable">
+      <Column Name="ID" DataType="System.Int32"/>
+      <Column Name="Borrower" DataType="System.String"/>
+      <Column Name="ISBN" DataType="System.String"/>
+      <Column Name="Barcode" DataType="System.String"/>
+      <Column Name="AccessionID" DataType="System.String"/>
+      <Column Name="BookTitle" DataType="System.String"/>
+      <Column Name="Shelf" DataType="System.String"/>
+      <Column Name="LRN" DataType="System.String"/>
+      <Column Name="EmployeeNo" DataType="System.String"/>
+      <Column Name="Name" DataType="System.String"/>
+      <Column Name="BorrowedDate" DataType="System.String"/>
+      <Column Name="DueDate" DataType="System.String"/>
+      <Column Name="TransactionReceipt" DataType="System.String"/>
+      <Column Name="Status" DataType="System.String"/>
+    </TableDataSource>
+  </Dictionary>
+
+  <ReportPage Name="Page1">
+    <ReportTitleBand Name="ReportTitle1" Height="50">
+      <TextObject Name="Text1" Width="1000" Height="30" Text="Borrowing History Report" HorzAlign="Center" Font="Arial, 16pt, style=Bold"/>
+    </ReportTitleBand>
+
+    <DataBand Name="Data1" DataSource="BorrowingHistory" Height="25">
+      <TextObject Name="ID" Left="0" Width="40" Height="25" Text="{ID}" Border.Lines="All"/>
+      <TextObject Name="Borrower" Left="40" Width="100" Height="25" Text="{Borrower}" Border.Lines="All"/>
+      <TextObject Name="ISBN" Left="140" Width="100" Height="25" Text="{ISBN}" Border.Lines="All"/>
+      <TextObject Name="Barcode" Left="240" Width="100" Height="25" Text="{Barcode}" Border.Lines="All"/>
+      <TextObject Name="AccessionID" Left="340" Width="100" Height="25" Text="{AccessionID}" Border.Lines="All"/>
+      <TextObject Name="BookTitle" Left="440" Width="150" Height="25" Text="{BookTitle}" Border.Lines="All"/>
+      <TextObject Name="Shelf" Left="590" Width="40" Height="25" Text="{Shelf}" Border.Lines="All"/>
+      <TextObject Name="LRN" Left="630" Width="100" Height="25" Text="{LRN}" Border.Lines="All"/>
+      <TextObject Name="EmployeeNo" Left="730" Width="100" Height="25" Text="{EmployeeNo}" Border.Lines="All"/>
+      <TextObject Name="Name" Left="830" Width="150" Height="25" Text="{Name}" Border.Lines="All"/>
+      <TextObject Name="BorrowedDate" Left="980" Width="120" Height="25" Text="{BorrowedDate}" Border.Lines="All"/>
+      <TextObject Name="DueDate" Left="1100" Width="120" Height="25" Text="{DueDate}" Border.Lines="All"/>
+      <TextObject Name="TransactionReceipt" Left="1220" Width="120" Height="25" Text="{TransactionReceipt}" Border.Lines="All"/>
+      <TextObject Name="Status" Left="1340" Width="100" Height="25" Text="{Status}" Border.Lines="All"/>
+    </DataBand>
+  </ReportPage>
+</Report>

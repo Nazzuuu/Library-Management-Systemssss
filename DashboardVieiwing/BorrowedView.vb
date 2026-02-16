@@ -9,7 +9,7 @@ Public Class BorrowedView
     End Sub
 
     Public Sub refreshbrw()
-
+        MainForm.lblborrowcount()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Dim com As String = "SELECT " &

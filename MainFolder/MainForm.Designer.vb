@@ -536,7 +536,7 @@ Partial Class MainForm
         ' 
         lblform.Anchor = AnchorStyles.Top
         lblform.AutoSize = True
-        lblform.Font = New Font("Tahoma", 12F, FontStyle.Bold Or FontStyle.Underline, GraphicsUnit.Point, CByte(0))
+        lblform.Font = New Font("Tahoma", 12.0F, FontStyle.Bold Or FontStyle.Underline, GraphicsUnit.Point, CByte(0))
         lblform.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         lblform.Location = New Point(763, 21)
         lblform.Name = "lblform"
@@ -566,7 +566,7 @@ Partial Class MainForm
         btnlogoutt.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
         btnlogoutt.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
         btnlogoutt.FillColor = Color.Empty
-        btnlogoutt.Font = New Font("Tahoma", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnlogoutt.Font = New Font("Tahoma", 9.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         btnlogoutt.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnlogoutt.Location = New Point(849, 18)
         btnlogoutt.Name = "btnlogoutt"
@@ -587,7 +587,7 @@ Partial Class MainForm
         btnexit.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
         btnexit.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
         btnexit.FillColor = Color.Empty
-        btnexit.Font = New Font("Tahoma", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnexit.Font = New Font("Tahoma", 9.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         btnexit.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnexit.Location = New Point(849, 18)
         btnexit.Name = "btnexit"
@@ -625,7 +625,7 @@ Partial Class MainForm
         ' 
         Label1.Anchor = AnchorStyles.Top
         Label1.AutoSize = True
-        Label1.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold)
+        Label1.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold)
         Label1.Location = New Point(260, 14)
         Label1.Name = "Label1"
         Label1.Size = New Size(471, 54)
@@ -703,7 +703,7 @@ Partial Class MainForm
         ' lbltotalbooks
         ' 
         lbltotalbooks.BackColor = Color.Transparent
-        lbltotalbooks.Font = New Font("Baskerville Old Face", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lbltotalbooks.Font = New Font("Baskerville Old Face", 12.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lbltotalbooks.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         lbltotalbooks.Location = New Point(148, 11)
         lbltotalbooks.Name = "lbltotalbooks"
@@ -741,8 +741,8 @@ Partial Class MainForm
         tbl_paneldash.Location = New Point(27, 39)
         tbl_paneldash.Name = "tbl_paneldash"
         tbl_paneldash.RowCount = 2
-        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
-        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
+        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50.0F))
+        tbl_paneldash.RowStyles.Add(New RowStyle(SizeType.Percent, 50.0F))
         tbl_paneldash.Size = New Size(851, 246)
         tbl_paneldash.TabIndex = 0
         ' 
@@ -1135,7 +1135,7 @@ Partial Class MainForm
         ' 
         ' MainForm
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1015, 515)
         ControlBox = False
