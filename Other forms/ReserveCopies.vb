@@ -24,7 +24,7 @@ Public Class ReserveCopies
 
 
     Private Function BuildReserveCopiesQuery() As String
-        Return "SELECT ID, TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Status " &
+        Return "SELECT ID, TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Donor, Status " &
            "FROM `reservecopiess_tbl` WHERE Status = 'Reserved'"
     End Function
 
@@ -144,6 +144,7 @@ Public Class ReserveCopies
         Dim bookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
         Dim shelf As String = selectedRow.Cells("Shelf").Value.ToString()
         Dim supplierName As String = selectedRow.Cells("SupplierName").Value.ToString()
+        Dim donor As String = selectedRow.Cells("Donor").Value.ToString()
 
         Dim defaultStatus As String = "Available"
 
@@ -158,8 +159,8 @@ Public Class ReserveCopies
                 con.Open()
                 transaction = con.BeginTransaction()
 
-                Dim insertAcs As String = "INSERT INTO `acession_tbl` (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Status`) " &
-                                          "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Status)"
+                Dim insertAcs As String = "INSERT INTO `acession_tbl` (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`,`Donor`, `Status`) " &
+                                          "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @donor, @Status)"
 
                 Dim ins As New MySqlCommand(insertAcs, con, transaction)
                 ins.Parameters.AddWithValue("@TransactionNo", tranNo)
@@ -169,6 +170,7 @@ Public Class ReserveCopies
                 ins.Parameters.AddWithValue("@BookTitle", bookTitle)
                 ins.Parameters.AddWithValue("@Shelf", shelf)
                 ins.Parameters.AddWithValue("@SupplierName", supplierName)
+                ins.Parameters.AddWithValue("@donor", donor)
                 ins.Parameters.AddWithValue("@Status", defaultStatus)
                 ins.ExecuteNonQuery()
 

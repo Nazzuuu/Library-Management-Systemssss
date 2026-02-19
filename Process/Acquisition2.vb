@@ -86,17 +86,19 @@ Public Class Acquisition2
         If e.RowIndex >= 0 Then
 
             Dim result As DialogResult = MessageBox.Show(
-            "Are you sure you want to edit this row?",
-            "Edit Confirmation",
-            MessageBoxButtons.YesNo,
-            MessageBoxIcon.Question
-        )
+        "Are you sure you want to edit this row?",
+        "Edit Confirmation",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Question
+    )
 
             If result = DialogResult.Yes Then
 
                 Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
 
-                With AcquistionDetails
+                Dim frm As New AcquistionDetails
+
+                With frm
 
                     .SelectedAcquisitionID = row.Cells("ID").Value.ToString()
 
@@ -132,7 +134,6 @@ Public Class Acquisition2
                         End If
                         .txtdonor.Clear()
                     End If
-
 
                     .txtisbn.Text = row.Cells("ISBN").Value.ToString()
                     .txtbarcode.Text = row.Cells("Barcode").Value.ToString()
@@ -170,16 +171,17 @@ Public Class Acquisition2
                     .btnselectsu.Enabled = False
                     .cbisbnbarcode.Enabled = False
 
-
                     .ShowDialog()
 
                     .SelectedAcquisitionID = ""
 
                 End With
+
             End If
         End If
 
     End Sub
+
 
     Public Sub HandleAutoRefreshPause(grid As DataGridView, txtSearch As Control)
         Try

@@ -124,16 +124,48 @@ Public Class AcquistionDetails
         End Using
     End Sub
 
+    'Private Async Sub OnDatabaseUpdated()
+    '    Try
+
+    '        Await Task.Run(Sub()
+    '                           Me.Invoke(Sub() supplieracq())
+    '                       End Sub)
+    '    Catch ex As Exception
+    '        Debug.WriteLine("OnDatabaseUpdated error: " & ex.Message)
+    '    End Try
+    'End Sub
+
     Private Async Sub OnDatabaseUpdated()
         Try
 
+            If Me Is Nothing OrElse Me.IsDisposed OrElse Not Me.IsHandleCreated Then
+                Return
+            End If
+
             Await Task.Run(Sub()
-                               Me.Invoke(Sub() supplieracq())
+
+                               If Not Me.IsDisposed AndAlso Me.IsHandleCreated Then
+                                   Try
+                                       Me.Invoke(Sub()
+
+                                                     If Not Me.IsDisposed AndAlso Me.IsHandleCreated Then
+                                                         supplieracq()
+                                                     End If
+                                                 End Sub)
+                                   Catch ex As ObjectDisposedException
+
+                                   Catch ex As Exception
+
+                                   End Try
+                               End If
                            End Sub)
+
         Catch ex As Exception
             Debug.WriteLine("OnDatabaseUpdated error: " & ex.Message)
         End Try
     End Sub
+
+
 
 
     Public Sub supplieracq()
@@ -787,18 +819,77 @@ Public Class AcquistionDetails
         If Not balidisyun() Then Exit Sub
         If String.IsNullOrEmpty(SelectedAcquisitionID) Then Return
 
+        If numupdown.Value <= 0 Then
+            MessageBox.Show("Quantity cannot be zero.", "Invalid Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            numupdown.Focus()
+            Exit Sub
+        End If
+
         Try
             Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                 con.Open()
 
 
+                Dim transNo As String = ""
+                Dim getTransSql As String = "SELECT TransactionNo FROM acquisition_tbl WHERE ID=@id"
+
+                Using cmdTrans = New MySqlCommand(getTransSql, con)
+                    cmdTrans.Parameters.AddWithValue("@id", SelectedAcquisitionID)
+                    transNo = Convert.ToString(cmdTrans.ExecuteScalar())
+                End Using
+
+
+                Dim currentCount As Integer = 0
+                Dim countSql As String = "SELECT COUNT(*) FROM acession_tbl WHERE TransactionNo=@tno"
+                Using cmdCount = New MySqlCommand(countSql, con)
+                    cmdCount.Parameters.AddWithValue("@tno", transNo)
+                    currentCount = Convert.ToInt32(cmdCount.ExecuteScalar())
+                End Using
+
+                Dim newQty As Integer = CInt(numupdown.Value)
+
+                If newQty > currentCount Then
+
+                    Dim toAdd As Integer = newQty - currentCount
+                    For i As Integer = 1 To toAdd
+
+                        Dim rnd As New Random()
+                        Dim newAccessionID As String = rnd.Next(10000, 99999).ToString()
+
+                        Dim insertAccSql As String = "INSERT INTO acession_tbl (TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Donor, Status) " &
+                                                "VALUES (@tno, @accid, @isbn, @barcode, @title, '1', @sup, @don, 'Available')"
+                        Using cmdAdd = New MySqlCommand(insertAccSql, con)
+                            cmdAdd.Parameters.AddWithValue("@tno", transNo)
+                            cmdAdd.Parameters.AddWithValue("@accid", newAccessionID)
+                            cmdAdd.Parameters.AddWithValue("@isbn", txtisbn.Text)
+                            cmdAdd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
+                            cmdAdd.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                            cmdAdd.Parameters.AddWithValue("@sup", If(cbacquistiontype.Text = "PURCHASED", cbsupplierdonator.Text, ""))
+                            cmdAdd.Parameters.AddWithValue("@don", If(cbacquistiontype.Text <> "PURCHASED", txtdonor.Text, ""))
+                            cmdAdd.ExecuteNonQuery()
+                        End Using
+                    Next
+
+                ElseIf newQty < currentCount Then
+
+                    Dim toDelete As Integer = currentCount - newQty
+
+                    Dim deleteAccSql As String = "DELETE FROM acession_tbl WHERE TransactionNo=@tno AND Status='Available' ORDER BY ID DESC LIMIT @limit"
+                    Using cmdDel = New MySqlCommand(deleteAccSql, con)
+                        cmdDel.Parameters.AddWithValue("@tno", transNo)
+                        cmdDel.Parameters.AddWithValue("@limit", toDelete)
+                        cmdDel.ExecuteNonQuery()
+                    End Using
+                End If
+
+
                 Dim isPurchased As Boolean = (cbacquistiontype.Text = "PURCHASED")
 
                 Dim sql As String = "UPDATE acquisition_tbl SET " &
-                                "ISBN=@isbn, Barcode=@barcode, BookTitle=@title, " &
-                                "SupplierName=@sup, Donor=@don, Quantity=@qty, " &
-                                "BookPrice=@price, TotalCost=@total, DateAcquired=@date " &
-                                "WHERE ID=@id"
+                     "ISBN=@isbn, Barcode=@barcode, BookTitle=@title, " &
+                     "SupplierName=@sup, Donor=@don, Quantity=@qty, " &
+                     "BookPrice=@price, TotalCost=@total, DateAcquired=@date " &
+                     "WHERE ID=@id"
 
                 Using cmd As New MySqlCommand(sql, con)
                     cmd.Parameters.AddWithValue("@isbn", txtisbn.Text)
@@ -825,7 +916,7 @@ Public Class AcquistionDetails
              formName:="ACQUISITION FORM",
              description:=$"Updated Acquisition Record for Book: {txtbooktitle.Text} (ID: {SelectedAcquisitionID})",
              recordID:=SelectedAcquisitionID
-         )
+     )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -835,15 +926,21 @@ Public Class AcquistionDetails
             Next
 
             MessageBox.Show("Record Updated Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+            RemoveHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+
             GlobalVarsModule.TriggerDatabaseUpdated()
+
             Me.Close()
+
         Catch ex As Exception
-
             MessageBox.Show("Update Error: " & ex.Message)
-
         End Try
 
     End Sub
+
+
 
     Private Sub txtbookprice_TextChanged(sender As Object, e As EventArgs) Handles txtbookprice.TextChanged
         CalculateTotal()

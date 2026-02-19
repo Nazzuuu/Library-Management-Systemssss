@@ -1,9 +1,11 @@
-﻿Imports System.IO
+﻿Imports System.Data
+Imports System.IO
+Imports System.Net
+Imports System.Net.Mail
 Imports System.Security.Cryptography
 Imports System.Text
-Imports MySql.Data.MySqlClient
-Imports System.Data
 Imports System.Text.RegularExpressions
+Imports MySql.Data.MySqlClient
 
 Public Class Users
 
@@ -238,6 +240,23 @@ Public Class Users
             Exit Sub
         End If
 
+        Dim generatedOTP As String = GenerateOTP()
+        If SendVerificationEmail(email, generatedOTP) Then
+            Dim userOTP As String = InputBox("A verification code has been sent to " & email & ". Please enter the 6-digit code below:", "Email Verification")
+            If String.IsNullOrWhiteSpace(userOTP) Then
+                MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+            If userOTP <> generatedOTP Then
+                MessageBox.Show("Invalid verification code. Registration cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End If
+        Else
+
+            Return
+        End If
+
+
         Dim gender As String = ""
         If rbmale.Checked Then
             gender = "Male"
@@ -330,11 +349,11 @@ Public Class Users
             newID = Convert.ToInt32(com.ExecuteScalar())
 
             GlobalVarsModule.LogAudit(
-    actionType:="ADD",
-    formName:="USER STAFF FORM",
-    description:=$"Added new staff: {lastName}, {firstName} ({role})",
-    recordID:=newID.ToString()
-)
+         actionType:="ADD",
+         formName:="USER STAFF FORM",
+         description:=$"Added new staff: {lastName}, {firstName} ({role})",
+         recordID:=newID.ToString()
+     )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -425,6 +444,25 @@ Public Class Users
             MsgBox("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
             Exit Sub
         End If
+
+        If Not oldEmail.Equals(email, StringComparison.OrdinalIgnoreCase) Then
+            Dim generatedOTP As String = GenerateOTP()
+            If SendVerificationEmail(email, generatedOTP) Then
+                Dim userOTP As String = InputBox("A verification code has been sent to " & email & ". Please enter the 6-digit code below:", "Email Verification")
+                If String.IsNullOrWhiteSpace(userOTP) Then
+                    MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+                If userOTP <> generatedOTP Then
+                    MessageBox.Show("Invalid verification code. Update cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
+                End If
+            Else
+
+                Return
+            End If
+        End If
+
 
         If rbmale.Checked Then
             gender = "Male"
@@ -530,13 +568,13 @@ Public Class Users
             Dim newValueString As String = $"{firstName}|{lastName}|{middleName}|{user}|{pass}|{email}|{contact}|{address}|{gender}|{role}"
 
             GlobalVarsModule.LogAudit(
-    actionType:="UPDATE",
-    formName:="USER STAFF FORM",
-    description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
-    recordID:=ID.ToString(),
-    oldValue:=oldValueString,
-    newValue:=newValueString
-)
+        actionType:="UPDATE",
+        formName:="USER STAFF FORM",
+        description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
+        recordID:=ID.ToString(),
+        oldValue:=oldValueString,
+        newValue:=newValueString
+                                )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -1324,5 +1362,56 @@ Public Class Users
 
     End Sub
 
+    Private Sub GetEmailConfig(ByRef email As String, ByRef password As String)
+        Dim sql As String = "SELECT Email, AppPassword FROM email_config LIMIT 1"
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Using cmd As New MySqlCommand(sql, con)
+                con.Open()
+                Using rdr = cmd.ExecuteReader()
+                    If rdr.Read() Then
+                        email = rdr("Email").ToString()
+                        password = rdr("AppPassword").ToString()
+                    End If
+                End Using
+            End Using
+        End Using
+    End Sub
+
+    Private Function GenerateOTP() As String
+        Dim rand As New Random()
+        Return rand.Next(100000, 999999).ToString()
+    End Function
+
+    Private Function SendVerificationEmail(targetEmail As String, otpCode As String) As Boolean
+        Try
+            Dim fromEmail As String = ""
+            Dim appPassword As String = ""
+
+            GetEmailConfig(fromEmail, appPassword)
+
+            Dim mail As New MailMessage()
+            mail.From = New MailAddress(fromEmail, "MDA-LMS Support")
+            mail.To.Add(targetEmail)
+            mail.Subject = "MDA-LMS Account Verification Code"
+            mail.Body = "Your verification code is: " & otpCode & vbCrLf & vbCrLf & "Please enter this code to complete your account update."
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+
+            Dim smtp As New SmtpClient("smtp.gmail.com")
+            smtp.Port = 587
+            smtp.EnableSsl = True
+            smtp.UseDefaultCredentials = False
+            smtp.Credentials = New NetworkCredential(fromEmail, appPassword)
+            smtp.DeliveryMethod = SmtpDeliveryMethod.Network
+
+            smtp.Send(mail)
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show("Failed to send email: " & ex.Message)
+            Return False
+        End Try
+    End Function
 
 End Class

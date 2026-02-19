@@ -26,7 +26,9 @@ Public Class BorrowingHistoryForm
 
                 Dim query As String =
                     "SELECT Borrower, ISBN, Barcode, AccessionID, BookTitle, Name, BorrowedDate, DueDate, TransactionReceipt " &
-                    "FROM borrowinghistory_tbl ORDER BY BorrowedDate DESC;"
+                    "FROM borrowinghistory_tbl " &
+                    "WHERE Status = 'Granted' " &
+                    "ORDER BY BorrowedDate DESC;"
 
                 Using cmd As New MySqlCommand(query, con)
                     Using adapter As New MySqlDataAdapter(cmd)

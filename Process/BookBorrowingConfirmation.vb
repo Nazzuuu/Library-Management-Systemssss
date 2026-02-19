@@ -744,8 +744,6 @@ Public Class BookBorrowingConfirmation
         Dim borrowerName As String = selectedRow.Cells("Name").Value.ToString
         Dim borrowedDate As String = selectedRow.Cells("BorrowedDate").Value.ToString
 
-
-
         Dim finalLRN As String = If(lbllrn.Text = "--", "", lbllrn.Text)
         Dim finalEmpNo As String = If(lblemployeeno.Text = "--", "", lblemployeeno.Text)
 
@@ -785,9 +783,8 @@ Public Class BookBorrowingConfirmation
 
                 pendingstats(finalAccessionID, "Available")
 
-
                 Dim insertHistoryCom As String = "INSERT INTO borrowinghistory_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, BorrowedDate, TransactionReceipt, Status) " &
-                                             "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @BDate, @DDate, @TransactionReceipt, @Status)"
+                                                 "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @BDate, @TransactionReceipt, @Status)"
 
                 Using cmdHistory As New MySqlCommand(insertHistoryCom, con)
                     cmdHistory.Parameters.AddWithValue("@Borrower", borrowerType)
@@ -849,4 +846,5 @@ Public Class BookBorrowingConfirmation
         End Try
 
     End Sub
+
 End Class
