@@ -250,7 +250,7 @@ Public Class Borrower
             borrowerType = "Teacher"
         End If
 
-        If rbnone.Checked Then
+        If CheckBox1.Checked Then
             middleInitial = "N/A"
         End If
 
@@ -424,7 +424,7 @@ Public Class Borrower
 
 
             Dim newFullName As String = $"{lastName}, {firstName}"
-            If Not rbnone.Checked AndAlso Not String.IsNullOrWhiteSpace(middleInitial) Then
+            If Not CheckBox1.Checked AndAlso Not String.IsNullOrWhiteSpace(middleInitial) Then
                 newFullName = $"{lastName}, {firstName} {middleInitial}"
             End If
 
@@ -435,7 +435,7 @@ Public Class Borrower
                 borrowerType = "Teacher"
             End If
 
-            If rbnone.Checked Then
+            If CheckBox1.Checked Then
                 middleInitial = "N/A"
             End If
 
@@ -817,12 +817,12 @@ Public Class Borrower
 
             If middleInitial = "N/A" OrElse String.IsNullOrWhiteSpace(middleInitial) Then
 
-                rbnone.Checked = False
+                CheckBox1.Checked = False
                 txtmname.Text = ""
 
             Else
 
-                rbnone.Checked = False
+                CheckBox1.Checked = False
                 txtmname.Text = middleInitial
 
             End If
@@ -1070,8 +1070,8 @@ Public Class Borrower
             txtlname.Enabled = True
             txtmname.Enabled = True
             txtcontactnumber.Enabled = True
-            rbnone.Enabled = True
-            rbnone.Checked = False
+            CheckBox1.Enabled = True
+            CheckBox1.Checked = False
 
         End If
 
@@ -1113,16 +1113,19 @@ Public Class Borrower
             txtmname.Enabled = True
             txtemployeeno.Enabled = True
             txtcontactnumber.Enabled = True
-            rbnone.Enabled = True
-            rbnone.Checked = False
+            'rbnone.Enabled = True
+            'rbnone.Checked = False
+
+            CheckBox1.Enabled = True
+            CheckBox1.Checked = False
 
         End If
 
     End Sub
 
-    Private Sub rbnone_CheckedChanged(sender As Object, e As EventArgs) Handles rbnone.CheckedChanged
+    Private Sub chk1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
 
-        If rbnone.Checked Then
+        If CheckBox1.Checked Then
             txtmname.Enabled = False
             txtmname.Text = ""
         Else
@@ -1170,7 +1173,7 @@ Public Class Borrower
 
         rbstudent.Checked = False
         rbteacher.Checked = False
-        rbnone.Checked = False
+        CheckBox1.Checked = False
         txtmname.Enabled = True
         lblborrowertype.Text = "LRN:"
 
@@ -1179,7 +1182,7 @@ Public Class Borrower
         txtmname.Enabled = False
         txtlrn.Enabled = False
         txtcontactnumber.Enabled = False
-        rbnone.Enabled = False
+        CheckBox1.Enabled = False
 
     End Sub
 

@@ -72,6 +72,7 @@ Partial Class Borrower
         btnadd = New Guna.UI2.WinForms.Guna2Button()
         Label6 = New Label()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
+        CheckBox1 = New CheckBox()
         Label7 = New Label()
         Label4 = New Label()
         Label3 = New Label()
@@ -95,7 +96,6 @@ Partial Class Borrower
         lbldepartment = New Label()
         lblborrowertype = New Label()
         txtlrn = New Guna.UI2.WinForms.Guna2TextBox()
-        rbnone = New RadioButton()
         Label2 = New Label()
         txtmname = New Guna.UI2.WinForms.Guna2TextBox()
         Label1 = New Label()
@@ -310,6 +310,7 @@ Partial Class Borrower
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(CheckBox1)
         Guna2GroupBox1.Controls.Add(Label7)
         Guna2GroupBox1.Controls.Add(Label4)
         Guna2GroupBox1.Controls.Add(Label3)
@@ -330,7 +331,6 @@ Partial Class Borrower
         Guna2GroupBox1.Controls.Add(lbldepartment)
         Guna2GroupBox1.Controls.Add(lblborrowertype)
         Guna2GroupBox1.Controls.Add(txtlrn)
-        Guna2GroupBox1.Controls.Add(rbnone)
         Guna2GroupBox1.Controls.Add(Label2)
         Guna2GroupBox1.Controls.Add(txtmname)
         Guna2GroupBox1.Controls.Add(Label1)
@@ -355,6 +355,18 @@ Partial Class Borrower
         Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges34
         Guna2GroupBox1.Size = New Size(1333, 626)
         Guna2GroupBox1.TabIndex = 0
+        ' 
+        ' CheckBox1
+        ' 
+        CheckBox1.AutoSize = True
+        CheckBox1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        CheckBox1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        CheckBox1.Location = New Point(504, 65)
+        CheckBox1.Name = "CheckBox1"
+        CheckBox1.Size = New Size(52, 20)
+        CheckBox1.TabIndex = 110
+        CheckBox1.Text = "N/A"
+        CheckBox1.UseVisualStyleBackColor = True
         ' 
         ' Label7
         ' 
@@ -633,7 +645,7 @@ Partial Class Borrower
         lblborrowertype.AutoSize = True
         lblborrowertype.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblborrowertype.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblborrowertype.Location = New Point(306, 135)
+        lblborrowertype.Location = New Point(324, 135)
         lblborrowertype.Name = "lblborrowertype"
         lblborrowertype.Size = New Size(36, 16)
         lblborrowertype.TabIndex = 58
@@ -653,7 +665,7 @@ Partial Class Borrower
         txtlrn.Font = New Font("Segoe UI", 9F)
         txtlrn.ForeColor = Color.Black
         txtlrn.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtlrn.Location = New Point(306, 154)
+        txtlrn.Location = New Point(324, 154)
         txtlrn.MaxLength = 12
         txtlrn.Name = "txtlrn"
         txtlrn.PlaceholderText = ""
@@ -662,25 +674,12 @@ Partial Class Borrower
         txtlrn.Size = New Size(232, 33)
         txtlrn.TabIndex = 3
         ' 
-        ' rbnone
-        ' 
-        rbnone.AutoSize = True
-        rbnone.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        rbnone.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        rbnone.Location = New Point(550, 95)
-        rbnone.Name = "rbnone"
-        rbnone.Size = New Size(51, 20)
-        rbnone.TabIndex = 56
-        rbnone.TabStop = True
-        rbnone.Text = "N/A"
-        rbnone.UseVisualStyleBackColor = True
-        ' 
         ' Label2
         ' 
         Label2.AutoSize = True
         Label2.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label2.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label2.Location = New Point(306, 69)
+        Label2.Location = New Point(324, 69)
         Label2.Name = "Label2"
         Label2.Size = New Size(93, 16)
         Label2.TabIndex = 55
@@ -700,7 +699,7 @@ Partial Class Borrower
         txtmname.Font = New Font("Segoe UI", 9F)
         txtmname.ForeColor = Color.Black
         txtmname.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtmname.Location = New Point(306, 88)
+        txtmname.Location = New Point(324, 88)
         txtmname.MaxLength = 2
         txtmname.Name = "txtmname"
         txtmname.PlaceholderText = ""
@@ -780,7 +779,7 @@ Partial Class Borrower
         txtemployeeno.Font = New Font("Segoe UI", 9F)
         txtemployeeno.ForeColor = Color.Black
         txtemployeeno.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
-        txtemployeeno.Location = New Point(306, 154)
+        txtemployeeno.Location = New Point(324, 154)
         txtemployeeno.MaxLength = 8
         txtemployeeno.Name = "txtemployeeno"
         txtemployeeno.PlaceholderText = ""
@@ -840,7 +839,6 @@ Partial Class Borrower
     Friend WithEvents txtlname As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents lblborrowertype As Label
     Friend WithEvents txtlrn As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents rbnone As RadioButton
     Friend WithEvents cbstrand As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents lblstrand As Label
     Friend WithEvents cbsection As Guna.UI2.WinForms.Guna2ComboBox
@@ -865,5 +863,6 @@ Partial Class Borrower
     Friend WithEvents Label3 As Label
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Label7 As Label
+    Friend WithEvents CheckBox1 As CheckBox
 
 End Class
