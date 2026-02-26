@@ -101,7 +101,7 @@ Partial Class Superadmin
         btnedit.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnedit.Size = New Size(90, 27)
         btnedit.TabIndex = 1
-        btnedit.Text = "EDIT"
+        btnedit.Text = "UPDATE"
         ' 
         ' btnadd
         ' 
@@ -121,7 +121,7 @@ Partial Class Superadmin
         btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnadd.Size = New Size(90, 27)
         btnadd.TabIndex = 0
-        btnadd.Text = "ADD"
+        btnadd.Text = "SAVE"
         ' 
         ' Guna2Elipse1
         ' 
@@ -386,7 +386,7 @@ Partial Class Superadmin
         txtemail.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtemail.Location = New Point(360, 135)
         txtemail.Margin = New Padding(3, 5, 3, 5)
-        txtemail.MaxLength = 20
+        txtemail.MaxLength = 50
         txtemail.Name = "txtemail"
         txtemail.PlaceholderText = ""
         txtemail.SelectedText = ""

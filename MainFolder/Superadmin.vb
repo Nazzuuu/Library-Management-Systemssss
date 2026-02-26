@@ -1,4 +1,6 @@
 ﻿Imports System.IO
+Imports System.Net
+Imports System.Net.Mail
 Imports Microsoft.VisualBasic.ApplicationServices
 Imports MySql.Data.MySqlClient
 
@@ -37,6 +39,8 @@ Public Class Superadmin
 
 
         DataGridView1.Columns("ID").Visible = False
+        DataGridView1.Columns("CurrentIP").Visible = False
+        DataGridView1.Columns("is_logged_in").Visible = False
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
@@ -74,6 +78,7 @@ Public Class Superadmin
         Dim user As String = txtusername.Text.Trim()
         Dim contact As String = txtcontact.Text.Trim()
         Dim adr As String = txtaddress.Text.Trim()
+        Dim email As String = txtemail.Text.Trim()
 
         If firstName.Length < 2 Then
             MessageBox.Show("First Name must be 2 characters or more.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -95,36 +100,42 @@ Public Class Superadmin
             Return
         End If
 
-        Dim email As String = txtemail.Text.Trim()
+
         If Not String.IsNullOrEmpty(email) Then
             Dim emailRegex As New Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
             If Not emailRegex.IsMatch(email) Then
                 MessageBox.Show("Please enter a valid email address.", "Invalid Email", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return
             End If
+
+
+            Dim generatedOTP As String = GenerateOTP()
+            If SendVerificationEmail(email, generatedOTP) Then
+                Dim userOTP As String = InputBox("A verification code has been sent to " & email & ". Please enter the 6-digit code below:", "Email Verification")
+                If String.IsNullOrWhiteSpace(userOTP) Then
+                    MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+                If userOTP <> generatedOTP Then
+                    MessageBox.Show("Invalid verification code. Add cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
+                End If
+            Else
+                Return
+            End If
         End If
 
-        Dim gender As String = ""
-        Dim middlename As String = txtmname.Text.Trim
 
-        If rbmale.Checked Then
-            gender = "Male"
-        ElseIf rbfemale.Checked Then
-            gender = "Female"
-        End If
+        Dim gender As String = If(rbmale.Checked, "Male", If(rbfemale.Checked, "Female", ""))
+        Dim middlename As String = If(CheckBox1.Checked, "N/A", txtmname.Text.Trim())
 
-        If CheckBox1.Checked Then
-            middlename = "N/A"
-        End If
 
-        If String.IsNullOrEmpty(txtusername.Text.Trim) OrElse String.IsNullOrEmpty(txtpassword.Text.Trim) OrElse String.IsNullOrEmpty(txtfname.Text.Trim) OrElse String.IsNullOrEmpty(txtlname.Text.Trim) Then
+        If String.IsNullOrEmpty(user) OrElse String.IsNullOrEmpty(txtpassword.Text.Trim()) OrElse String.IsNullOrEmpty(firstName) OrElse String.IsNullOrEmpty(lastName) Then
             MessageBox.Show("Please fill out all required fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
-        If Not IsPasswordValid() Then
-            Return
-        End If
+        If Not IsPasswordValid() Then Return
 
         If contact.Length < 11 OrElse (contact.StartsWith("09") AndAlso contact.Length = 2) Then
             MessageBox.Show("Contact Number must be a valid length (e.g., 11 digits).", "Invalid Contact Number", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -132,45 +143,37 @@ Public Class Superadmin
         End If
 
 
-        Dim con As New MySqlConnection(connectionString)
-        Dim com As New MySqlCommand("INSERT INTO superadmin_tbl (Username, Password, FirstName, LastName, MiddleName, ContactNumber, Address, Email, Gender, Role) VALUES (@username, @password, @fname, @lname, @mname, @contact, @address, @email, @gender, @role)", con)
+        Using con As New MySqlConnection(connectionString)
+            Dim com As New MySqlCommand("INSERT INTO superadmin_tbl (Username, Password, FirstName, LastName, MiddleName, ContactNumber, Address, Email, Gender, Role) VALUES (@username, @password, @fname, @lname, @mname, @contact, @address, @email, @gender, @role)", con)
+            com.Parameters.AddWithValue("@username", user)
+            com.Parameters.AddWithValue("@password", txtpassword.Text.Trim())
+            com.Parameters.AddWithValue("@fname", firstName)
+            com.Parameters.AddWithValue("@lname", lastName)
+            com.Parameters.AddWithValue("@mname", middlename)
+            com.Parameters.AddWithValue("@contact", contact)
+            com.Parameters.AddWithValue("@address", adr)
+            com.Parameters.AddWithValue("@email", email)
+            com.Parameters.AddWithValue("@gender", gender)
+            com.Parameters.AddWithValue("@role", "Librarian")
 
-        com.Parameters.AddWithValue("@username", txtusername.Text.Trim)
-        com.Parameters.AddWithValue("@password", txtpassword.Text.Trim)
-        com.Parameters.AddWithValue("@fname", txtfname.Text.Trim)
-        com.Parameters.AddWithValue("@lname", txtlname.Text.Trim)
-        com.Parameters.AddWithValue("@mname", middlename)
-        com.Parameters.AddWithValue("@contact", txtcontact.Text.Trim)
-        com.Parameters.AddWithValue("@address", txtaddress.Text.Trim)
-        com.Parameters.AddWithValue("@email", txtemail.Text.Trim)
-        com.Parameters.AddWithValue("@gender", gender)
-        com.Parameters.AddWithValue("@role", "Librarian")
+            Dim isalang As New MySqlCommand("SELECT COUNT(*) FROM `superadmin_tbl` WHERE `Role` = 'Librarian'", con)
 
+            Try
+                con.Open()
+                Dim count As Integer = Convert.ToInt32(isalang.ExecuteScalar())
+                If count > 0 Then
+                    MsgBox("Only one librarian is allowed.", vbExclamation)
+                    Return
+                End If
 
-        Dim isalang As New MySqlCommand("SELECT COUNT(*) FROM `superadmin_tbl` WHERE `Role` = 'Librarian'", con)
-
-
-        Try
-            con.Open()
-
-            Dim count As Integer = Convert.ToInt32(isalang.ExecuteScalar)
-
-            If count > 0 Then
-                MsgBox("Only one librarian is allowed.", vbExclamation)
-                Return
-            End If
-
-            com.ExecuteNonQuery()
-            MessageBox.Show("Librarian account successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Superadmin_Load(sender, e)
-            clearlahat()
-        Catch ex As Exception
-            MessageBox.Show("Error adding account: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
+                com.ExecuteNonQuery()
+                MessageBox.Show("Librarian account successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Superadmin_Load(sender, e)
+                clearlahat()
+            Catch ex As Exception
+                MessageBox.Show("Error adding account: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
     End Sub
 
     Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
@@ -185,21 +188,18 @@ Public Class Superadmin
         Dim user As String = txtusername.Text.Trim()
         Dim contact As String = txtcontact.Text.Trim()
         Dim adr As String = txtaddress.Text.Trim
-
         Dim editedEmail As String = txtemail.Text.Trim()
         Dim editedFirstName As String = txtfname.Text.Trim()
         Dim editedLastName As String = txtlname.Text.Trim()
-
 
         If String.IsNullOrEmpty(txtusername.Text.Trim) OrElse String.IsNullOrEmpty(txtpassword.Text.Trim) OrElse String.IsNullOrEmpty(txtfname.Text.Trim) OrElse String.IsNullOrEmpty(txtlname.Text.Trim) Then
             MessageBox.Show("Please fill out all required fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
-        Dim email As String = txtemail.Text.Trim()
-        If Not String.IsNullOrEmpty(email) Then
+        If Not String.IsNullOrEmpty(editedEmail) Then
             Dim emailRegex As New Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
-            If Not emailRegex.IsMatch(email) Then
+            If Not emailRegex.IsMatch(editedEmail) Then
                 MessageBox.Show("Please enter a valid email address.", "Invalid Email", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Return
             End If
@@ -225,7 +225,6 @@ Public Class Superadmin
             Return
         End If
 
-
         If contact.Length < 11 OrElse (contact.StartsWith("09") AndAlso contact.Length = 2) Then
             MessageBox.Show("Contact Number must be a valid length (e.g., 11 digits).", "Invalid Contact Number", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
@@ -233,6 +232,25 @@ Public Class Superadmin
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
         Dim superadminId As Integer = CInt(selectedRow.Cells("ID").Value)
+        Dim originalEmail As String = selectedRow.Cells("Email").Value.ToString().Trim()
+
+
+        If Not String.IsNullOrEmpty(editedEmail) AndAlso Not originalEmail.Equals(editedEmail, StringComparison.OrdinalIgnoreCase) Then
+            Dim generatedOTP As String = GenerateOTP()
+            If SendVerificationEmail(editedEmail, generatedOTP) Then
+                Dim userOTP As String = InputBox("A verification code has been sent to " & editedEmail & ". Please enter the 6-digit code below:", "Email Verification")
+                If String.IsNullOrWhiteSpace(userOTP) Then
+                    MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return
+                End If
+                If userOTP <> generatedOTP Then
+                    MessageBox.Show("Invalid verification code. Update cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
+                End If
+            Else
+                Return
+            End If
+        End If
 
         Dim gender As String = ""
         If rbmale.Checked Then
@@ -244,11 +262,6 @@ Public Class Superadmin
         Dim middlename As String = txtmname.Text.Trim()
         If CheckBox1.Checked Then
             middlename = "N/A"
-        End If
-
-        If String.IsNullOrEmpty(txtusername.Text.Trim) OrElse String.IsNullOrEmpty(txtpassword.Text.Trim) OrElse String.IsNullOrEmpty(txtfname.Text.Trim) OrElse String.IsNullOrEmpty(txtlname.Text.Trim) Then
-            MessageBox.Show("Please fill out all required fields (Username, Password, First Name, Last Name).", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Return
         End If
 
         If Not IsPasswordValid() Then
@@ -274,14 +287,11 @@ Public Class Superadmin
             con.Open()
             com.ExecuteNonQuery()
 
+
             If GlobalVarsModule.GlobalEmail.Equals(editedEmail, StringComparison.OrdinalIgnoreCase) Then
-
-
                 GlobalVarsModule.GlobalFullname = $"{editedFirstName} {editedLastName}".Trim()
-
                 For Each form As Form In Application.OpenForms
                     If TypeOf form Is MainForm Then
-
                         Dim mainForm As MainForm = DirectCast(form, MainForm)
                         mainForm.lblgmail.Text = GlobalVarsModule.GlobalFullname
                     End If
@@ -291,8 +301,6 @@ Public Class Superadmin
             If MainForm.lblgmail.Text = selectedRow.Cells("Email").Value.ToString Then
                 MainForm.lblgmail.Text = txtemail.Text.Trim
             End If
-
-
 
             MessageBox.Show("Librarian account successfully updated!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Superadmin_Load(sender, e)
@@ -851,6 +859,57 @@ Public Class Superadmin
 
     End Sub
 
+    Private Function GenerateOTP() As String
+        Dim rand As New Random()
+        Return rand.Next(100000, 999999).ToString()
+    End Function
+
+    Private Sub GetEmailConfig(ByRef email As String, ByRef password As String)
+        Dim sql As String = "SELECT Email, AppPassword FROM email_config LIMIT 1"
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Using cmd As New MySqlCommand(sql, con)
+                con.Open()
+                Using rdr = cmd.ExecuteReader()
+                    If rdr.Read() Then
+                        email = rdr("Email").ToString()
+                        password = rdr("AppPassword").ToString()
+                    End If
+                End Using
+            End Using
+        End Using
+    End Sub
+
+    Private Function SendVerificationEmail(targetEmail As String, otpCode As String) As Boolean
+        Try
+            Dim fromEmail As String = ""
+            Dim appPassword As String = ""
+
+            GetEmailConfig(fromEmail, appPassword)
+
+            Dim mail As New MailMessage()
+            mail.From = New MailAddress(fromEmail, "MDA-LMS Support")
+            mail.To.Add(targetEmail)
+            mail.Subject = "MDA-LMS Account Verification Code"
+            mail.Body = "Your verification code is: " & otpCode & vbCrLf & vbCrLf & "Please enter this code to complete your account update."
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+
+            Dim smtp As New SmtpClient("smtp.gmail.com")
+            smtp.Port = 587
+            smtp.EnableSsl = True
+            smtp.UseDefaultCredentials = False
+            smtp.Credentials = New NetworkCredential(fromEmail, appPassword)
+            smtp.DeliveryMethod = SmtpDeliveryMethod.Network
+
+            smtp.Send(mail)
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show("Failed to send email: " & ex.Message)
+            Return False
+        End Try
+    End Function
 
     'hatdoggggg'''
     'palalala'

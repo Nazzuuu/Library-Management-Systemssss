@@ -1,13 +1,17 @@
-﻿Imports System.Drawing
+﻿Imports System.Collections.Generic
+Imports System.Data
+Imports System.Diagnostics
+Imports System.Drawing
+Imports System.Drawing.Printing
 Imports System.IO
 Imports MySql.Data.MySqlClient
+Imports PdfSharp.Drawing
+Imports PdfSharp.Pdf
+Imports PdfSharp.Fonts
+Imports TheArtOfDevHtmlRenderer.Adapters.Entities
 Imports ZXing
 Imports ZXing.Rendering
 Imports ZXing.Windows.Compatibility
-Imports System.Drawing.Printing
-Imports System.Collections.Generic
-Imports System.Data
-Imports System.Diagnostics
 
 
 Public Class Book
@@ -38,9 +42,14 @@ Public Class Book
 
 
     Private Sub Book_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
         TopMost = True
         Me.Font = New Font("Baskerville Old Face", 9)
         Me.Refresh()
+
+        If GlobalFontSettings.FontResolver Is Nothing Then
+            GlobalFontSettings.FontResolver = New CustomFontResolver()
+        End If
 
         refreshbook()
         DisablePaste_AllTextBoxes()
@@ -220,6 +229,7 @@ Public Class Book
 
 
     Private Sub ExportPDF_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+
         Try
             BarcodeList.Clear()
             Using con As New MySqlConnection(GlobalVarsModule.connectionString)
@@ -229,9 +239,9 @@ Public Class Book
                 Dim reader As MySqlDataReader = cmd.ExecuteReader()
                 While reader.Read()
                     BarcodeList.Add(New BarcodeInfo With {
-                        .Barcode = reader("Barcode").ToString(),
-                        .Title = reader("BookTitle").ToString()
-                    })
+                .Barcode = reader("Barcode").ToString(),
+                .Title = reader("BookTitle").ToString()
+            })
                 End While
             End Using
 
@@ -240,22 +250,77 @@ Public Class Book
                 Return
             End If
 
-            BarcodeIndex = 0
+            Dim sfd As New SaveFileDialog()
+            sfd.Filter = "PDF File|*.pdf"
+            sfd.FileName = "BarcodeList.pdf"
+            If sfd.ShowDialog() <> DialogResult.OK Then Return
+
+            Dim pdf As New PdfDocument()
+            pdf.Info.Title = "Barcode List"
+
+            Dim page As PdfPage = pdf.AddPage()
+            Dim gfx As XGraphics = XGraphics.FromPdfPage(page)
+
+            Dim font As XFont = New XFont("Arial", 10, XFontStyleEx.Regular,
+            New XPdfFontOptions(PdfFontEncoding.Unicode, PdfFontEmbedding.EmbedCompleteFontFile))
 
 
-            Dim totalHeight As Integer = (BarcodeList.Count * 130) + 100
-            Dim customPaperSize As New PaperSize("Custom", 350, totalHeight)
+            Dim marginX As Double = 40
+            Dim currentY As Double = 40
+            Dim boxWidth As Double = 270
+            Dim boxHeight As Double = 100
+            Dim padding As Double = 10
+            Dim lineHeight As Double = 120
 
-            printDoc.DefaultPageSettings.PaperSize = customPaperSize
-            printDoc.DefaultPageSettings.Margins = New Margins(10, 10, 10, 10)
+            For Each item In BarcodeList
 
-            Dim printPreview As New PrintPreviewDialog()
-            printPreview.Document = printDoc
-            printPreview.WindowState = FormWindowState.Maximized
-            printPreview.ShowDialog()
+
+                Dim writer As New ZXing.Windows.Compatibility.BarcodeWriter()
+                writer.Format = ZXing.BarcodeFormat.CODE_128
+                writer.Options = New ZXing.Common.EncodingOptions With {
+                .Width = 250,
+                .Height = 60,
+                .Margin = 2
+            }
+
+                Dim barcodeBitmap As Bitmap = writer.Write(item.Barcode)
+                Dim ms As New System.IO.MemoryStream()
+                barcodeBitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png)
+                ms.Position = 0
+                Dim xImg As XImage = XImage.FromStream(ms)
+
+
+                Dim pen As New XPen(XColors.Black, 1)
+
+                gfx.DrawRectangle(pen, marginX, currentY, boxWidth, boxHeight)
+
+
+                Dim displayTitle As String = item.Title
+                If displayTitle.Length > 40 Then displayTitle = displayTitle.Substring(0, 37) & "..."
+
+                gfx.DrawString(displayTitle, font, XBrushes.Black,
+                           New XPoint(marginX + padding, currentY + 20))
+
+
+                gfx.DrawImage(xImg, marginX + 10, currentY + 30, 250, 60)
+
+
+                currentY += lineHeight
+
+                If currentY > page.Height.Point - 150 Then
+                    page = pdf.AddPage()
+                    gfx = XGraphics.FromPdfPage(page)
+                    currentY = 40
+                End If
+            Next
+
+            pdf.Save(sfd.FileName)
+            MessageBox.Show($"PDF saved successfully at {sfd.FileName}", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         Catch ex As Exception
-            MessageBox.Show("Error: " & ex.Message)
+            MessageBox.Show("Error: " & ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
@@ -765,7 +830,7 @@ Public Class Book
 
 
     Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
-        clear
+        clear()
     End Sub
 
     Public Sub clear()

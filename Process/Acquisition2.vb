@@ -170,6 +170,7 @@ Public Class Acquisition2
                     .txtbooktitle.Enabled = False
                     .btnselectsu.Enabled = False
                     .cbisbnbarcode.Enabled = False
+                    .cbacquistiontype.Enabled = False
 
                     .ShowDialog()
 

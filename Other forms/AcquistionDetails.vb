@@ -36,6 +36,9 @@ Public Class AcquistionDetails
 
 
         DateTimePicker1.MaxDate = DateTime.Now.Date
+        DateTimePicker1.Value = DateTime.Now.Date
+
+
         If DateTimePicker1.Value > DateTimePicker1.MaxDate Then
             DateTimePicker1.Value = DateTimePicker1.MaxDate
         End If
@@ -850,25 +853,43 @@ Public Class AcquistionDetails
 
                 If newQty > currentCount Then
 
-                    Dim toAdd As Integer = newQty - currentCount
-                    For i As Integer = 1 To toAdd
 
-                        Dim rnd As New Random()
-                        Dim newAccessionID As String = rnd.Next(10000, 99999).ToString()
+                    If currentCount > 0 Then
 
-                        Dim insertAccSql As String = "INSERT INTO acession_tbl (TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Donor, Status) " &
-                                                "VALUES (@tno, @accid, @isbn, @barcode, @title, '1', @sup, @don, 'Available')"
-                        Using cmdAdd = New MySqlCommand(insertAccSql, con)
-                            cmdAdd.Parameters.AddWithValue("@tno", transNo)
-                            cmdAdd.Parameters.AddWithValue("@accid", newAccessionID)
-                            cmdAdd.Parameters.AddWithValue("@isbn", txtisbn.Text)
-                            cmdAdd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
-                            cmdAdd.Parameters.AddWithValue("@title", txtbooktitle.Text)
-                            cmdAdd.Parameters.AddWithValue("@sup", If(cbacquistiontype.Text = "PURCHASED", cbsupplierdonator.Text, ""))
-                            cmdAdd.Parameters.AddWithValue("@don", If(cbacquistiontype.Text <> "PURCHASED", txtdonor.Text, ""))
-                            cmdAdd.ExecuteNonQuery()
+                        Dim detectedShelf As String = "1"
+                        Dim getShelfSql As String = "SELECT Shelf FROM acession_tbl WHERE BookTitle=@title LIMIT 1"
+                        Using cmdShelf As New MySqlCommand(getShelfSql, con)
+                            cmdShelf.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                            Dim result = cmdShelf.ExecuteScalar()
+                            If result IsNot Nothing AndAlso Not IsDBNull(result) Then
+                                detectedShelf = result.ToString()
+                            End If
                         End Using
-                    Next
+
+
+                        Dim toAdd As Integer = newQty - currentCount
+                        For i As Integer = 1 To toAdd
+
+                            Dim rnd As New Random()
+                            Dim newAccessionID As String = rnd.Next(10000, 99999).ToString()
+
+                            Dim insertAccSql As String = "INSERT INTO acession_tbl (TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Donor, Status) " &
+                                            "VALUES (@tno, @accid, @isbn, @barcode, @title, @shelf, @sup, @don, 'Available')"
+                            Using cmdAdd = New MySqlCommand(insertAccSql, con)
+                                cmdAdd.Parameters.AddWithValue("@tno", transNo)
+                                cmdAdd.Parameters.AddWithValue("@accid", newAccessionID)
+                                cmdAdd.Parameters.AddWithValue("@isbn", txtisbn.Text)
+                                cmdAdd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
+                                cmdAdd.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                                cmdAdd.Parameters.AddWithValue("@shelf", detectedShelf)
+                                cmdAdd.Parameters.AddWithValue("@sup", If(cbacquistiontype.Text = "PURCHASED", cbsupplierdonator.Text, ""))
+                                cmdAdd.Parameters.AddWithValue("@don", If(cbacquistiontype.Text <> "PURCHASED", txtdonor.Text, ""))
+                                cmdAdd.ExecuteNonQuery()
+                            End Using
+                        Next
+
+                    End If
+
 
                 ElseIf newQty < currentCount Then
 
@@ -886,10 +907,10 @@ Public Class AcquistionDetails
                 Dim isPurchased As Boolean = (cbacquistiontype.Text = "PURCHASED")
 
                 Dim sql As String = "UPDATE acquisition_tbl SET " &
-                     "ISBN=@isbn, Barcode=@barcode, BookTitle=@title, " &
-                     "SupplierName=@sup, Donor=@don, Quantity=@qty, " &
-                     "BookPrice=@price, TotalCost=@total, DateAcquired=@date " &
-                     "WHERE ID=@id"
+                 "ISBN=@isbn, Barcode=@barcode, BookTitle=@title, " &
+                 "SupplierName=@sup, Donor=@don, Quantity=@qty, " &
+                 "BookPrice=@price, TotalCost=@total, DateAcquired=@date " &
+                 "WHERE ID=@id"
 
                 Using cmd As New MySqlCommand(sql, con)
                     cmd.Parameters.AddWithValue("@isbn", txtisbn.Text)
@@ -916,7 +937,7 @@ Public Class AcquistionDetails
              formName:="ACQUISITION FORM",
              description:=$"Updated Acquisition Record for Book: {txtbooktitle.Text} (ID: {SelectedAcquisitionID})",
              recordID:=SelectedAcquisitionID
-     )
+)
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -925,9 +946,10 @@ Public Class AcquistionDetails
                 End If
             Next
 
+
             MessageBox.Show("Record Updated Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-
+            cbacquistiontype.Enabled = True
             RemoveHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
 
             GlobalVarsModule.TriggerDatabaseUpdated()
@@ -939,7 +961,6 @@ Public Class AcquistionDetails
         End Try
 
     End Sub
-
 
 
     Private Sub txtbookprice_TextChanged(sender As Object, e As EventArgs) Handles txtbookprice.TextChanged

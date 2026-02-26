@@ -109,7 +109,17 @@ Public Class Borrower
     End Sub
 
     Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
+
         ColorRows()
+
+
+        For Each col As DataGridViewColumn In DataGridView1.Columns
+            If col.Name = "HasAccount" Then
+                col.Visible = False
+                Exit For
+            End If
+        Next
+
     End Sub
 
     Public Sub strandlocation()
