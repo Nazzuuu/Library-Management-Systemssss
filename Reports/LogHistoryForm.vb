@@ -9,6 +9,7 @@ Public Class LogHistoryForm
     Private WithEvents reportViewer As New ReportViewer()
 
     Public Sub New()
+        InitializeComponent()
         Me.Text = "ORAS Log History Report"
         Me.StartPosition = FormStartPosition.CenterScreen
         Me.ClientSize = New Size(900, 600)

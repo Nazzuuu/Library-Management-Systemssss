@@ -9,6 +9,7 @@ Public Class BorrowingHistoryForm
     Private WithEvents reportViewer As New ReportViewer()
 
     Public Sub New()
+        InitializeComponent()
         Me.Text = "Borrowing History Report"
         Me.StartPosition = FormStartPosition.CenterScreen
         Me.ClientSize = New Size(900, 600)

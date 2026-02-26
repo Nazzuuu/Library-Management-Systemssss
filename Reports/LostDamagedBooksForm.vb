@@ -10,6 +10,7 @@ Public Class LostDamagedBooksForm
     Private WithEvents reportViewer As New ReportViewer()
 
     Public Sub New(reportType As String)
+        InitializeComponent()
         Me.reportType = reportType
         Me.Text = If(reportType = "LostBooks", "Lost Books Report", "Damaged Books Report")
         Me.StartPosition = FormStartPosition.CenterScreen

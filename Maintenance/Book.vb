@@ -13,6 +13,7 @@ Imports ZXing
 Imports ZXing.Rendering
 Imports ZXing.Windows.Compatibility
 
+'kainisus'
 
 Public Class Book
 
