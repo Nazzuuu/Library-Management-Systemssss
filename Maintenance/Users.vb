@@ -53,17 +53,32 @@ Public Class Users
         Catch ex As Exception
             MessageBox.Show("Error loading pikit.png for Users_Staffs Form: " & ex.Message, "Image Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+
         LoadStaffData()
         LoadUserData()
-        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `user_staff_tbl`", 2000)
+
+        If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
+            GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `user_staff_tbl` WHERE ID = '" & GlobalVarsModule.CurrentEmployeeID & "'", 2000)
+        Else
+            GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `user_staff_tbl`", 2000)
+        End If
+
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
         AddHandler DataGridView1.CellFormatting, AddressOf Me.DataGridView1_CellFormatting
         lblpassword.Visible = False
     End Sub
 
+
+
     Private Async Sub OnDatabaseUpdated()
         Try
-            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `user_staff_tbl`")
+
+            If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
+                Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `user_staff_tbl` WHERE ID = '" & GlobalVarsModule.CurrentEmployeeID & "'")
+            Else
+                Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `user_staff_tbl`")
+            End If
+
             If DataGridView1.Columns.Contains("ID") Then DataGridView1.Columns("ID").Visible = False
             If DataGridView1.Columns.Contains("Password") Then DataGridView1.Columns("Password").Visible = False
             DataGridView1.ClearSelection()
@@ -76,18 +91,19 @@ Public Class Users
     End Sub
 
 
+
     Private Sub User_staff(sender As Object, e As EventArgs) Handles MyBase.Shown
-
         DataGridView1.ClearSelection()
-
     End Sub
+
+
 
     Public Sub LoadUserData()
         Try
             Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim SQLQuery As String =
-                "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
-                "FROM user_staff_tbl"
+            "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
+            "FROM user_staff_tbl"
 
                 If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
                     SQLQuery &= " WHERE ID = @EmployeeID"
@@ -575,13 +591,13 @@ Public Class Users
             Dim newValueString As String = $"{firstName}|{lastName}|{middleName}|{user}|{pass}|{email}|{contact}|{address}|{gender}|{role}"
 
             GlobalVarsModule.LogAudit(
-        actionType:="UPDATE",
-        formName:="USER STAFF FORM",
-        description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
-        recordID:=ID.ToString(),
-        oldValue:=oldValueString,
-        newValue:=newValueString
-        )
+            actionType:="UPDATE",
+            formName:="USER STAFF FORM",
+            description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
+            recordID:=ID.ToString(),
+            oldValue:=oldValueString,
+            newValue:=newValueString
+            )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
