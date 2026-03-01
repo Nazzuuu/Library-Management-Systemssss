@@ -111,11 +111,19 @@ Public Class Superadmin
 
             Dim generatedOTP As String = GenerateOTP()
             If SendVerificationEmail(email, generatedOTP) Then
+
+                Me.Hide()
+
                 Dim userOTP As String = InputBox("A verification code has been sent to " & email & ". Please enter the 6-digit code below:", "Email Verification")
+
+                Me.Show()
+                Me.Activate()
+
                 If String.IsNullOrWhiteSpace(userOTP) Then
                     MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     Return
                 End If
+
                 If userOTP <> generatedOTP Then
                     MessageBox.Show("Invalid verification code. Add cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Return
@@ -238,13 +246,21 @@ Public Class Superadmin
         If Not String.IsNullOrEmpty(editedEmail) AndAlso Not originalEmail.Equals(editedEmail, StringComparison.OrdinalIgnoreCase) Then
             Dim generatedOTP As String = GenerateOTP()
             If SendVerificationEmail(editedEmail, generatedOTP) Then
+
+                Me.Hide()
+
                 Dim userOTP As String = InputBox("A verification code has been sent to " & editedEmail & ". Please enter the 6-digit code below:", "Email Verification")
+
+                Me.Show()
+                Me.Activate()
+
                 If String.IsNullOrWhiteSpace(userOTP) Then
                     MessageBox.Show("Verification cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     Return
                 End If
+
                 If userOTP <> generatedOTP Then
-                    MessageBox.Show("Invalid verification code. Update cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("Invalid verification code. Add cancelled.", "Verification Failed", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Return
                 End If
             Else

@@ -458,11 +458,9 @@ Public Class Users
                     Return
                 End If
             Else
-
                 Return
             End If
         End If
-
 
         If rbmale.Checked Then
             gender = "Male"
@@ -496,6 +494,17 @@ Public Class Users
             con.Open()
 
 
+            Dim loginCheck As New MySqlCommand("SELECT is_logged_in FROM user_staff_tbl WHERE ID = @id", con)
+            loginCheck.Parameters.AddWithValue("@id", ID)
+
+            Dim loginStatusObj = loginCheck.ExecuteScalar()
+
+            If loginStatusObj IsNot Nothing AndAlso Convert.ToInt32(loginStatusObj) = 1 Then
+                MsgBox("This account is currently logged in on another device. You cannot edit this user while they are active.", vbExclamation, "Edit Not Allowed")
+                Exit Sub
+            End If
+
+
             Dim Com As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE (`Username` = @username OR `Email` = @email) AND `ID` <> @id", con)
             Com.Parameters.AddWithValue("@username", user)
             Com.Parameters.AddWithValue("@email", email)
@@ -506,7 +515,6 @@ Public Class Users
                 MsgBox("The username or email already exists in user staff. Please use a different one.", vbExclamation, "Duplication Not Allowed")
                 Exit Sub
             End If
-
 
             Dim checkSuper As New MySqlCommand("SELECT COUNT(*) FROM superadmin_tbl WHERE Username = @username OR Email = @email", con)
             checkSuper.Parameters.AddWithValue("@username", user)
@@ -525,7 +533,6 @@ Public Class Users
                 MsgBox("The username or email already exists. Please use a different one.", vbExclamation, "Duplication Not Allowed")
                 Exit Sub
             End If
-
 
             If role <> oldRole Then
                 Dim maxLimit As Integer = 0
@@ -574,7 +581,7 @@ Public Class Users
         recordID:=ID.ToString(),
         oldValue:=oldValueString,
         newValue:=newValueString
-                                )
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
@@ -583,7 +590,6 @@ Public Class Users
             Next
 
             If GlobalVarsModule.GlobalEmail.Equals(editedEmail, StringComparison.OrdinalIgnoreCase) Then
-
 
                 GlobalVarsModule.GlobalFullname = $"{editedFirstName} {editedLastName}".Trim()
 
@@ -600,10 +606,7 @@ Public Class Users
                 MainForm.lblgmail.Text = txtemail.Text.Trim
             End If
 
-
             MsgBox("User updated successfully!", vbInformation)
-
-
 
             LoadStaffData()
             clearfields()
