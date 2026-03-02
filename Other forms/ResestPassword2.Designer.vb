@@ -178,7 +178,7 @@ Partial Class ResetPassword2
         btnback.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         btnback.Size = New Size(364, 53)
         btnback.TabIndex = 89
-        btnback.Text = "Back"
+        btnback.Text = "Cancel"
         ' 
         ' ResetPassword2
         ' 

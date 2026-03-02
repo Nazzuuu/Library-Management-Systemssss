@@ -538,7 +538,11 @@ TryBorrower:
     End Sub
 
     Private Sub LinkLabel2_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel2.LinkClicked
-        BorrowerCreateAccount.Show
+
+        Dim frm As New BorrowerCreateAccount
+        frm.Show()
+        Me.Hide()
+
     End Sub
 
     Private Sub login_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
@@ -571,7 +575,6 @@ TryBorrower:
 
         Dim frm As New ResetPassword1
         frm.Show()
-
         Me.Hide()
 
     End Sub

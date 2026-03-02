@@ -16,7 +16,7 @@ Public Class ResetPassword1
     Private Sub btnSendCode_Click(sender As Object, e As EventArgs) Handles btnreset.Click
 
         If txtenter1.Text.Trim = "" Then
-            MessageBox.Show("Please enter your LRN / Employee No / Email.")
+            MessageBox.Show("Please enter your LRN / Employee No / Email.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
@@ -105,7 +105,7 @@ Public Class ResetPassword1
 
             End If
 
-            MessageBox.Show("Account not found.")
+            MessageBox.Show("Account not found.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             con.Close()
             Exit Sub
 
@@ -140,4 +140,12 @@ SENDCODE:
 
     End Sub
 
+    Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs) Handles Guna2ControlBox1.Click
+
+        Dim frm As New login
+
+        frm.Show()
+        Me.Hide()
+
+    End Sub
 End Class
