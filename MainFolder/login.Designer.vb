@@ -46,6 +46,7 @@ Partial Class login
         PictureBox1 = New PictureBox()
         LinkLabel2 = New LinkLabel()
         Label4 = New Label()
+        LinkLabel1 = New LinkLabel()
         Panel1.SuspendLayout()
         CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Panel_btnlogin.SuspendLayout()
@@ -216,7 +217,7 @@ Partial Class login
         ' 
         LinkLabel2.AutoSize = True
         LinkLabel2.Font = New Font("Tahoma", 11.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
-        LinkLabel2.Location = New Point(325, 257)
+        LinkLabel2.Location = New Point(325, 258)
         LinkLabel2.Name = "LinkLabel2"
         LinkLabel2.Size = New Size(49, 18)
         LinkLabel2.TabIndex = 77
@@ -228,11 +229,22 @@ Partial Class login
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 11.25F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = SystemColors.WindowFrame
-        Label4.Location = New Point(139, 257)
+        Label4.Location = New Point(139, 258)
         Label4.Name = "Label4"
         Label4.Size = New Size(189, 18)
         Label4.TabIndex = 76
         Label4.Text = "Don't have an account yet?"
+        ' 
+        ' LinkLabel1
+        ' 
+        LinkLabel1.AutoSize = True
+        LinkLabel1.Font = New Font("Tahoma", 11.25F, FontStyle.Italic, GraphicsUnit.Point, CByte(0))
+        LinkLabel1.Location = New Point(192, 276)
+        LinkLabel1.Name = "LinkLabel1"
+        LinkLabel1.Size = New Size(116, 18)
+        LinkLabel1.TabIndex = 78
+        LinkLabel1.TabStop = True
+        LinkLabel1.Text = "Forgot Password"
         ' 
         ' login
         ' 
@@ -241,6 +253,7 @@ Partial Class login
         BackColor = Color.White
         ClientSize = New Size(482, 321)
         ControlBox = False
+        Controls.Add(LinkLabel1)
         Controls.Add(LinkLabel2)
         Controls.Add(Label4)
         Controls.Add(PictureBox1)
@@ -280,4 +293,5 @@ Partial Class login
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents LinkLabel2 As LinkLabel
     Friend WithEvents Label4 As Label
+    Friend WithEvents LinkLabel1 As LinkLabel
 End Class

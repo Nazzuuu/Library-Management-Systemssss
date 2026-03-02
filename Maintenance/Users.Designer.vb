@@ -69,10 +69,9 @@ Partial Class Users
         Label6 = New Label()
         groupbox = New Guna.UI2.WinForms.Guna2GroupBox()
         lblnote = New Label()
-        lblmessagesu = New Label()
         Label10 = New Label()
         txtaddress = New Guna.UI2.WinForms.Guna2TextBox()
-        PictureBox2 = New PictureBox()
+        lblmessagesu = New Label()
         lblpassword = New Label()
         Panel1 = New Panel()
         rbassistant = New RadioButton()
@@ -98,13 +97,14 @@ Partial Class Users
         txtusername = New Guna.UI2.WinForms.Guna2TextBox()
         panel_book = New Panel()
         OpenFileDialog1 = New OpenFileDialog()
+        PictureBox2 = New PictureBox()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Guna2GradientPanel1.SuspendLayout()
         groupbox.SuspendLayout()
-        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         Panel1.SuspendLayout()
         panel_book.SuspendLayout()
+        CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' Guna2Elipse1
@@ -359,17 +359,6 @@ Partial Class Users
         lblnote.TabIndex = 129
         lblnote.Text = "Note:"
         ' 
-        ' lblmessagesu
-        ' 
-        lblmessagesu.AutoSize = True
-        lblmessagesu.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        lblmessagesu.ForeColor = Color.Red
-        lblmessagesu.Location = New Point(1005, 31)
-        lblmessagesu.Name = "lblmessagesu"
-        lblmessagesu.Size = New Size(296, 16)
-        lblmessagesu.TabIndex = 128
-        lblmessagesu.Text = "Select Row before clicking [Edit] or [Delete]."
-        ' 
         ' Label10
         ' 
         Label10.AutoSize = True
@@ -405,16 +394,16 @@ Partial Class Users
         txtaddress.Size = New Size(232, 33)
         txtaddress.TabIndex = 3
         ' 
-        ' PictureBox2
+        ' lblmessagesu
         ' 
-        PictureBox2.BackColor = Color.White
-        PictureBox2.BackgroundImageLayout = ImageLayout.Zoom
-        PictureBox2.Location = New Point(1169, 171)
-        PictureBox2.Name = "PictureBox2"
-        PictureBox2.Size = New Size(28, 18)
-        PictureBox2.SizeMode = PictureBoxSizeMode.Zoom
-        PictureBox2.TabIndex = 125
-        PictureBox2.TabStop = False
+        lblmessagesu.AutoSize = True
+        lblmessagesu.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        lblmessagesu.ForeColor = Color.Red
+        lblmessagesu.Location = New Point(1005, 31)
+        lblmessagesu.Name = "lblmessagesu"
+        lblmessagesu.Size = New Size(296, 16)
+        lblmessagesu.TabIndex = 128
+        lblmessagesu.Text = "Select Row before clicking [Edit] or [Delete]."
         ' 
         ' lblpassword
         ' 
@@ -773,6 +762,17 @@ Partial Class Users
         ' 
         OpenFileDialog1.FileName = "OpenFileDialog1"
         ' 
+        ' PictureBox2
+        ' 
+        PictureBox2.BackColor = Color.White
+        PictureBox2.BackgroundImageLayout = ImageLayout.Zoom
+        PictureBox2.Location = New Point(1169, 171)
+        PictureBox2.Name = "PictureBox2"
+        PictureBox2.Size = New Size(28, 18)
+        PictureBox2.SizeMode = PictureBoxSizeMode.Zoom
+        PictureBox2.TabIndex = 125
+        PictureBox2.TabStop = False
+        ' 
         ' Users
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -787,10 +787,10 @@ Partial Class Users
         Guna2GradientPanel1.ResumeLayout(False)
         groupbox.ResumeLayout(False)
         groupbox.PerformLayout()
-        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         Panel1.ResumeLayout(False)
         Panel1.PerformLayout()
         panel_book.ResumeLayout(False)
+        CType(PictureBox2, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub
 
@@ -830,9 +830,9 @@ Partial Class Users
     Friend WithEvents rbstaff As RadioButton
     Friend WithEvents lblrolesu As Label
     Friend WithEvents lblpassword As Label
-    Friend WithEvents PictureBox2 As PictureBox
     Friend WithEvents Label10 As Label
     Friend WithEvents txtaddress As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents lblnote As Label
     Friend WithEvents lblmessagesu As Label
+    Friend WithEvents PictureBox2 As PictureBox
 End Class

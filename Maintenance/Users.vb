@@ -39,8 +39,11 @@ Public Class Users
     End Sub
 
     Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
         DisablePaste_AllTextBoxes()
+
         txtpassword.PasswordChar = "•"
+
         Try
             Dim filePath As String = Application.StartupPath & "\Resources\pikit.png"
             If File.Exists(filePath) Then
@@ -56,29 +59,15 @@ Public Class Users
 
         LoadStaffData()
         LoadUserData()
-
-        If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
-            GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `user_staff_tbl` WHERE ID = '" & GlobalVarsModule.CurrentEmployeeID & "'", 2000)
-        Else
-            GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `user_staff_tbl`", 2000)
-        End If
-
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `user_staff_tbl`", 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
         AddHandler DataGridView1.CellFormatting, AddressOf Me.DataGridView1_CellFormatting
         lblpassword.Visible = False
     End Sub
 
-
-
     Private Async Sub OnDatabaseUpdated()
         Try
-
-            If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
-                Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `user_staff_tbl` WHERE ID = '" & GlobalVarsModule.CurrentEmployeeID & "'")
-            Else
-                Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `user_staff_tbl`")
-            End If
-
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `user_staff_tbl`")
             If DataGridView1.Columns.Contains("ID") Then DataGridView1.Columns("ID").Visible = False
             If DataGridView1.Columns.Contains("Password") Then DataGridView1.Columns("Password").Visible = False
             DataGridView1.ClearSelection()
@@ -91,19 +80,18 @@ Public Class Users
     End Sub
 
 
-
     Private Sub User_staff(sender As Object, e As EventArgs) Handles MyBase.Shown
+
         DataGridView1.ClearSelection()
+
     End Sub
-
-
 
     Public Sub LoadUserData()
         Try
             Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                 Dim SQLQuery As String =
-            "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
-            "FROM user_staff_tbl"
+                "SELECT ID, FirstName, LastName, MiddleInitial, Username, Password, Email, Address, ContactNumber, Gender, Role " &
+                "FROM user_staff_tbl"
 
                 If GlobalVarsModule.GlobalRole = "Staff" OrElse GlobalVarsModule.GlobalRole = "Assistant Librarian" Then
                     SQLQuery &= " WHERE ID = @EmployeeID"
@@ -509,17 +497,15 @@ Public Class Users
         Try
             con.Open()
 
-
             Dim loginCheck As New MySqlCommand("SELECT is_logged_in FROM user_staff_tbl WHERE ID = @id", con)
             loginCheck.Parameters.AddWithValue("@id", ID)
 
             Dim loginStatusObj = loginCheck.ExecuteScalar()
 
-            If loginStatusObj IsNot Nothing AndAlso Convert.ToInt32(loginStatusObj) = 1 Then
+            If loginStatusObj IsNot Nothing AndAlso Convert.ToInt32(loginStatusObj) = 1 AndAlso ID.ToString() <> GlobalVarsModule.CurrentUserID Then
                 MsgBox("This account is currently logged in on another device. You cannot edit this user while they are active.", vbExclamation, "Edit Not Allowed")
                 Exit Sub
             End If
-
 
             Dim Com As New MySqlCommand("SELECT COUNT(*) FROM `user_staff_tbl` WHERE (`Username` = @username OR `Email` = @email) AND `ID` <> @id", con)
             Com.Parameters.AddWithValue("@username", user)
@@ -550,7 +536,7 @@ Public Class Users
                 Exit Sub
             End If
 
-            If role <> oldRole Then
+            If role <> oldRole AndAlso ID <> GlobalVarsModule.CurrentUserID Then
                 Dim maxLimit As Integer = 0
                 If role = "Assistant Librarian" Then
                     maxLimit = 2
@@ -591,13 +577,13 @@ Public Class Users
             Dim newValueString As String = $"{firstName}|{lastName}|{middleName}|{user}|{pass}|{email}|{contact}|{address}|{gender}|{role}"
 
             GlobalVarsModule.LogAudit(
-            actionType:="UPDATE",
-            formName:="USER STAFF FORM",
-            description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
-            recordID:=ID.ToString(),
-            oldValue:=oldValueString,
-            newValue:=newValueString
-            )
+        actionType:="UPDATE",
+        formName:="USER STAFF FORM",
+        description:=$"Updated staff ID {ID}: {lastName}, {firstName} ({role})",
+        recordID:=ID.ToString(),
+        oldValue:=oldValueString,
+        newValue:=newValueString
+        )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
