@@ -717,7 +717,7 @@ Public Class AcquistionDetails
             End Using
 
             MessageBox.Show("Books Added Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
+            Me.Close()
             clearlahatsu(False)
 
         Catch ex As Exception

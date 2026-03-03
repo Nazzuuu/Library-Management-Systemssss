@@ -449,6 +449,25 @@ Public Class Book
             Exit Sub
         End If
 
+        Dim comx As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `BookTitle` = @booktitle", con)
+        comx.Parameters.AddWithValue("@booktitle", booktitle)
+
+        Try
+            con.Open()
+            Dim count As Integer = CInt(comx.ExecuteScalar())
+            If count > 0 Then
+                MsgBox("This book already exists.", vbExclamation, "Duplication not allowed.")
+                Exit Sub
+            End If
+        Catch ex As Exception
+            MsgBox("Error checking Book Title: " & ex.Message, vbCritical)
+            Exit Sub
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+
         If rbgenerate.Checked Then
             isbn = DBNull.Value
             barcode = lblrandom.Text.Trim()
@@ -460,7 +479,7 @@ Public Class Book
                 con.Open()
                 Dim count As Integer = CInt(coms.ExecuteScalar())
                 If count > 0 Then
-                    MsgBox("This book already exists.", vbExclamation, "Duplication not allowed.")
+                    MsgBox("This barcode already exists.", vbExclamation, "Duplication not allowed.")
                     Exit Sub
                 End If
             Catch ex As Exception
@@ -696,8 +715,8 @@ Public Class Book
 
                 For Each form In Application.OpenForms
 
-                    If TypeOf form Is Acquisition Then
-                        DirectCast(form, Acquisition).refreshData()
+                    If TypeOf form Is Acquisition2 Then
+                        DirectCast(form, Acquisition2).refreshData()
                     End If
 
                     If TypeOf form Is Accession Then

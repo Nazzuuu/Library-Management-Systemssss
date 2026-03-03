@@ -704,12 +704,14 @@ Public Class Returning
                 End If
             Next
 
+
+
             trans.Commit()
 
             For Each form In Application.OpenForms
 
-                If TypeOf form Is Acquisition Then
-                    DirectCast(form, Acquisition).refreshData()
+                If TypeOf form Is Acquisition2 Then
+                    DirectCast(form, Acquisition2).refreshData()
                 End If
             Next
 

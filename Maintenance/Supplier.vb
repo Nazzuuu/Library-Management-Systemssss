@@ -136,9 +136,9 @@ Public Class Supplier
             Next
 
             For Each form In Application.OpenForms
-                If TypeOf form Is Acquisition Then
-                    Dim acq = DirectCast(form, Acquisition)
-                    acq.cbsupplierr()
+                If TypeOf form Is Acquisition2 Then
+                    Dim acq = DirectCast(form, Acquisition2)
+                    acq.refreshData()
                 End If
             Next
 
@@ -253,10 +253,9 @@ Public Class Supplier
                 Next
 
                 For Each form In Application.OpenForms
-                    If TypeOf form Is Acquisition Then
-                        Dim acq = DirectCast(form, Acquisition)
+                    If TypeOf form Is Acquisition2 Then
+                        Dim acq = DirectCast(form, Acquisition2)
 
-                        acq.cbsupplierr()
                         acq.refreshData()
                     End If
                 Next
@@ -345,9 +344,9 @@ Public Class Supplier
                     Next
 
                     For Each form In Application.OpenForms
-                        If TypeOf form Is Acquisition Then
-                            Dim acq = DirectCast(form, Acquisition)
-                            acq.cbsupplierr()
+                        If TypeOf form Is Acquisition2 Then
+                            Dim acq = DirectCast(form, Acquisition2)
+                            acq.refreshdata()
                         End If
                     Next
 

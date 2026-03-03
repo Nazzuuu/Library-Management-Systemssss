@@ -139,7 +139,6 @@ Public Class Accession
         btnview.Visible = True
         shelfsu()
 
-
         Try
             AutoRefreshComboBox(cbshelf, "SELECT ID, Shelf FROM shelf_tbl", "Shelf", "ID")
         Catch ex As Exception
@@ -147,6 +146,8 @@ Public Class Accession
         End Try
 
         DataGridView1.ClearSelection()
+
+        UpdateAllTransactionQuantities()
 
         For Each form In Application.OpenForms
             If TypeOf form Is MainForm Then
@@ -164,12 +165,51 @@ Public Class Accession
             Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
             DataGridView1.ClearSelection()
 
-
             shelfsu()
             AutoRefreshComboBox(cbshelf, "SELECT ID, Shelf FROM shelf_tbl", "Shelf", "ID")
+            UpdateAllTransactionQuantities()
 
         Catch ex As Exception
             Debug.WriteLine("OnDatabaseUpdated error: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub UpdateAllTransactionQuantities()
+        Try
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+
+
+                Dim getTransactionsQuery As String = "SELECT DISTINCT TransactionNo FROM acession_tbl"
+                Dim getCmd As New MySqlCommand(getTransactionsQuery, con)
+                Dim reader As MySqlDataReader = getCmd.ExecuteReader()
+
+                Dim transactionList As New List(Of String)
+
+                While reader.Read()
+                    transactionList.Add(reader("TransactionNo").ToString())
+                End While
+
+                reader.Close()
+
+
+                For Each transNo In transactionList
+                    Dim countQuery As String = "SELECT COUNT(*) FROM acession_tbl WHERE TransactionNo = @TransactionNo AND Status = 'Available'"
+                    Dim countCmd As New MySqlCommand(countQuery, con)
+                    countCmd.Parameters.AddWithValue("@TransactionNo", transNo)
+
+                    Dim availableCount As Integer = Convert.ToInt32(countCmd.ExecuteScalar())
+
+                    Dim updateQuery As String = "UPDATE acquisition_tbl SET Quantity = @Quantity WHERE TransactionNo = @TransactionNo"
+                    Dim updateCmd As New MySqlCommand(updateQuery, con)
+                    updateCmd.Parameters.AddWithValue("@Quantity", availableCount)
+                    updateCmd.Parameters.AddWithValue("@TransactionNo", transNo)
+                    updateCmd.ExecuteNonQuery()
+                Next
+
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine("UpdateAllTransactionQuantities error: " & ex.Message)
         End Try
     End Sub
 
@@ -428,6 +468,7 @@ Public Class Accession
         Dim insertedAccessionIDs As New List(Of String)()
         Dim allSucceeded As Boolean = True
 
+
         Try
             con.Open()
             transaction = con.BeginTransaction()
@@ -550,7 +591,6 @@ Public Class Accession
             Else
                 MessageBox.Show($"Finished processing. Successfully added: {insertedAccessionIDs.Count} records. Some accession IDs were skipped due to duplicates.", "Partial Success", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             End If
-
 
             Acession_Load(sender, e)
             clearlahat()
@@ -814,7 +854,7 @@ Public Class Accession
                     con.Open()
                     transaction = con.BeginTransaction()
 
-                    Dim comm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE `Status` IN ('Pending', 'Lost', 'Damage')"
+                    Dim comm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE `Status` IN ('Pending', 'Lost', 'Damaged')"
                     Dim comssu As New MySqlCommand(comm, con, transaction)
                     Dim count As Integer = CInt(comssu.ExecuteScalar())
 

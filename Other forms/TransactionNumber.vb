@@ -176,6 +176,7 @@ Public Class TransactionNumber
                             MessageBox.Show("All copies for this title in this transaction have already been accessioned.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
                             accessionForm.txtaccessionid.Text = "COMPLETED"
                             accessionForm.txtaccessionid.Enabled = False
+                            accessionForm.clearlahat()
                             Me.Close()
                             Return
                         End If

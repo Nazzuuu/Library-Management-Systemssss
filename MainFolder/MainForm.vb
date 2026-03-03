@@ -499,7 +499,7 @@ Public Class MainForm
             Accession.btnview.Visible = True
 
             Accession.DataGridView1.ClearSelection()
-            Acquisition.DataGridView1.ClearSelection()
+            Acquisition2.DataGridView1.ClearSelection()
             oras.DataGridView1.ClearSelection()
 
             lblform.Text = "MAIN FORM"
@@ -1293,8 +1293,8 @@ Public Class MainForm
 
             .Show()
 
-            Acquisition.DataGridView1.ClearSelection()
-            Acquisition.DataGridView1.CurrentCell = Nothing
+            Acquisition2.DataGridView1.ClearSelection()
+            Acquisition2.DataGridView1.CurrentCell = Nothing
 
 
         End With
