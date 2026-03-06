@@ -1419,4 +1419,12 @@ Public Class Users
         End Try
     End Function
 
+    Private Sub DataGridView1_MouseHover(sender As Object, e As EventArgs) Handles DataGridView1.MouseHover
+        PauseAutoRefresh(DataGridView1)
+    End Sub
+
+    Private Sub datagridview1_mouseleave(sender As Object, e As EventArgs) Handles DataGridView1.MouseLeave
+        ResumeAutoRefresh(DataGridView1)
+    End Sub
+
 End Class

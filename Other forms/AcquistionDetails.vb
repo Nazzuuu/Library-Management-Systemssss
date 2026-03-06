@@ -946,6 +946,19 @@ Public Class AcquistionDetails
                 End If
             Next
 
+            For Each form In Application.OpenForms
+                If TypeOf form Is TotalBooksView Then
+                    Dim loadsu = DirectCast(form, TotalBooksView)
+                    loadsu.refreshtotalbooks()
+                End If
+            Next
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is Accession Then
+                    Dim lodx = DirectCast(form, Accession)
+                    lodx.RefreshAccessionData()
+                End If
+            Next
 
             MessageBox.Show("Record Updated Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 

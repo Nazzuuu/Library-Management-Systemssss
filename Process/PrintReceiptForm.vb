@@ -29,26 +29,26 @@ Public Class PrintReceiptForm
     End Sub
 
     Private Sub btnprint_Click(sender As Object, e As EventArgs) Handles btnprint.Click
-        ' --- Validation: walang laman or walang naka-select ---
+
         If Me.DataGridView1.RowCount = 0 OrElse Me.DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a borrowing record to print.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Exit Sub
         End If
 
-        ' --- Kukunin ang selected row at basic info ---
+
         Dim selectedRow As DataGridViewRow = Me.DataGridView1.SelectedRows(0)
         Dim transacReceiptID As String = selectedRow.Cells("TransactionReceipt").Value?.ToString()
         Dim borrowerName As String = selectedRow.Cells("Name").Value?.ToString()
         Dim oldIsPrintedValue As String = selectedRow.Cells("IsPrinted").Value?.ToString()
 
-        ' --- Kukunin kung sino ang nagpi-print ---
+
         If MainForm IsNot Nothing AndAlso MainForm.lbl_currentuser IsNot Nothing Then
             PrintingUserRole = MainForm.lbl_currentuser.Text
         Else
             PrintingUserRole = "System User"
         End If
 
-        ' --- Check kung printed na dati ---
+
         If selectedRow.Cells("IsPrinted").Value IsNot DBNull.Value AndAlso selectedRow.Cells("IsPrinted").Value.ToString() = "1" Then
             Dim response As DialogResult = MessageBox.Show(
             $"Transaction No. {transacReceiptID} is already marked as printed. Do you want to print a duplicate receipt?",
@@ -57,19 +57,18 @@ Public Class PrintReceiptForm
             If response = DialogResult.No Then Exit Sub
         End If
 
-        ' --- Setup ng printing format ---
+
         printDoc.DefaultPageSettings.PaperSize = New PaperSize("Custom Thermal 58mm", 228, 2000)
         printDoc.DefaultPageSettings.Margins = New Margins(5, 5, 5, 5)
 
         Try
-            ' --- Actual print execution ---
             printDoc.DocumentName = $"Receipt {transacReceiptID}"
             printDoc.Print()
 
-            ' --- Update IsPrinted status sa database ---
+
             UpdatePrintedStatus(transacReceiptID)
 
-            ' --- Log sa Audit Trail ---
+
             GlobalVarsModule.LogAudit(
             actionType:="UPDATE",
             formName:="PRINT RECEIPT",
@@ -79,17 +78,16 @@ Public Class PrintReceiptForm
             newValue:=$"IsPrinted=1 (Printed by: {GlobalUsername})"
         )
 
-            ' --- Auto-refresh audit form kung bukas ---
+
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then
                     DirectCast(form, AuditTrail).refreshaudit()
                 End If
             Next
 
-            ' --- Refresh ng receipt list (pero hindi na tatanggal ng printed rows) ---
+
             refreshreceipt()
 
-            ' --- Visual cue (optional): kulay gray kung printed na ---
             For Each row As DataGridViewRow In DataGridView1.Rows
                 If row.Cells("IsPrinted").Value?.ToString() = "1" Then
                     row.DefaultCellStyle.BackColor = Color.LightGray
@@ -97,7 +95,7 @@ Public Class PrintReceiptForm
                 End If
             Next
 
-            ' --- Success message ---
+
             MessageBox.Show($"Receipt for Transaction No. {transacReceiptID} successfully sent to '{printDoc.PrinterSettings.PrinterName}'.",
                         "Print Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
@@ -359,6 +357,14 @@ Public Class PrintReceiptForm
                 dt.DefaultView.RowFilter = ""
             End If
         End If
+    End Sub
+
+    Private Sub DataGridView1_MouseHover(sender As Object, e As EventArgs) Handles DataGridView1.MouseHover
+        PauseAutoRefresh(DataGridView1)
+    End Sub
+
+    Private Sub datagridview1_mouseleave(sender As Object, e As EventArgs) Handles DataGridView1.MouseLeave
+        ResumeAutoRefresh(DataGridView1)
     End Sub
 
 End Class
