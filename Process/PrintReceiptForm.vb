@@ -5,7 +5,8 @@ Imports ZXing
 Imports ZXing.Rendering
 Imports ZXing.Windows.Compatibility
 Imports System.Drawing.Drawing2D
-
+Imports System.IO
+Imports System.Runtime.InteropServices
 Public Class PrintReceiptForm
 
     Private WithEvents printDoc As New System.Drawing.Printing.PrintDocument
@@ -154,8 +155,60 @@ Public Class PrintReceiptForm
 
     Private printedAlready As Boolean = False
 
-    Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
+    Public Sub PrintBarcodeESC_POS(ByVal barcodeText As String)
 
+        Try
+            Dim printerName As String = printDoc.PrinterSettings.PrinterName
+            Dim escpos As New List(Of Byte)
+
+
+            escpos.Add(&H1B)
+            escpos.Add(&H40)
+
+
+            escpos.Add(&H1B)
+            escpos.Add(&H61)
+            escpos.Add(&H1)
+
+
+            escpos.Add(&H1D)
+            escpos.Add(&H68)
+            escpos.Add(80)
+
+
+            escpos.Add(&H1D)
+            escpos.Add(&H77)
+            escpos.Add(3)
+
+
+            escpos.Add(&H1D)
+            escpos.Add(&H48)
+            escpos.Add(2)
+
+
+            escpos.Add(&H1D)
+            escpos.Add(&H6B)
+            escpos.Add(73)
+
+            Dim barcodeBytes As Byte() = System.Text.Encoding.ASCII.GetBytes(barcodeText)
+            escpos.Add(CByte(barcodeBytes.Length))
+            escpos.AddRange(barcodeBytes)
+
+
+            escpos.Add(&H1B)
+            escpos.Add(&H64)
+            escpos.Add(6)
+
+            RawPrinterHelper.SendBytesToPrinter(printerName, escpos.ToArray())
+
+        Catch ex As Exception
+            MessageBox.Show("ESC/POS Barcode Print Error: " & ex.Message)
+        End Try
+
+    End Sub
+
+
+    Private Sub PrintDocument_PrintPage(sender As Object, e As Printing.PrintPageEventArgs) Handles printDoc.PrintPage
         If printedAlready Then
             e.HasMorePages = False
             Exit Sub
@@ -164,7 +217,7 @@ Public Class PrintReceiptForm
 
         Dim g As Graphics = e.Graphics
         g.SmoothingMode = SmoothingMode.AntiAlias
-        g.TextRenderingHint = Drawing.Text.TextRenderingHint.ClearTypeGridFit
+        g.TextRenderingHint = Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit
 
         Dim margin As Integer = 5
         Dim yPos As Integer = margin
@@ -173,10 +226,10 @@ Public Class PrintReceiptForm
         Dim contentWidth As Integer = pageWidth - (margin * 2)
 
 
-        Dim fontHeader As New Font("Arial", 7.2, FontStyle.Bold)
-        Dim fontSubHeader As New Font("Arial", 7, FontStyle.Regular)
-        Dim fontBody As New Font("Arial", 6.5, FontStyle.Regular)
-        Dim fontBodyBold As New Font("Arial", 6.5, FontStyle.Bold)
+        Dim fontHeader As New Font("Arial", 10.0F, FontStyle.Bold)
+        Dim fontSubHeader As New Font("Arial", 9.0F, FontStyle.Regular)
+        Dim fontBody As New Font("Arial", 8.0F, FontStyle.Regular)
+        Dim fontBodyBold As New Font("Arial", 8.0F, FontStyle.Bold)
 
         If Me.DataGridView1.SelectedRows.Count = 0 Then Exit Sub
 
@@ -188,25 +241,20 @@ Public Class PrintReceiptForm
         Dim transacReceipt As String = summaryRow.Cells("TransactionReceipt").Value?.ToString()
         If String.IsNullOrEmpty(transacReceipt) Then transacReceipt = Me.lbltransacno.Text
 
-
         Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
-
-            g.DrawString("", fontHeader, Brushes.Black,
-                 New RectangleF(margin - 8, yPos, contentWidth + 16, lineHeight * 2), sfCenter)
+            g.DrawString("", fontHeader, Brushes.Black, New RectangleF(margin - 8, yPos, contentWidth + 16, lineHeight * 2), sfCenter)
             yPos += CInt(lineHeight * 1.8)
-
-            g.DrawString("Library Management System", fontSubHeader, Brushes.Black,
-                 New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
+            g.DrawString("Library Management System", fontSubHeader, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
             yPos += lineHeight
-
-            g.DrawString("---- Borrowing Receipt ----", fontSubHeader, Brushes.Black,
-                 New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
+            g.DrawString("---- Borrowing Receipt ----", fontSubHeader, Brushes.Black, New RectangleF(margin, yPos, contentWidth, lineHeight * 2), sfCenter)
             yPos += CInt(lineHeight * 2.5)
         End Using
 
-
-        g.DrawString($"Transaction Receipt No: {transacReceipt}", fontBodyBold, Brushes.Black, margin, yPos)
+        g.DrawString("Transaction Receipt No:", fontBodyBold, Brushes.Black, margin, yPos)
         yPos += lineHeight + 2
+        g.DrawString(transacReceipt, fontBodyBold, Brushes.Black, margin + 2, yPos)
+        yPos += lineHeight + 2
+
         g.DrawString($"Borrower: {name} ({borrowerType})", fontBody, Brushes.Black, margin, yPos)
         yPos += lineHeight
         g.DrawString($"Date Borrowed: {borrowedDate}", fontBody, Brushes.Black, margin + 2, yPos)
@@ -216,8 +264,15 @@ Public Class PrintReceiptForm
 
         Dim bookDetailsList As DataTable = GetBookDetailsByTransaction(transacReceipt)
         Dim totalBooks As Integer = bookDetailsList.Rows.Count
-        g.DrawString($"Book Details (Total: {totalBooks}):", fontBodyBold, Brushes.Black, margin, yPos)
-        yPos += lineHeight + 3
+
+        Dim sfLeft As New StringFormat()
+        sfLeft.FormatFlags = StringFormatFlags.LineLimit Or StringFormatFlags.NoClip
+        sfLeft.Trimming = StringTrimming.Word
+
+        Dim booksHeader As String = $"Book Details (Total: {totalBooks}):"
+        Dim booksHeaderHeight As Integer = CInt(Math.Ceiling(g.MeasureString(booksHeader, fontBodyBold, contentWidth).Height))
+        g.DrawString(booksHeader, fontBodyBold, Brushes.Black, New RectangleF(margin, yPos, contentWidth, booksHeaderHeight), sfLeft)
+        yPos += booksHeaderHeight + 4
 
         For Each bookRow As DataRow In bookDetailsList.Rows
             Dim bookTitle As String = bookRow("BookTitle").ToString()
@@ -226,74 +281,36 @@ Public Class PrintReceiptForm
             Dim barcode As String = bookRow("Barcode").ToString()
             Dim codeToPrint As String = If(String.IsNullOrWhiteSpace(barcode), isbn, barcode)
 
-            g.DrawString($"Title: {bookTitle}", fontBody, Brushes.Black, margin, yPos)
-            yPos += lineHeight
+            Dim titleTextLine As String = $"Title: {bookTitle}"
+            Dim titleWidth As Integer = Math.Max(10, contentWidth - 10)
+            Dim titleHeight As Integer = CInt(Math.Ceiling(g.MeasureString(titleTextLine, fontBody, titleWidth).Height))
+            g.DrawString(titleTextLine, fontBody, Brushes.Black, New RectangleF(margin + 10, yPos, titleWidth, titleHeight), sfLeft)
+            yPos += titleHeight + 2
+
             g.DrawString($"AccessionID: {accessionID}", fontBody, Brushes.Black, margin + 10, yPos)
             yPos += lineHeight
             g.DrawString($"Barcode/ISBN: {codeToPrint}", fontBody, Brushes.Black, margin + 10, yPos)
             yPos += lineHeight + 5
         Next
-        yPos += 5
+
+        yPos -= 5
 
         If Not String.IsNullOrEmpty(transacReceipt) Then
-            Dim barcodeWidth As Integer = 140
-            Dim barcodeHeight As Integer = 25
-            Using receiptBarcode As Image = GenerateBarcodeImage(transacReceipt, barcodeWidth, barcodeHeight)
-                If receiptBarcode IsNot Nothing Then
-                    Dim xPosBarcode As Integer = margin + ((contentWidth - barcodeWidth) / 2)
-                    g.DrawImage(receiptBarcode, xPosBarcode, yPos, barcodeWidth, barcodeHeight)
-                    yPos += barcodeHeight + 3
-                    Using sfCenter As New StringFormat With {.Alignment = StringAlignment.Center}
-                        g.DrawString(transacReceipt, fontBody, Brushes.Black,
-                               New RectangleF(margin, yPos, contentWidth, lineHeight), sfCenter)
-                    End Using
-                    yPos += lineHeight + 2
-                End If
-            End Using
+            System.Threading.Thread.Sleep(150)
+            PrintBarcodeESC_POS(transacReceipt)
         End If
+
+        yPos += 20
+        g.DrawString(" ", fontBody, Brushes.Black, margin, yPos)
 
         e.HasMorePages = False
     End Sub
-
-
 
 
     Private Sub printDoc_EndPrint(sender As Object, e As Printing.PrintEventArgs) Handles printDoc.EndPrint
         printedAlready = False
     End Sub
 
-
-    Public Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal targetWidth As Integer, ByVal targetHeight As Integer) As Image
-        If String.IsNullOrWhiteSpace(barcodeText) Then Return Nothing
-
-        Try
-            Dim options As New ZXing.Common.EncodingOptions With {
-            .Width = targetWidth,
-            .Height = targetHeight,
-            .Margin = 1,
-            .PureBarcode = True
-        }
-
-            Dim writer As New BarcodeWriter(Of Bitmap) With {
-            .Format = BarcodeFormat.CODE_128,
-            .Options = options,
-            .Renderer = New ZXing.Windows.Compatibility.BitmapRenderer()
-        }
-
-            Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
-            Return barcodeBitmap
-
-        Catch ex As Exception
-            Dim bmp As New Bitmap(targetWidth, targetHeight)
-            Using g As Graphics = Graphics.FromImage(bmp)
-                g.Clear(Color.White)
-                Using font As New Font("Arial", 6)
-                    g.DrawString("Barcode Error: " & ex.Message, font, Brushes.Red, 2, 2)
-                End Using
-            End Using
-            Return bmp
-        End Try
-    End Function
 
     Public Sub LoadPrintReceiptDataByTransaction(ByVal transactionID As String)
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
@@ -366,5 +383,69 @@ Public Class PrintReceiptForm
     Private Sub datagridview1_mouseleave(sender As Object, e As EventArgs) Handles DataGridView1.MouseLeave
         ResumeAutoRefresh(DataGridView1)
     End Sub
+
+End Class
+
+Public Class RawPrinterHelper
+
+    <DllImport("winspool.Drv", EntryPoint:="OpenPrinterA", SetLastError:=True)>
+    Public Shared Function OpenPrinter(szPrinter As String, ByRef hPrinter As IntPtr, pd As IntPtr) As Boolean
+    End Function
+
+    <DllImport("winspool.Drv", EntryPoint:="ClosePrinter", SetLastError:=True)>
+    Public Shared Function ClosePrinter(hPrinter As IntPtr) As Boolean
+    End Function
+
+    <DllImport("winspool.Drv", EntryPoint:="StartDocPrinterA", SetLastError:=True)>
+    Public Shared Function StartDocPrinter(hPrinter As IntPtr, level As Integer, di As DOCINFOA) As Boolean
+    End Function
+
+    <DllImport("winspool.Drv", EntryPoint:="EndDocPrinter", SetLastError:=True)>
+    Public Shared Function EndDocPrinter(hPrinter As IntPtr) As Boolean
+    End Function
+
+    <DllImport("winspool.Drv", EntryPoint:="StartPagePrinter", SetLastError:=True)>
+    Public Shared Function StartPagePrinter(hPrinter As IntPtr) As Boolean
+    End Function
+
+    <DllImport("winspool.Drv", EntryPoint:="EndPagePrinter", SetLastError:=True)>
+    Public Shared Function EndPagePrinter(hPrinter As IntPtr) As Boolean
+    End Function
+
+    <DllImport("winspool.Drv", EntryPoint:="WritePrinter", SetLastError:=True)>
+    Public Shared Function WritePrinter(hPrinter As IntPtr, pBytes As Byte(), dwCount As Integer, ByRef dwWritten As Integer) As Boolean
+    End Function
+
+    <StructLayout(LayoutKind.Sequential)>
+    Public Structure DOCINFOA
+        <MarshalAs(UnmanagedType.LPStr)>
+        Public pDocName As String
+        <MarshalAs(UnmanagedType.LPStr)>
+        Public pOutputFile As String
+        <MarshalAs(UnmanagedType.LPStr)>
+        Public pDataType As String
+    End Structure
+
+    Public Shared Function SendBytesToPrinter(printerName As String, bytes As Byte()) As Boolean
+        Dim hPrinter As IntPtr
+        Dim docInfo As New DOCINFOA()
+        docInfo.pDocName = "ESC POS Barcode"
+        docInfo.pDataType = "RAW"
+
+        If OpenPrinter(printerName, hPrinter, IntPtr.Zero) Then
+            StartDocPrinter(hPrinter, 1, docInfo)
+            StartPagePrinter(hPrinter)
+
+            Dim written As Integer
+            WritePrinter(hPrinter, bytes, bytes.Length, written)
+
+            EndPagePrinter(hPrinter)
+            EndDocPrinter(hPrinter)
+            ClosePrinter(hPrinter)
+            Return True
+        End If
+
+        Return False
+    End Function
 
 End Class
