@@ -6,7 +6,7 @@ Imports System.ComponentModel
 
 Public Class login
 
-    'shettt, kapagoddddddd'''''
+    'shettt, kapagoddddddd''''''''''''''''''''
 
     Public Sub clear()
         txtpass.Text = ""
@@ -163,6 +163,7 @@ Public Class login
                             activeMain.BorrowToolStripMenuItem.Visible = False
                             activeMain.PenaltyToolStripMenuItem.Visible = False
                             activeMain.PenaltyManagementToolStripMenuItem.Visible = False
+                            activeMain.BorrowLimitToolStripMenuItem.Visible = False
 
                         Case "Assistant Librarian"
                             activeMain.lbl_currentuser.Text = "Asst. Librarian"
@@ -171,9 +172,8 @@ Public Class login
                             activeMain.BorrowerAccountToolStripMenuItem.Visible = False
                             activeMain.BorrowerAccountToolStripMenuItem1.Visible = False
                             activeMain.BorrowerAccountToolStripMenuItem.Visible = True
-                            'activeMain.BorrowToolStripMenuItem.Visible = False
-                            'activeMain.AcquisitionToolStripMenuItem.Visible = False
-                            'activeMain.AccessionToolStripMenuItem.Visible = False
+                            activeMain.BorrowLimitToolStripMenuItem.Visible = False
+
 
                             For Each form In Application.OpenForms
                                 If TypeOf form Is Penalty Then
