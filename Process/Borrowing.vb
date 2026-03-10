@@ -318,8 +318,17 @@ Public Class Borrowing
         End If
 
         Dim enteredEmployeeID As String = txtemployee.Text.Trim()
-        Dim currentUserID_Cleaned As String = GlobalVarsModule.GetCleanCurrentBorrowerID()
-        Dim enteredEmployeeID_Cleaned As String = enteredEmployeeID
+        Dim currentUserID_Cleaned As String = If(GlobalVarsModule.GetCleanCurrentBorrowerID(), "").Trim()
+        Dim enteredEmployeeID_Cleaned As String = enteredEmployeeID.Trim()
+
+        ' Normalize numeric IDs so "00123" and "123" compare equal
+        Dim tempID As Long
+        If Long.TryParse(currentUserID_Cleaned, tempID) Then
+            currentUserID_Cleaned = tempID.ToString()
+        End If
+        If Long.TryParse(enteredEmployeeID_Cleaned, tempID) Then
+            enteredEmployeeID_Cleaned = tempID.ToString()
+        End If
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim foundBorrower As Boolean = False
@@ -368,13 +377,10 @@ Public Class Borrowing
             btntimein.Visible = False
         End If
 
-
         If foundBorrower Then
-
             If lastBorrowerReceiptMap.ContainsKey(enteredEmployeeID) Then
                 lbltransac.Text = lastBorrowerReceiptMap(enteredEmployeeID)
                 Try
-
                     Dim writer As New ZXing.BarcodeWriter(Of Bitmap)() With {
                     .Format = ZXing.BarcodeFormat.CODE_128,
                     .Renderer = New BitmapRenderer()
@@ -410,7 +416,6 @@ Public Class Borrowing
             If picbarcode.Image IsNot Nothing Then picbarcode.Image.Dispose()
             picbarcode.Image = Nothing
         End If
-
 
     End Sub
 
@@ -1243,4 +1248,5 @@ Public Class Borrowing
     End Sub
 
     'fuck sakit na sa braincellsuu'''
+
 End Class
