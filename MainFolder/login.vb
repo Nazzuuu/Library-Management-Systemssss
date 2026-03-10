@@ -7,7 +7,7 @@ Imports System.ComponentModel
 Public Class login
 
     'shettt, kapagoddddddd''''''''''''''''''''
-
+    Private allowExit As Boolean = False
     Public Sub clear()
         txtpass.Text = ""
         txtuser.Text = ""
@@ -558,15 +558,22 @@ TryBorrower:
         End If
     End Sub
 
-
     Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs) Handles Guna2ControlBox1.Click
 
         Dim passwordForm As New LibrarianPassword()
 
         If passwordForm.ShowDialog() = DialogResult.OK Then
+            allowExit = True
             Application.Exit()
-        Else
+        End If
 
+    End Sub
+
+    Private Sub login_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+
+        If allowExit = False Then
+            e.Cancel = True
+            Me.Hide()
         End If
 
     End Sub
