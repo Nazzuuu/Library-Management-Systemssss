@@ -67,9 +67,9 @@ Public Class StayLogoutFormm
     Private Sub btnlogout_Click(sender As Object, e As EventArgs) Handles btnlogout.Click
 
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?",
-                                                     "Confirmation",
-                                                     MessageBoxButtons.YesNo,
-                                                     MessageBoxIcon.Question)
+                                             "Confirmation",
+                                             MessageBoxButtons.YesNo,
+                                             MessageBoxIcon.Question)
 
         If result <> DialogResult.Yes Then Exit Sub
 
@@ -84,22 +84,38 @@ Public Class StayLogoutFormm
                 If Not String.IsNullOrEmpty(borrowerID) Then
 
                     Dim activeRecordID As Integer = GlobalVarsModule.GetLastTimeInRecordID(borrowerID)
+
+                    If activeRecordID = 0 Then
+                        Dim stillTimedIn As Boolean = GlobalVarsModule.IsBorrowerStillTimedIn(borrowerID)
+                        If stillTimedIn Then
+                            activeRecordID = GlobalVarsModule.GetLastTimeInRecordID(borrowerID)
+                        End If
+                    End If
+
+
                     If activeRecordID > 0 Then
                         Dim timeoutSuccess As Boolean = GlobalVarsModule.AutomaticTimeOut(activeRecordID)
                         If timeoutSuccess Then
                             MessageBox.Show("You have successfully logged out. Your Time-In session was automatically Timed Out by the system.",
-                                            "Auto Time-Out",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Information)
+                                    "Auto Time-Out",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information)
                         End If
+                    Else
+
+                        MessageBox.Show("You have successfully logged out. No active Time-In session was found.",
+                                "Logout",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information)
+
                     End If
 
                     Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                         con.Open()
                         Dim updateLogout As String =
-                            "UPDATE borroweredit_tbl " &
-                            "SET is_logged_in = 0, CurrentIP = NULL " &
-                            "WHERE (LRN = @id OR EmployeeNo = @id) LIMIT 1"
+                    "UPDATE borroweredit_tbl " &
+                    "SET is_logged_in = 0, CurrentIP = NULL " &
+                    "WHERE (LRN = @id OR EmployeeNo = @id) LIMIT 1"
 
                         Using cmd As New MySqlCommand(updateLogout, con)
                             cmd.Parameters.AddWithValue("@id", borrowerID)
@@ -114,15 +130,15 @@ Public Class StayLogoutFormm
 
 
             If previousRole.Equals("Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-               previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
-               previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
+       previousRole.Equals("Assistant Librarian", StringComparison.OrdinalIgnoreCase) OrElse
+       previousRole.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
 
                 GlobalVarsModule.LogAudit(
-                    actionType:="LOGOUT SUCCESS",
-                    formName:="MAIN FORM",
-                    description:=$"User '{userName}' ({previousRole}) successfully logged out.",
-                    recordID:="N/A"
-                )
+            actionType:="LOGOUT SUCCESS",
+            formName:="MAIN FORM",
+            description:=$"User '{userName}' ({previousRole}) successfully logged out.",
+            recordID:="N/A"
+        )
             End If
 
 
@@ -167,9 +183,9 @@ Public Class StayLogoutFormm
 
         Catch ex As Exception
             MessageBox.Show("An error occurred while logging out: " & ex.Message,
-                            "Logout Error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error)
+                    "Logout Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error)
         End Try
     End Sub
 

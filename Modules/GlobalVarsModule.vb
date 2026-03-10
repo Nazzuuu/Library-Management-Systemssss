@@ -168,14 +168,18 @@ Module GlobalVarsModule
         End Using
     End Sub
 
+    'Public Function GetCleanCurrentBorrowerID() As String
+    '    Dim idTrimmed As String = CurrentBorrowerID.Trim()
+    '    Dim tempID As Long
+    '    If Long.TryParse(idTrimmed, tempID) Then
+    '        Return tempID.ToString()
+    '    Else
+    '        Return idTrimmed
+    '    End If
+    'End Function
+
     Public Function GetCleanCurrentBorrowerID() As String
-        Dim idTrimmed As String = CurrentBorrowerID.Trim()
-        Dim tempID As Long
-        If Long.TryParse(idTrimmed, tempID) Then
-            Return tempID.ToString()
-        Else
-            Return idTrimmed
-        End If
+        Return CurrentBorrowerID.Trim()
     End Function
 
 
