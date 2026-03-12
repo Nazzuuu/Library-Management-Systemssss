@@ -9,12 +9,14 @@ Public Class RegisteredBrwr
     Public IsTimeInMode As Boolean = False
     Private IsTimeInSuccessfulAndClosing As Boolean = False
     Private con As New MySqlConnection(GlobalVarsModule.connectionString)
-
+    Private skipNextHighlight As Boolean = False
 
 
     Private Sub RegisteredBrwr_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        skipNextHighlight = True
         ludeyngborrower()
+        skipNextHighlight = False
         ludeyngtimedinborrower()
 
     End Sub
@@ -152,6 +154,7 @@ Public Class RegisteredBrwr
     Public Sub ludeyngborrower()
 
         ListView1.Items.Clear()
+        ListView1.BeginUpdate()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim searchText As String = txtsearch.Text.Trim()
 
@@ -195,7 +198,10 @@ Public Class RegisteredBrwr
             reader.Close()
 
 
-            ludeyngtimedinborrower()
+            If Not skipNextHighlight Then
+                ludeyngtimedinborrower()
+            End If
+
         Catch ex As Exception
             MessageBox.Show("Error loading borrower data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
@@ -205,6 +211,7 @@ Public Class RegisteredBrwr
         End Try
 
         IsTimeInMode = True
+        ListView1.EndUpdate()
         txtsearch.Enabled = True
 
     End Sub
@@ -292,7 +299,42 @@ Public Class RegisteredBrwr
         Dim section As String = selectedItem.SubItems(9).Text
         Dim strand As String = selectedItem.SubItems(10).Text
 
-        Dim currentID As String = If(borrowerType = "Student", lrn, employeeNo)
+
+        Using reloadCon As New MySqlConnection(GlobalVarsModule.connectionString)
+            Try
+                reloadCon.Open()
+
+                Dim reloadQuery As String = "SELECT * FROM borrower_tbl WHERE LRN = @LRN OR EmployeeNo = @EmployeeNo LIMIT 1"
+
+                Using reloadCmd As New MySqlCommand(reloadQuery, reloadCon)
+
+                    reloadCmd.Parameters.AddWithValue("@LRN", lrn)
+                    reloadCmd.Parameters.AddWithValue("@EmployeeNo", employeeNo)
+
+                    Using rdr As MySqlDataReader = reloadCmd.ExecuteReader()
+
+                        If rdr.Read() Then
+                            borrowerType = rdr("Borrower").ToString()
+                            firstName = rdr("FirstName").ToString()
+                            lastName = rdr("LastName").ToString()
+                            middleInitial = rdr("MiddleInitial").ToString()
+                            contactNumber = rdr("ContactNumber").ToString()
+                            department = rdr("Department").ToString()
+                            grade = rdr("Grade").ToString()
+                            section = rdr("Section").ToString()
+                            strand = rdr("Strand").ToString()
+                        End If
+
+                    End Using
+                End Using
+
+            Catch
+            End Try
+        End Using
+
+
+        'Dim currentID As String = If(borrowerType = "Student", lrn, employeeNo)
+        Dim currentID As String = If(Not String.IsNullOrEmpty(lrn), lrn, employeeNo)
 
         If selectedItem.BackColor = Color.FromArgb(153, 255, 153) Then
             MessageBox.Show("This borrower is currently timed in. Please Time Out first.", "Already Timed In", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -309,11 +351,28 @@ Public Class RegisteredBrwr
             Try
                 conInsert.Open()
 
+                Dim checkQuery As String = "SELECT COUNT(*) FROM oras_tbl WHERE (LRN = @LRN OR EmployeeNo = @EmployeeNo) AND TimeOut IS NULL"
+
+                Using checkCmd As New MySqlCommand(checkQuery, conInsert)
+
+                    checkCmd.Parameters.AddWithValue("@LRN", lrn)
+                    checkCmd.Parameters.AddWithValue("@EmployeeNo", employeeNo)
+
+                    Dim existing As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
+
+                    If existing > 0 Then
+                        MessageBox.Show("This borrower already has an active Time-In record.", "Duplicate Time-In Blocked", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Exit Sub
+                    End If
+
+                End Using
+
+
                 Using cmd As New MySqlCommand(insertQuery, conInsert)
 
                     cmd.Parameters.AddWithValue("@Borrower", borrowerType)
-                    cmd.Parameters.AddWithValue("@LRN", If(String.IsNullOrEmpty(lrn), DBNull.Value, lrn))
-                    cmd.Parameters.AddWithValue("@EmployeeNo", If(String.IsNullOrEmpty(employeeNo), DBNull.Value, employeeNo))
+                    cmd.Parameters.AddWithValue("@LRN", lrn)
+                    cmd.Parameters.AddWithValue("@EmployeeNo", employeeNo)
                     cmd.Parameters.AddWithValue("@FirstName", firstName)
                     cmd.Parameters.AddWithValue("@LastName", lastName)
                     cmd.Parameters.AddWithValue("@MiddleInitial", middleInitial)
@@ -324,7 +383,9 @@ Public Class RegisteredBrwr
                     cmd.Parameters.AddWithValue("@Strand", strand)
 
                     cmd.ExecuteNonQuery()
+
                 End Using
+
 
                 MessageBox.Show($"SUCCESS: Borrower ID {currentID} has been successfully Timed In.", "Time In Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
 

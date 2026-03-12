@@ -106,8 +106,11 @@ Public Class LibrarianPassword
 
     Private Sub Password_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
 
-        login.Show()
-        Me.Hide()
+        If Me.DialogResult <> DialogResult.OK Then
+            login.Show()
+            'Me.Hide()
+            Application.Exit()
+        End If
 
     End Sub
 
