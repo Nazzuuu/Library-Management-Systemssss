@@ -20,19 +20,19 @@ Public Class TimeInOutRecord
 
 
         Dim query As String =
-            "SELECT " &
-            "o.`ID`, " &
-            "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
-            "b.`Borrower`, " &
-            "CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
-            "IF(b.`MiddleInitial` IS NULL OR b.`MiddleInitial` = '' OR UPPER(b.`MiddleInitial`) = 'N/A', '', CONCAT(' ', b.`MiddleInitial`))" &
-            ") AS `FullName`, " &
-            "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
-            "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
-            "FROM `oras_tbl` o " &
-            "LEFT JOIN `borrower_tbl` b " &
-            "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
-            "ORDER BY o.`TimeIn` DESC"
+        "SELECT " &
+        "o.`ID`, " &
+        "DATE_FORMAT(o.`TimeIn`, '%m/%d/%Y') AS `Date`, " &
+        "IFNULL(b.`Borrower`, 'UNKNOWN') AS `Borrower`, " &
+        "IFNULL(CONCAT(b.`LastName`, ', ', b.`FirstName`, " &
+        "IF(b.`MiddleInitial` IS NULL OR b.`MiddleInitial` = '' OR UPPER(b.`MiddleInitial`) = 'N/A', '', CONCAT(' ', b.`MiddleInitial`))" &
+        "), 'UNKNOWN BORROWER') AS `FullName`, " &
+        "TIME_FORMAT(o.`TimeIn`, '%I:%i %p') AS `TimeIn`, " &
+        "TIME_FORMAT(o.`TimeOut`, '%I:%i %p') AS `TimeOut` " &
+        "FROM `oras_tbl` o " &
+        "LEFT JOIN `borrower_tbl` b " &
+        "ON o.`LRN` = b.`LRN` OR o.`EmployeeNo` = b.`EmployeeNo` " &
+        "ORDER BY o.`TimeIn` DESC"
 
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)

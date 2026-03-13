@@ -83,7 +83,7 @@ Public Class TransactionNumber
         Try
             con.Open()
 
-            Dim getRequiredSql As String = "SELECT Quantity FROM `acquisition_tbl` WHERE TransactionNo = @TranNo AND BookTitle = @BookTitle"
+            Dim getRequiredSql As String = "SELECT Quantity FROM `acquisition_tbl` WHERE TransactionNo = @TranNo AND TRIM(BookTitle) = TRIM(@BookTitle)"
             Using getRequiredCmd As New MySqlCommand(getRequiredSql, con)
                 getRequiredCmd.Parameters.AddWithValue("@TranNo", tranNo)
                 getRequiredCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
@@ -94,7 +94,7 @@ Public Class TransactionNumber
                 End If
             End Using
 
-            Dim getAccessionCountSql As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TranNo AND BookTitle = @BookTitle"
+            Dim getAccessionCountSql As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE TransactionNo = @TranNo AND TRIM(BookTitle) = TRIM(@BookTitle)"
             Using getAccessionCmd As New MySqlCommand(getAccessionCountSql, con)
                 getAccessionCmd.Parameters.AddWithValue("@TranNo", tranNo)
                 getAccessionCmd.Parameters.AddWithValue("@BookTitle", bookTitle)

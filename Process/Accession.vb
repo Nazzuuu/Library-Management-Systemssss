@@ -23,7 +23,7 @@ Public Class Accession
 
         DataGridView1.ClearSelection()
 
-        rbborrowable.Checked = False
+        'rbborrowable.Checked = False
         rbforlibraryonly.Checked = False
 
         CheckBox1.Checked = False
@@ -51,7 +51,7 @@ Public Class Accession
     End Sub
 
     Private Sub Acession_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
+        rbborrowable.Checked = True
         DisablePaste_AllTextBoxes()
         RefreshAccessionData()
         AddHandler cbshelf.DropDown, AddressOf RefreshComboBoxes
@@ -176,35 +176,44 @@ Public Class Accession
 
     Private Sub UpdateAllTransactionQuantities()
         Try
-            Using con As New MySqlConnection(connectionString)
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                 con.Open()
 
 
-                Dim getTransactionsQuery As String = "SELECT DISTINCT TransactionNo FROM acession_tbl"
+                Dim getTransactionsQuery As String = "SELECT DISTINCT TransactionNo, BookTitle FROM acession_tbl"
                 Dim getCmd As New MySqlCommand(getTransactionsQuery, con)
                 Dim reader As MySqlDataReader = getCmd.ExecuteReader()
 
-                Dim transactionList As New List(Of String)
+                Dim transactionList As New List(Of Tuple(Of String, String))
 
                 While reader.Read()
-                    transactionList.Add(reader("TransactionNo").ToString())
+                    Dim transNo As String = reader("TransactionNo").ToString()
+                    Dim bookTitle As String = reader("BookTitle").ToString()
+                    transactionList.Add(New Tuple(Of String, String)(transNo, bookTitle))
                 End While
 
                 reader.Close()
 
 
-                For Each transNo In transactionList
-                    Dim countQuery As String = "SELECT COUNT(*) FROM acession_tbl WHERE TransactionNo = @TransactionNo AND Status = 'Available'"
+                For Each item In transactionList
+
+                    Dim transNo As String = item.Item1
+                    Dim bookTitle As String = item.Item2
+
+                    Dim countQuery As String = "SELECT COUNT(*) FROM acession_tbl WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle AND Status = 'Available'"
                     Dim countCmd As New MySqlCommand(countQuery, con)
                     countCmd.Parameters.AddWithValue("@TransactionNo", transNo)
+                    countCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
 
                     Dim availableCount As Integer = Convert.ToInt32(countCmd.ExecuteScalar())
 
-                    Dim updateQuery As String = "UPDATE acquisition_tbl SET Quantity = @Quantity WHERE TransactionNo = @TransactionNo"
+                    Dim updateQuery As String = "UPDATE acquisition_tbl SET Quantity = @Quantity WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle"
                     Dim updateCmd As New MySqlCommand(updateQuery, con)
                     updateCmd.Parameters.AddWithValue("@Quantity", availableCount)
                     updateCmd.Parameters.AddWithValue("@TransactionNo", transNo)
+                    updateCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
                     updateCmd.ExecuteNonQuery()
+
                 Next
 
             End Using
@@ -213,6 +222,41 @@ Public Class Accession
         End Try
     End Sub
 
+
+    Private Sub UpdateSingleTransactionQuantity(transactionNo As String, bookTitle As String)
+
+        Using con As New MySqlConnection(connectionString)
+            con.Open()
+
+            Dim countQuery As String =
+        "SELECT COUNT(*) 
+         FROM acession_tbl 
+         WHERE TransactionNo=@TransactionNo 
+         AND BookTitle=@BookTitle 
+         AND Status='Available'"
+
+            Dim countCmd As New MySqlCommand(countQuery, con)
+            countCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+            countCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+
+            Dim availableCount As Integer = Convert.ToInt32(countCmd.ExecuteScalar())
+
+            Dim updateQuery As String =
+        "UPDATE acquisition_tbl 
+         SET Quantity=@Quantity
+         WHERE TransactionNo=@TransactionNo 
+         AND BookTitle=@BookTitle"
+
+            Dim updateCmd As New MySqlCommand(updateQuery, con)
+            updateCmd.Parameters.AddWithValue("@Quantity", availableCount)
+            updateCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+            updateCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+
+            updateCmd.ExecuteNonQuery()
+
+        End Using
+
+    End Sub
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
 
         If CheckBox1.Checked Then
@@ -591,7 +635,7 @@ Public Class Accession
             Else
                 MessageBox.Show($"Finished processing. Successfully added: {insertedAccessionIDs.Count} records. Some accession IDs were skipped due to duplicates.", "Partial Success", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             End If
-
+            UpdateSingleTransactionQuantity(txttransactionno.Text, txtbooktitle.Text)
             Acession_Load(sender, e)
             clearlahat()
 
@@ -945,6 +989,7 @@ Public Class Accession
 
                         End If
                     Next
+                    UpdateSingleTransactionQuantity(txttransactionno.Text, txtbooktitle.Text)
                     Acession_Load(sender, e)
                     clearlahat()
 

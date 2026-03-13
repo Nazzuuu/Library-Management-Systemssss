@@ -105,6 +105,16 @@ Public Class Acquisition2
                     .txttransactionno.Enabled = True
                     .txttransactionno.Text = row.Cells("TransactionNo").Value.ToString()
                     .txttransactionno.Enabled = False
+
+                    Dim rawDate As Object = row.Cells("DateAcquired").Value
+                    If rawDate IsNot Nothing AndAlso Not IsDBNull(rawDate) Then
+                        Dim parsedDate As DateTime
+                        If DateTime.TryParse(rawDate.ToString(), parsedDate) Then
+                            .DateTimePicker1.Value = parsedDate
+                        End If
+                    End If
+
+
                     .DateTimePicker1.Value = Convert.ToDateTime(row.Cells("DateAcquired").Value)
 
                     .supplieracq()
@@ -171,6 +181,8 @@ Public Class Acquisition2
                     .btnselectsu.Enabled = False
                     .cbisbnbarcode.Enabled = False
                     .cbacquistiontype.Enabled = False
+                    .txtbarcode.Enabled = False
+                    .txtisbn.Enabled = False
 
                     .ShowDialog()
 

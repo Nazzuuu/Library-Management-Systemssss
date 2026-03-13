@@ -223,7 +223,7 @@ Partial Class Penalty
         txtsearch.Location = New Point(660, 10)
         txtsearch.Margin = New Padding(4)
         txtsearch.Name = "txtsearch"
-        txtsearch.PlaceholderText = "Search Borrower"
+        txtsearch.PlaceholderText = "Type Borrower ID Type (Employee No or LRN)"
         txtsearch.SelectedText = ""
         txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         txtsearch.Size = New Size(645, 30)

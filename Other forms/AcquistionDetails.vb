@@ -493,7 +493,30 @@ Public Class AcquistionDetails
     End Sub
 
     Private Sub DynamicSearch_TextChanged(sender As Object, e As EventArgs)
+
         Dim tb = DirectCast(sender, Guna.UI2.WinForms.Guna2TextBox)
+
+        If tb.Name = "txtisbn" AndAlso tb.Text.Length >= 13 Then
+
+            If IsISBNOrBarcodeExists("ISBN", tb.Text) Then
+                MessageBox.Show("This ISBN already scanned.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                tb.Clear()
+                Exit Sub
+            End If
+
+        End If
+
+
+        If tb.Name = "txtbarcode" AndAlso tb.Text.Length >= 13 Then
+
+            If IsISBNOrBarcodeExists("Barcode", tb.Text) Then
+                MessageBox.Show("This Barcode already scanned.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                tb.Clear()
+                Exit Sub
+            End If
+
+        End If
+
         Dim panel = DirectCast(tb.Parent, Guna.UI2.WinForms.Guna2Panel)
         Dim txtTitle As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txtbooktitle")
 
@@ -525,6 +548,29 @@ Public Class AcquistionDetails
             End Try
         End Using
     End Sub
+
+
+    Private Function IsISBNOrBarcodeExists(field As String, value As String) As Boolean
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+
+            Dim query As String = $"SELECT COUNT(*) FROM acquisition_tbl WHERE {field} = @val"
+
+            Using cmd As New MySqlCommand(query, con)
+
+                cmd.Parameters.AddWithValue("@val", value)
+
+                con.Open()
+
+                Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+
+                Return count > 0
+
+            End Using
+
+        End Using
+
+    End Function
 
     Private Sub RemovePanel_Click(sender As Object, e As EventArgs)
         Dim lbl = DirectCast(sender, Label)

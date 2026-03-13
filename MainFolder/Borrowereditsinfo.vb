@@ -583,8 +583,8 @@ Public Class Borrowereditsinfo
                 txtemployeeno.Visible = True
 
 
-                lblemp.Location = New Point(29, 52)
-                txtemployeeno.Location = New Point(29, 74)
+                lblemp.Location = New Point(29, 69)
+                txtemployeeno.Location = New Point(29, 21)
                 Borrowing.lblnotesu.Text = "Input your Employee No."
 
             Case Else

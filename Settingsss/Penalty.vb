@@ -158,12 +158,12 @@ Public Class Penalty
     Private Function GetBookPriceByAccessionID(ByVal accessID As String) As Decimal
         If String.IsNullOrWhiteSpace(accessID) Then Return 0.00
 
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim price As Decimal = 0.00
         Dim priceQuery As String = "SELECT T2.`BookPrice` " &
-                                   "FROM `acession_tbl` T1 " &
-                                   "INNER JOIN `acquisition_tbl` T2 ON T1.`TransactionNo` = T2.`TransactionNo` " &
-                                   "WHERE T1.`AccessionID` = @accessID LIMIT 1"
+                               "FROM `acession_tbl` T1 " &
+                               "INNER JOIN `acquisition_tbl` T2 ON T1.`TransactionNo` = T2.`TransactionNo` " &
+                               "WHERE T1.`AccessionID` = @accessID LIMIT 1"
 
         Try
             con.Open()
@@ -178,9 +178,32 @@ Public Class Penalty
                         Return price
                     End If
                 End If
+
             End Using
+
+
+            Dim fallbackQuery As String =
+            "SELECT T2.`BookPrice` " &
+            "FROM `acession_tbl` T1 " &
+            "INNER JOIN `acquisition_tbl` T2 ON T1.`BookTitle` = T2.`BookTitle` " &
+            "WHERE T1.`AccessionID` = @accessID LIMIT 1"
+
+            Using cmd2 As New MySqlCommand(fallbackQuery, con)
+
+                cmd2.Parameters.AddWithValue("@accessID", accessID.Trim())
+
+                Dim fallbackResult As Object = cmd2.ExecuteScalar()
+
+                If fallbackResult IsNot Nothing AndAlso fallbackResult IsNot DBNull.Value Then
+                    If Decimal.TryParse(fallbackResult.ToString(), price) Then
+                        Return price
+                    End If
+                End If
+
+            End Using
+
         Catch ex As Exception
-            MessageBox.Show("Error retrieving book price by Accession ID (JOIN failed). Check if 'TransactionID' is the correct join key: " & ex.Message, "Price Retrieval Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error retrieving book price by Accession ID: " & ex.Message, "Price Retrieval Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             If con.State = ConnectionState.Open Then con.Close()
         End Try
@@ -375,7 +398,7 @@ Public Class Penalty
     End Sub
 
     Private Function GetAggregatedBookDetails(ByVal transactionNo As String) As Tuple(Of String, Integer, List(Of String))
-        Dim con As New MySqlConnection(connectionString)
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim titles As New List(Of String)
         Dim totalCount As Integer = 0
         Dim query As String = "SELECT `ReturnedBook`, `BookTotal` FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
