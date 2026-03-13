@@ -29,6 +29,7 @@
     <EmbeddedResource Include="Reports\Design\rptBorrowing.rdlc" />
     <EmbeddedResource Include="Reports\Design\rptDamagedBooks.rdlc" />
     <EmbeddedResource Include="Reports\Design\rptLostBooks.rdlc" />
+    <EmbeddedResource Include="Library Card\LibraryCard.rdlc" />
   </ItemGroup>
 
   <ItemGroup>

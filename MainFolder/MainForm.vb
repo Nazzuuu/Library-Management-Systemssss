@@ -1496,4 +1496,19 @@ Public Class MainForm
         lblform.Text = "REPORTS"
     End Sub
 
+    Private Sub LibraryCardToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LibraryCardToolStripMenuItem.Click
+        Panel_dash.Controls.Clear()
+
+        With LibraryCard
+            .TopLevel = False
+            .FormBorderStyle = FormBorderStyle.None
+            .Dock = DockStyle.Fill
+            Panel_dash.Controls.Add(LibraryCard)
+            .BringToFront()
+            .Show()
+        End With
+
+        lblform.Text = "LIBRARY CARD FORM"
+
+    End Sub
 End Class
