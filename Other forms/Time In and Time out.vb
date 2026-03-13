@@ -67,6 +67,9 @@ Public Class oras
 
 
     Private Sub oras_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        AutoTimeoutAfter12Hours()
+
         ludeyngoras()
         clearlahat()
 
@@ -95,6 +98,31 @@ Public Class oras
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildQuery(), 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+    End Sub
+
+    Private Sub AutoTimeoutAfter12Hours()
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+
+            Dim query As String = "
+            UPDATE oras_tbl
+            SET TimeOut = DATE_ADD(TimeIn, INTERVAL 12 HOUR)
+            WHERE TimeOut IS NULL
+            AND TimeIn <= DATE_SUB(NOW(), INTERVAL 12 HOUR);
+            "
+
+            Using cmd As New MySqlCommand(query, con)
+
+                Try
+                    con.Open()
+                    cmd.ExecuteNonQuery()
+                Catch ex As Exception
+                    Console.WriteLine("Auto timeout error: " & ex.Message)
+                End Try
+
+            End Using
+        End Using
+
     End Sub
 
     Private Function BuildQuery() As String

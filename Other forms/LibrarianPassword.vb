@@ -90,6 +90,11 @@ Public Class LibrarianPassword
 
                         Me.DialogResult = DialogResult.OK
                         Me.Close()
+
+                        Application.Exit()
+                        Environment.Exit(0)
+                        End
+
                     Else
 
                         MessageBox.Show("Invalid password.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Stop)
@@ -108,8 +113,8 @@ Public Class LibrarianPassword
 
         If Me.DialogResult <> DialogResult.OK Then
             login.Show()
-            'Me.Hide()
-            Application.Exit()
+            Me.Hide()
+
         End If
 
     End Sub

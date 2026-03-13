@@ -290,6 +290,19 @@ TryBorrower:
                         End If
 
                         If Not GlobalVarsModule.IsBorrowerStillTimedIn(borrowerID) Then
+
+
+                            If String.IsNullOrWhiteSpace(borrowerID) Then
+                                MessageBox.Show("Borrower ID is missing. Auto Time-In cancelled to prevent NULL record.", "System Protection", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                                Exit Sub
+                            End If
+
+                            If borrowerType <> "Student" And borrowerType <> "Teacher" Then
+                                MessageBox.Show("Borrower type is invalid. Auto Time-In cancelled to prevent NULL record.", "System Protection", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                                Exit Sub
+                            End If
+
+
                             Dim lrn As Object = If(borrowerType = "Student", borrowerID, CType(DBNull.Value, Object))
                             Dim employeeNo As Object = If(borrowerType = "Teacher", borrowerID, CType(DBNull.Value, Object))
 
@@ -303,7 +316,7 @@ TryBorrower:
                             MessageBox.Show($"Welcome, {Username_borrower}!", "Time In Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
                         Else
                             Dim reminderMessage As String = $"Welcome back, {Username_borrower}! You are currently Timed In." & Environment.NewLine &
-                                                "Please Time Out before leaving the library."
+                        "Please Time Out before leaving the library."
                             MessageBox.Show(reminderMessage, "Time Out Reminder 🔔", MessageBoxButtons.OK, MessageBoxIcon.Information)
                         End If
 
