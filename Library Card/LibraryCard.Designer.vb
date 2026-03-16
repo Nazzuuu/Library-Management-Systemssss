@@ -23,18 +23,18 @@ Partial Class LibraryCard
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle6 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle7 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle8 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Guna2GroupBox1 = New Guna.UI2.WinForms.Guna2GroupBox()
         chkSelectAll = New Guna.UI2.WinForms.Guna2CheckBox()
         btnPrint = New Guna.UI2.WinForms.Guna2Button()
@@ -55,19 +55,19 @@ Partial Class LibraryCard
         Guna2GroupBox1.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2GroupBox1.BorderRadius = 9
         Guna2GroupBox1.BorderThickness = 2
+        Guna2GroupBox1.Controls.Add(txtSearch)
         Guna2GroupBox1.Controls.Add(chkSelectAll)
         Guna2GroupBox1.Controls.Add(btnPrint)
         Guna2GroupBox1.Controls.Add(PictureBox1)
-        Guna2GroupBox1.Controls.Add(txtSearch)
         Guna2GroupBox1.Controls.Add(Guna2GradientPanel1)
         Guna2GroupBox1.CustomBorderColor = Color.Transparent
-        Guna2GroupBox1.CustomizableEdges = CustomizableEdges15
+        Guna2GroupBox1.CustomizableEdges = CustomizableEdges7
         Guna2GroupBox1.FillColor = Color.Transparent
         Guna2GroupBox1.Font = New Font("Segoe UI", 9F)
         Guna2GroupBox1.ForeColor = Color.FromArgb(CByte(125), CByte(137), CByte(149))
         Guna2GroupBox1.Location = New Point(11, 18)
         Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges16
+        Guna2GroupBox1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
         Guna2GroupBox1.Size = New Size(1333, 621)
         Guna2GroupBox1.TabIndex = 1
         ' 
@@ -95,7 +95,7 @@ Partial Class LibraryCard
         btnPrint.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnPrint.BorderRadius = 9
         btnPrint.BorderThickness = 1
-        btnPrint.CustomizableEdges = CustomizableEdges9
+        btnPrint.CustomizableEdges = CustomizableEdges3
         btnPrint.DisabledState.BorderColor = Color.DarkGray
         btnPrint.DisabledState.CustomBorderColor = Color.DarkGray
         btnPrint.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -105,7 +105,7 @@ Partial Class LibraryCard
         btnPrint.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnPrint.Location = New Point(129, 68)
         btnPrint.Name = "btnPrint"
-        btnPrint.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        btnPrint.ShadowDecoration.CustomizableEdges = CustomizableEdges4
         btnPrint.Size = New Size(127, 27)
         btnPrint.TabIndex = 48
         btnPrint.Text = "Print"
@@ -124,7 +124,7 @@ Partial Class LibraryCard
         ' 
         txtSearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtSearch.BorderRadius = 16
-        txtSearch.CustomizableEdges = CustomizableEdges11
+        txtSearch.CustomizableEdges = CustomizableEdges1
         txtSearch.DefaultText = ""
         txtSearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtSearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -140,7 +140,7 @@ Partial Class LibraryCard
         txtSearch.Name = "txtSearch"
         txtSearch.PlaceholderText = "Search Borrower"
         txtSearch.SelectedText = ""
-        txtSearch.ShadowDecoration.CustomizableEdges = CustomizableEdges12
+        txtSearch.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         txtSearch.Size = New Size(889, 30)
         txtSearch.TabIndex = 9
         ' 
@@ -150,10 +150,10 @@ Partial Class LibraryCard
         Guna2GradientPanel1.BorderRadius = 9
         Guna2GradientPanel1.BorderThickness = 2
         Guna2GradientPanel1.Controls.Add(dgvLibraryCard)
-        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges13
+        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges5
         Guna2GradientPanel1.Location = New Point(25, 106)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
-        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges14
+        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges6
         Guna2GradientPanel1.Size = New Size(1283, 493)
         Guna2GradientPanel1.TabIndex = 45
         ' 
@@ -166,42 +166,42 @@ Partial Class LibraryCard
         dgvLibraryCard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         dgvLibraryCard.BackgroundColor = SystemColors.Control
         dgvLibraryCard.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal
-        DataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle5.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DataGridViewCellStyle5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        DataGridViewCellStyle5.ForeColor = Color.White
-        DataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DataGridViewCellStyle5.SelectionForeColor = Color.White
-        DataGridViewCellStyle5.WrapMode = DataGridViewTriState.True
-        dgvLibraryCard.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
+        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        DataGridViewCellStyle1.ForeColor = Color.White
+        DataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle1.SelectionForeColor = Color.White
+        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
+        dgvLibraryCard.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         dgvLibraryCard.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvLibraryCard.Cursor = Cursors.Hand
-        DataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle6.BackColor = SystemColors.Window
-        DataGridViewCellStyle6.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle6.ForeColor = Color.FromArgb(CByte(125), CByte(137), CByte(149))
-        DataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle6.WrapMode = DataGridViewTriState.False
-        dgvLibraryCard.DefaultCellStyle = DataGridViewCellStyle6
+        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = SystemColors.Window
+        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle2.ForeColor = Color.FromArgb(CByte(125), CByte(137), CByte(149))
+        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
+        dgvLibraryCard.DefaultCellStyle = DataGridViewCellStyle2
         dgvLibraryCard.Location = New Point(24, 26)
         dgvLibraryCard.MultiSelect = False
         dgvLibraryCard.Name = "dgvLibraryCard"
         dgvLibraryCard.ReadOnly = True
-        DataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle7.BackColor = SystemColors.Control
-        DataGridViewCellStyle7.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle7.ForeColor = SystemColors.WindowText
-        DataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle7.WrapMode = DataGridViewTriState.True
-        dgvLibraryCard.RowHeadersDefaultCellStyle = DataGridViewCellStyle7
+        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle3.BackColor = SystemColors.Control
+        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
+        DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
+        dgvLibraryCard.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
         dgvLibraryCard.RowHeadersVisible = False
         dgvLibraryCard.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle8.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        DataGridViewCellStyle8.ForeColor = Color.Black
-        dgvLibraryCard.RowsDefaultCellStyle = DataGridViewCellStyle8
+        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle4.ForeColor = Color.Black
+        dgvLibraryCard.RowsDefaultCellStyle = DataGridViewCellStyle4
         dgvLibraryCard.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         dgvLibraryCard.Size = New Size(1234, 441)
         dgvLibraryCard.TabIndex = 26

@@ -266,6 +266,12 @@ Public Class Borrowereditsinfo
 
         Dim originalEmail As String = GetOriginalEmail(selectedBorrowerID)
         If Not originalEmail.Equals(newEmail, StringComparison.OrdinalIgnoreCase) Then
+            ' Ensure required fields are present before sending OTP
+            If String.IsNullOrWhiteSpace(newUsername) OrElse String.IsNullOrWhiteSpace(newPassword) OrElse String.IsNullOrWhiteSpace(newEmail) Then
+                MessageBox.Show("Please complete Username, Password, and Email before verifying email.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
             Dim generatedOTP As String = GenerateOTP()
             If SendVerificationEmail(newEmail, generatedOTP) Then
                 Dim userOTP As String = InputBox("A verification code has been sent to " & newEmail & ". Please enter the 6-digit code below:", "Email Verification")

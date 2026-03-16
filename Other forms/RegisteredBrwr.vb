@@ -239,20 +239,34 @@ Public Class RegisteredBrwr
 
             While reader.Read()
 
-                If Not reader.IsDBNull(reader.GetOrdinal("LRN")) AndAlso Not String.IsNullOrEmpty(reader.GetString("LRN")) Then
-                    timedInBorrowers.Add(reader.GetString("LRN"))
+                If Not reader.IsDBNull(reader.GetOrdinal("LRN")) Then
+                    Dim lrnValDb As String = reader.GetString("LRN").Trim()
+                    If Not String.IsNullOrEmpty(lrnValDb) Then
+                        timedInBorrowers.Add(lrnValDb)
+                    End If
                 End If
-                If Not reader.IsDBNull(reader.GetOrdinal("EmployeeNo")) AndAlso Not String.IsNullOrEmpty(reader.GetString("EmployeeNo")) Then
-                    timedInBorrowers.Add(reader.GetString("EmployeeNo"))
+                If Not reader.IsDBNull(reader.GetOrdinal("EmployeeNo")) Then
+                    Dim empValDb As String = reader.GetString("EmployeeNo").Trim()
+                    If Not String.IsNullOrEmpty(empValDb) Then
+                        timedInBorrowers.Add(empValDb)
+                    End If
                 End If
             End While
             reader.Close()
 
             For Each item As ListViewItem In ListView1.Items
-                Dim lrnValue As String = item.SubItems(4).Text
-                Dim employeeNoValue As String = item.SubItems(5).Text
+                Dim lrnValue As String = item.SubItems(4).Text.Trim()
+                Dim employeeNoValue As String = item.SubItems(5).Text.Trim()
 
-                If timedInBorrowers.Contains(lrnValue) OrElse timedInBorrowers.Contains(employeeNoValue) Then
+                Dim isTimedIn As Boolean = False
+                If Not String.IsNullOrEmpty(lrnValue) AndAlso timedInBorrowers.Contains(lrnValue) Then
+                    isTimedIn = True
+                End If
+                If Not isTimedIn AndAlso Not String.IsNullOrEmpty(employeeNoValue) AndAlso timedInBorrowers.Contains(employeeNoValue) Then
+                    isTimedIn = True
+                End If
+
+                If isTimedIn Then
                     item.BackColor = Color.FromArgb(153, 255, 153)
                 Else
                     item.BackColor = Color.FromArgb(255, 102, 102)
@@ -333,7 +347,7 @@ Public Class RegisteredBrwr
         End Using
 
 
-        'Dim currentID As String = If(borrowerType = "Student", lrn, employeeNo)
+
         Dim currentID As String = If(Not String.IsNullOrEmpty(lrn), lrn, employeeNo)
 
         If selectedItem.BackColor = Color.FromArgb(153, 255, 153) Then
@@ -351,21 +365,36 @@ Public Class RegisteredBrwr
             Try
                 conInsert.Open()
 
-                Dim checkQuery As String = "SELECT COUNT(*) FROM oras_tbl WHERE (LRN = @LRN OR EmployeeNo = @EmployeeNo) AND TimeOut IS NULL"
+                ' Only check for duplicates using non-empty identifier values to avoid false positives
+                If String.IsNullOrWhiteSpace(lrn) AndAlso String.IsNullOrWhiteSpace(employeeNo) Then
+                    MessageBox.Show("Cannot Time In borrower: missing LRN and EmployeeNo.", "Missing Identifier", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Exit Sub
+                End If
 
-                Using checkCmd As New MySqlCommand(checkQuery, conInsert)
+                Dim checkQuery As String = "SELECT COUNT(*) FROM oras_tbl WHERE TimeOut IS NULL"
+                Dim conditions As New List(Of String)
 
-                    checkCmd.Parameters.AddWithValue("@LRN", lrn)
-                    checkCmd.Parameters.AddWithValue("@EmployeeNo", employeeNo)
+                If Not String.IsNullOrWhiteSpace(lrn) Then
+                    conditions.Add("LRN = @LRN")
+                End If
+                If Not String.IsNullOrWhiteSpace(employeeNo) Then
+                    conditions.Add("EmployeeNo = @EmployeeNo")
+                End If
 
-                    Dim existing As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
+                If conditions.Count > 0 Then
+                    checkQuery &= " AND (" & String.Join(" OR ", conditions) & ")"
 
-                    If existing > 0 Then
-                        MessageBox.Show("This borrower already has an active Time-In record.", "Duplicate Time-In Blocked", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        Exit Sub
-                    End If
+                    Using checkCmd As New MySqlCommand(checkQuery, conInsert)
+                        If Not String.IsNullOrWhiteSpace(lrn) Then checkCmd.Parameters.AddWithValue("@LRN", lrn)
+                        If Not String.IsNullOrWhiteSpace(employeeNo) Then checkCmd.Parameters.AddWithValue("@EmployeeNo", employeeNo)
 
-                End Using
+                        Dim existing As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
+                        If existing > 0 Then
+                            MessageBox.Show("This borrower already has an active Time-In record.", "Duplicate Time-In Blocked", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            Exit Sub
+                        End If
+                    End Using
+                End If
 
 
                 Using cmd As New MySqlCommand(insertQuery, conInsert)

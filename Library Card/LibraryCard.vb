@@ -12,8 +12,6 @@ Public Class LibraryCard
         dgvLibraryCard.EnableHeadersVisualStyles = False
         dgvLibraryCard.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         dgvLibraryCard.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-
-
     End Sub
 
     Private Sub dgvLibraryCard_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles dgvLibraryCard.DataBindingComplete
@@ -89,18 +87,22 @@ Public Class LibraryCard
 
     Private Sub chkSelectAll_CheckedChanged(sender As Object, e As EventArgs) Handles chkSelectAll.CheckedChanged
         isRefreshing = True
+
+        Dim isSelected As Boolean = chkSelectAll.Checked
+
         For Each row As DataGridViewRow In dgvLibraryCard.Rows
             If Not row.IsNewRow Then
                 Dim id As Integer = CInt(row.Cells("ID").Value)
-                row.Cells("chkSelect").Value = chkSelectAll.Checked
 
-                If chkSelectAll.Checked Then
+                row.Cells("chkSelect").Value = isSelected
+                If isSelected Then
                     If Not SelectedIDs.Contains(id) Then SelectedIDs.Add(id)
                 Else
                     SelectedIDs.Remove(id)
                 End If
             End If
         Next
+
         isRefreshing = False
     End Sub
 

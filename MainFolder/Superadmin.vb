@@ -108,6 +108,11 @@ Public Class Superadmin
                 Return
             End If
 
+            ' Ensure required fields are filled before sending OTP
+            If String.IsNullOrWhiteSpace(txtpassword.Text) OrElse String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) Then
+                MessageBox.Show("Please fill out all required fields before verifying email.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
 
             Dim generatedOTP As String = GenerateOTP()
             If SendVerificationEmail(email, generatedOTP) Then

@@ -9,17 +9,18 @@
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="DataSet_LibraryCard" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="DataSet_LibraryCard" msprop:Generator_DataSetName="DataSet_LibraryCard">
+  <xs:element name="DataSet_LibraryCard" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DataSet_LibraryCard" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DataSet_LibraryCard">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="BorrowerData" msprop:Generator_RowEvHandlerName="BorrowerDataRowChangeEventHandler" msprop:Generator_RowDeletedName="BorrowerDataRowDeleted" msprop:Generator_RowDeletingName="BorrowerDataRowDeleting" msprop:Generator_RowEvArgName="BorrowerDataRowChangeEvent" msprop:Generator_TablePropName="BorrowerData" msprop:Generator_RowChangedName="BorrowerDataRowChanged" msprop:Generator_RowChangingName="BorrowerDataRowChanging" msprop:Generator_TableClassName="BorrowerDataDataTable" msprop:Generator_RowClassName="BorrowerDataRow" msprop:Generator_TableVarName="tableBorrowerData" msprop:Generator_UserTableName="BorrowerData">
+        <xs:element name="BorrowerData" msprop:Generator_RowClassName="BorrowerDataRow" msprop:Generator_RowEvHandlerName="BorrowerDataRowChangeEventHandler" msprop:Generator_RowDeletedName="BorrowerDataRowDeleted" msprop:Generator_RowDeletingName="BorrowerDataRowDeleting" msprop:Generator_RowEvArgName="BorrowerDataRowChangeEvent" msprop:Generator_TablePropName="BorrowerData" msprop:Generator_RowChangedName="BorrowerDataRowChanged" msprop:Generator_UserTableName="BorrowerData" msprop:Generator_RowChangingName="BorrowerDataRowChanging" msprop:Generator_TableClassName="BorrowerDataDataTable" msprop:Generator_TableVarName="tableBorrowerData">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="FullName" msprop:Generator_ColumnPropNameInRow="FullName" msprop:Generator_ColumnPropNameInTable="FullNameColumn" msprop:Generator_ColumnVarNameInTable="columnFullName" msprop:Generator_UserColumnName="FullName" type="xs:string" minOccurs="0" />
-              <xs:element name="Identifier" msprop:Generator_ColumnPropNameInRow="Identifier" msprop:Generator_ColumnPropNameInTable="IdentifierColumn" msprop:Generator_ColumnVarNameInTable="columnIdentifier" msprop:Generator_UserColumnName="Identifier" type="xs:string" minOccurs="0" />
-              <xs:element name="LibrarianName" msprop:Generator_ColumnPropNameInRow="LibrarianName" msprop:Generator_ColumnPropNameInTable="LibrarianNameColumn" msprop:Generator_ColumnVarNameInTable="columnLibrarianName" msprop:Generator_UserColumnName="LibrarianName" type="xs:string" minOccurs="0" />
-              <xs:element name="Department" msprop:Generator_ColumnPropNameInRow="Department" msprop:Generator_ColumnPropNameInTable="DepartmentColumn" msprop:Generator_ColumnVarNameInTable="columnDepartment" msprop:Generator_UserColumnName="Department" type="xs:string" minOccurs="0" />
-              <xs:element name="Barcode" msprop:Generator_ColumnPropNameInRow="Barcode" msprop:Generator_ColumnPropNameInTable="BarcodeColumn" msprop:Generator_ColumnVarNameInTable="columnBarcode" msprop:Generator_UserColumnName="Barcode" type="xs:unsignedByte" minOccurs="0" />
+              <xs:element name="FullName" msprop:Generator_UserColumnName="FullName" msprop:Generator_ColumnPropNameInTable="FullNameColumn" msprop:Generator_ColumnPropNameInRow="FullName" msprop:Generator_ColumnVarNameInTable="columnFullName" type="xs:string" minOccurs="0" />
+              <xs:element name="Identifier" msprop:Generator_UserColumnName="Identifier" msprop:Generator_ColumnPropNameInTable="IdentifierColumn" msprop:Generator_ColumnPropNameInRow="Identifier" msprop:Generator_ColumnVarNameInTable="columnIdentifier" type="xs:string" minOccurs="0" />
+              <xs:element name="LibrarianName" msprop:Generator_UserColumnName="LibrarianName" msprop:Generator_ColumnPropNameInTable="LibrarianNameColumn" msprop:Generator_ColumnPropNameInRow="LibrarianName" msprop:Generator_ColumnVarNameInTable="columnLibrarianName" type="xs:string" minOccurs="0" />
+              <xs:element name="Department" msprop:Generator_UserColumnName="Department" msprop:Generator_ColumnPropNameInTable="DepartmentColumn" msprop:Generator_ColumnPropNameInRow="Department" msprop:Generator_ColumnVarNameInTable="columnDepartment" type="xs:string" minOccurs="0" />
+              <xs:element name="Barcode" msprop:Generator_UserColumnName="Barcode" msprop:Generator_ColumnPropNameInTable="BarcodeColumn" msprop:Generator_ColumnPropNameInRow="Barcode" msprop:Generator_ColumnVarNameInTable="columnBarcode" type="xs:unsignedByte" minOccurs="0" />
+              <xs:element name="ID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_UserColumnName="ID" type="xs:int" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

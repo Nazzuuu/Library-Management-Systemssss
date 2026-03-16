@@ -14,6 +14,10 @@ Module GlobalVarsModule
     Private _connectionString As String =
         $"Server={My.Settings.Server};Database={My.Settings.Database};Uid={My.Settings.Username};Pwd={My.Settings.Password};"
 
+    'wag mo to alisin
+    'Private _connectionString As String =
+    '    $"Server=localhost;Database=laybsisu_dbs;Uid=root;Pwd=root;"
+
     Public ReadOnly Property connectionString As String
         Get
             Return _connectionString
@@ -179,7 +183,12 @@ Module GlobalVarsModule
     'End Function
 
     Public Function GetCleanCurrentBorrowerID() As String
-        Return CurrentBorrowerID.Trim()
+        Dim idTrimmed As String = CurrentBorrowerID.Trim()
+        Dim tempID As Long
+        If Long.TryParse(idTrimmed, tempID) Then
+            Return tempID.ToString()
+        End If
+        Return idTrimmed
     End Function
 
 

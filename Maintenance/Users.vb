@@ -244,7 +244,24 @@ Public Class Users
             Exit Sub
         End If
 
+        If String.IsNullOrWhiteSpace(firstName) OrElse String.IsNullOrWhiteSpace(lastName) OrElse String.IsNullOrWhiteSpace(user) OrElse String.IsNullOrWhiteSpace(pass) OrElse String.IsNullOrWhiteSpace(email) Then
+            MsgBox("Please fill in all the required fields before email verification.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
+
+        If Not (rbmale.Checked Or rbfemale.Checked) Then
+            MsgBox("Please select a gender before email verification.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
+        If Not (rbassistant.Checked Or rbstaff.Checked) Then
+            MsgBox("Please select a role before email verification.", vbExclamation, "Missing Information")
+            Exit Sub
+        End If
+
         Dim generatedOTP As String = GenerateOTP()
+
         If SendVerificationEmail(email, generatedOTP) Then
             Dim userOTP As String = InputBox("A verification code has been sent to " & email & ". Please enter the 6-digit code below:", "Email Verification")
             If String.IsNullOrWhiteSpace(userOTP) Then
