@@ -9,6 +9,7 @@ Public Class Language
         refreshLanguage()
         DisablePaste_AllTextBoxes()
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
     End Sub
 
     Public Sub refreshLanguage()

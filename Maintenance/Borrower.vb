@@ -12,6 +12,7 @@ Public Class Borrower
         refreshData()
         DisablePaste_AllTextBoxes()
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
     End Sub
 
     Public Sub refreshData()

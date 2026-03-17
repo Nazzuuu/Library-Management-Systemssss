@@ -9,6 +9,7 @@ Public Class Supplier
         LoadSupplierData()
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `supplier_tbl`", 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
     End Sub
 
     Private Sub LoadSupplierData()

@@ -10,6 +10,7 @@ Public Class Author
 
         refreshauthor()
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
 
     End Sub
 

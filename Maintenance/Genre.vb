@@ -6,6 +6,7 @@ Public Class Genre
         Me.Refresh()
         refreshGenre()
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
     End Sub
 
     Public Sub refreshGenre()

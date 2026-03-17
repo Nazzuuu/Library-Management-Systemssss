@@ -421,7 +421,7 @@ Partial Class AcquistionDetails
         txtbookprice.ForeColor = Color.Black
         txtbookprice.HoverState.BorderColor = Color.FromArgb(CByte(94), CByte(148), CByte(255))
         txtbookprice.Location = New Point(19, 221)
-        txtbookprice.MaxLength = 13
+        txtbookprice.MaxLength = 4
         txtbookprice.Name = "txtbookprice"
         txtbookprice.PlaceholderText = ""
         txtbookprice.SelectedText = ""

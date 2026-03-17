@@ -40,6 +40,85 @@ Module GlobalVarsModule
         End Try
     End Sub
 
+
+    Public Sub CapitalizeFirstLetter_ControlTextChanged(sender As Object, e As EventArgs)
+        Dim ctrl As Control = TryCast(sender, Control)
+        If ctrl Is Nothing Then Return
+        CapitalizeFirstLetter(ctrl)
+    End Sub
+
+    Public Sub CapitalizeFirstLetter(ctrl As Control)
+        Try
+            Dim textProp = ctrl.GetType().GetProperty("Text")
+            If textProp Is Nothing Then Return
+
+            Dim original As String = Convert.ToString(textProp.GetValue(ctrl))
+            If String.IsNullOrEmpty(original) Then Return
+
+
+            Dim selStart As Integer = 0
+            Dim selLen As Integer = 0
+
+            Dim selStartProp = ctrl.GetType().GetProperty("SelectionStart")
+            Dim selLenProp = ctrl.GetType().GetProperty("SelectionLength")
+
+            If selStartProp IsNot Nothing Then
+                selStart = Convert.ToInt32(selStartProp.GetValue(ctrl))
+            ElseIf TypeOf ctrl Is TextBoxBase Then
+                selStart = DirectCast(ctrl, TextBoxBase).SelectionStart
+            End If
+
+            If selLenProp IsNot Nothing Then
+                selLen = Convert.ToInt32(selLenProp.GetValue(ctrl))
+            ElseIf TypeOf ctrl Is TextBoxBase Then
+                selLen = DirectCast(ctrl, TextBoxBase).SelectionLength
+            End If
+
+            Dim newText As String = original
+            If original.Length >= 1 Then
+                Dim firstChar As Char = original(0)
+                Dim rest As String = If(original.Length > 1, original.Substring(1), String.Empty)
+                newText = Char.ToUpperInvariant(firstChar) & rest
+            End If
+
+            If Not newText.Equals(original) Then
+                textProp.SetValue(ctrl, newText)
+
+
+                Try
+                    If selStartProp IsNot Nothing Then selStartProp.SetValue(ctrl, selStart)
+                    If selLenProp IsNot Nothing Then selLenProp.SetValue(ctrl, selLen)
+                    If TypeOf ctrl Is TextBoxBase Then
+                        Dim tb = DirectCast(ctrl, TextBoxBase)
+                        tb.SelectionStart = selStart
+                        tb.SelectionLength = selLen
+                    End If
+                Catch
+                End Try
+            End If
+        Catch
+        End Try
+    End Sub
+
+    Public Sub EnableCapitalizeFirstLetterForControls(parent As Control)
+        Try
+            For Each ctrl As Control In parent.Controls
+                If ctrl Is Nothing Then Continue For
+
+
+                Dim textProp = ctrl.GetType().GetProperty("Text")
+                If textProp IsNot Nothing Then
+                    AddHandler ctrl.TextChanged, AddressOf CapitalizeFirstLetter_ControlTextChanged
+                End If
+
+                If ctrl.HasChildren Then
+                    EnableCapitalizeFirstLetterForControls(ctrl)
+                End If
+            Next
+        Catch
+        End Try
+    End Sub
+
     Private Sub dbRefreshTimer_MD5_Tick(sender As Object, e As EventArgs) Handles dbRefreshTimer_MD5.Tick
         Try
             Using con As New MySqlConnection(connectionString)
@@ -76,10 +155,6 @@ Module GlobalVarsModule
 
         End Try
     End Sub
-
-
-
-
 
     Public Sub RefreshConnectionString()
         _connectionString =
@@ -172,15 +247,7 @@ Module GlobalVarsModule
         End Using
     End Sub
 
-    'Public Function GetCleanCurrentBorrowerID() As String
-    '    Dim idTrimmed As String = CurrentBorrowerID.Trim()
-    '    Dim tempID As Long
-    '    If Long.TryParse(idTrimmed, tempID) Then
-    '        Return tempID.ToString()
-    '    Else
-    '        Return idTrimmed
-    '    End If
-    'End Function
+
 
     Public Function GetCleanCurrentBorrowerID() As String
         Dim idTrimmed As String = CurrentBorrowerID.Trim()
@@ -299,8 +366,7 @@ Module GlobalVarsModule
 
     Public Event DatabaseUpdated()
     Private WithEvents dbRefreshTimer As New Timer() With {.Interval = 200}
-
-
+    Private WithEvents autoTimeoutTimer As New Timer() With {.Interval = 60 * 1000}
     Private lastTableCounts As New Dictionary(Of String, Integer)
 
 
@@ -318,10 +384,64 @@ Module GlobalVarsModule
     Public Sub StartAutoRefresh()
         dbRefreshTimer.Start()
         AddHandler DatabaseUpdated, AddressOf GlobalComboBoxUpdater
+        Try
+            autoTimeoutTimer.Start()
+        Catch
+        End Try
+    End Sub
+
+    Private Sub autoTimeoutTimer_Tick(sender As Object, e As EventArgs) Handles autoTimeoutTimer.Tick
+        Try
+
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+
+
+                Dim sql14 As String = "SELECT ID FROM oras_tbl WHERE TimeOut IS NULL AND TimeIn <= DATE_SUB(NOW(), INTERVAL 14 HOUR)"
+                Using cmd14 As New MySqlCommand(sql14, con)
+                    Using rdr14 = cmd14.ExecuteReader()
+                        Dim ids As New List(Of Integer)
+                        While rdr14.Read()
+                            ids.Add(Convert.ToInt32(rdr14("ID")))
+                        End While
+                        rdr14.Close()
+
+                        For Each id In ids
+                            AutomaticTimeOut(id)
+                        Next
+                    End Using
+                End Using
+
+
+                Dim nowTime As DateTime = DateTime.Now
+                If nowTime.TimeOfDay >= New TimeSpan(20, 0, 0) Then
+                    Dim sql8pm As String = "SELECT ID FROM oras_tbl WHERE TimeOut IS NULL AND DATE(TimeIn) = DATE(NOW())"
+                    Using cmd8 As New MySqlCommand(sql8pm, con)
+                        Using rdr8 = cmd8.ExecuteReader()
+                            Dim ids8 As New List(Of Integer)
+                            While rdr8.Read()
+                                ids8.Add(Convert.ToInt32(rdr8("ID")))
+                            End While
+                            rdr8.Close()
+
+                            For Each id In ids8
+                                AutomaticTimeOut(id)
+                            Next
+                        End Using
+                    End Using
+                End If
+
+            End Using
+        Catch
+        End Try
     End Sub
 
     Public Sub StopAutoRefresh()
         dbRefreshTimer.Stop()
+        Try
+            autoTimeoutTimer.Stop()
+        Catch
+        End Try
     End Sub
 
 
@@ -366,35 +486,6 @@ Module GlobalVarsModule
 
         End Try
     End Sub
-
-
-
-    'Public Async Function LoadToGridAsync(grid As DataGridView, query As String) As Task
-    '    Await Task.Run(Sub()
-    '                       Try
-    '                           Using con As New MySqlConnection(connectionString)
-    '                               Using adap As New MySqlDataAdapter(query, con)
-    '                                   Dim ds As New DataSet()
-    '                                   adap.Fill(ds)
-    '                                   Dim dt As DataTable = ds.Tables(0)
-
-    '                                   grid.Invoke(Sub()
-    '                                                   grid.DataSource = dt
-    '                                               End Sub)
-    '                               End Using
-    '                           End Using
-    '                       Catch ex As MySqlException
-    '                           grid.Invoke(Sub()
-
-    '                                       End Sub)
-    '                       Catch ex As Exception
-    '                           grid.Invoke(Sub()
-
-    '                                       End Sub)
-    '                       End Try
-    '                   End Sub)
-    'End Function
-
 
     Public Async Function LoadToGridAsync(grid As DataGridView, query As String) As Task
         Await Task.Run(Sub()
@@ -715,31 +806,37 @@ Module GlobalVarsModule
 
     Public OverdueEmailAlreadySent As Boolean = False
     Public LastProcessedDate As Date = Date.MinValue
+    Private OverdueEmailLock As New Object()
+    Private OverdueProcessing As Boolean = False
 
     Public Sub SendOverdueBorrowerNotifications()
 
-        Dim laptopDate As Date = Date.Today
-        Dim laptopDateString As String = laptopDate.ToString("yyyy-MM-dd")
-
-
-        Dim sql As String =
-        "SELECT bw.BorrowID, be.Email, bw.Name, bw.DueDate " &
-        "FROM borrowing_tbl bw " &
-        "JOIN borroweredit_tbl be ON bw.LRN = be.LRN OR bw.EmployeeNo = be.EmployeeNo " &
-        "JOIN acession_tbl ac ON bw.AccessionID = ac.AccessionID " &
-        "WHERE bw.DueDate < '" & laptopDateString & "' " &
-        "AND (ac.Status = 'borrowed' OR ac.Status = 'overdue') " &
-        "AND (bw.LastEmailSentDate IS NULL OR bw.LastEmailSentDate <> '" & laptopDateString & "')"
+        SyncLock OverdueEmailLock
+            If OverdueProcessing Then
+                Return
+            End If
+            OverdueProcessing = True
+        End SyncLock
 
         Try
+            Dim laptopDate As Date = Date.Today
+            Dim laptopDateString As String = laptopDate.ToString("yyyy-MM-dd")
+
+            Dim sql As String =
+            "SELECT bw.BorrowID, be.Email, bw.Name, bw.DueDate " &
+            "FROM borrowing_tbl bw " &
+            "JOIN borroweredit_tbl be ON bw.LRN = be.LRN OR bw.EmployeeNo = be.EmployeeNo " &
+            "JOIN acession_tbl ac ON bw.AccessionID = ac.AccessionID " &
+            "WHERE bw.DueDate < @today " &
+            "AND (ac.Status = 'borrowed' OR ac.Status = 'overdue') " &
+            "AND (bw.LastEmailSentDate IS NULL OR DATE(bw.LastEmailSentDate) <> @today)"
+
             Using con As New MySqlConnection(connectionString)
                 con.Open()
                 Using cmd As New MySqlCommand(sql, con)
+                    cmd.Parameters.AddWithValue("@today", laptopDateString)
                     Using rdr = cmd.ExecuteReader()
-
-
                         Dim processedIDs As New List(Of String)
-
                         While rdr.Read()
                             Dim email As String = rdr("Email").ToString()
                             If String.IsNullOrWhiteSpace(email) Then Continue While
@@ -755,18 +852,24 @@ Module GlobalVarsModule
                             "Please return the book immediately to avoid penalties." & vbCrLf & vbCrLf &
                             "Monlimar Development Academy Library Management System (MDA-LMS)"
 
+                            Dim sentSuccessfully As Boolean = False
+                            Try
+                                SendEmailNotification_Global(email, "MDA-LMS Overdue Notice", body)
+                                sentSuccessfully = True
+                            Catch
+                                sentSuccessfully = False
+                            End Try
 
-                            SendEmailNotification_Global(email, "MDA-LMS Overdue Notice", body)
-
-                            processedIDs.Add(borrowID)
+                            If sentSuccessfully Then
+                                processedIDs.Add(borrowID)
+                            End If
 
                         End While
 
                         rdr.Close()
 
-
                         For Each id In processedIDs
-                            Dim updateSql As String = "UPDATE borrowing_tbl SET LastEmailSentDate = '" & laptopDateString & "' WHERE BorrowID = @id"
+                            Dim updateSql As String = "UPDATE borrowing_tbl SET LastEmailSentDate = NOW() WHERE BorrowID = @id"
                             Using updateCmd As New MySqlCommand(updateSql, con)
                                 updateCmd.Parameters.AddWithValue("@id", id)
                                 updateCmd.ExecuteNonQuery()
@@ -776,9 +879,12 @@ Module GlobalVarsModule
                     End Using
                 End Using
             End Using
-
         Catch ex As Exception
 
+        Finally
+            SyncLock OverdueEmailLock
+                OverdueProcessing = False
+            End SyncLock
         End Try
     End Sub
 

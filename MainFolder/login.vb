@@ -420,8 +420,6 @@ TryBorrower:
 
 
 
-
-
     Private Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         If GlobalVarsModule.IsInDesignMode(Me) Then Return
@@ -430,7 +428,6 @@ TryBorrower:
         MainForm.Refresh()
         Me.KeyPreview = True
         txtpass.PasswordChar = "•"
-
 
         Try
 

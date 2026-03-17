@@ -8,6 +8,7 @@ Public Class Publisher
         Me.Refresh()
         refreshPublisher()
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
     End Sub
 
     Public Sub refreshPublisher()

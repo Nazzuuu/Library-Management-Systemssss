@@ -92,6 +92,7 @@ Public Class NewPassword
 
     Private Sub NewPassword_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
         txtpass.PasswordChar = "•"
         txtconfirm.PasswordChar = "•"
         Try

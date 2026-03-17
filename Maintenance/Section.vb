@@ -14,7 +14,7 @@ Public Class Section
         AddHandler cbstrand.DropDown, AddressOf RefreshComboBoxes
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
         AddHandler cbdepartment.SelectedIndexChanged, AddressOf cbdepartment_SelectedIndexChanged
-
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
         cbgrade.Enabled = False
     End Sub
 

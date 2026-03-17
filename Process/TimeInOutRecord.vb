@@ -121,9 +121,6 @@ Public Class TimeInOutRecord
     End Sub
 
 
-
-
-
     Private Sub chkSelectAll_CheckedChanged(sender As Object, e As EventArgs) Handles chkSelectAll.CheckedChanged
 
         If chkSelectAll.Checked Then

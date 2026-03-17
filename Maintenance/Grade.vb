@@ -379,11 +379,6 @@ Public Class Grade
             e.SuppressKeyPress = True
         End If
 
-        ' Removed the Enter key to call btnadd_Click here as the previous
-        ' implementation didn't have it, but for better user experience,
-        ' I'll re-add it if you want to allow adding by pressing Enter.
-        ' For now, I'll stick to the provided code structure.
-
     End Sub
 
     Private Sub txtgrade_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtgrade.KeyPress

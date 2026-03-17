@@ -368,7 +368,6 @@ Public Class Penalty_Management
     End Sub
 
 
-
     Private Sub btnclear_MouseHover(sender As Object, e As EventArgs) Handles btnclear.MouseHover
         Cursor = Cursors.Hand
     End Sub

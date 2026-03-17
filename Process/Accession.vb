@@ -281,7 +281,7 @@ Public Class Accession
 
             btntransaction.Enabled = False
 
-            rbborrowable.Enabled = False
+
             rbforlibraryonly.Enabled = False
             cbshelf.Enabled = False
 
@@ -353,6 +353,9 @@ Public Class Accession
             End If
 
 
+
+            PauseAutoRefresh(DataGridView1)
+
             Dim dialogResult As DialogResult = MessageBox.Show($"Are you sure you want to reserve the {selectedRowsCount} selected copies?", "Confirm Reserve", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
             If dialogResult = DialogResult.Yes Then
@@ -361,6 +364,9 @@ Public Class Accession
 
                 CheckBox1.Checked = False
 
+            Else
+
+                ResumeAutoRefresh(DataGridView1)
             End If
         End If
 
@@ -464,6 +470,9 @@ Public Class Accession
                     avail.counts()
                 End If
             Next
+
+
+            ResumeAutoRefresh(DataGridView1)
 
 
 

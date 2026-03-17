@@ -445,8 +445,6 @@ Public Class Strand
 
     End Sub
 
-
-
     Private Sub Strand_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
         If e.KeyCode = Keys.Escape Then
             Me.Close()

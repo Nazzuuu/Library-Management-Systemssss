@@ -168,20 +168,6 @@ Public Class SelectBarcode
         Next
     End Sub
 
-
-    'Private Sub DataGridView1_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellDoubleClick
-    '    If e.RowIndex >= 0 Then
-    '        Dim selectedBarcode As String = DataGridView1.Rows(e.RowIndex).Cells("Barcode").Value.ToString()
-
-    '        If Application.OpenForms().OfType(Of AcquistionDetails).Any() Then
-    '            Dim f As AcquistionDetails = Application.OpenForms().OfType(Of AcquistionDetails).First()
-    '            f.txtbarcode.Text = selectedBarcode
-    '        End If
-
-    '        Me.Close()
-    '    End If
-    'End Sub
-
     Private Sub DataGridView1_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellDoubleClick
 
         If e.RowIndex >= 0 Then

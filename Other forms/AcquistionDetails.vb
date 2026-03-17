@@ -17,7 +17,7 @@ Public Class AcquistionDetails
         Me.Size = New Size(1071, 701)
         Me.AutoScroll = True
 
-
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
 
         DisablePaste_AllTextBoxes()
 
@@ -127,16 +127,6 @@ Public Class AcquistionDetails
         End Using
     End Sub
 
-    'Private Async Sub OnDatabaseUpdated()
-    '    Try
-
-    '        Await Task.Run(Sub()
-    '                           Me.Invoke(Sub() supplieracq())
-    '                       End Sub)
-    '    Catch ex As Exception
-    '        Debug.WriteLine("OnDatabaseUpdated error: " & ex.Message)
-    '    End Try
-    'End Sub
 
     Private Async Sub OnDatabaseUpdated()
         Try
@@ -551,22 +541,30 @@ Public Class AcquistionDetails
 
 
     Private Function IsISBNOrBarcodeExists(field As String, value As String) As Boolean
-
         Using con As New MySqlConnection(GlobalVarsModule.connectionString)
 
-            Dim query As String = $"SELECT COUNT(*) FROM acquisition_tbl WHERE {field} = @val"
+            Dim transNo As String = txttransactionno.Text.Trim()
 
-            Using cmd As New MySqlCommand(query, con)
+            If String.IsNullOrWhiteSpace(transNo) Then
 
-                cmd.Parameters.AddWithValue("@val", value)
+                Dim query As String = $"SELECT COUNT(*) FROM acquisition_tbl WHERE {field} = @val"
+                Using cmd As New MySqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@val", value)
+                    con.Open()
+                    Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                    Return count > 0
+                End Using
+            Else
 
-                con.Open()
-
-                Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
-
-                Return count > 0
-
-            End Using
+                Dim query As String = $"SELECT COUNT(*) FROM acquisition_tbl WHERE {field} = @val AND TransactionNo = @tno"
+                Using cmd As New MySqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@val", value)
+                    cmd.Parameters.AddWithValue("@tno", transNo)
+                    con.Open()
+                    Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                    Return count > 0
+                End Using
+            End If
 
         End Using
 

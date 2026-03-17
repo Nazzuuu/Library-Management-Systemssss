@@ -41,7 +41,7 @@ Public Class Users
     Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         DisablePaste_AllTextBoxes()
-
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
         txtpassword.PasswordChar = "•"
 
         Try
@@ -150,9 +150,6 @@ Public Class Users
     End Sub
 
 
-
-
-
     Public Sub uidisplay()
 
         btnedit.Location = New Point(30, 227)
@@ -238,7 +235,7 @@ Public Class Users
             Exit Sub
         End If
 
-        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$", System.Text.RegularExpressions.RegexOptions.IgnoreCase)
         If Not emailRegex.IsMatch(email) Then
             MsgBox("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
             Exit Sub
@@ -460,7 +457,7 @@ Public Class Users
             Exit Sub
         End If
 
-        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$")
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$", System.Text.RegularExpressions.RegexOptions.IgnoreCase)
         If Not emailRegex.IsMatch(email) Then
             MsgBox("Invalid email format. Please enter a valid email address (e.g., example@gmail.com).", vbExclamation, "Invalid Email")
             Exit Sub
@@ -817,7 +814,7 @@ Public Class Users
         DataGridView1.ClearSelection()
 
         lblexample.ForeColor = Color.Black
-        lblexample.Text = "Name@domain.com"
+        lblexample.Text = "Name@domain.tld"
         lblpassword.Visible = False
 
     End Sub
@@ -985,18 +982,15 @@ Public Class Users
             Exit Sub
         End If
 
-        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9]+(?:[._%+-][a-zA-Z0-9]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$")
 
+        Dim emailRegex As New System.Text.RegularExpressions.Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$", System.Text.RegularExpressions.RegexOptions.IgnoreCase)
 
         If emailRegex.IsMatch(email) Then
-
             lblexample.ForeColor = Color.Green
-            lblexample.Text = " Name@domain.com ✓"
-
+            lblexample.Text = " Name@domain.tld ✓"
         Else
-
             lblexample.ForeColor = Color.Red
-            lblexample.Text = " Name@domain.com ✕"
+            lblexample.Text = " Name@domain.tld ✕"
         End If
 
     End Sub
@@ -1005,7 +999,7 @@ Public Class Users
 
         Dim EmailText As String = txtemail.Text.Trim()
 
-        Dim EmailPattern As String = "^[a-zA-Z0-9]+(?:[._%+-][a-zA-Z0-9]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$"
+        Dim EmailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$"
 
         If String.IsNullOrEmpty(EmailText) Then
             e.Cancel = False
@@ -1014,8 +1008,7 @@ Public Class Users
 
         If Not System.Text.RegularExpressions.Regex.IsMatch(EmailText, EmailPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
 
-            MessageBox.Show("Invalid email format. Please check the structure (e.g., name@domain.com) and ensure there are no double dots or invalid characters.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
+            MessageBox.Show("Invalid email format. Please check the structure (e.g., name@domain.tld) and ensure there are no double dots or invalid characters.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             e.Cancel = True
         Else
             e.Cancel = False

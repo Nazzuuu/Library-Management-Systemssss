@@ -48,6 +48,7 @@ Public Class Book
         Me.Font = New Font("Baskerville Old Face", 9)
         Me.Refresh()
 
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
         If GlobalFontSettings.FontResolver Is Nothing Then
             GlobalFontSettings.FontResolver = New CustomFontResolver()
         End If

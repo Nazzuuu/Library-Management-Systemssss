@@ -25,6 +25,13 @@ Public Class Borrowing
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildBorrowingQuery(), 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+
+        Try
+            If GlobalVarsModule.CurrentUserRole = "Borrower" Then
+                SetupBorrowerFields()
+            End If
+        Catch
+        End Try
     End Sub
 
     Public Sub refreshborrowingsu()
@@ -92,7 +99,6 @@ Public Class Borrowing
 
         Return "SELECT * FROM `borrowing_tbl` ORDER BY `BorrowedDate` DESC"
     End Function
-
 
     Private Async Sub OnDatabaseUpdated()
         Try
@@ -321,7 +327,7 @@ Public Class Borrowing
         Dim currentUserID_Cleaned As String = If(GlobalVarsModule.GetCleanCurrentBorrowerID(), "").Trim()
         Dim enteredEmployeeID_Cleaned As String = enteredEmployeeID.Trim()
 
-        ' Normalize numeric IDs so "00123" and "123" compare equal
+
         Dim tempID As Long
         If Long.TryParse(currentUserID_Cleaned, tempID) Then
             currentUserID_Cleaned = tempID.ToString()
@@ -418,7 +424,6 @@ Public Class Borrowing
         End If
 
     End Sub
-
 
 
     Private Sub txtlrn_TextChanged(sender As Object, e As EventArgs) Handles txtlrn.TextChanged
@@ -539,8 +544,6 @@ Public Class Borrowing
     End Sub
 
 
-
-
     Private Sub txtaccessionid_TextChanged(sender As Object, e As EventArgs) Handles txtaccessionid.TextChanged
 
         If isLoadingData Then
@@ -606,10 +609,6 @@ Public Class Borrowing
                 con.Close()
             End If
         End Try
-    End Sub
-
-    Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
-
     End Sub
 
 
@@ -881,7 +880,6 @@ Public Class Borrowing
     End Sub
 
 
-
     Private Sub btntimein_Click(sender As Object, e As EventArgs) Handles btntimein.Click
 
         Dim borrowerID As String = ""
@@ -1045,8 +1043,6 @@ Public Class Borrowing
         End If
 
     End Sub
-
-
 
     Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
 

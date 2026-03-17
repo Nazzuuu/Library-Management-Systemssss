@@ -10,6 +10,7 @@ Public Class Department
         refreshDepartment()
         DisablePaste_AllTextBoxes()
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
     End Sub
 
     Public Sub refreshDepartment()
