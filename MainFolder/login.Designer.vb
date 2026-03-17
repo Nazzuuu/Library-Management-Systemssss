@@ -47,6 +47,7 @@ Partial Class login
         LinkLabel2 = New LinkLabel()
         Label4 = New Label()
         LinkLabel1 = New LinkLabel()
+        LinkLabel3 = New LinkLabel()
         Panel1.SuspendLayout()
         CType(Guna2CirclePictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         Panel_btnlogin.SuspendLayout()
@@ -246,6 +247,18 @@ Partial Class login
         LinkLabel1.TabStop = True
         LinkLabel1.Text = "Forgot Password"
         ' 
+        ' LinkLabel3
+        ' 
+        LinkLabel3.AutoSize = True
+        LinkLabel3.Font = New Font("Tahoma", 11.25F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        LinkLabel3.LinkColor = Color.IndianRed
+        LinkLabel3.Location = New Point(329, 69)
+        LinkLabel3.Name = "LinkLabel3"
+        LinkLabel3.Size = New Size(144, 18)
+        LinkLabel3.TabIndex = 79
+        LinkLabel3.TabStop = True
+        LinkLabel3.Text = "Time-In/Time-Out"
+        ' 
         ' login
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -253,6 +266,7 @@ Partial Class login
         BackColor = Color.White
         ClientSize = New Size(482, 321)
         ControlBox = False
+        Controls.Add(LinkLabel3)
         Controls.Add(LinkLabel1)
         Controls.Add(LinkLabel2)
         Controls.Add(Label4)
@@ -294,4 +308,5 @@ Partial Class login
     Friend WithEvents LinkLabel2 As LinkLabel
     Friend WithEvents Label4 As Label
     Friend WithEvents LinkLabel1 As LinkLabel
+    Friend WithEvents LinkLabel3 As LinkLabel
 End Class

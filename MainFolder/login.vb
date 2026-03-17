@@ -591,8 +591,14 @@ TryBorrower:
     Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
 
         Dim frm As New ResetPassword1
+        frm.Show
+        Hide
+
+    End Sub
+
+    Private Sub LinkLabel3_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel3.LinkClicked
+        Dim frm As New TimeInOutScan
         frm.Show()
         Me.Hide()
-
     End Sub
 End Class
