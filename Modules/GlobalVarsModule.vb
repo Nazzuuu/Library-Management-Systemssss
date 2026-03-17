@@ -44,11 +44,14 @@ Module GlobalVarsModule
     Public Sub CapitalizeFirstLetter_ControlTextChanged(sender As Object, e As EventArgs)
         Dim ctrl As Control = TryCast(sender, Control)
         If ctrl Is Nothing Then Return
+        If Not String.IsNullOrEmpty(ctrl.Name) AndAlso ctrl.Name.ToLower().Contains("email") Then Return
         CapitalizeFirstLetter(ctrl)
     End Sub
 
     Public Sub CapitalizeFirstLetter(ctrl As Control)
         Try
+            If ctrl Is Nothing Then Return
+            If Not String.IsNullOrEmpty(ctrl.Name) AndAlso ctrl.Name.ToLower().Contains("email") Then Return
             Dim textProp = ctrl.GetType().GetProperty("Text")
             If textProp Is Nothing Then Return
 
@@ -108,7 +111,9 @@ Module GlobalVarsModule
 
                 Dim textProp = ctrl.GetType().GetProperty("Text")
                 If textProp IsNot Nothing Then
-                    AddHandler ctrl.TextChanged, AddressOf CapitalizeFirstLetter_ControlTextChanged
+                    If String.IsNullOrEmpty(ctrl.Name) OrElse Not ctrl.Name.ToLower().Contains("email") Then
+                        AddHandler ctrl.TextChanged, AddressOf CapitalizeFirstLetter_ControlTextChanged
+                    End If
                 End If
 
                 If ctrl.HasChildren Then

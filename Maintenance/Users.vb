@@ -41,7 +41,7 @@ Public Class Users
     Private Sub Users_Staffs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         DisablePaste_AllTextBoxes()
-        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
+        'GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
         txtpassword.PasswordChar = "•"
 
         Try
@@ -516,7 +516,7 @@ Public Class Users
 
             Dim loginStatusObj = loginCheck.ExecuteScalar()
 
-            If loginStatusObj IsNot Nothing AndAlso Convert.ToInt32(loginStatusObj) = 1 AndAlso ID.ToString() <> GlobalVarsModule.CurrentUserID Then
+            If loginStatusObj IsNot Nothing AndAlso loginStatusObj IsNot DBNull.Value AndAlso Convert.ToInt32(loginStatusObj) = 1 AndAlso ID.ToString() <> GlobalVarsModule.CurrentUserID Then
                 MsgBox("This account is currently logged in on another device. You cannot edit this user while they are active.", vbExclamation, "Edit Not Allowed")
                 Exit Sub
             End If
@@ -658,7 +658,7 @@ Public Class Users
                 checkCmd.Parameters.AddWithValue("@id", ID)
 
                 Dim result As Object = checkCmd.ExecuteScalar()
-                If result IsNot Nothing AndAlso Convert.ToInt32(result) = 1 Then
+                If result IsNot Nothing AndAlso result IsNot DBNull.Value AndAlso Convert.ToInt32(result) = 1 Then
                     isLoggedIn = True
                 End If
 

@@ -794,15 +794,16 @@ Public Class Borrower
                 Exit Sub
             End If
 
+
+            cbdepartment.Text = row.Cells("Department").Value.ToString()
+            cbdepartment_SelectedIndexChanged(cbdepartment, EventArgs.Empty)
+
             If borrowerType = "Student" Then
                 rbstudent.Checked = True
 
-
-                If row.Cells("Department").Value.ToString() = "Senior High School" Then
+                If cbdepartment.Text = "Senior High School" Then
                     cbstrand.Visible = True
-                    cbstrand.Location = New Point(942, 285)
                     lblstrand.Visible = True
-                    lblstrand.Location = New Point(942, 266)
                 Else
                     cbstrand.Visible = False
                     lblstrand.Visible = False
@@ -1293,7 +1294,7 @@ Public Class Borrower
         Else
 
             If oreyjeynal.Length > 0 Then
-                txtcontactnumber.Clear
+                txtcontactnumber.Clear()
                 txtcontactnumber.Text = "09"
                 txtcontactnumber.SelectionStart = 2
             End If
