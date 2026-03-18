@@ -2,6 +2,63 @@
 
 Public Class Acquisition2
 
+    Private Function SafeGetString(row As DataGridViewRow, columnName As String) As String
+        Try
+            If row Is Nothing Then Return String.Empty
+            If row.DataGridView Is Nothing Then Return String.Empty
+            If Not row.DataGridView.Columns.Contains(columnName) Then Return String.Empty
+            Dim val = row.Cells(columnName).Value
+            If val Is Nothing OrElse IsDBNull(val) Then Return String.Empty
+            Return val.ToString()
+        Catch
+            Return String.Empty
+        End Try
+    End Function
+
+    Private Function SafeGetDecimal(row As DataGridViewRow, columnName As String) As Decimal
+        Try
+            If row Is Nothing Then Return 0D
+            If row.DataGridView Is Nothing Then Return 0D
+            If Not row.DataGridView.Columns.Contains(columnName) Then Return 0D
+            Dim val = row.Cells(columnName).Value
+            If val Is Nothing OrElse IsDBNull(val) Then Return 0D
+            Return Convert.ToDecimal(val)
+        Catch
+            Return 0D
+        End Try
+    End Function
+
+    Private Function SafeGetInt(row As DataGridViewRow, columnName As String) As Integer
+        Try
+            If row Is Nothing Then Return 0
+            If row.DataGridView Is Nothing Then Return 0
+            If Not row.DataGridView.Columns.Contains(columnName) Then Return 0
+            Dim val = row.Cells(columnName).Value
+            If val Is Nothing OrElse IsDBNull(val) Then Return 0
+            Return Convert.ToInt32(val)
+        Catch
+            Return 0
+        End Try
+    End Function
+
+    Private Function SafeTryGetDate(row As DataGridViewRow, columnName As String, ByRef result As DateTime) As Boolean
+        Try
+            result = DateTime.MinValue
+            If row Is Nothing Then Return False
+            If row.DataGridView Is Nothing Then Return False
+            If Not row.DataGridView.Columns.Contains(columnName) Then Return False
+            Dim val = row.Cells(columnName).Value
+            If val Is Nothing OrElse IsDBNull(val) Then Return False
+            Dim tmp As DateTime
+            If DateTime.TryParse(val.ToString(), tmp) Then
+                result = tmp
+                Return True
+            End If
+        Catch
+        End Try
+        Return False
+    End Function
+
 
     Private Sub Acquisition2_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -100,27 +157,21 @@ Public Class Acquisition2
 
                 With frm
 
-                    .SelectedAcquisitionID = row.Cells("ID").Value.ToString()
+                    .SelectedAcquisitionID = SafeGetString(row, "ID")
 
                     .txttransactionno.Enabled = True
-                    .txttransactionno.Text = row.Cells("TransactionNo").Value.ToString()
+                    .txttransactionno.Text = SafeGetString(row, "TransactionNo")
                     .txttransactionno.Enabled = False
 
-                    Dim rawDate As Object = row.Cells("DateAcquired").Value
-                    If rawDate IsNot Nothing AndAlso Not IsDBNull(rawDate) Then
-                        Dim parsedDate As DateTime
-                        If DateTime.TryParse(rawDate.ToString(), parsedDate) Then
-                            .DateTimePicker1.Value = parsedDate
-                        End If
+                    Dim parsedDate As DateTime
+                    If SafeTryGetDate(row, "DateAcquired", parsedDate) Then
+                        .DateTimePicker1.Value = parsedDate
                     End If
-
-
-                    .DateTimePicker1.Value = Convert.ToDateTime(row.Cells("DateAcquired").Value)
 
                     .supplieracq()
 
-                    Dim supplierValue As String = If(row.Cells("SupplierName").Value IsNot Nothing, row.Cells("SupplierName").Value.ToString().Trim(), "")
-                    Dim donorValue As String = If(row.Cells("Donor").Value IsNot Nothing, row.Cells("Donor").Value.ToString().Trim(), "")
+                    Dim supplierValue As String = SafeGetString(row, "SupplierName").Trim()
+                    Dim donorValue As String = SafeGetString(row, "Donor").Trim()
 
                     If Not String.IsNullOrEmpty(donorValue) Then
                         .cbacquistiontype.SelectedIndex = .cbacquistiontype.FindStringExact("DONATE")
@@ -145,16 +196,16 @@ Public Class Acquisition2
                         .txtdonor.Clear()
                     End If
 
-                    .txtisbn.Text = row.Cells("ISBN").Value.ToString()
-                    .txtbarcode.Text = row.Cells("Barcode").Value.ToString()
-                    .txtbooktitle.Text = row.Cells("BookTitle").Value.ToString()
+                    .txtisbn.Text = SafeGetString(row, "ISBN")
+                    .txtbarcode.Text = SafeGetString(row, "Barcode")
+                    .txtbooktitle.Text = SafeGetString(row, "BookTitle")
 
                     Application.DoEvents()
 
-                    .txtbooktitle.Text = row.Cells("BookTitle").Value.ToString()
+                    .txtbooktitle.Text = SafeGetString(row, "BookTitle")
 
-                    Dim price As Decimal = If(IsDBNull(row.Cells("BookPrice").Value), 0D, Convert.ToDecimal(row.Cells("BookPrice").Value))
-                    Dim qty As Integer = If(IsDBNull(row.Cells("Quantity").Value), 0, Convert.ToInt32(row.Cells("Quantity").Value))
+                    Dim price As Decimal = SafeGetDecimal(row, "BookPrice")
+                    Dim qty As Integer = SafeGetInt(row, "Quantity")
 
                     .txtbookprice.Text = price.ToString("F2")
                     .numupdown.Value = qty

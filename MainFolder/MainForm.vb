@@ -354,6 +354,7 @@ Public Class MainForm
         Panel_dash.Controls.Remove(Returning)
         Panel_dash.Controls.Remove(AuditTrail)
         Panel_dash.Controls.Remove(ReportsForm)
+        Panel_dash.Controls.Remove(LibraryCard)
 
 
         If lumabasna = False Then
@@ -365,6 +366,7 @@ Public Class MainForm
         End If
 
         lblform.Text = "MAIN FORM"
+        ''
     End Sub
 
     Private Sub ToolStripMenuItem2_DropDownClosed(sender As Object, e As EventArgs) Handles SettingsStripMenuItem.DropDownClosed

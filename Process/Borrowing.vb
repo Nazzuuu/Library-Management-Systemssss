@@ -197,8 +197,8 @@ Public Class Borrowing
         txtbarcode.Enabled = False
         txtshelf.Enabled = False
         txtaccessionid.Enabled = False
-        rbstudent.Checked = False
-        rbteacher.Checked = False
+        'rbstudent.Checked = False
+        'rbteacher.Checked = False
 
 
         txtlrn.Text = ""
@@ -237,8 +237,8 @@ Public Class Borrowing
         txtshelf.Enabled = False
         txtaccessionid.Enabled = False
 
-        rbstudent.Checked = False
-        rbteacher.Checked = False
+        'rbstudent.Checked = False
+        'rbteacher.Checked = False
 
     End Sub
 

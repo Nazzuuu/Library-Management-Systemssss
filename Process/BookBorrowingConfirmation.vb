@@ -14,6 +14,28 @@ Public Class BookBorrowingConfirmation
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
+    Private Function GetRowValue(row As DataGridViewRow, columnName As String) As String
+        Try
+            If row Is Nothing Then Return ""
+
+            If row.DataGridView IsNot Nothing AndAlso row.DataGridView.Columns.Contains(columnName) Then
+                Dim v = row.Cells(columnName).Value
+                If v IsNot Nothing Then Return v.ToString()
+            End If
+
+
+            For Each c As DataGridViewCell In row.Cells
+                If c.OwningColumn IsNot Nothing Then
+                    If String.Equals(c.OwningColumn.Name, columnName, StringComparison.OrdinalIgnoreCase) OrElse String.Equals(c.OwningColumn.HeaderText, columnName, StringComparison.OrdinalIgnoreCase) Then
+                        If c.Value IsNot Nothing Then Return c.Value.ToString()
+                    End If
+                End If
+            Next
+        Catch
+        End Try
+        Return ""
+    End Function
+
     Public Sub refreshconfirmation()
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
@@ -103,11 +125,18 @@ Public Class BookBorrowingConfirmation
 
         Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
 
-        Dim idToConfirm As Integer = CInt(selectedRow.Cells("ID").Value)
-        Dim transactionReceiptID As String = selectedRow.Cells("TransactionReceipt").Value.ToString()
-        Dim borrowedBookCount As Integer = CInt(selectedRow.Cells("BorrowedBookCount").Value)
-        Dim borrowerType As String = selectedRow.Cells("Borrower").Value.ToString()
-        Dim borrowerName As String = selectedRow.Cells("Name").Value.ToString()
+        Dim idVal As String = GetRowValue(selectedRow, "ID")
+        Dim idToConfirm As Integer = 0
+        If Not Integer.TryParse(idVal, idToConfirm) Then
+            MessageBox.Show("Unable to determine record ID. Please select a valid row.", "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        Dim transactionReceiptID As String = GetRowValue(selectedRow, "TransactionReceipt")
+        Dim borrowedBookCount As Integer = 0
+        Integer.TryParse(GetRowValue(selectedRow, "BorrowedBookCount"), borrowedBookCount)
+        Dim borrowerType As String = GetRowValue(selectedRow, "Borrower")
+        Dim borrowerName As String = GetRowValue(selectedRow, "Name")
 
         Dim con As New MySqlConnection(connectionString)
 
@@ -733,8 +762,14 @@ Public Class BookBorrowingConfirmation
             Exit Sub
         End If
 
-        Dim idToDecline As Integer = CInt(selectedRow.Cells("ID").Value)
-        Dim transactionReceiptID As String = selectedRow.Cells("TransactionReceipt").Value.ToString
+        Dim idVal As String = GetRowValue(selectedRow, "ID")
+        Dim idToDecline As Integer = 0
+        If Not Integer.TryParse(idVal, idToDecline) Then
+            MessageBox.Show("Unable to determine record ID. Please select a valid row.", "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        Dim transactionReceiptID As String = GetRowValue(selectedRow, "TransactionReceipt")
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 

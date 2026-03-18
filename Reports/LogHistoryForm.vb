@@ -26,18 +26,18 @@ Public Class LogHistoryForm
             Await con.OpenAsync()
 
             Dim query As String =
-                "SELECT
-                    Borrower,
-                    LRN,
-                    EmployeeNo,
-                    FirstName,
-                    LastName,
-                    MiddleInitial,
-                    Department,
-                    TimeIn,
-                    TimeOut
-                 FROM oras_tbl
-                 ORDER BY TimeIn DESC;"
+                "SELECT " &
+                "COALESCE(o.Borrower, b.Borrower, '') AS Borrower, " &
+                "COALESCE(o.LRN, b.LRN, '') AS LRN, " &
+                "COALESCE(o.EmployeeNo, b.EmployeeNo, '') AS EmployeeNo, " &
+                "COALESCE(o.FirstName, b.FirstName, '') AS FirstName, " &
+                "COALESCE(o.LastName, b.LastName, '') AS LastName, " &
+                "CASE WHEN (COALESCE(o.MiddleInitial, b.MiddleInitial) IS NULL OR TRIM(COALESCE(o.MiddleInitial, b.MiddleInitial)) = '') THEN 'N/A' ELSE COALESCE(o.MiddleInitial, b.MiddleInitial) END AS MiddleInitial, " &
+                "COALESCE(o.Department, b.Department, '') AS Department, " &
+                "o.TimeIn AS TimeIn, o.TimeOut AS TimeOut " &
+                "FROM oras_tbl o " &
+                "LEFT JOIN borrower_tbl b ON o.LRN = b.LRN OR o.EmployeeNo = b.EmployeeNo " &
+                "ORDER BY o.TimeIn DESC;"
 
             Using cmd As New MySqlCommand(query, con)
                 Using adapter As New MySqlDataAdapter(cmd)
