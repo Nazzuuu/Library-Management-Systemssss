@@ -10,6 +10,7 @@ Module GlobalVarsModule
 
     Public GlobalAutoRefreshTimer As Timer
     Public ShouldShowMainFormNextLogin As Boolean = False
+    Private WithEvents backgroundInboxTimer As New Timer() With {.Interval = 1000}
 
 
     Private _connectionString As String =
@@ -479,11 +480,13 @@ Module GlobalVarsModule
             End Try
             Try
                 inboxCheckTimer.Start()
+                backgroundInboxTimer.Start()
             Catch
             End Try
         Catch
         End Try
     End Sub
+
 
     Private Sub autoTimeoutTimer_Tick(sender As Object, e As EventArgs) Handles autoTimeoutTimer.Tick
         Try
@@ -853,73 +856,6 @@ Module GlobalVarsModule
         End Try
     End Sub
 
-
-    Private Sub GlobalComboBoxUpdater()
-        Try
-            For Each pair In comboSources.ToList()
-                Dim cb As ComboBox = pair.Key
-                Dim query As String = pair.Value
-
-
-                If cb Is Nothing OrElse cb.IsDisposed Then
-                    comboSources.Remove(cb)
-                    Continue For
-                End If
-
-
-                Dim displayMember As String = cb.DisplayMember
-                Dim valueMember As String = cb.ValueMember
-                RefreshComboBox(cb, query, displayMember, valueMember)
-            Next
-        Catch
-        End Try
-    End Sub
-
-    Public Function IsInDesignMode(ctrl As Control) As Boolean
-        Try
-            Return (LicenseManager.UsageMode = LicenseUsageMode.Designtime) OrElse
-                   (ctrl IsNot Nothing AndAlso ctrl.Site IsNot Nothing AndAlso ctrl.Site.DesignMode)
-        Catch
-            Return False
-        End Try
-    End Function
-
-    Public Function IsDatabaseConnected() As Boolean
-        Try
-            Using con As New MySqlConnection(connectionString)
-                con.Open()
-                Return True
-            End Using
-        Catch
-            Return False
-        End Try
-    End Function
-
-    Private Function SafeCellValue(row As DataGridViewRow, columnName As String) As String
-        Try
-            If row.Cells(columnName).Value IsNot Nothing Then
-                Return row.Cells(columnName).Value.ToString()
-            End If
-        Catch
-        End Try
-        Return ""
-    End Function
-
-    Public Sub TriggerDatabaseUpdated()
-
-        RaiseEvent DatabaseUpdated()
-
-    End Sub
-
-    Public OverdueEmailAlreadySent As Boolean = False
-    Public LastProcessedDate As Date = Date.MinValue
-    Private OverdueEmailLock As New Object()
-    Private OverdueProcessing As Boolean = False
-    Private WithEvents dailyOverdueTimer As New Timer() With {.Interval = 60 * 60 * 1000}
-    Private WithEvents inboxCheckTimer As New Timer() With {.Interval = 1000}
-    Public inboxCache As DataTable = Nothing
-    Public Event InboxUpdated()
-
     Public Sub SendOverdueBorrowerNotifications()
 
         SyncLock OverdueEmailLock
@@ -1094,14 +1030,6 @@ Module GlobalVarsModule
                                 End If
                             Next
 
-
-                            Try
-                                Dim main = GlobalVarsModule.ActiveMainForm
-                                If main IsNot Nothing Then
-                                    main.ShowOverdueNotification(processedInboxIds.Count)
-                                End If
-                            Catch
-                            End Try
                         End If
                     End Using
                 End Using
@@ -1225,6 +1153,159 @@ Module GlobalVarsModule
             End Using
         End Using
 
+    End Sub
+
+    Private Sub GlobalComboBoxUpdater()
+        Try
+            For Each pair In comboSources.ToList()
+                Dim cb As ComboBox = pair.Key
+                Dim query As String = pair.Value
+
+
+                If cb Is Nothing OrElse cb.IsDisposed Then
+                    comboSources.Remove(cb)
+                    Continue For
+                End If
+
+
+                Dim displayMember As String = cb.DisplayMember
+                Dim valueMember As String = cb.ValueMember
+                RefreshComboBox(cb, query, displayMember, valueMember)
+            Next
+        Catch
+        End Try
+    End Sub
+
+    Public Function IsInDesignMode(ctrl As Control) As Boolean
+        Try
+            Return (LicenseManager.UsageMode = LicenseUsageMode.Designtime) OrElse
+                   (ctrl IsNot Nothing AndAlso ctrl.Site IsNot Nothing AndAlso ctrl.Site.DesignMode)
+        Catch
+            Return False
+        End Try
+    End Function
+
+    Public Function IsDatabaseConnected() As Boolean
+        Try
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+                Return True
+            End Using
+        Catch
+            Return False
+        End Try
+    End Function
+
+    Private Function SafeCellValue(row As DataGridViewRow, columnName As String) As String
+        Try
+            If row.Cells(columnName).Value IsNot Nothing Then
+                Return row.Cells(columnName).Value.ToString()
+            End If
+        Catch
+        End Try
+        Return ""
+    End Function
+
+    Public Sub TriggerDatabaseUpdated()
+
+        RaiseEvent DatabaseUpdated()
+
+    End Sub
+
+    Public OverdueEmailAlreadySent As Boolean = False
+    Public LastProcessedDate As Date = Date.MinValue
+    Private OverdueEmailLock As New Object()
+    Private OverdueProcessing As Boolean = False
+    Private WithEvents dailyOverdueTimer As New Timer() With {.Interval = 60 * 60 * 1000}
+    Private WithEvents inboxCheckTimer As New Timer() With {.Interval = 1000}
+    Public inboxCache As DataTable = Nothing
+    Public Event InboxUpdated()
+
+
+    Private Async Sub backgroundInboxTimer_Tick(sender As Object, e As EventArgs) Handles backgroundInboxTimer.Tick
+
+        backgroundInboxTimer.Stop()
+
+        Try
+            Using con As New MySqlConnection(connectionString)
+                Await con.OpenAsync()
+
+
+                Dim overdueQuery As String = "SELECT b.Email, b.FullName, br.BookTitle, br.DueDate " &
+                                         "FROM borrowing_tbl br " &
+                                         "INNER JOIN borrower_tbl b ON br.BorrowerID = b.BorrowerID " &
+                                         "WHERE br.DueDate < NOW() AND br.Status = 'Borrowed' " &
+                                         "AND NOT EXISTS (SELECT 1 FROM inbox_tbl i WHERE i.Email = b.Email AND DATE(i.CreatedAt) = DATE(NOW()) AND i.Subject LIKE '%Overdue%')"
+
+                Dim overdueList As New List(Of Dictionary(Of String, String))
+
+                Using cmd As New MySqlCommand(overdueQuery, con)
+                    Using rdr = Await cmd.ExecuteReaderAsync()
+                        While Await rdr.ReadAsync()
+                            Dim data As New Dictionary(Of String, String) From {
+                            {"Email", rdr("Email").ToString()},
+                            {"FullName", rdr("FullName").ToString()},
+                            {"BookTitle", rdr("BookTitle").ToString()},
+                            {"DueDate", Convert.ToDateTime(rdr("DueDate")).ToString("yyyy-MM-dd")}
+                        }
+                            overdueList.Add(data)
+                        End While
+                    End Using
+                End Using
+
+
+                For Each row In overdueList
+                    Dim emailTo As String = row("Email")
+                    Dim nameTo As String = row("FullName")
+                    Dim book As String = row("BookTitle")
+                    Dim due As String = row("DueDate")
+
+                    Dim subject As String = "Overdue Book Notification"
+                    Dim body As String = $"Dear {nameTo}," & Environment.NewLine & Environment.NewLine &
+                                     $"This is to notify you that the book '{book}' you borrowed was due on {due}." & Environment.NewLine &
+                                     "Please return it to the library as soon as possible to avoid further penalties."
+
+
+                    Dim isSentSuccess As Integer = 0
+                    Try
+                        Dim mail As New MailMessage("email@gmail.com", emailTo, subject, body)
+                        Dim smtp As New SmtpClient("smtp.gmail.com")
+                        smtp.Port = 587
+                        smtp.EnableSsl = True
+                        smtp.Credentials = New NetworkCredential("email@gmail.com", "apppass")
+
+
+                        isSentSuccess = 1
+                        AppendLog($"Email successfully sent to {emailTo} for book '{book}'")
+                    Catch ex As Exception
+                        isSentSuccess = 0
+                        AppendLog($"Email failed to send to {emailTo}: {ex.Message}")
+                    End Try
+
+
+                    Dim insertSql As String = "INSERT INTO `inbox_tbl` (Email, FullName, Subject, Body, IsSent, DueDate, `Date`, CreatedAt, SentAt) " &
+                                          "VALUES (@email, @name, @subject, @body, @isSent, @dueDate, NOW(), NOW(), @sentAt)"
+
+                    Using insCmd As New MySqlCommand(insertSql, con)
+                        insCmd.Parameters.AddWithValue("@email", emailTo)
+                        insCmd.Parameters.AddWithValue("@name", nameTo)
+                        insCmd.Parameters.AddWithValue("@subject", subject)
+                        insCmd.Parameters.AddWithValue("@body", body)
+                        insCmd.Parameters.AddWithValue("@isSent", isSentSuccess)
+                        insCmd.Parameters.AddWithValue("@dueDate", due)
+                        insCmd.Parameters.AddWithValue("@sentAt", If(isSentSuccess = 1, DateTime.Now, DBNull.Value))
+
+                        Await insCmd.ExecuteNonQueryAsync()
+                    End Using
+                Next
+
+            End Using
+        Catch ex As Exception
+            AppendLog($"Background Monitor Error: {ex.Message}")
+        Finally
+
+            backgroundInboxTimer.Start()
+        End Try
     End Sub
 
 

@@ -39,6 +39,21 @@ Public Class MainForm
         t.IsBackground = True
         t.Start()
 
+        Try
+            Dim autoNotificationTimer As New Timer()
+            autoNotificationTimer.Interval = 1000
+            AddHandler autoNotificationTimer.Tick, Sub(senderObj As Object, args As EventArgs)
+                                                       Try
+
+                                                           loadsu()
+                                                           SendOverdueBorrowerNotifications()
+                                                       Catch
+                                                       End Try
+                                                   End Sub
+            autoNotificationTimer.Start()
+        Catch
+        End Try
+
     End Sub
 
 
@@ -1519,19 +1534,6 @@ Public Class MainForm
 
     Private Sub InboxToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InboxToolStripMenuItem.Click
         Inbox.ShowDialog()
-    End Sub
-
-    Public Sub ShowOverdueNotification(count As Integer)
-        Try
-            If Me.InvokeRequired Then
-                Me.Invoke(Sub() ShowOverdueNotification(count))
-                Return
-            End If
-
-            ' simple MessageBox fallback if label not present in this build
-            MessageBox.Show($"{count} overdue notification(s) sent.", "Overdue Notifications", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        Catch
-        End Try
     End Sub
 
 End Class

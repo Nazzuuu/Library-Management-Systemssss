@@ -9,6 +9,7 @@ Public Class Inbox
 
 
         Dim query As String = "SELECT ID, FullName, COALESCE(DueDate, Body) AS DueDate, COALESCE(`Date`, CreatedAt) AS `Date` FROM `inbox_tbl` ORDER BY COALESCE(`Date`, CreatedAt) DESC"
+
         Try
             GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
         Catch
@@ -25,13 +26,19 @@ Public Class Inbox
                 Else
                     DataGridView1.DataSource = Nothing
                 End If
-                DataGridView1.EnableHeadersVisualStyles = False
-                DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-                DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-                DataGridView1.ReadOnly = True
+
 
             Catch
             End Try
+        End Try
+
+
+        Try
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.ReadOnly = True
+        Catch
         End Try
 
         AddHandler DataGridView1.DataBindingComplete, Sub(s, ev)
