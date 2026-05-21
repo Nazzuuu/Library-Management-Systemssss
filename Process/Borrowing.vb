@@ -7,6 +7,7 @@ Imports ZXing.Windows.Compatibility
 Public Class Borrowing
 
     Private isLoadingData As Boolean = False
+    Private isDateLocked As Boolean = False
     Private WithEvents timerSystemDate As New Timer()
     Private lastBorrowerReceiptMap As New Dictionary(Of String, String)
     Private lastEnteredBorrowerID As String = ""
@@ -240,6 +241,7 @@ Public Class Borrowing
         'rbstudent.Checked = False
         'rbteacher.Checked = False
 
+        isDateLocked = False
     End Sub
 
 
@@ -615,6 +617,11 @@ Public Class Borrowing
 
     Private Sub timerSystemDate_Tick(sender As Object, e As EventArgs) Handles timerSystemDate.Tick
 
+        ' Do not override the picker if a record date was intentionally set
+        If isDateLocked Then
+            Return
+        End If
+
         If DateTimePicker1.Value.Date <> DateTime.Now.Date Then
             DateTimePicker1.Value = DateTime.Now
         End If
@@ -951,6 +958,7 @@ Public Class Borrowing
             If row.Cells("BorrowedDate").Value IsNot DBNull.Value Then
                 If IsDate(row.Cells("BorrowedDate").Value) Then
                     DateTimePicker1.Value = CDate(row.Cells("BorrowedDate").Value)
+                    isDateLocked = True
                 End If
             End If
 

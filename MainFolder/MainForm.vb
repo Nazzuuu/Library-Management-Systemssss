@@ -713,6 +713,9 @@ Public Class MainForm
 
     End Sub
 
+    'dim con as new mysqlconnection (connectionstring)
+    'dim com as new mysqlcommand ("")
+
     Private Sub TimeInToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TimeInToolStripMenuItem.Click
 
         Panel_dash.Controls.Clear()
@@ -1513,4 +1516,22 @@ Public Class MainForm
         lblform.Text = "LIBRARY CARD FORM"
 
     End Sub
+
+    Private Sub InboxToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InboxToolStripMenuItem.Click
+        Inbox.ShowDialog()
+    End Sub
+
+    Public Sub ShowOverdueNotification(count As Integer)
+        Try
+            If Me.InvokeRequired Then
+                Me.Invoke(Sub() ShowOverdueNotification(count))
+                Return
+            End If
+
+            ' simple MessageBox fallback if label not present in this build
+            MessageBox.Show($"{count} overdue notification(s) sent.", "Overdue Notifications", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        Catch
+        End Try
+    End Sub
+
 End Class

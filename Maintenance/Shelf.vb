@@ -4,21 +4,21 @@ Imports System.Data
 
 Public Class Shelf
     Private Sub Shelf_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
         DisablePaste_AllTextBoxes()
 
         TopMost = True
         Me.Refresh()
-
         LoadShelfData()
 
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `shelf_tbl`", 2000)
-
-
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+
     End Sub
 
     Private Sub LoadShelfData()
+
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `shelf_tbl`"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -31,6 +31,7 @@ Public Class Shelf
         Catch ex As Exception
             MsgBox($"Error loading data: {ex.Message}", vbCritical)
         End Try
+
     End Sub
 
     Private Async Sub OnDatabaseUpdated()
