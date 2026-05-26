@@ -38,6 +38,73 @@ Module GlobalVarsModule
             If Not dbRefreshTimer_MD5.Enabled Then
                 dbRefreshTimer_MD5.Start()
             End If
+            Try
+                AddHandler Microsoft.Win32.SystemEvents.SessionEnding, AddressOf OnSessionEnding
+                Try
+                    AddHandler Application.ApplicationExit, AddressOf OnApplicationExit
+                Catch
+                End Try
+                Try
+                    AddHandler AppDomain.CurrentDomain.ProcessExit, AddressOf OnProcessExit
+                Catch
+                End Try
+            Catch
+            End Try
+        Catch
+        End Try
+    End Sub
+
+    Private Sub OnSessionEnding(sender As Object, e As Microsoft.Win32.SessionEndingEventArgs)
+        Try
+            ShutdownCleanup()
+        Catch
+        End Try
+    End Sub
+
+    Private Sub OnApplicationExit(sender As Object, e As EventArgs)
+        Try
+            ShutdownCleanup()
+        Catch
+        End Try
+    End Sub
+
+    Private Sub OnProcessExit(sender As Object, e As EventArgs)
+        Try
+            ShutdownCleanup()
+        Catch
+        End Try
+    End Sub
+
+    Public Sub ShutdownCleanup()
+        Try
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+
+                Try
+
+                    Using cmd As New MySqlCommand("UPDATE superadmin_tbl SET is_logged_in = 0, CurrentIP = '0.0.0.0'", con)
+                        cmd.ExecuteNonQuery()
+                    End Using
+
+                    Using cmd2 As New MySqlCommand("UPDATE user_staff_tbl SET is_logged_in = 0, CurrentIP = '0.0.0.0'", con)
+                        cmd2.ExecuteNonQuery()
+                    End Using
+
+                    Using cmd3 As New MySqlCommand("UPDATE borroweredit_tbl SET is_logged_in = 0, CurrentIP = NULL", con)
+                        cmd3.ExecuteNonQuery()
+                    End Using
+
+
+                    If Not SuppressShutdownCleanup Then
+                        Using cmd4 As New MySqlCommand("UPDATE oras_tbl SET TimeOut = NOW() WHERE TimeOut IS NULL", con)
+                            cmd4.ExecuteNonQuery()
+                        End Using
+                    End If
+                Catch
+                End Try
+
+                con.Close()
+            End Using
         Catch
         End Try
     End Sub
@@ -1220,6 +1287,8 @@ Module GlobalVarsModule
     Private WithEvents inboxCheckTimer As New Timer() With {.Interval = 1000}
     Public inboxCache As DataTable = Nothing
     Public Event InboxUpdated()
+
+    Public SuppressShutdownCleanup As Boolean = False
 
 
     Private Async Sub backgroundInboxTimer_Tick(sender As Object, e As EventArgs) Handles backgroundInboxTimer.Tick

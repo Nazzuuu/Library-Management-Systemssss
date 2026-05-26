@@ -25,5 +25,12 @@ Namespace My
 
     Partial Friend Class MyApplication
 
+        Private Sub MyApplication_Shutdown(sender As Object, e As EventArgs) Handles Me.Shutdown
+            Try
+                GlobalVarsModule.ShutdownCleanup()
+            Catch
+            End Try
+        End Sub
+
     End Class
 End Namespace

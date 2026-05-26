@@ -1098,6 +1098,9 @@ Public Class Borrowing
                 'rbstudent.Enabled = False
                 Accession.btnview.Visible = True
 
+                txtemployee.Enabled = False
+                txtlrn.Enabled = True
+
             ElseIf borrowerType = "Teacher" Then
 
                 lbllrn.Visible = False
@@ -1115,6 +1118,9 @@ Public Class Borrowing
 
                 rbteacher.Checked = True
                 'rbteacher.Enabled = False
+
+                txtemployee.Enabled = True
+                txtlrn.Enabled = False
 
             End If
 
@@ -1252,5 +1258,4 @@ Public Class Borrowing
     End Sub
 
     'fuck sakit na sa braincellsuu'''
-
 End Class

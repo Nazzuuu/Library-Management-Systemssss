@@ -4,6 +4,10 @@ Imports System.Linq
 
 Public Class AvailableBooks
 
+    Private selectedAccessions As New List(Of String)()
+    Private Const STUDENT_SELECT_LIMIT As Integer = 3
+    Private Const TEACHER_SELECT_LIMIT As Integer = 5
+
     Private Sub AvailableBooks_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshavail()
         counts()
@@ -130,6 +134,62 @@ Public Class AvailableBooks
 
     End Sub
 
+    Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
+
+        Try
+
+            Dim presentIds As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
+            Dim dt As DataTable = TryCast(DataGridView1.DataSource, DataTable)
+            If dt Is Nothing AndAlso TypeOf DataGridView1.DataSource Is BindingSource Then
+                Dim bs = DirectCast(DataGridView1.DataSource, BindingSource)
+                dt = TryCast(bs.DataSource, DataTable)
+            End If
+
+            If dt IsNot Nothing Then
+                For Each dr As DataRow In dt.Rows
+                    Try
+                        If dt.Columns.Contains("AccessionID") AndAlso dr("AccessionID") IsNot DBNull.Value Then
+                            presentIds.Add(dr("AccessionID").ToString())
+                        End If
+                    Catch
+                    End Try
+                Next
+            Else
+
+                For Each r As DataGridViewRow In DataGridView1.Rows
+                    Try
+                        If DataGridView1.Columns.Contains("AccessionID") AndAlso r.Cells("AccessionID").Value IsNot Nothing Then
+                            presentIds.Add(r.Cells("AccessionID").Value.ToString())
+                        End If
+                    Catch
+                    End Try
+                Next
+            End If
+
+            Dim newSelection As New List(Of String)()
+            For Each id In selectedAccessions
+                If presentIds.Contains(id) Then newSelection.Add(id)
+            Next
+            selectedAccessions = newSelection
+
+
+            For Each r As DataGridViewRow In DataGridView1.Rows
+                Try
+                    r.DefaultCellStyle.BackColor = Color.White
+                    r.DefaultCellStyle.ForeColor = Color.Black
+                    If DataGridView1.Columns.Contains("AccessionID") AndAlso r.Cells("AccessionID").Value IsNot Nothing Then
+                        Dim aid = r.Cells("AccessionID").Value.ToString()
+                        If selectedAccessions.Contains(aid) Then
+                            r.DefaultCellStyle.BackColor = Color.LightGreen
+                            r.DefaultCellStyle.ForeColor = Color.Black
+                        End If
+                    End If
+                Catch
+                End Try
+            Next
+        Catch
+        End Try
+    End Sub
 
     Private Sub DataGridView1_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellDoubleClick
 
@@ -218,6 +278,230 @@ Public Class AvailableBooks
         End If
     End Sub
 
+    Private Sub DataGridView1_CellClick_SelectToggle(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+        If e.RowIndex < 0 Then Return
+
+        Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+
+        Dim accIDObj = Nothing
+        Dim statusObj = Nothing
+        Try
+            If DataGridView1.Columns.Contains("AccessionID") Then accIDObj = row.Cells("AccessionID").Value
+            If DataGridView1.Columns.Contains("Status") Then statusObj = row.Cells("Status").Value
+        Catch
+        End Try
+        If accIDObj Is Nothing OrElse accIDObj Is DBNull.Value Then Return
+
+        Dim accID As String = accIDObj.ToString()
+        Dim status As String = If(statusObj Is Nothing OrElse statusObj Is DBNull.Value, String.Empty, statusObj.ToString())
+
+        If Not status.Equals("Available", StringComparison.OrdinalIgnoreCase) Then
+            MessageBox.Show("Only Available books can be selected.", "Selection Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim requestedQty As Integer = 1
+        Try
+            Dim numCtrl = Me.Controls.Find("numupdown", True).FirstOrDefault()
+            If numCtrl IsNot Nothing Then
+                If TypeOf numCtrl Is NumericUpDown Then
+                    requestedQty = CInt(DirectCast(numCtrl, NumericUpDown).Value)
+                ElseIf numCtrl.GetType().FullName.Contains("Guna.UI2.WinForms.Guna2NumericUpDown") Then
+                    requestedQty = CInt(Convert.ToDecimal(numCtrl.GetType().GetProperty("Value").GetValue(numCtrl)))
+                End If
+            End If
+        Catch
+        End Try
+
+        Dim borrowerLimit As Integer = Integer.MaxValue
+        Dim brType As String = If(String.IsNullOrWhiteSpace(GlobalVarsModule.CurrentBorrowerType), String.Empty, GlobalVarsModule.CurrentBorrowerType)
+        Try
+            If String.IsNullOrWhiteSpace(brType) Then
+                Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+                If activeMain Is Nothing Then activeMain = Application.OpenForms.OfType(Of MainForm)().FirstOrDefault()
+                If activeMain IsNot Nothing Then
+
+                    For Each ctrl As Control In activeMain.Panel_dash.Controls
+                        If TypeOf ctrl Is Borrowing Then
+                            Dim bf = DirectCast(ctrl, Borrowing)
+                            If bf.rbstudent.Checked Then
+                                brType = "Student"
+                            ElseIf bf.rbteacher.Checked Then
+                                brType = "Teacher"
+                            End If
+                            Exit For
+                        End If
+                    Next
+
+
+                    If String.IsNullOrWhiteSpace(brType) AndAlso activeMain.Controls.Contains(activeMain.lbl_currentuser) Then
+                        Try
+                            brType = activeMain.lbl_currentuser.Text
+                        Catch
+                        End Try
+                    End If
+                End If
+            End If
+        Catch
+        End Try
+
+        If String.Equals(brType, "Student", StringComparison.OrdinalIgnoreCase) Then borrowerLimit = STUDENT_SELECT_LIMIT
+        If String.Equals(brType, "Teacher", StringComparison.OrdinalIgnoreCase) Then borrowerLimit = TEACHER_SELECT_LIMIT
+
+        If borrowerLimit <> Integer.MaxValue Then
+            Try
+                Dim numCtrlCap = Me.Controls.Find("numupdown", True).FirstOrDefault()
+                If numCtrlCap IsNot Nothing Then
+                    If TypeOf numCtrlCap Is NumericUpDown Then
+                        Dim nud = DirectCast(numCtrlCap, NumericUpDown)
+                        nud.Maximum = borrowerLimit
+                        If nud.Value > borrowerLimit Then nud.Value = borrowerLimit
+                    Else
+
+                        Dim t = numCtrlCap.GetType()
+                        Dim maxProp = t.GetProperty("Maximum")
+                        Dim valProp = t.GetProperty("Value")
+                        If maxProp IsNot Nothing Then
+                            maxProp.SetValue(numCtrlCap, Convert.ChangeType(borrowerLimit, maxProp.PropertyType), Nothing)
+                        End If
+                        If valProp IsNot Nothing Then
+                            Dim curVal = Convert.ToDecimal(valProp.GetValue(numCtrlCap))
+                            If curVal > borrowerLimit Then
+                                valProp.SetValue(numCtrlCap, Convert.ChangeType(borrowerLimit, valProp.PropertyType), Nothing)
+                            End If
+                        End If
+                    End If
+                End If
+            Catch
+            End Try
+        End If
+
+        Dim effectiveLimit As Integer = If(borrowerLimit = Integer.MaxValue, requestedQty, Math.Min(requestedQty, borrowerLimit))
+
+        If selectedAccessions.Contains(accID) Then
+            selectedAccessions.Remove(accID)
+            Try
+                row.DefaultCellStyle.BackColor = Color.White
+                row.DefaultCellStyle.ForeColor = Color.Black
+            Catch
+            End Try
+            Return
+        End If
+
+
+        Dim currentTitle As String = ""
+        Try
+            If DataGridView1.Columns.Contains("BookTitle") AndAlso row.Cells("BookTitle").Value IsNot Nothing Then
+                currentTitle = row.Cells("BookTitle").Value.ToString().Trim()
+            End If
+        Catch
+        End Try
+
+        If Not String.IsNullOrEmpty(currentTitle) Then
+            For Each selId In selectedAccessions
+
+                For Each rr As DataGridViewRow In DataGridView1.Rows
+                    Try
+                        If DataGridView1.Columns.Contains("AccessionID") AndAlso rr.Cells("AccessionID").Value IsNot Nothing AndAlso rr.Cells("AccessionID").Value.ToString() = selId Then
+                            If DataGridView1.Columns.Contains("BookTitle") AndAlso rr.Cells("BookTitle").Value IsNot Nothing Then
+                                If String.Equals(rr.Cells("BookTitle").Value.ToString().Trim(), currentTitle, StringComparison.OrdinalIgnoreCase) Then
+                                    MessageBox.Show("You have already selected this book title.", "Duplicate Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                                    Return
+                                End If
+                            End If
+                            Exit For
+                        End If
+                    Catch
+                    End Try
+                Next
+            Next
+        End If
+
+
+        If selectedAccessions.Count >= effectiveLimit Then
+            MessageBox.Show($"Selection limit reached. You can select up to {effectiveLimit} book(s).", "Limit Reached", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        selectedAccessions.Add(accID)
+        Try
+            row.DefaultCellStyle.BackColor = Color.LightGreen
+            row.DefaultCellStyle.ForeColor = Color.Black
+        Catch
+        End Try
+
+    End Sub
+
+    Private Sub DataGridView1_KeyDown_SelectConfirm(sender As Object, e As KeyEventArgs) Handles DataGridView1.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            e.SuppressKeyPress = True
+
+            If selectedAccessions.Count = 0 Then
+                MessageBox.Show("Please select at least one book before confirming.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Return
+            End If
+
+            Dim borrowCount As Integer = selectedAccessions.Count
+            Dim dialogResult As DialogResult = MessageBox.Show($"Confirm selection of {borrowCount} book(s)?", "Confirm Selection", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            If dialogResult = DialogResult.Yes Then
+
+                Try
+                    Dim activeBorrowing As Borrowing = Nothing
+
+                    Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+                    If activeMain Is Nothing Then
+                        activeMain = Application.OpenForms.OfType(Of MainForm)().FirstOrDefault()
+                        If activeMain IsNot Nothing Then
+                            GlobalVarsModule.ActiveMainForm = activeMain
+                        End If
+                    End If
+
+                    If activeMain IsNot Nothing Then
+                        For Each ctrl As Control In activeMain.Panel_dash.Controls
+                            If TypeOf ctrl Is Borrowing Then
+                                activeBorrowing = DirectCast(ctrl, Borrowing)
+                                Exit For
+                            End If
+                        Next
+
+                        If activeBorrowing Is Nothing Then
+                            activeBorrowing = New Borrowing()
+                            With activeBorrowing
+                                .TopLevel = False
+                                .Dock = DockStyle.Fill
+                                activeMain.Panel_dash.Controls.Add(activeBorrowing)
+                                .BringToFront()
+                                .Show()
+                            End With
+                        End If
+                    End If
+
+                    If activeBorrowing IsNot Nothing Then
+                        activeBorrowing.txtaccessionid.Text = String.Join(",", selectedAccessions)
+
+                        Dim firstAcc As String = selectedAccessions(0)
+                        For Each r As DataGridViewRow In DataGridView1.Rows
+                            Try
+                                If DataGridView1.Columns.Contains("AccessionID") AndAlso r.Cells("AccessionID").Value IsNot Nothing AndAlso r.Cells("AccessionID").Value.ToString() = firstAcc Then
+                                    If DataGridView1.Columns.Contains("BookTitle") Then activeBorrowing.txtsus.Text = r.Cells("BookTitle").Value.ToString()
+                                    Exit For
+                                End If
+                            Catch
+                            End Try
+                        Next
+
+                        activeBorrowing.SetupBorrowerFields()
+                    End If
+                Catch ex As Exception
+                End Try
+
+
+                Me.Dispose()
+            Else
+
+            End If
+        End If
+    End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 

@@ -71,6 +71,14 @@ Public Class MainForm
         sizelocation()
 
     End Sub
+
+    Private Sub MainForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        Try
+
+            GlobalVarsModule.ShutdownCleanup()
+        Catch
+        End Try
+    End Sub
     Public Sub loadsu()
 
         Dim main As MainForm = Application.OpenForms.OfType(Of MainForm)().FirstOrDefault()
@@ -256,9 +264,12 @@ Public Class MainForm
             If Borrowing IsNot Nothing AndAlso Not Borrowing.IsDisposed Then Borrowing.Close()
 
             If GlobalVarsModule.ActiveMainForm IsNot Nothing AndAlso Not GlobalVarsModule.ActiveMainForm.IsDisposed Then
+
+                GlobalVarsModule.SuppressShutdownCleanup = True
                 GlobalVarsModule.ActiveMainForm.Close()
                 GlobalVarsModule.ActiveMainForm.Dispose()
                 GlobalVarsModule.ActiveMainForm = Nothing
+                GlobalVarsModule.SuppressShutdownCleanup = False
             End If
 
 

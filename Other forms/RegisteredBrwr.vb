@@ -7,9 +7,26 @@ Public Class RegisteredBrwr
     Public Property IsSearchOverride() As Boolean = False
     Public IsInViewMode As Boolean = False
     Public IsTimeInMode As Boolean = False
+    Private wasOpenedInTimeInMode As Boolean = False
     Private IsTimeInSuccessfulAndClosing As Boolean = False
     Private con As New MySqlConnection(GlobalVarsModule.connectionString)
     Private skipNextHighlight As Boolean = False
+    Private processingLock As Boolean = False
+    Private processingResetTimer As Timer = Nothing
+
+    Private Sub StartProcessingResetTimer()
+        If processingResetTimer Is Nothing Then
+            processingResetTimer = New Timer()
+            AddHandler processingResetTimer.Tick, Sub(s, ea)
+                                                      processingResetTimer.Stop()
+                                                      processingLock = False
+                                                  End Sub
+        End If
+
+        processingResetTimer.Interval = 300
+        processingResetTimer.Stop()
+        processingResetTimer.Start()
+    End Sub
 
 
     Private Sub RegisteredBrwr_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -22,6 +39,17 @@ Public Class RegisteredBrwr
     End Sub
 
     Private Sub RegisteredBrwr_Activated(sender As Object, e As EventArgs) Handles Me.Activated
+
+
+        If IsTimeInMode Then
+            txtsearch.Enabled = False
+            If oras IsNot Nothing Then
+                oras.btnregisterview.Visible = False
+                oras.btnview.Location = New Point(398, 274)
+            End If
+            Me.IsSearchOverride = False
+            Return
+        End If
 
         Dim isSpecificBorrowerLoggedIn As Boolean = (GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrEmpty(GlobalVarsModule.CurrentUserID))
 
@@ -46,12 +74,15 @@ Public Class RegisteredBrwr
 
     Private Sub RegisteredBrwr_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
-
+        Dim wasTimeIn As Boolean = wasOpenedInTimeInMode
+        wasOpenedInTimeInMode = False
         IsTimeInMode = False
-        txtsearch.Text = ""
+
+        If Not wasTimeIn Then
+            txtsearch.Text = ""
+        End If
+
         txtsearch.Enabled = True
-
-
     End Sub
 
     Private Sub ListView1_DrawColumnHeader(sender As Object, e As DrawListViewColumnHeaderEventArgs) Handles ListView1.DrawColumnHeader
@@ -210,9 +241,9 @@ Public Class RegisteredBrwr
             End If
         End Try
 
-        IsTimeInMode = True
+
         ListView1.EndUpdate()
-        txtsearch.Enabled = True
+        txtsearch.Enabled = Not IsTimeInMode
 
     End Sub
 
@@ -288,9 +319,8 @@ Public Class RegisteredBrwr
 
         If borrowerType = "LRN" Or borrowerType = "EmployeeNo" Or BorrowerName = "FirstName" Or BorrowerName = "LastName" Then
 
+            wasOpenedInTimeInMode = IsTimeInMode
             txtsearch.Text = borrowerID
-
-
             ludeyngborrower()
 
         End If
@@ -300,6 +330,9 @@ Public Class RegisteredBrwr
     Private Sub TimeInBorrower(selectedItem As ListViewItem)
 
         If Not IsTimeInMode OrElse selectedItem Is Nothing Then Exit Sub
+
+        If processingLock Then Exit Sub
+        processingLock = True
 
         Dim borrowerType As String = selectedItem.SubItems(0).Text
         Dim firstName As String = selectedItem.SubItems(1).Text
@@ -352,6 +385,8 @@ Public Class RegisteredBrwr
 
         If selectedItem.BackColor = Color.FromArgb(153, 255, 153) Then
             MessageBox.Show("This borrower is currently timed in. Please Time Out first.", "Already Timed In", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+            StartProcessingResetTimer()
             Exit Sub
         End If
 
@@ -365,9 +400,9 @@ Public Class RegisteredBrwr
             Try
                 conInsert.Open()
 
-                ' Only check for duplicates using non-empty identifier values to avoid false positives
                 If String.IsNullOrWhiteSpace(lrn) AndAlso String.IsNullOrWhiteSpace(employeeNo) Then
                     MessageBox.Show("Cannot Time In borrower: missing LRN and EmployeeNo.", "Missing Identifier", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    StartProcessingResetTimer()
                     Exit Sub
                 End If
 
@@ -391,6 +426,7 @@ Public Class RegisteredBrwr
                         Dim existing As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
                         If existing > 0 Then
                             MessageBox.Show("This borrower already has an active Time-In record.", "Duplicate Time-In Blocked", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            StartProcessingResetTimer()
                             Exit Sub
                         End If
                     End Using
@@ -424,7 +460,11 @@ Public Class RegisteredBrwr
                 ludeyngborrower()
                 Me.Close()
 
+                StartProcessingResetTimer()
+
             Catch ex As Exception
+
+                processingLock = False
                 MessageBox.Show("Error processing Time In: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         End Using
