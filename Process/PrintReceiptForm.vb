@@ -29,7 +29,7 @@ Public Class PrintReceiptForm
         End If
     End Sub
 
-    Private Sub btnprint_Click(sender As Object, e As EventArgs) Handles btnprint.Click
+    Private Async Sub btnprint_Click(sender As Object, e As EventArgs) Handles btnprint.Click
         If Me.DataGridView1.RowCount = 0 OrElse Me.DataGridView1.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a borrowing record to print.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Exit Sub
@@ -57,9 +57,11 @@ Public Class PrintReceiptForm
         End If
 
         Try
+
+            PauseAutoRefresh(DataGridView1)
             Dim printerName As String = printDoc.PrinterSettings.PrinterName
-            Dim bytesToPrint As Byte() = BuildEscPosReceiptBytes(transacReceiptID)
-            Dim result As Boolean = RawPrinterHelper.SendBytesToPrinter(printerName, bytesToPrint)
+            Dim bytesToPrint As Byte() = BuildEscPosReceiptBytes(transacReceiptID, "", True)
+            Dim result As Boolean = Await Task.Run(Function() RawPrinterHelper.SendBytesToPrinter(printerName, bytesToPrint))
 
             If Not result Then
                 MessageBox.Show($"Failed to send raw ESC/POS data to '{printerName}'. Please verify printer selection.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -68,8 +70,18 @@ Public Class PrintReceiptForm
                     If pdlg.ShowDialog() = DialogResult.OK Then
                         printDoc.PrinterSettings = pdlg.PrinterSettings
                         bytesToPrint = BuildEscPosReceiptBytes(transacReceiptID)
-                        If RawPrinterHelper.SendBytesToPrinter(printDoc.PrinterSettings.PrinterName, bytesToPrint) Then
-                            UpdatePrintedStatus(transacReceiptID)
+                        If Await Task.Run(Function() RawPrinterHelper.SendBytesToPrinter(printDoc.PrinterSettings.PrinterName, bytesToPrint)) Then
+
+
+
+                            Await EnsureFirstPrintFinishedAsync()
+                            Dim dlg As DialogResult = MessageBox.Show("Do you want to print the borrower's receipt copy?", "Print Borrower's Copy", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                            If dlg = DialogResult.OK Then
+                                Dim sep As Byte() = BuildSeparatorBytes()
+                                Await Task.Run(Function() RawPrinterHelper.SendBytesToPrinter(printDoc.PrinterSettings.PrinterName, sep))
+                                Dim libBytes As Byte() = BuildEscPosReceiptBytes(transacReceiptID, "For Library's Copy" & vbLf & vbLf & vbLf, False)
+                                Await Task.Run(Function() RawPrinterHelper.SendBytesToPrinter(printDoc.PrinterSettings.PrinterName, libBytes))
+                            End If
                         Else
                             MessageBox.Show("Printing failed with selected printer.", "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                             Exit Sub
@@ -79,7 +91,15 @@ Public Class PrintReceiptForm
                     End If
                 End Using
             Else
-                UpdatePrintedStatus(transacReceiptID)
+
+                Await EnsureFirstPrintFinishedAsync()
+                Dim dlg2 As DialogResult = MessageBox.Show("Do you want to print the borrower's receipt copy?", "Print Borrower's Copy", MessageBoxButtons.OKCancel, MessageBoxIcon.Information)
+                If dlg2 = DialogResult.OK Then
+                    Dim sep As Byte() = BuildSeparatorBytes()
+                    Await Task.Run(Function() RawPrinterHelper.SendBytesToPrinter(printerName, sep))
+                    Dim libBytes As Byte() = BuildEscPosReceiptBytes(transacReceiptID, "For Library's Copy" & vbLf & vbLf & vbLf, False)
+                    Await Task.Run(Function() RawPrinterHelper.SendBytesToPrinter(printerName, libBytes))
+                End If
             End If
 
             GlobalVarsModule.LogAudit(
@@ -115,10 +135,13 @@ Public Class PrintReceiptForm
         Catch ex As Exception
             MessageBox.Show("An unexpected error occurred during the print job. Please try a different printer. " & ex.Message,
                         "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+
+            ResumeAutoRefresh(DataGridView1)
         End Try
     End Sub
 
-    Private Function BuildEscPosReceiptBytes(transactionID As String) As Byte()
+    Private Function BuildEscPosReceiptBytes(transactionID As String, Optional footerLabel As String = "", Optional includeCut As Boolean = True) As Byte()
         Dim esc As New List(Of Byte)
         Dim enc As System.Text.Encoding = System.Text.Encoding.ASCII
 
@@ -132,8 +155,6 @@ Public Class PrintReceiptForm
         esc.Add(&H1B) : esc.Add(&H45) : esc.Add(&H1)
 
         SubAppendText("Library Management System")
-
-        'MDA-LMS'
 
 
         esc.Add(&H1B) : esc.Add(&H45) : esc.Add(&H0)
@@ -190,10 +211,21 @@ Public Class PrintReceiptForm
                 SubAppendText(line)
             Next
 
+            Dim codeLabel As String
+            If Not String.IsNullOrWhiteSpace(isbn) Then
+                codeLabel = "ISBN: " & isbn
+            Else
+                codeLabel = "Barcode: " & barcode
+            End If
+
             SubAppendText($"AccessionID: {accessionID}")
-            SubAppendText($"Barcode/ISBN: {codeToPrint}")
+            SubAppendText(codeLabel)
             esc.AddRange(enc.GetBytes(vbLf))
         Next
+
+        SubAppendText("")
+        SubAppendText("Signature:")
+        SubAppendText("______________________________")
 
 
         If Not String.IsNullOrEmpty(transactionID) Then
@@ -212,14 +244,58 @@ Public Class PrintReceiptForm
             esc.AddRange(barcodeBytes)
             esc.AddRange(enc.GetBytes(vbLf))
 
+
+            If Not String.IsNullOrWhiteSpace(footerLabel) Then
+                SubAppendText(footerLabel)
+
+                esc.AddRange(enc.GetBytes(vbLf))
+            End If
+
         End If
 
 
-        esc.Add(&H1B) : esc.Add(&H64) : esc.Add(4)
-        esc.Add(&H1D) : esc.Add(&H56) : esc.Add(&H1)
+        If includeCut Then
+            esc.Add(&H1B) : esc.Add(&H64) : esc.Add(4)
+            esc.Add(&H1D) : esc.Add(&H56) : esc.Add(&H1)
+        End If
 
         Return esc.ToArray()
 
+    End Function
+
+    Private Function BuildSeparatorBytes() As Byte()
+        Dim esc As New List(Of Byte)
+        Dim enc As System.Text.Encoding = System.Text.Encoding.ASCII
+
+        esc.AddRange(enc.GetBytes(vbLf & vbLf))
+        Return esc.ToArray()
+    End Function
+
+    Private Async Function EnsureFirstPrintFinishedAsync() As Threading.Tasks.Task
+        Await Threading.Tasks.Task.Delay(2000)
+    End Function
+
+    Private Function BuildCutBytes() As Byte()
+
+        Dim esc As New List(Of Byte)
+        Dim enc As System.Text.Encoding = System.Text.Encoding.ASCII
+
+        esc.AddRange(enc.GetBytes(vbLf & vbLf & vbLf))
+
+
+        esc.Add(&H1D) : esc.Add(&H56) : esc.Add(&H1)
+        esc.AddRange(enc.GetBytes(vbLf))
+
+        esc.Add(&H1D) : esc.Add(&H56) : esc.Add(&H0)
+        esc.AddRange(enc.GetBytes(vbLf))
+
+        esc.Add(&H1B) : esc.Add(&H69)
+        esc.AddRange(enc.GetBytes(vbLf))
+
+        esc.Add(&H1B) : esc.Add(&H6D)
+        esc.AddRange(enc.GetBytes(vbLf & vbLf))
+
+        Return esc.ToArray()
     End Function
 
     Private Iterator Function WrapText(text As String, maxChars As Integer) As IEnumerable(Of String)
@@ -419,11 +495,24 @@ Public Class PrintReceiptForm
 
             g.DrawString($"AccessionID: {accessionID}", fontBody, Brushes.Black, margin + 10, yPos)
             yPos += lineHeight + bodyLineSpacing
-            g.DrawString($"Barcode/ISBN: {codeToPrint}", fontBody, Brushes.Black, margin + 10, yPos)
+
+            Dim codeLabel As String
+            If Not String.IsNullOrWhiteSpace(isbn) Then
+                codeLabel = "ISBN: " & isbn
+            Else
+                codeLabel = "Barcode: " & barcode
+            End If
+
+            g.DrawString(codeLabel, fontBody, Brushes.Black, margin + 10, yPos)
             yPos += lineHeight + (bodyLineSpacing * 2)
         Next
 
         yPos -= 5
+
+        g.DrawString("Signature:", fontBody, Brushes.Black, margin, yPos)
+        yPos += lineHeight + bodyLineSpacing
+        g.DrawString("______________________________", fontBody, Brushes.Black, margin, yPos)
+        yPos += lineHeight + (bodyLineSpacing * 2)
 
         If Not String.IsNullOrEmpty(transacReceipt) Then
             System.Threading.Thread.Sleep(150)
