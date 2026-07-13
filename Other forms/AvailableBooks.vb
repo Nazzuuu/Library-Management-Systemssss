@@ -442,7 +442,42 @@ Public Class AvailableBooks
             End If
 
             Dim borrowCount As Integer = selectedAccessions.Count
-            Dim dialogResult As DialogResult = MessageBox.Show($"Confirm selection of {borrowCount} book(s)?", "Confirm Selection", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+
+            Dim selTitles As New List(Of String)()
+            For Each accId In selectedAccessions
+                For Each r As DataGridViewRow In DataGridView1.Rows
+                    Try
+                        If DataGridView1.Columns.Contains("AccessionID") AndAlso r.Cells("AccessionID").Value IsNot Nothing AndAlso r.Cells("AccessionID").Value.ToString() = accId Then
+                            If DataGridView1.Columns.Contains("BookTitle") AndAlso r.Cells("BookTitle").Value IsNot Nothing Then
+                                Dim bt = r.Cells("BookTitle").Value.ToString().Trim()
+                                If bt <> String.Empty Then selTitles.Add(bt)
+                            End If
+                            Exit For
+                        End If
+                    Catch
+                    End Try
+                Next
+            Next
+
+            Dim uniqueTitles = selTitles.Distinct().ToList()
+            Dim sb As New System.Text.StringBuilder()
+            If uniqueTitles.Count = 0 Then
+
+                sb.AppendLine($"Selected books ({selectedAccessions.Count}):")
+                sb.AppendLine()
+                For Each accId In selectedAccessions
+                    sb.AppendLine(accId)
+                Next
+            Else
+                sb.AppendLine($"Selected books ({uniqueTitles.Count}):")
+                sb.AppendLine()
+                For Each t In uniqueTitles
+                    sb.AppendLine(t)
+                Next
+            End If
+
+            Dim dialogResult As DialogResult = MessageBox.Show(sb.ToString(), "Confirm Selection", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
             If dialogResult = DialogResult.Yes Then
 
                 Try
@@ -479,16 +514,43 @@ Public Class AvailableBooks
                     If activeBorrowing IsNot Nothing Then
                         activeBorrowing.txtaccessionid.Text = String.Join(",", selectedAccessions)
 
-                        Dim firstAcc As String = selectedAccessions(0)
-                        For Each r As DataGridViewRow In DataGridView1.Rows
-                            Try
-                                If DataGridView1.Columns.Contains("AccessionID") AndAlso r.Cells("AccessionID").Value IsNot Nothing AndAlso r.Cells("AccessionID").Value.ToString() = firstAcc Then
-                                    If DataGridView1.Columns.Contains("BookTitle") Then activeBorrowing.txtsus.Text = r.Cells("BookTitle").Value.ToString()
-                                    Exit For
-                                End If
-                            Catch
-                            End Try
+                        Dim titles As New List(Of String)()
+                        Dim isbns As New List(Of String)()
+                        Dim barcodes As New List(Of String)()
+                        Dim shelves As New List(Of String)()
+
+                        For Each accId In selectedAccessions
+                            For Each r As DataGridViewRow In DataGridView1.Rows
+                                Try
+                                    If DataGridView1.Columns.Contains("AccessionID") AndAlso r.Cells("AccessionID").Value IsNot Nothing AndAlso r.Cells("AccessionID").Value.ToString() = accId Then
+                                        If DataGridView1.Columns.Contains("BookTitle") Then
+                                            Dim bt = If(r.Cells("BookTitle").Value IsNot DBNull.Value, r.Cells("BookTitle").Value.ToString().Trim(), "")
+                                            If bt <> "" Then titles.Add(bt)
+                                        End If
+                                        If DataGridView1.Columns.Contains("ISBN") Then
+                                            Dim isv = If(r.Cells("ISBN").Value IsNot DBNull.Value, r.Cells("ISBN").Value.ToString().Trim(), "")
+                                            If isv <> "" Then isbns.Add(isv)
+                                        End If
+                                        If DataGridView1.Columns.Contains("Barcode") Then
+                                            Dim bv = If(r.Cells("Barcode").Value IsNot DBNull.Value, r.Cells("Barcode").Value.ToString().Trim(), "")
+                                            If bv <> "" Then barcodes.Add(bv)
+                                        End If
+                                        If DataGridView1.Columns.Contains("Shelf") Then
+                                            Dim sh = If(r.Cells("Shelf").Value IsNot DBNull.Value, r.Cells("Shelf").Value.ToString().Trim(), "")
+                                            If sh <> "" Then shelves.Add(sh)
+                                        End If
+                                        Exit For
+                                    End If
+                                Catch
+                                End Try
+                            Next
                         Next
+
+
+                        activeBorrowing.txtsus.Text = String.Join(",", titles.Distinct())
+                        activeBorrowing.txtisbn.Text = String.Join(",", isbns.Distinct())
+                        activeBorrowing.txtbarcode.Text = String.Join(",", barcodes.Distinct())
+                        activeBorrowing.txtshelf.Text = String.Join(",", shelves.Distinct())
 
                         activeBorrowing.SetupBorrowerFields()
                     End If

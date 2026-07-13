@@ -161,6 +161,7 @@ Public Class AcquistionDetails
 
 
 
+
     Public Sub supplieracq()
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM supplier_tbl"
@@ -286,15 +287,15 @@ Public Class AcquistionDetails
         Dim isPurchased As Boolean = (cbacquistiontype.SelectedItem IsNot Nothing AndAlso cbacquistiontype.SelectedItem.ToString() = "PURCHASED")
 
         Dim newPanel As New Guna.UI2.WinForms.Guna2Panel With {
-     .Size = Panel_Duplicate.Size,
-     .BorderColor = Panel_Duplicate.BorderColor,
-     .BorderThickness = Panel_Duplicate.BorderThickness,
-     .BorderRadius = Panel_Duplicate.BorderRadius,
-     .CustomBorderColor = Panel_Duplicate.CustomBorderColor,
-     .FillColor = Panel_Duplicate.FillColor,
-     .BackColor = Panel_Duplicate.BackColor,
-     .Name = "Panel_Book_" & bookCount
- }
+         .Size = Panel_Duplicate.Size,
+         .BorderColor = Panel_Duplicate.BorderColor,
+         .BorderThickness = Panel_Duplicate.BorderThickness,
+         .BorderRadius = Panel_Duplicate.BorderRadius,
+         .CustomBorderColor = Panel_Duplicate.CustomBorderColor,
+         .FillColor = Panel_Duplicate.FillColor,
+         .BackColor = Panel_Duplicate.BackColor,
+         .Name = "Panel_Book_" & bookCount
+     }
 
         For Each ctrl As Control In Panel_Duplicate.Controls
             Dim newCtrl As Control = Nothing
@@ -1051,5 +1052,9 @@ Public Class AcquistionDetails
         SelectBarcode.TargetTextBox = targetPanel.Controls("txtbarcode")
         SelectBarcode.ShowDialog()
 
+    End Sub
+
+    Private Sub AcquistionDetails_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+        Me.Dispose()
     End Sub
 End Class

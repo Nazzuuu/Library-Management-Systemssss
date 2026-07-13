@@ -565,8 +565,10 @@ Public Class PrintReceiptForm
         Dim ds As New DataSet
         adap.Fill(ds, "info")
         DataGridView1.DataSource = ds.Tables("info")
-
         DataGridView1.Columns("ID").Visible = False
+        If DataGridView1.Columns.Contains("IsPrinted") Then
+            DataGridView1.Columns("IsPrinted").Visible = False
+        End If
         DataGridView1.EnableHeadersVisualStyles = False
         DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
         DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
@@ -576,7 +578,19 @@ Public Class PrintReceiptForm
     Private Async Sub OnDatabaseUpdated()
         Try
             Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `printreceipt_tbl` WHERE `IsPrinted` = 0")
+            If DataGridView1.Columns.Contains("IsPrinted") Then
+                DataGridView1.Columns("IsPrinted").Visible = False
+            End If
             DataGridView1.ClearSelection()
+        Catch
+        End Try
+    End Sub
+
+    Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
+        Try
+            If DataGridView1.Columns.Contains("IsPrinted") Then
+                DataGridView1.Columns("IsPrinted").Visible = False
+            End If
         Catch
         End Try
     End Sub

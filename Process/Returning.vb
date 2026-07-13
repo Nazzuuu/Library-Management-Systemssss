@@ -5,6 +5,7 @@ Public Class Returning
 
 
     Private IsLoadingTransaction As Boolean = False
+    Private pausedByScan As Boolean = False
 
     Private Sub clear_details_only()
 
@@ -44,6 +45,14 @@ Public Class Returning
 
         btnreturn.Enabled = True
 
+        Try
+            If pausedByScan Then
+                GlobalVarsModule.ResumeAutoRefresh(DataGridView1)
+                pausedByScan = False
+            End If
+        Catch
+        End Try
+
     End Sub
 
     Private Sub InitializeConditionControls()
@@ -82,6 +91,10 @@ Public Class Returning
     End Sub
 
     Public Sub RefreshReturningData()
+        If pausedByScan Then
+
+            Return
+        End If
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim com As String = "SELECT * FROM `returning_tbl` ORDER BY ID DESC"
         Dim adap As New MySqlDataAdapter(com, con)
@@ -108,6 +121,10 @@ Public Class Returning
 
     Private Async Sub OnDatabaseUpdated_Returning()
         Try
+            If pausedByScan Then
+                Return
+            End If
+
             Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `returning_tbl` ORDER BY ID DESC")
             DataGridView1.ClearSelection()
         Catch
@@ -553,7 +570,7 @@ Public Class Returning
             trans = con.BeginTransaction()
 
 
-            Dim update_accession_com As String = "UPDATE `acession_tbl` SET `Status` = @newStatus WHERE `AccessionID` = @accessionId"
+            Dim update_accession_com As String = "UPDATE `acesion_tbl` SET `Status` = @newStatus WHERE `AccessionID` = @accessionId"
             Using update_accession_cmd As New MySqlCommand(update_accession_com, con, trans)
                 update_accession_cmd.Parameters.AddWithValue("@newStatus", newAccessionStatus)
                 update_accession_cmd.Parameters.AddWithValue("@accessionId", accessionID)
@@ -893,12 +910,17 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
         If IsLoadingTransaction Then Return
         Const MIN_LENGTH As Integer = 12
 
-        clear_details_only()
-        cbbooks.Items.Clear()
-
         Dim TransactionNo As String = txttransactionreceipt.Text.Trim()
 
         If String.IsNullOrWhiteSpace(TransactionNo) OrElse TransactionNo.Length < MIN_LENGTH Then
+
+            cbbooks.Items.Clear()
+            clear_details_only()
+            pausedByScan = False
+            Try
+                GlobalVarsModule.ResumeAutoRefresh(DataGridView1)
+            Catch
+            End Try
             Return
         End If
 
@@ -909,9 +931,16 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
 
         End If
 
+        Try
+            GlobalVarsModule.PauseAutoRefresh(DataGridView1)
+            pausedByScan = True
+        Catch
+        End Try
+
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
 
         Try
+            IsLoadingTransaction = True
             con.Open()
 
             Dim com_check_return As String = "SELECT COUNT(*) FROM `borrowing_tbl` WHERE `TransactionReceipt` = @transNo"
@@ -994,6 +1023,30 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
                 End Using
             End Using
 
+
+            If String.IsNullOrWhiteSpace(borrowedDateStr) OrElse String.IsNullOrWhiteSpace(dueDateStr) Then
+                Dim com_dates As String = "SELECT BorrowedDate, DueDate FROM `borrowing_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"
+                Using cmdDates As New MySqlCommand(com_dates, con)
+                    cmdDates.Parameters.AddWithValue("@transNo", TransactionNo)
+                    Using rdrDates As MySqlDataReader = cmdDates.ExecuteReader()
+                        If rdrDates.Read() Then
+                            If Not IsDBNull(rdrDates("BorrowedDate")) Then
+                                Try
+                                    borrowedDateStr = Convert.ToDateTime(rdrDates("BorrowedDate")).ToShortDateString()
+                                Catch
+                                End Try
+                            End If
+                            If Not IsDBNull(rdrDates("DueDate")) Then
+                                Try
+                                    dueDateStr = Convert.ToDateTime(rdrDates("DueDate")).ToShortDateString()
+                                Catch
+                                End Try
+                            End If
+                        End If
+                    End Using
+                End Using
+            End If
+
             lblfullname.Text = borrowerName
             lblborrowertype.Text = borrowerType
             lblborroweddate.Text = borrowedDateStr
@@ -1049,6 +1102,7 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
             If con.State = ConnectionState.Open Then
                 con.Close()
             End If
+            IsLoadingTransaction = False
         End Try
     End Sub
 

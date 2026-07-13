@@ -617,7 +617,6 @@ Public Class Borrowing
 
     Private Sub timerSystemDate_Tick(sender As Object, e As EventArgs) Handles timerSystemDate.Tick
 
-        ' Do not override the picker if a record date was intentionally set
         If isDateLocked Then
             Return
         End If
@@ -640,23 +639,28 @@ Public Class Borrowing
 
     Private Function acessionstats(accessionID As String) As Boolean
 
+        If String.IsNullOrWhiteSpace(accessionID) Then Return False
+        Dim ids As String() = accessionID.Split({","c}, StringSplitOptions.RemoveEmptyEntries)
         Try
-
-            Dim con As New MySqlConnection(connectionString)
-            Using con
-                Dim comm As String = "SELECT Status FROM `acession_tbl` WHERE `AccessionID` = @AccessionID"
-                Using cmd As New MySqlCommand(comm, con)
-                    cmd.Parameters.AddWithValue("@AccessionID", accessionID)
-
-                    con.Open()
-                    Dim status As Object = cmd.ExecuteScalar()
-                    If status IsNot DBNull.Value AndAlso status IsNot Nothing Then
-                        Return status.ToString().Equals("Available", StringComparison.OrdinalIgnoreCase)
-                    Else
-                        Return False
-                    End If
-                End Using
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+                For Each id In ids
+                    Dim trimId = id.Trim()
+                    If trimId = "" Then Continue For
+                    Dim comm As String = "SELECT Status FROM `acession_tbl` WHERE `AccessionID` = @AccessionID LIMIT 1"
+                    Using cmd As New MySqlCommand(comm, con)
+                        cmd.Parameters.AddWithValue("@AccessionID", trimId)
+                        Dim status As Object = cmd.ExecuteScalar()
+                        If status Is Nothing OrElse status Is DBNull.Value Then
+                            Return False
+                        End If
+                        If Not status.ToString().Equals("Available", StringComparison.OrdinalIgnoreCase) Then
+                            Return False
+                        End If
+                    End Using
+                Next
             End Using
+            Return True
         Catch ex As Exception
             MessageBox.Show("Error checking AccessionID availability: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return False
@@ -740,15 +744,38 @@ Public Class Borrowing
             Exit Sub
         End If
 
-        If Not acessionstats(txtaccessionid.Text) Then
-            MsgBox("The selected book is not available for borrowing.", vbExclamation, "Book Not Available")
+        Dim accessionList As List(Of String) = txtaccessionid.Text.Split({","c}, StringSplitOptions.RemoveEmptyEntries).Select(Function(s) s.Trim()).Where(Function(s) s <> "").ToList()
+        If accessionList.Count = 0 Then
+            MsgBox("Accession ID and Borrower Name are required.", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
-        If Not limitniborrower(borrowerIdentifier, identifierType) Then
-            MsgBox($"Borrowing limit reached. This borrower has already borrowed {MAX_BORROWED_BOOKS} books.", vbExclamation, "Borrowing Limit Exceeded")
+
+        If Not acessionstats(String.Join(",", accessionList)) Then
+            MsgBox("One or more selected books are not available for borrowing.", vbExclamation, "Book Not Available")
             Exit Sub
         End If
+
+
+        Dim conCheckLimit As New MySqlConnection(connectionString)
+        Try
+            conCheckLimit.Open()
+            Dim comCount As String = $"SELECT COUNT(*) FROM borrowing_tbl WHERE {(If(identifierType = "LRN", "LRN", "EmployeeNo"))} = @Identifier"
+            Using cmdc As New MySqlCommand(comCount, conCheckLimit)
+                cmdc.Parameters.AddWithValue("@Identifier", borrowerIdentifier)
+                Dim existingBorrowed As Integer = Convert.ToInt32(cmdc.ExecuteScalar())
+                If existingBorrowed + accessionList.Count > MAX_BORROWED_BOOKS Then
+                    MsgBox($"Borrowing limit reached. This borrower currently has {existingBorrowed} borrowed; selecting {accessionList.Count} more exceeds the limit of {MAX_BORROWED_BOOKS}.", vbExclamation, "Borrowing Limit Exceeded")
+                    conCheckLimit.Close()
+                    Exit Sub
+                End If
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error checking borrower limit: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        Finally
+            If conCheckLimit.State = ConnectionState.Open Then conCheckLimit.Close()
+        End Try
 
         Dim booktitleee As String = txtsus.Text.Trim
         Dim identifierValue As String = If(borrower = "Student", txtlrn.Text, txtemployee.Text)
@@ -794,23 +821,45 @@ Public Class Borrowing
                 currentBookCount = CInt(countCmd.ExecuteScalar())
             End Using
 
-            Dim newBookCount As Integer = currentBookCount + 1
-            Dim comsx As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate,TransactionReceipt) " &
+            Dim insertSql As String = "INSERT INTO borrowing_tbl (Borrower, LRN, EmployeeNo, Name, BookTitle, ISBN, Barcode, AccessionID, Shelf, BorrowedDate,TransactionReceipt) " &
                               "VALUES (@Borrower, @LRN, @EmpNo, @Name, @Title, @ISBN, @Barcode, @AccessionID, @Shelf, @BDate, @TransactionReceipt)"
 
-            Using comsi As New MySqlCommand(comsx, con)
-                comsi.Parameters.AddWithValue("@Borrower", borrower)
-                comsi.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text))
-                comsi.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text))
-                comsi.Parameters.AddWithValue("@Name", txtname.Text)
-                comsi.Parameters.AddWithValue("@Title", txtsus.Text)
-                comsi.Parameters.AddWithValue("@ISBN", txtisbn.Text)
-                comsi.Parameters.AddWithValue("@Barcode", txtbarcode.Text)
-                comsi.Parameters.AddWithValue("@AccessionID", txtaccessionid.Text)
-                comsi.Parameters.AddWithValue("@Shelf", txtshelf.Text)
-                comsi.Parameters.AddWithValue("@BDate", formattedBorrowedDate)
-                comsi.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
-                comsi.ExecuteNonQuery()
+            Using txCmd As New MySqlCommand(insertSql, con)
+                For Each acc As String In accessionList
+
+                    Dim accTrim = acc.Trim()
+                    Dim fetch As String = "SELECT BookTitle, ISBN, Barcode, Shelf FROM acession_tbl WHERE AccessionID = @acc LIMIT 1"
+                    Using fcmd As New MySqlCommand(fetch, con)
+                        fcmd.Parameters.AddWithValue("@acc", accTrim)
+                        Using rdr = fcmd.ExecuteReader()
+                            If rdr.Read() Then
+                                Dim bt = If(rdr.IsDBNull(rdr.GetOrdinal("BookTitle")), "", rdr("BookTitle").ToString())
+                                Dim isbnVal = If(rdr.IsDBNull(rdr.GetOrdinal("ISBN")), "", rdr("ISBN").ToString())
+                                Dim barcodeVal = If(rdr.IsDBNull(rdr.GetOrdinal("Barcode")), "", rdr("Barcode").ToString())
+                                Dim shelfVal = If(rdr.IsDBNull(rdr.GetOrdinal("Shelf")), "", rdr("Shelf").ToString())
+                                rdr.Close()
+
+                                txCmd.Parameters.Clear()
+                                txCmd.Parameters.AddWithValue("@Borrower", borrower)
+                                txCmd.Parameters.AddWithValue("@LRN", If(String.IsNullOrWhiteSpace(txtlrn.Text), DBNull.Value, txtlrn.Text))
+                                txCmd.Parameters.AddWithValue("@EmpNo", If(String.IsNullOrWhiteSpace(txtemployee.Text), DBNull.Value, txtemployee.Text))
+                                txCmd.Parameters.AddWithValue("@Name", txtname.Text)
+                                txCmd.Parameters.AddWithValue("@Title", bt)
+                                txCmd.Parameters.AddWithValue("@ISBN", isbnVal)
+                                txCmd.Parameters.AddWithValue("@Barcode", barcodeVal)
+                                txCmd.Parameters.AddWithValue("@AccessionID", accTrim)
+                                txCmd.Parameters.AddWithValue("@Shelf", shelfVal)
+                                txCmd.Parameters.AddWithValue("@BDate", formattedBorrowedDate)
+                                txCmd.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
+                                txCmd.ExecuteNonQuery()
+
+                                currentBookCount += 1
+                            Else
+                                If Not rdr.IsClosed Then rdr.Close()
+                            End If
+                        End Using
+                    End Using
+                Next
             End Using
 
 
@@ -829,7 +878,7 @@ Public Class Borrowing
                 If CInt(checkCmd.ExecuteScalar()) > 0 Then
                     Dim updateCom As String = "UPDATE `confimation_tbl` SET `BorrowedBookCount` = @BookCount WHERE `TransactionReceipt` = @TID"
                     Using updateCmd As New MySqlCommand(updateCom, con)
-                        updateCmd.Parameters.AddWithValue("@BookCount", newBookCount.ToString())
+                        updateCmd.Parameters.AddWithValue("@BookCount", currentBookCount.ToString())
                         updateCmd.Parameters.AddWithValue("@TID", transactionReceiptID)
                         updateCmd.ExecuteNonQuery()
                     End Using
@@ -842,16 +891,18 @@ Public Class Borrowing
                         insertCmd.Parameters.AddWithValue("@BDate", formattedBorrowedDate)
                         insertCmd.Parameters.AddWithValue("@TransactionReceipt", transactionReceiptID)
                         insertCmd.Parameters.AddWithValue("@Status", "Pending")
-                        insertCmd.Parameters.AddWithValue("@BookCount", newBookCount.ToString())
+                        insertCmd.Parameters.AddWithValue("@BookCount", currentBookCount.ToString())
                         insertCmd.ExecuteNonQuery()
                     End Using
                 End If
             End Using
 
-            Dim accessionID As String = txtaccessionid.Text.ToString
-            pendingstats(accessionID, "Pending")
 
-            MsgBox("Book successfully added for confirmation. Total pending books: " & newBookCount.ToString(), vbInformation, "Awaiting Confirmation")
+            For Each acc As String In accessionList
+                pendingstats(acc, "Pending")
+            Next
+
+            MsgBox("Book successfully added for confirmation. Total pending books: " & currentBookCount.ToString(), vbInformation, "Awaiting Confirmation")
 
 
             For Each form In Application.OpenForms
