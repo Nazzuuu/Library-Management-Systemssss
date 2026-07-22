@@ -151,6 +151,7 @@ Public Class login
                             activeMain.Panel_Studentlogs.Visible = True
                             activeMain.PenaltyManagementToolStripMenuItem.Visible = True
                             activeMain.PenaltyToolStripMenuItem.Visible = True
+                            Borrowing.view_link.Visible = False
 
                         Case "Staff"
                             activeMain.lbl_currentuser.Text = "Staff"
@@ -164,6 +165,7 @@ Public Class login
                             activeMain.PenaltyToolStripMenuItem.Visible = False
                             activeMain.PenaltyManagementToolStripMenuItem.Visible = False
                             activeMain.BorrowLimitToolStripMenuItem.Visible = False
+                            Borrowing.view_link.Visible = False
 
                         Case "Assistant Librarian"
                             activeMain.lbl_currentuser.Text = "Asst. Librarian"
@@ -173,6 +175,7 @@ Public Class login
                             activeMain.BorrowerAccountToolStripMenuItem1.Visible = False
                             activeMain.BorrowerAccountToolStripMenuItem.Visible = True
                             activeMain.BorrowLimitToolStripMenuItem.Visible = False
+                            Borrowing.view_link.Visible = False
 
 
                             For Each form In Application.OpenForms
@@ -379,6 +382,11 @@ TryBorrower:
                         activeMain_borrower.Panel_dash.Controls.Add(borrowingForm_borrower)
                         borrowingForm_borrower.SetupBorrowerFields()
                         borrowingForm_borrower.Show()
+
+                        Try
+                            borrowingForm_borrower.view_link.Visible = True
+                        Catch
+                        End Try
 
                         If borrowerType = "Student" Or borrowerType = "student" Then
                             borrowingForm_borrower.lblnotesu.Text = "Input your LRN."

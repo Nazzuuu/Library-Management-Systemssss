@@ -31,6 +31,13 @@ Public Class Borrowing
             If GlobalVarsModule.CurrentUserRole = "Borrower" Then
                 SetupBorrowerFields()
             End If
+
+
+            Try
+                Dim isBorrowerRole As Boolean = (GlobalVarsModule.CurrentUserRole = "Borrower") AndAlso (String.Equals(GlobalVarsModule.CurrentBorrowerType, "Student", StringComparison.OrdinalIgnoreCase) OrElse String.Equals(GlobalVarsModule.CurrentBorrowerType, "Teacher", StringComparison.OrdinalIgnoreCase))
+                view_link.Visible = isBorrowerRole
+            Catch
+            End Try
         Catch
         End Try
     End Sub
@@ -1297,7 +1304,7 @@ Public Class Borrowing
                 dt.DefaultView.RowFilter = ""
             End If
         End If
-
+        ''''
     End Sub
 
     Private Sub DataGridView1_MouseHover(sender As Object, e As EventArgs) Handles DataGridView1.MouseHover
@@ -1306,6 +1313,34 @@ Public Class Borrowing
 
     Private Sub datagridview1_mouseleave(sender As Object, e As EventArgs) Handles DataGridView1.MouseLeave
         ResumeAutoRefresh(DataGridView1)
+    End Sub
+
+    Private Sub view_link_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles view_link.LinkClicked
+        Try
+
+            Dim borrowerName As String = If(String.IsNullOrWhiteSpace(GlobalVarsModule.GlobalUsername), txtname.Text.Trim(), GlobalVarsModule.GlobalUsername)
+            Dim borrowerType As String = If(String.IsNullOrWhiteSpace(GlobalVarsModule.CurrentBorrowerType), If(rbteacher.Checked, "Teacher", "Student"), GlobalVarsModule.CurrentBorrowerType)
+
+            Dim lrn As String = String.Empty
+            Dim empNo As String = String.Empty
+
+            If Not String.IsNullOrWhiteSpace(GlobalVarsModule.CurrentBorrowerID) Then
+                If borrowerType = "Student" Then
+                    lrn = GlobalVarsModule.CurrentBorrowerID
+                ElseIf borrowerType = "Teacher" Then
+                    empNo = GlobalVarsModule.CurrentBorrowerID
+                End If
+            Else
+
+                lrn = txtlrn.Text.Trim()
+                empNo = txtemployee.Text.Trim()
+            End If
+
+            Dim popup As New popuphistory()
+            popup.ShowForBorrower(borrowerName, borrowerType, lrn, empNo)
+        Catch ex As Exception
+            MessageBox.Show("Error opening history: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     'fuck sakit na sa braincellsuu'''
