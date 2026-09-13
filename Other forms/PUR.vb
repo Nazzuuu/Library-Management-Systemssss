@@ -6,6 +6,10 @@ Class PUR
 
     Private Sub PUR_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshPUR()
+        DataGridView1.EnableHeadersVisualStyles = False
+        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+        DataGridView1.ReadOnly = True
     End Sub
 
     Private Async Sub OnDatabaseUpdated()

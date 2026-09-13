@@ -46,23 +46,10 @@ Public Class reprintlibrarycard
     Private _printLibrarianName As String = ""
     Private _printPhoto As Image = Nothing
 
-    ' ============================================================
-    ' FINAL COMPOSED CARD IMAGE
-    '
-    ' FIX:
-    ' Instead of redrawing the card from scratch here with plain
-    ' Arial fonts and hand-rolled layout math (which looked
-    ' different from the actual LibraryCardPreview.vb card), this
-    ' now holds the SAME rendered bitmap that LibraryCardPreview
-    ' produces - same panel, same fonts/colors, same barcode. See
-    ' BuildCardImageFromPreview() below.
-    ' ============================================================
+
     Private _printCardImage As Image = Nothing
 
 
-    ' ============================================================
-    ' FORM LOAD
-    ' ============================================================
     Private Sub reprintlibrarycard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         Try
@@ -71,15 +58,17 @@ Public Class reprintlibrarycard
 
             LoadSearchResults("")
 
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+            DataGridView1.ReadOnly = True
+
         Catch
         End Try
 
     End Sub
 
 
-    ' ============================================================
-    ' CLEAN UP ON CLOSE
-    ' ============================================================
     Private Sub reprintlibrarycard_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
         Try
@@ -99,9 +88,6 @@ Public Class reprintlibrarycard
     End Sub
 
 
-    ' ============================================================
-    ' SEARCH BOX
-    ' ============================================================
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
         Try
@@ -114,9 +100,6 @@ Public Class reprintlibrarycard
     End Sub
 
 
-    ' ============================================================
-    ' LOAD SEARCH RESULTS INTO THE GRID
-    ' ============================================================
     Private Sub LoadSearchResults(searchTerm As String)
 
         Try
@@ -176,9 +159,6 @@ Public Class reprintlibrarycard
     End Sub
 
 
-    ' ============================================================
-    ' GRID APPEARANCE / BEHAVIOR
-    ' ============================================================
     Private Sub ConfigureGrid()
 
         Try
@@ -223,9 +203,6 @@ Public Class reprintlibrarycard
     End Sub
 
 
-    ' ============================================================
-    ' REPRINT BUTTON
-    ' ============================================================
     Private Sub btnreprint_Click(sender As Object, e As EventArgs) Handles btnreprint.Click
 
         Try
@@ -262,9 +239,6 @@ Public Class reprintlibrarycard
     End Sub
 
 
-    ' ============================================================
-    ' FETCH RECORD, BUILD CARD DATA, AND PRINT
-    ' ============================================================
     Private Async Sub PrintSelectedCardAsync(recordId As Integer)
 
         If isPrinting Then
@@ -279,9 +253,6 @@ Public Class reprintlibrarycard
             btnreprint.Enabled = False
 
 
-            ' ================================================
-            ' FETCH RECORD FROM DATABASE
-            ' ================================================
             Dim fetchedName As String = ""
             Dim fetchedLrn As String = ""
             Dim fetchedDepartment As String = ""
@@ -338,9 +309,6 @@ Public Class reprintlibrarycard
             End If
 
 
-            ' ================================================
-            ' PREPARE CARD DATA
-            ' ================================================
             _printName =
                 If(String.IsNullOrWhiteSpace(fetchedName), "..", fetchedName)
 
@@ -383,15 +351,6 @@ Public Class reprintlibrarycard
             End If
 
 
-            ' ================================================
-            ' BUILD THE CARD IMAGE
-            '
-            ' FIX: build it using the EXACT SAME rendering as
-            ' LibraryCardPreview.vb (same panel, fonts, colors,
-            ' barcode) so the reprinted card looks identical to
-            ' the original, instead of the old hand-drawn version
-            ' with plain Arial text that looked different.
-            ' ================================================
             If _printCardImage IsNot Nothing Then
                 Try
                     _printCardImage.Dispose()
@@ -415,9 +374,6 @@ Public Class reprintlibrarycard
             End If
 
 
-            ' ================================================
-            ' CONFIGURE PRINT DOCUMENT
-            ' ================================================
             Try
 
                 pd.DocumentName = "Library Card Reprint"

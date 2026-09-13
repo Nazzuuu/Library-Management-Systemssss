@@ -1,4 +1,5 @@
-﻿Imports MySql.Data.MySqlClient
+﻿Imports System.Text.RegularExpressions
+Imports MySql.Data.MySqlClient
 
 Public Class AcquistionDetails
 
@@ -6,6 +7,15 @@ Public Class AcquistionDetails
     Private addedPanels As New List(Of Guna.UI2.WinForms.Guna2Panel)
     Private allowRealClose As Boolean = False
     Private isLayouting As Boolean = False
+
+    ' ============================================================
+    ' TRANSACTION NO. FORMATTING STATE
+    '
+    ' Guards against re-entrancy while we auto-format the
+    ' Transaction No. textbox as the user types (see
+    ' txttransactionno_TextChanged below).
+    ' ============================================================
+    Private isFormattingTransactionNo As Boolean = False
 
     Private Const BASE_X As Integer = 12
     Private Const BASE_BOOK_Y As Integer = 185
@@ -36,7 +46,19 @@ Public Class AcquistionDetails
 
 
         DateTimePicker1.MaxDate = DateTime.Now.Date
-        DateTimePicker1.Value = DateTime.Now.Date
+
+        ' ============================================================
+        ' FIX:
+        ' Only default the date to "today" when this is a brand-new
+        ' acquisition. When editing (SelectedAcquisitionID is set),
+        ' the caller already assigns DateTimePicker1.Value to the
+        ' original DateAcquired from the selected row BEFORE this
+        ' form is shown - so leave it alone here instead of
+        ' overwriting it back to today's date.
+        ' ============================================================
+        If String.IsNullOrEmpty(SelectedAcquisitionID) Then
+            DateTimePicker1.Value = DateTime.Now.Date
+        End If
 
 
         If DateTimePicker1.Value > DateTimePicker1.MaxDate Then
@@ -60,6 +82,9 @@ Public Class AcquistionDetails
             AddHandler txtbarcode.TextChanged, AddressOf DynamicSearch_TextChanged
         End If
     End Sub
+
+
+    ' (Removed unique-candidate generation: keep using exact TransactionNo entered)
 
     Public Sub clearlahatsu(Optional isEditMode As Boolean = False)
 
@@ -225,6 +250,19 @@ Public Class AcquistionDetails
 
     End Sub
 
+    ' ============================================================
+    ' AUTO-GENERATE THE DONATION-STYLE TRANSACTION NO. (T-00001)
+    '
+    ' FIX:
+    ' Now purchased entries use a manually-typed "INV-00001"
+    ' transaction number (see txttransactionno_TextChanged and
+    ' cbacquistiontype_SelectedIndexChanged below), while donation
+    ' entries keep using this auto-generated "T-00001" style. This
+    ' scopes the "last transaction number" lookup to rows that
+    ' actually start with "T-", so INV- numbers typed for
+    ' purchases no longer interfere with (or get skipped by) the
+    ' donation auto-numbering.
+    ' ============================================================
     Public Sub jineret()
 
         Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
@@ -238,7 +276,9 @@ Public Class AcquistionDetails
 
         Try
             con.Open()
-            com = "SELECT TransactionNo FROM acquisition_tbl ORDER BY LENGTH(TransactionNo) DESC, TransactionNo DESC LIMIT 1"
+            com = "SELECT TransactionNo FROM acquisition_tbl " &
+                  "WHERE TransactionNo LIKE 'T-%' " &
+                  "ORDER BY LENGTH(TransactionNo) DESC, TransactionNo DESC LIMIT 1"
 
             Using comsi As New MySqlCommand(com, con)
                 Dim result As Object = comsi.ExecuteScalar()
@@ -486,11 +526,21 @@ Public Class AcquistionDetails
     Private Sub DynamicSearch_TextChanged(sender As Object, e As EventArgs)
 
         Dim tb = DirectCast(sender, Guna.UI2.WinForms.Guna2TextBox)
+        Dim panel = DirectCast(tb.Parent, Guna.UI2.WinForms.Guna2Panel)
 
         If tb.Name = "txtisbn" AndAlso tb.Text.Length >= 13 Then
 
+            ' Already-saved books under this Transaction No.
             If IsISBNOrBarcodeExists("ISBN", tb.Text) Then
                 MessageBox.Show("This ISBN already scanned.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                tb.Clear()
+                Exit Sub
+            End If
+
+            ' Other book panels on this form that are not yet
+            ' saved (still being added before Submit All).
+            If IsDuplicateInAddedPanels(panel, "ISBN", tb.Text) Then
+                MessageBox.Show("This ISBN was already entered for another book in this transaction.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 tb.Clear()
                 Exit Sub
             End If
@@ -506,9 +556,14 @@ Public Class AcquistionDetails
                 Exit Sub
             End If
 
+            If IsDuplicateInAddedPanels(panel, "Barcode", tb.Text) Then
+                MessageBox.Show("This Barcode was already entered for another book in this transaction.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                tb.Clear()
+                Exit Sub
+            End If
+
         End If
 
-        Dim panel = DirectCast(tb.Parent, Guna.UI2.WinForms.Guna2Panel)
         Dim txtTitle As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txtbooktitle")
 
         If String.IsNullOrWhiteSpace(tb.Text) Then
@@ -571,6 +626,40 @@ Public Class AcquistionDetails
 
     End Function
 
+    ' ============================================================
+    ' IN-SESSION DUPLICATE CHECK (BOOKS NOT YET SAVED TO THE DB)
+    '
+    ' FIX:
+    ' IsISBNOrBarcodeExists above only looks at rows that are
+    ' already saved in acquisition_tbl. When adding 3 or more
+    ' books under the SAME Transaction No. in a single Submit
+    ' All, none of those books exist in the DB yet - so that
+    ' check alone cannot catch the same ISBN/Barcode being typed
+    ' into two different book panels before Submit All is even
+    ' pressed. This only compares against the OTHER panels
+    ' currently on the form (never against the panel being typed
+    ' in itself), so having several DIFFERENT books share one
+    ' Transaction No. is still perfectly fine - it only flags the
+    ' SAME book (same ISBN or same Barcode) being added twice.
+    ' ============================================================
+    Private Function IsDuplicateInAddedPanels(currentPanel As Guna.UI2.WinForms.Guna2Panel, field As String, value As String) As Boolean
+        If String.IsNullOrWhiteSpace(value) Then Return False
+
+        Dim ctrlName As String = If(field = "ISBN", "txtisbn", "txtbarcode")
+
+        For Each panel As Guna.UI2.WinForms.Guna2Panel In addedPanels
+            If panel Is currentPanel Then Continue For
+
+            Dim tb As Guna.UI2.WinForms.Guna2TextBox = TryCast(panel.Controls(ctrlName), Guna.UI2.WinForms.Guna2TextBox)
+
+            If tb IsNot Nothing AndAlso String.Equals(tb.Text.Trim(), value.Trim(), StringComparison.OrdinalIgnoreCase) Then
+                Return True
+            End If
+        Next
+
+        Return False
+    End Function
+
     Private Sub RemovePanel_Click(sender As Object, e As EventArgs)
         Dim lbl = DirectCast(sender, Label)
         Dim panel = DirectCast(lbl.Parent, Guna.UI2.WinForms.Guna2Panel)
@@ -625,6 +714,17 @@ Public Class AcquistionDetails
         ResetLayout()
     End Sub
 
+    ' ============================================================
+    ' VALIDATE THE "INV-00001" FORMAT
+    '
+    ' Used before submitting/updating a PURCHASED acquisition, to
+    ' make sure the transaction number the user typed actually
+    ' matches "INV-" followed by exactly 5 digits.
+    ' ============================================================
+    Private Function IsValidInvoiceTransactionNo(value As String) As Boolean
+        Return Regex.IsMatch(If(value, ""), "^INV-\d{5}$")
+    End Function
+
     Private Sub btnsubmitall_Click(sender As Object, e As EventArgs) Handles btnsubmitall.Click
 
 
@@ -643,7 +743,34 @@ Public Class AcquistionDetails
             Exit Sub
         End If
 
+        ' ================================================
+        ' VALIDATE THE INV- TRANSACTION NO. FORMAT
+        '
+        ' Only applies to PURCHASED entries, since donation
+        ' entries keep using the disabled, auto-generated
+        ' T-00001 textbox.
+        ' ================================================
+        If isPurchased Then
+
+            Dim transNoText As String = txttransactionno.Text.Trim()
+
+            If Not IsValidInvoiceTransactionNo(transNoText) Then
+
+                MessageBox.Show(
+                "Transaction No. must be in the format INV-00001 (INV- followed by 5 digits) for Purchased acquisitions.",
+                "Invalid Transaction No.",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning)
+
+                txttransactionno.Focus()
+                Exit Sub
+
+            End If
+
+        End If
+
         Dim usedISBNs As New List(Of String)
+        Dim usedBarcodes As New List(Of String)
 
         For Each panel As Guna.UI2.WinForms.Guna2Panel In addedPanels
             Dim bookNum As String = ""
@@ -651,14 +778,39 @@ Public Class AcquistionDetails
                 If ctrl.Name = "lblbooknumber" Then bookNum = ctrl.Text
             Next
 
+            Dim currentTitleForDupCheck As String = DirectCast(panel.Controls("txtbooktitle"), Guna.UI2.WinForms.Guna2TextBox).Text.Trim()
             Dim currentISBN As String = DirectCast(panel.Controls("txtisbn"), Guna.UI2.WinForms.Guna2TextBox).Text.Trim()
+            Dim currentBarcode As String = DirectCast(panel.Controls("txtbarcode"), Guna.UI2.WinForms.Guna2TextBox).Text.Trim()
 
+            ' ================================================
+            ' DUPLICATE CHECK (SAME BOOK ADDED TWICE IN THIS
+            ' SUBMISSION)
+            '
+            ' FIX: previously only ISBN was checked here, so two
+            ' panels for the same book scanned by Barcode instead
+            ' of ISBN were not caught. Both ISBN and Barcode are
+            ' now checked, and the message includes the Book
+            ' Title so it's clear which book is duplicated.
+            ' Several DIFFERENT books sharing the same Transaction
+            ' No. is NOT affected by this check at all - that is
+            ' expected when adding multiple books together. This
+            ' only blocks the SAME book (same ISBN or same
+            ' Barcode) from being added more than once.
+            ' ================================================
             If Not String.IsNullOrEmpty(currentISBN) Then
                 If usedISBNs.Contains(currentISBN) Then
-                    MessageBox.Show("Duplicate ISBN detected: " & currentISBN & " in " & bookNum, "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MessageBox.Show("Duplicate book detected: '" & currentTitleForDupCheck & "' (ISBN: " & currentISBN & ") in " & bookNum, "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Return
                 End If
                 usedISBNs.Add(currentISBN)
+            End If
+
+            If Not String.IsNullOrEmpty(currentBarcode) Then
+                If usedBarcodes.Contains(currentBarcode) Then
+                    MessageBox.Show("Duplicate book detected: '" & currentTitleForDupCheck & "' (Barcode: " & currentBarcode & ") in " & bookNum, "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
+                End If
+                usedBarcodes.Add(currentBarcode)
             End If
 
             If isPurchased Then
@@ -738,6 +890,33 @@ Public Class AcquistionDetails
 
             Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                 con.Open()
+                ' If the DB has a UNIQUE index on TransactionNo, remove it so multiple rows
+                ' can share the same TransactionNo entered by the user. Wrap in try/catch
+                ' so failures won't stop the normal insert flow.
+                Try
+                    Dim idxNames As New List(Of String)()
+                    Dim idxSql As String = "SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'acquisition_tbl' AND COLUMN_NAME = 'TransactionNo' AND NON_UNIQUE = 0"
+                    Using idxCmd As New MySqlCommand(idxSql, con)
+                        Using rdr = idxCmd.ExecuteReader()
+                            While rdr.Read()
+                                idxNames.Add(rdr.GetString(0))
+                            End While
+                        End Using
+                    End Using
+
+                    For Each idx As String In idxNames
+                        Try
+                            Using dropCmd As New MySqlCommand("ALTER TABLE acquisition_tbl DROP INDEX `" & idx & "`", con)
+                                dropCmd.ExecuteNonQuery()
+                            End Using
+                        Catch
+                            ' ignore individual drop failures
+                        End Try
+                    Next
+                Catch
+                    ' ignore any errors querying/dropping indexes
+                End Try
+
                 For Each panel As Guna.UI2.WinForms.Guna2Panel In addedPanels
                     Dim isbn As String = DirectCast(panel.Controls("txtisbn"), Guna.UI2.WinForms.Guna2TextBox).Text
                     Dim barcode As String = DirectCast(panel.Controls("txtbarcode"), Guna.UI2.WinForms.Guna2TextBox).Text
@@ -761,14 +940,14 @@ Public Class AcquistionDetails
                         totalValue = parsedPrice * qtyValue
                     End If
 
-                    Dim transNo As String = txttransactionno.Text
+                    Dim transNoToUse As String = txttransactionno.Text
                     Dim dateAcq As String = DateTimePicker1.Value.ToString("yyyy-MM-dd")
 
                     Dim sql As String = "INSERT INTO acquisition_tbl (TransactionNo, ISBN, Barcode, BookTitle, SupplierName, Donor, Quantity, BookPrice, TotalCost, DateAcquired) " &
                                     "VALUES (@trans, @isbn, @barcode, @title, @sup, @don, @qty, @price, @total, @date)"
 
                     Using cmd As New MySqlCommand(sql, con)
-                        cmd.Parameters.AddWithValue("@trans", transNo)
+                        cmd.Parameters.AddWithValue("@trans", transNoToUse)
                         cmd.Parameters.AddWithValue("@isbn", isbn)
                         cmd.Parameters.AddWithValue("@barcode", barcode)
                         cmd.Parameters.AddWithValue("@title", title)
@@ -784,8 +963,8 @@ Public Class AcquistionDetails
                     GlobalVarsModule.LogAudit(
                     actionType:="INSERT",
                     formName:="ACQUISITION FORM",
-                    description:=$"Added New Acquisition Record for Book: {title} (ISBN: {isbn}, TransNo: {transNo})",
-                    recordID:=transNo
+                    description:=$"Added New Acquisition Record for Book: {title} (ISBN: {isbn}, TransNo: {transNoToUse})",
+                    recordID:=transNoToUse
                     )
 
                     Dim newRow As DataRow = dt.NewRow()
@@ -797,7 +976,7 @@ Public Class AcquistionDetails
                     newRow("Quantity") = qtyValue
                     newRow("BookPrice") = If(priceValue Is DBNull.Value, 0, priceValue)
                     newRow("TotalCost") = If(totalValue Is DBNull.Value, 0, totalValue)
-                    newRow("TransactionNo") = transNo
+                    newRow("TransactionNo") = transNoToUse
                     newRow("DateAcquired") = dateAcq
                     dt.Rows.Add(newRow)
                 Next
@@ -814,10 +993,29 @@ Public Class AcquistionDetails
 
 
 
+    ' ============================================================
+    ' ACQUISITION TYPE CHANGED
+    '
+    ' FIX:
+    ' - PURCHASED: Transaction No. becomes typeable, pre-filled
+    '   with the "INV-" prefix (auto-formatted as the user types
+    '   - see txttransactionno_TextChanged below).
+    ' - Anything else (donation): Transaction No. goes back to
+    '   disabled / auto-generated "T-00001" style via jineret().
+    ' ============================================================
     Private Sub cbacquistiontype_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbacquistiontype.SelectedIndexChanged
         Dim isPurchased As Boolean = (cbacquistiontype.SelectedItem IsNot Nothing AndAlso cbacquistiontype.SelectedItem.ToString() = "PURCHASED")
 
         If isPurchased Then
+
+            txttransactionno.Enabled = True
+
+            If Not txttransactionno.Text.ToUpper().StartsWith("INV-") Then
+                txttransactionno.Text = "INV-"
+            End If
+
+            txttransactionno.SelectionStart = txttransactionno.Text.Length
+
             lblsupdonator.Text = "SUPPLIER:"
             cbsupplierdonator.Visible = True
             cbsupplierdonator.Enabled = True
@@ -826,6 +1024,10 @@ Public Class AcquistionDetails
                 panel.Controls("numupdown").Enabled = True
             Next
         Else
+
+            txttransactionno.Enabled = False
+            jineret()
+
             lblsupdonator.Text = "DONATOR:"
             cbsupplierdonator.Visible = False
             cbsupplierdonator.Enabled = True
@@ -845,6 +1047,61 @@ Public Class AcquistionDetails
 
             Next
         End If
+    End Sub
+
+    ' ============================================================
+    ' AUTO-FORMAT THE TRANSACTION NO. WHILE TYPING (PURCHASED ONLY)
+    '
+    ' Keeps the "INV-" prefix fixed no matter what the user types
+    ' or deletes, strips out anything that isn't a digit, and caps
+    ' it at 5 digits - so the final value always ends up looking
+    ' like "INV-00001".
+    ' ============================================================
+    Private Sub txttransactionno_TextChanged(sender As Object, e As EventArgs) Handles txttransactionno.TextChanged
+
+        If isFormattingTransactionNo Then
+            Return
+        End If
+
+        Dim isPurchased As Boolean = (cbacquistiontype.SelectedItem IsNot Nothing AndAlso cbacquistiontype.SelectedItem.ToString() = "PURCHASED")
+
+        If Not isPurchased Then
+            ' Donation mode uses the auto-generated T-00001 value
+            ' as-is; the textbox is disabled anyway so there is
+            ' nothing to reformat here.
+            Return
+        End If
+
+        Try
+
+            isFormattingTransactionNo = True
+
+            Dim originalText As String = If(txttransactionno.Text, "")
+
+            Dim digitsOnly As String = ""
+            For Each ch As Char In originalText
+                If Char.IsDigit(ch) Then
+                    digitsOnly &= ch
+                End If
+            Next
+
+            If digitsOnly.Length > 5 Then
+                digitsOnly = digitsOnly.Substring(0, 5)
+            End If
+
+            Dim newText As String = "INV-" & digitsOnly
+
+            If Not String.Equals(txttransactionno.Text, newText, StringComparison.Ordinal) Then
+                txttransactionno.Text = newText
+                txttransactionno.SelectionStart = txttransactionno.Text.Length
+            End If
+
+        Finally
+
+            isFormattingTransactionNo = False
+
+        End Try
+
     End Sub
 
     Private Sub cbisbnbarcode_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbisbnbarcode.SelectedIndexChanged
@@ -917,6 +1174,31 @@ Public Class AcquistionDetails
             Exit Sub
         End If
 
+        ' ================================================
+        ' VALIDATE THE INV- TRANSACTION NO. FORMAT
+        ' (same rule as btnsubmitall_Click above)
+        ' ================================================
+        Dim isPurchasedForUpdate As Boolean = (cbacquistiontype.Text = "PURCHASED")
+
+        If isPurchasedForUpdate Then
+
+            Dim transNoTextForUpdate As String = txttransactionno.Text.Trim()
+
+            If Not IsValidInvoiceTransactionNo(transNoTextForUpdate) Then
+
+                MessageBox.Show(
+                "Transaction No. must be in the format INV-00001 (INV- followed by 5 digits) for Purchased acquisitions.",
+                "Invalid Transaction No.",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning)
+
+                txttransactionno.Focus()
+                Exit Sub
+
+            End If
+
+        End If
+
         Try
             Using con As New MySqlConnection(GlobalVarsModule.connectionString)
                 con.Open()
@@ -965,117 +1247,117 @@ Public Class AcquistionDetails
                 Try
                     If newQty > currentCount Then
 
-                    ' Always add missing accession records when increasing quantity
-                    Dim detectedShelf As String = "1"
-                    Dim getShelfSql As String = "SELECT Shelf FROM acession_tbl WHERE BookTitle=@title LIMIT 1"
-                    Using cmdShelf As New MySqlCommand(getShelfSql, con)
-                        cmdShelf.Parameters.AddWithValue("@title", txtbooktitle.Text)
-                        Dim result = cmdShelf.ExecuteScalar()
-                        If result IsNot Nothing AndAlso Not IsDBNull(result) Then
-                            detectedShelf = result.ToString()
-                        End If
-                    End Using
+                        ' Always add missing accession records when increasing quantity
+                        Dim detectedShelf As String = "1"
+                        Dim getShelfSql As String = "SELECT Shelf FROM acession_tbl WHERE BookTitle=@title LIMIT 1"
+                        Using cmdShelf As New MySqlCommand(getShelfSql, con)
+                            cmdShelf.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                            Dim result = cmdShelf.ExecuteScalar()
+                            If result IsNot Nothing AndAlso Not IsDBNull(result) Then
+                                detectedShelf = result.ToString()
+                            End If
+                        End Using
 
-                    Dim toAdd As Integer = newQty - currentCount
-                    Dim rnd As New Random()
-                    For i As Integer = 1 To toAdd
-                        Dim newAccessionID As String = Nothing
-                        ' ensure uniqueness of accession id
-                        Do
-                            newAccessionID = rnd.Next(10000, 99999).ToString()
-                            Dim existsSql As String = "SELECT COUNT(*) FROM acession_tbl WHERE AccessionID=@accid"
-                            Using existsCmd As New MySqlCommand(existsSql, con, trans)
-                                existsCmd.Parameters.AddWithValue("@accid", newAccessionID)
-                                Dim cnt As Integer = Convert.ToInt32(existsCmd.ExecuteScalar())
-                                If cnt = 0 Then Exit Do
+                        Dim toAdd As Integer = newQty - currentCount
+                        Dim rnd As New Random()
+                        For i As Integer = 1 To toAdd
+                            Dim newAccessionID As String = Nothing
+                            ' ensure uniqueness of accession id
+                            Do
+                                newAccessionID = rnd.Next(10000, 99999).ToString()
+                                Dim existsSql As String = "SELECT COUNT(*) FROM acession_tbl WHERE AccessionID=@accid"
+                                Using existsCmd As New MySqlCommand(existsSql, con, trans)
+                                    existsCmd.Parameters.AddWithValue("@accid", newAccessionID)
+                                    Dim cnt As Integer = Convert.ToInt32(existsCmd.ExecuteScalar())
+                                    If cnt = 0 Then Exit Do
+                                End Using
+                            Loop
+                            Dim insertAccSql As String = "INSERT INTO acession_tbl (TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Donor, Status) " &
+                                            "VALUES (@tno, @accid, @isbn, @barcode, @title, @shelf, @sup, @don, 'Available')"
+                            Using cmdAdd = New MySqlCommand(insertAccSql, con, trans)
+                                cmdAdd.Parameters.AddWithValue("@tno", transNo)
+                                cmdAdd.Parameters.AddWithValue("@accid", newAccessionID)
+                                cmdAdd.Parameters.AddWithValue("@isbn", txtisbn.Text)
+                                cmdAdd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
+                                cmdAdd.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                                cmdAdd.Parameters.AddWithValue("@shelf", detectedShelf)
+                                cmdAdd.Parameters.AddWithValue("@sup", If(cbacquistiontype.Text = "PURCHASED", cbsupplierdonator.Text, ""))
+                                cmdAdd.Parameters.AddWithValue("@don", If(cbacquistiontype.Text <> "PURCHASED", txtdonor.Text, ""))
+                                cmdAdd.ExecuteNonQuery()
                             End Using
-                        Loop
-                        Dim insertAccSql As String = "INSERT INTO acession_tbl (TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Donor, Status) " &
-                                        "VALUES (@tno, @accid, @isbn, @barcode, @title, @shelf, @sup, @don, 'Available')"
-                        Using cmdAdd = New MySqlCommand(insertAccSql, con, trans)
-                            cmdAdd.Parameters.AddWithValue("@tno", transNo)
-                            cmdAdd.Parameters.AddWithValue("@accid", newAccessionID)
-                            cmdAdd.Parameters.AddWithValue("@isbn", txtisbn.Text)
-                            cmdAdd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
-                            cmdAdd.Parameters.AddWithValue("@title", txtbooktitle.Text)
-                            cmdAdd.Parameters.AddWithValue("@shelf", detectedShelf)
-                            cmdAdd.Parameters.AddWithValue("@sup", If(cbacquistiontype.Text = "PURCHASED", cbsupplierdonator.Text, ""))
-                            cmdAdd.Parameters.AddWithValue("@don", If(cbacquistiontype.Text <> "PURCHASED", txtdonor.Text, ""))
-                            cmdAdd.ExecuteNonQuery()
-                        End Using
-                    Next
-                    trans.Commit()
-                    trans = Nothing
-                ElseIf newQty < currentCount Then
+                        Next
+                        trans.Commit()
+                        trans = Nothing
+                    ElseIf newQty < currentCount Then
 
-                    Dim toDelete As Integer = currentCount - newQty
+                        Dim toDelete As Integer = currentCount - newQty
 
-                    If Not String.IsNullOrWhiteSpace(isbnVal) Then
-                        Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND ISBN=@isbn AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
-                        Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
-                            cmdDel.Parameters.AddWithValue("@tno", transNo)
-                            cmdDel.Parameters.AddWithValue("@isbn", isbnVal)
-                            cmdDel.ExecuteNonQuery()
-                        End Using
-                    ElseIf Not String.IsNullOrWhiteSpace(barcodeVal) Then
-                        Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND Barcode=@barcode AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
-                        Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
-                            cmdDel.Parameters.AddWithValue("@tno", transNo)
-                            cmdDel.Parameters.AddWithValue("@barcode", barcodeVal)
-                            cmdDel.ExecuteNonQuery()
-                        End Using
-                    Else
-                        Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND BookTitle=@title AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
-                        Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
-                            cmdDel.Parameters.AddWithValue("@tno", transNo)
-                            cmdDel.Parameters.AddWithValue("@title", txtbooktitle.Text)
-                            cmdDel.ExecuteNonQuery()
-                        End Using
+                        If Not String.IsNullOrWhiteSpace(isbnVal) Then
+                            Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND ISBN=@isbn AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
+                            Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
+                                cmdDel.Parameters.AddWithValue("@tno", transNo)
+                                cmdDel.Parameters.AddWithValue("@isbn", isbnVal)
+                                cmdDel.ExecuteNonQuery()
+                            End Using
+                        ElseIf Not String.IsNullOrWhiteSpace(barcodeVal) Then
+                            Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND Barcode=@barcode AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
+                            Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
+                                cmdDel.Parameters.AddWithValue("@tno", transNo)
+                                cmdDel.Parameters.AddWithValue("@barcode", barcodeVal)
+                                cmdDel.ExecuteNonQuery()
+                            End Using
+                        Else
+                            Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND BookTitle=@title AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
+                            Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
+                                cmdDel.Parameters.AddWithValue("@tno", transNo)
+                                cmdDel.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                                cmdDel.ExecuteNonQuery()
+                            End Using
+                        End If
+
+                        trans.Commit()
+                        trans = Nothing
                     End If
 
-                    trans.Commit()
-                    trans = Nothing
-                End If
 
+                    Dim isPurchased As Boolean = (cbacquistiontype.Text = "PURCHASED")
 
-                Dim isPurchased As Boolean = (cbacquistiontype.Text = "PURCHASED")
+                    Dim sql As String = "UPDATE acquisition_tbl SET " &
+                     "ISBN=@isbn, Barcode=@barcode, BookTitle=@title, " &
+                     "SupplierName=@sup, Donor=@don, Quantity=@qty, " &
+                     "BookPrice=@price, TotalCost=@total, DateAcquired=@date " &
+                     "WHERE ID=@id"
 
-                Dim sql As String = "UPDATE acquisition_tbl SET " &
-                 "ISBN=@isbn, Barcode=@barcode, BookTitle=@title, " &
-                 "SupplierName=@sup, Donor=@don, Quantity=@qty, " &
-                 "BookPrice=@price, TotalCost=@total, DateAcquired=@date " &
-                 "WHERE ID=@id"
+                    Using cmd As New MySqlCommand(sql, con, If(trans IsNot Nothing, trans, Nothing))
+                        cmd.Parameters.AddWithValue("@isbn", txtisbn.Text)
+                        cmd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
+                        cmd.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                        cmd.Parameters.AddWithValue("@sup", If(isPurchased, cbsupplierdonator.Text, ""))
+                        cmd.Parameters.AddWithValue("@don", If(Not isPurchased, txtdonor.Text, ""))
+                        cmd.Parameters.AddWithValue("@qty", numupdown.Value)
 
-                Using cmd As New MySqlCommand(sql, con, If(trans IsNot Nothing, trans, Nothing))
-                    cmd.Parameters.AddWithValue("@isbn", txtisbn.Text)
-                    cmd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
-                    cmd.Parameters.AddWithValue("@title", txtbooktitle.Text)
-                    cmd.Parameters.AddWithValue("@sup", If(isPurchased, cbsupplierdonator.Text, ""))
-                    cmd.Parameters.AddWithValue("@don", If(Not isPurchased, txtdonor.Text, ""))
-                    cmd.Parameters.AddWithValue("@qty", numupdown.Value)
+                        Dim price As Decimal = 0
+                        Decimal.TryParse(txtbookprice.Text, price)
+                        cmd.Parameters.AddWithValue("@price", If(isPurchased, price, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@total", If(isPurchased, price * numupdown.Value, DBNull.Value))
 
-                    Dim price As Decimal = 0
-                    Decimal.TryParse(txtbookprice.Text, price)
-                    cmd.Parameters.AddWithValue("@price", If(isPurchased, price, DBNull.Value))
-                    cmd.Parameters.AddWithValue("@total", If(isPurchased, price * numupdown.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@date", DateTimePicker1.Value.ToString("yyyy-MM-dd"))
+                        cmd.Parameters.AddWithValue("@id", SelectedAcquisitionID)
 
-                    cmd.Parameters.AddWithValue("@date", DateTimePicker1.Value.ToString("yyyy-MM-dd"))
-                    cmd.Parameters.AddWithValue("@id", SelectedAcquisitionID)
+                        cmd.ExecuteNonQuery()
+                    End Using
 
-                    cmd.ExecuteNonQuery()
-                End Using
-
-                If trans IsNot Nothing Then
-                    trans.Commit()
-                    trans = Nothing
-                End If
-            Catch
-                Try
-                    If trans IsNot Nothing Then trans.Rollback()
+                    If trans IsNot Nothing Then
+                        trans.Commit()
+                        trans = Nothing
+                    End If
                 Catch
+                    Try
+                        If trans IsNot Nothing Then trans.Rollback()
+                    Catch
+                    End Try
+                    Throw
                 End Try
-                Throw
-            End Try
             End Using
 
             GlobalVarsModule.LogAudit(
