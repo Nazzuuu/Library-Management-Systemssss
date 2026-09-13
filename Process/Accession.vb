@@ -1,0 +1,1204 @@
+﻿Imports MySql.Data.MySqlClient
+Imports System.Data
+Imports System.Drawing
+
+Public Class Accession
+
+
+    Private ReadOnly connectionString As String = GlobalVarsModule.connectionString
+
+
+    Public Sub clearlahat()
+
+        txtbarcodes.Text = ""
+        txtisbn.Text = ""
+        txtbooktitle.Text = ""
+        txtaccessionid.Text = ""
+        txtsuppliername.Text = ""
+        txttransactionno.Text = ""
+        txtdonor.Text = ""
+
+        cbshelf.DataSource = Nothing
+        shelfsu()
+
+        DataGridView1.ClearSelection()
+
+        'rbborrowable.Checked = False
+        rbforlibraryonly.Checked = False
+
+        CheckBox1.Checked = False
+
+    End Sub
+
+    Public Sub shelfsu()
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim com As String = "SELECT ID, Shelf FROM `shelf_tbl` ORDER BY CAST(Shelf AS UNSIGNED)"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim dt As New DataTable
+
+        adap.Fill(dt)
+
+        cbshelf.DataSource = dt
+        cbshelf.DisplayMember = "Shelf"
+        cbshelf.ValueMember = "ID"
+        cbshelf.SelectedIndex = -1
+
+    End Sub
+
+    Private Sub Accession_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        DataGridView1.ClearSelection()
+    End Sub
+
+    Private Sub Acession_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        rbborrowable.Checked = True
+        DisablePaste_AllTextBoxes()
+        RefreshAccessionData()
+        AddHandler cbshelf.DropDown, AddressOf RefreshComboBoxes
+
+        DataGridView1.EnableHeadersVisualStyles = False
+        DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+        DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+        DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        DataGridView1.MultiSelect = True
+
+        txtaccessionid.Enabled = False
+        txtbooktitle.Enabled = False
+        txtisbn.Enabled = False
+        txtbarcodes.Enabled = False
+        txttransactionno.Enabled = False
+        txtsuppliername.Enabled = False
+
+        GlobalVarsModule.AutoRefreshGrid(DataGridView1, BuildAccessionQuery(""), 2000)
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+    End Sub
+
+    Private Sub RefreshComboBoxes(sender As Object, e As EventArgs)
+        Dim cb As ComboBox = DirectCast(sender, ComboBox)
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Dim query As String = ""
+
+            Select Case cb.Name.ToLower()
+                Case "cbshelf"
+                    query = "SELECT Shelf FROM shelf_tbl ORDER BY CAST(Shelf AS UNSIGNED)"
+            End Select
+
+            If query <> "" Then
+                Dim dt As New DataTable()
+                Dim da As New MySqlDataAdapter(query, con)
+                da.Fill(dt)
+
+                cb.DataSource = dt
+                cb.DisplayMember = dt.Columns(0).ColumnName
+                cb.ValueMember = dt.Columns(0).ColumnName
+                cb.SelectedIndex = -1
+            End If
+        End Using
+    End Sub
+
+    Private Function BuildAccessionQuery(Optional filterStatus As String = "") As String
+        Dim query As String = "SELECT * FROM `acession_tbl`"
+
+        If Not String.IsNullOrEmpty(filterStatus) Then
+            query &= " WHERE Status = '" & MySqlHelper.EscapeString(filterStatus) & "'"
+        End If
+
+        query &= " ORDER BY TransactionNo, BookTitle, AccessionID"
+        Return query
+    End Function
+
+    Public Sub RefreshAccessionData(Optional ByVal filterStatus As String = "")
+        Dim con As New MySqlConnection(connectionString)
+        Dim query As String = BuildAccessionQuery(filterStatus)
+
+        Dim cmd As New MySqlCommand(query, con)
+        Dim adap As New MySqlDataAdapter(cmd)
+        Dim ds As New DataSet
+
+        Try
+            adap.Fill(ds, "INFO")
+            DataGridView1.DataSource = ds.Tables("INFO")
+
+            DataGridView1.EnableHeadersVisualStyles = False
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error refreshing data: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            con.Close()
+        End Try
+
+        btnview.Enabled = True
+        btnview.Visible = True
+        shelfsu()
+
+        Try
+            AutoRefreshComboBox(cbshelf, "SELECT ID, Shelf FROM shelf_tbl ORDER BY CAST(Shelf AS UNSIGNED)", "Shelf", "ID")
+        Catch ex As Exception
+            Debug.WriteLine("Auto-refresh shelf ComboBox failed: " & ex.Message)
+        End Try
+
+        DataGridView1.ClearSelection()
+
+        UpdateAllTransactionQuantities()
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is MainForm Then
+                Dim load = DirectCast(form, MainForm)
+                load.lbldamagecount()
+                load.lbllostcount()
+                load.lbloverduecount()
+            End If
+        Next
+    End Sub
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+            Dim query As String = BuildAccessionQuery("")
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, query)
+            DataGridView1.ClearSelection()
+
+            shelfsu()
+            AutoRefreshComboBox(cbshelf, "SELECT ID, Shelf FROM shelf_tbl ORDER BY CAST(Shelf AS UNSIGNED)", "Shelf", "ID")
+            UpdateAllTransactionQuantities()
+
+        Catch ex As Exception
+            Debug.WriteLine("OnDatabaseUpdated error: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub UpdateAllTransactionQuantities()
+        Try
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                con.Open()
+
+
+                Dim getTransactionsQuery As String = "SELECT DISTINCT TransactionNo, BookTitle FROM acession_tbl"
+                Dim getCmd As New MySqlCommand(getTransactionsQuery, con)
+                Dim reader As MySqlDataReader = getCmd.ExecuteReader()
+
+                Dim transactionList As New List(Of Tuple(Of String, String))
+
+                While reader.Read()
+                    Dim transNo As String = reader("TransactionNo").ToString()
+                    Dim bookTitle As String = reader("BookTitle").ToString()
+                    transactionList.Add(New Tuple(Of String, String)(transNo, bookTitle))
+                End While
+
+                reader.Close()
+
+
+                For Each item In transactionList
+
+                    Dim transNo As String = item.Item1
+                    Dim bookTitle As String = item.Item2
+
+                    Dim countQuery As String = "SELECT COUNT(*) FROM acession_tbl WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle AND Status = 'Available'"
+                    Dim countCmd As New MySqlCommand(countQuery, con)
+                    countCmd.Parameters.AddWithValue("@TransactionNo", transNo)
+                    countCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+
+                    Dim availableCount As Integer = Convert.ToInt32(countCmd.ExecuteScalar())
+
+                    Dim updateQuery As String = "UPDATE acquisition_tbl SET Quantity = @Quantity WHERE TransactionNo = @TransactionNo AND BookTitle = @BookTitle"
+                    Dim updateCmd As New MySqlCommand(updateQuery, con)
+                    updateCmd.Parameters.AddWithValue("@Quantity", availableCount)
+                    updateCmd.Parameters.AddWithValue("@TransactionNo", transNo)
+                    updateCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+                    updateCmd.ExecuteNonQuery()
+
+                Next
+
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine("UpdateAllTransactionQuantities error: " & ex.Message)
+        End Try
+    End Sub
+
+
+    Private Sub UpdateSingleTransactionQuantity(transactionNo As String, bookTitle As String)
+
+        Using con As New MySqlConnection(connectionString)
+            con.Open()
+
+            Dim countQuery As String =
+        "SELECT COUNT(*) 
+         FROM acession_tbl 
+         WHERE TransactionNo=@TransactionNo 
+         AND BookTitle=@BookTitle 
+         AND Status='Available'"
+
+            Dim countCmd As New MySqlCommand(countQuery, con)
+            countCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+            countCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+
+            Dim availableCount As Integer = Convert.ToInt32(countCmd.ExecuteScalar())
+
+            Dim updateQuery As String =
+        "UPDATE acquisition_tbl 
+         SET Quantity=@Quantity
+         WHERE TransactionNo=@TransactionNo 
+         AND BookTitle=@BookTitle"
+
+            Dim updateCmd As New MySqlCommand(updateQuery, con)
+            updateCmd.Parameters.AddWithValue("@Quantity", availableCount)
+            updateCmd.Parameters.AddWithValue("@TransactionNo", transactionNo)
+            updateCmd.Parameters.AddWithValue("@BookTitle", bookTitle)
+
+            updateCmd.ExecuteNonQuery()
+
+        End Using
+
+    End Sub
+    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+
+        If CheckBox1.Checked Then
+
+            PauseAutoRefresh(DataGridView1)
+
+            RefreshAccessionData("Available")
+
+
+            DataGridView1.MultiSelect = True
+
+
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+
+
+            lblnotes.Visible = True
+            lblnote.Visible = True
+
+            lblnote.Text = "Please hold the 'CTRL' key and select multiple rows. Press 'ENTER' to save."
+
+
+            btntransaction.Enabled = False
+
+
+            rbforlibraryonly.Enabled = False
+            cbshelf.Enabled = False
+
+            btnview.Visible = True
+
+            clearna()
+
+
+        Else
+
+            ResumeAutoRefresh(DataGridView1)
+            RefreshAccessionData()
+
+
+            DataGridView1.MultiSelect = False
+
+            DataGridView1.ClearSelection()
+
+            lblnotes.Visible = False
+            lblnote.Visible = False
+
+            btnview.Visible = True
+
+            btntransaction.Enabled = True
+
+            rbborrowable.Enabled = True
+            rbforlibraryonly.Enabled = True
+            cbshelf.Enabled = True
+
+        End If
+    End Sub
+
+    Public Sub clearna()
+
+        txtbarcodes.Text = ""
+        txtisbn.Text = ""
+        txtbooktitle.Text = ""
+        txtaccessionid.Text = ""
+        txtsuppliername.Text = ""
+        txttransactionno.Text = ""
+        txtdonor.Text = ""
+
+        btnview.Visible = True
+
+        rbborrowable.Checked = False
+        rbforlibraryonly.Checked = False
+        cbshelf.DataSource = Nothing
+        shelfsu()
+
+    End Sub
+
+    Private Sub DataGridView1_KeyDown(sender As Object, e As KeyEventArgs) Handles DataGridView1.KeyDown
+
+
+        If CheckBox1.Checked AndAlso e.KeyCode = Keys.Enter Then
+            e.SuppressKeyPress = True
+
+            Dim selectedRowsCount As Integer = DataGridView1.SelectedRows.Count
+            Dim availableRowCount As Integer = DataGridView1.Rows.Count
+
+            If selectedRowsCount = 0 Then
+                MessageBox.Show("Please select at least one row to reserve.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            If selectedRowsCount = availableRowCount Then
+                MessageBox.Show("Cannot reserve all available copies", "Action Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+
+
+            PauseAutoRefresh(DataGridView1)
+
+            Dim dialogResult As DialogResult = MessageBox.Show($"Are you sure you want to reserve the {selectedRowsCount} selected copies?", "Confirm Reserve", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+            If dialogResult = DialogResult.Yes Then
+
+                SaveReserveCopies()
+
+                CheckBox1.Checked = False
+
+            Else
+
+                ResumeAutoRefresh(DataGridView1)
+            End If
+        End If
+
+    End Sub
+
+
+    Public Sub SaveReserveCopies()
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim transaction As MySqlTransaction = Nothing
+
+        Dim moveit As New List(Of String)
+        For Each row As DataGridViewRow In DataGridView1.SelectedRows
+            If Not row.IsNewRow Then
+                Dim status As String = row.Cells("Status").Value.ToString().Trim()
+                If status.Equals("Available", StringComparison.OrdinalIgnoreCase) Then
+                    moveit.Add(row.Cells("AccessionID").Value.ToString())
+                End If
+            End If
+        Next
+
+        If moveit.Count = 0 Then
+            MessageBox.Show("No available copies selected for reservation.", "Reservation Aborted", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Try
+            con.Open()
+            transaction = con.BeginTransaction()
+
+            Dim reserveCount As Integer = 0
+
+            For Each accID As String In moveit
+
+
+                Dim comsiss As String = "SELECT * FROM `acession_tbl` WHERE AccessionID = @AccessionID AND Status = 'Available'"
+
+                Using comsusx As New MySqlCommand(comsiss, con, transaction)
+                    comsusx.Parameters.AddWithValue("@AccessionID", accID)
+                    Dim reader As MySqlDataReader = comsusx.ExecuteReader()
+
+                    If reader.Read() Then
+
+                        Dim tranNo As String = reader("TransactionNo").ToString()
+                        Dim isbn As Object = reader("ISBN")
+                        Dim barcode As Object = reader("Barcode")
+                        Dim bookTitle As String = reader("BookTitle").ToString()
+                        Dim shelf As String = reader("Shelf").ToString()
+                        Dim supplierName As String = reader("SupplierName").ToString()
+                        Dim donor As String = reader("Donor").ToString()
+
+                        reader.Close()
+
+
+                        Dim ins As String = "INSERT INTO `reservecopiess_tbl` (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Donor`, `Status`) " &
+                                            "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Donor, 'Reserved')"
+                        Using insx As New MySqlCommand(ins, con, transaction)
+
+                            insx.Parameters.AddWithValue("@TransactionNo", tranNo)
+                            insx.Parameters.AddWithValue("@AccessionID", accID)
+                            insx.Parameters.AddWithValue("@ISBN", If(IsDBNull(isbn), CType(DBNull.Value, Object), isbn))
+                            insx.Parameters.AddWithValue("@Barcode", If(IsDBNull(barcode), CType(DBNull.Value, Object), barcode))
+                            insx.Parameters.AddWithValue("@BookTitle", bookTitle)
+                            insx.Parameters.AddWithValue("@Shelf", shelf)
+                            insx.Parameters.AddWithValue("@SupplierName", supplierName)
+                            insx.Parameters.AddWithValue("@Donor", donor)
+                            insx.ExecuteNonQuery()
+                        End Using
+
+                        Dim deleyt As String = "DELETE FROM `acession_tbl` WHERE AccessionID = @AccessionID_Del"
+                        Using deletesu As New MySqlCommand(deleyt, con, transaction)
+                            deletesu.Parameters.AddWithValue("@AccessionID_Del", accID)
+                            deletesu.ExecuteNonQuery()
+                        End Using
+
+                        Dim deleteAvailable As String = "DELETE FROM `available_tbl` WHERE AccessionID = @AccessionID_AvailDel"
+                        Using deleteAvailCmd As New MySqlCommand(deleteAvailable, con, transaction)
+                            deleteAvailCmd.Parameters.AddWithValue("@AccessionID_AvailDel", accID)
+                            deleteAvailCmd.ExecuteNonQuery()
+                        End Using
+
+
+                        reserveCount += 1
+                    Else
+                        reader.Close()
+                    End If
+                End Using
+
+            Next
+
+            transaction.Commit()
+
+            btnview.Visible = True
+
+            MessageBox.Show("Reserve copies saved. Total reserved: " & reserveCount.ToString(), "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AvailableBooks Then
+                    Dim avail = DirectCast(form, AvailableBooks)
+                    avail.refreshavail()
+                    avail.counts()
+                End If
+            Next
+
+
+            ResumeAutoRefresh(DataGridView1)
+
+
+
+        Catch ex As Exception
+            If transaction IsNot Nothing Then
+                Try
+                    transaction.Rollback()
+                Catch rollEx As Exception
+                    MessageBox.Show("Error during rollback: " & rollEx.Message, "Rollback Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+            End If
+            MessageBox.Show("Error saving reserve copies: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+    End Sub
+
+    Private Sub btntransaction_Click(sender As Object, e As EventArgs) Handles btntransaction.Click
+
+        TransactionNumber.ShowDialog()
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is TransactionNumber Then
+                Dim load = DirectCast(form, TransactionNumber)
+                load.LoadTransactions()
+            End If
+        Next
+    End Sub
+
+
+
+    Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
+
+        If CheckBox1.Checked Then
+            MessageBox.Show("Please uncheck 'Select Reserve Copies' to add new records.", "Action Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim transaction As MySqlTransaction = Nothing
+
+        Dim cleanedBookTitle As String = txtbooktitle.Text.Trim()
+        Dim insertedAccessionIDs As New List(Of String)()
+        Dim allSucceeded As Boolean = True
+
+
+        Try
+            con.Open()
+            transaction = con.BeginTransaction()
+
+            If String.IsNullOrWhiteSpace(txttransactionno.Text) OrElse String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse cbshelf.SelectedIndex = -1 Then
+                MessageBox.Show("Please fill all required fields.", "Required Fields", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                transaction.Rollback()
+                Return
+            End If
+
+
+
+            Dim statusValue As String = ""
+
+            Dim isAvailable As Boolean = rbborrowable.Checked
+            If isAvailable Then
+                statusValue = "Available"
+            ElseIf rbforlibraryonly.Checked Then
+                statusValue = "For In-Library Use Only"
+            Else
+                MsgBox("Please select a Book Status.", vbExclamation, "Missing Information")
+                transaction.Rollback()
+                Exit Sub
+            End If
+
+            Dim accessionIDs As String() = txtaccessionid.Text.Split(","c)
+
+
+            For Each accessionID As String In accessionIDs
+                Dim acss As String = accessionID.Trim()
+
+
+                If Not String.IsNullOrWhiteSpace(acss) Then
+
+                    Dim ckacs As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE AccessionID = @AccessionID"
+                    Using comsx As New MySqlCommand(ckacs, con, transaction)
+                        comsx.Parameters.AddWithValue("@AccessionID", acss)
+                        If CInt(comsx.ExecuteScalar()) > 0 Then
+                            MessageBox.Show("Accession ID '" & acss & "' already exists. Please use a unique Accession ID. This record will be skipped.", "Duplicate Accession ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                            allSucceeded = False
+                            Continue For
+                        End If
+                    End Using
+
+                    Dim com As String = "INSERT INTO acession_tbl (`TransactionNo`, `AccessionID`, `ISBN`, `Barcode`, `BookTitle`, `Shelf`, `SupplierName`, `Donor`, `Status`) " &
+                                   "VALUES (@TransactionNo, @AccessionID, @ISBN, @Barcode, @BookTitle, @Shelf, @SupplierName, @Donor, @Status)"
+
+                    Using comsu As New MySqlCommand(com, con, transaction)
+                        comsu.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
+                        comsu.Parameters.AddWithValue("@AccessionID", acss)
+                        comsu.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                        comsu.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+
+                        comsu.Parameters.AddWithValue("@BookTitle", cleanedBookTitle)
+                        comsu.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                        comsu.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
+                        comsu.Parameters.AddWithValue("@Donor", txtdonor.Text)
+
+                        comsu.Parameters.AddWithValue("@Status", statusValue)
+                        comsu.ExecuteNonQuery()
+                    End Using
+
+                    If isAvailable Then
+                        Dim availableInsertSql As String = "INSERT INTO available_tbl (`ID`, `ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
+                                                     "VALUES (NULL, @ISBN_Avail, @Barcode_Avail, @AccessionID_Avail, @BookTitle_Avail, @Shelf_Avail, @Status_Avail)"
+
+                        Using availableCmd As New MySqlCommand(availableInsertSql, con, transaction)
+                            availableCmd.Parameters.AddWithValue("@AccessionID_Avail", acss)
+                            availableCmd.Parameters.AddWithValue("@ISBN_Avail", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                            availableCmd.Parameters.AddWithValue("@Barcode_Avail", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+
+                            availableCmd.Parameters.AddWithValue("@BookTitle_Avail", cleanedBookTitle)
+                            availableCmd.Parameters.AddWithValue("@Shelf_Avail", cbshelf.Text)
+                            availableCmd.Parameters.AddWithValue("@Status_Avail", statusValue)
+                            availableCmd.ExecuteNonQuery()
+                        End Using
+                    End If
+
+                    insertedAccessionIDs.Add(acss)
+                End If
+            Next
+
+            transaction.Commit()
+
+            If insertedAccessionIDs.Count > 0 Then
+                Dim insertedList As String = String.Join(", ", insertedAccessionIDs)
+                GlobalVarsModule.LogAudit(
+                actionType:="ADD",
+                formName:="ACCESSION FORM",
+                description:=$"Added new Accession records: {insertedList}. Title: {cleanedBookTitle}",
+                recordID:=txttransactionno.Text,
+                oldValue:="N/A",
+                newValue:=$"Status: {statusValue}, IDs: {insertedList}"
+            )
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+            End If
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AvailableBooks Then
+                    Dim avail = DirectCast(form, AvailableBooks)
+                    avail.refreshavail()
+                    avail.counts()
+                End If
+            Next
+
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is TransactionNumber Then
+                    Dim load = DirectCast(form, TransactionNumber)
+                    load.LoadTransactions()
+                End If
+            Next
+
+            If allSucceeded Then
+                MessageBox.Show("Successfully added all accession records!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Else
+                MessageBox.Show($"Finished processing. Successfully added: {insertedAccessionIDs.Count} records. Some accession IDs were skipped due to duplicates.", "Partial Success", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            End If
+            UpdateSingleTransactionQuantity(txttransactionno.Text, txtbooktitle.Text)
+            Acession_Load(sender, e)
+            clearlahat()
+
+        Catch ex As Exception
+            If transaction IsNot Nothing Then
+                Try
+                    transaction.Rollback()
+                Catch rollEx As Exception
+                End Try
+            End If
+            MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+
+    End Sub
+
+    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+
+        If CheckBox1.Checked Then
+            MessageBox.Show("Please uncheck 'Select Reserve Copies' to edit records.", "Action Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        If DataGridView1.SelectedRows.Count = 0 Then
+            MessageBox.Show("Please select a record from the table to edit.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+
+        Dim oldValues As New Dictionary(Of String, Object)
+        oldValues.Add("TransactionNo", selectedRow.Cells("TransactionNo").Value)
+        oldValues.Add("AccessionID", selectedRow.Cells("AccessionID").Value)
+        oldValues.Add("ISBN", selectedRow.Cells("ISBN").Value)
+        oldValues.Add("Barcode", selectedRow.Cells("Barcode").Value)
+        oldValues.Add("BookTitle", selectedRow.Cells("BookTitle").Value)
+        oldValues.Add("Shelf", selectedRow.Cells("Shelf").Value)
+        oldValues.Add("SupplierName", selectedRow.Cells("SupplierName").Value)
+        oldValues.Add("Donor", selectedRow.Cells("Donor").Value)
+        oldValues.Add("Status", selectedRow.Cells("Status").Value)
+
+
+        Dim currentStatus As String = oldValues("Status").ToString().Trim()
+        Dim oldAccessionID As String = oldValues("AccessionID").ToString().Trim()
+        Dim abeyl As Boolean = currentStatus.Equals("Available", StringComparison.OrdinalIgnoreCase)
+        Dim libraryonleh As Boolean = currentStatus.Equals("For In-Library Use Only", StringComparison.OrdinalIgnoreCase)
+
+
+        Dim statsskie As New List(Of String) From {"Pending", "Lost", "Damage"}
+
+
+        If statsskie.Contains(currentStatus, StringComparer.OrdinalIgnoreCase) Then
+            MessageBox.Show($"Cannot edit this accession record. The current status is '{currentStatus}'.", "Editing Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        If String.IsNullOrWhiteSpace(txttransactionno.Text) OrElse String.IsNullOrWhiteSpace(txtaccessionid.Text) OrElse cbshelf.SelectedIndex = -1 Then
+            MessageBox.Show("Please fill all required fields.", "Required Fields", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+        Dim newAccessionID As String = txtaccessionid.Text.Trim()
+
+
+        Dim newStatusValue As String = ""
+        Dim avail As Boolean = rbborrowable.Checked
+        Dim laybrarisu As Boolean = rbforlibraryonly.Checked
+
+        If avail Then
+            newStatusValue = "Available"
+        ElseIf laybrarisu Then
+            newStatusValue = "For In-Library Use Only"
+        Else
+            MsgBox("Please select a Book Status (Borrowable or For In-Library Use Only).", vbExclamation, "Missing Information")
+            Return
+        End If
+
+        Try
+            con.Open()
+
+
+            If newAccessionID <> oldAccessionID Then
+                Dim com As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE AccessionID = @AccessionID AND ID <> @ID"
+                Using comsss As New MySqlCommand(com, con)
+                    comsss.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                    comsss.Parameters.AddWithValue("@ID", ID)
+                    If CInt(comsss.ExecuteScalar()) > 0 Then
+                        MessageBox.Show("Accession ID '" & newAccessionID & "' already exists for another record. Update aborted.", "Duplicate Accession ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                        Return
+                    End If
+                End Using
+            End If
+
+
+            Dim coms As String = "SELECT COUNT(*) FROM `borrowing_tbl` WHERE AccessionID = @accessionID"
+            Dim comsuu As New MySqlCommand(coms, con)
+            comsuu.Parameters.AddWithValue("@accessionID", oldAccessionID)
+            Dim isBorrowed As Integer = CInt(comsuu.ExecuteScalar())
+
+            If isBorrowed > 0 Then
+                MessageBox.Show("Cannot modify this accession record. It is currently being borrowed.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Dim updt As String = "UPDATE `acession_tbl` SET " &
+                             "`TransactionNo` = @TransactionNo, " &
+                             "`AccessionID` = @AccessionID, " &
+                             "`ISBN` = @ISBN, " &
+                             "`Barcode` = @Barcode, " &
+                             "`BookTitle` = @BookTitle, " &
+                             "`Shelf` = @Shelf, " &
+                             "`SupplierName` = @SupplierName, " &
+                             "`Donor` = @Donor, " &
+                             "`Status` = @Status " &
+                             "WHERE `ID` = @ID"
+
+            Using command As New MySqlCommand(updt, con)
+                command.Parameters.AddWithValue("@TransactionNo", txttransactionno.Text)
+                command.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                command.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                command.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                command.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                command.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                command.Parameters.AddWithValue("@SupplierName", txtsuppliername.Text)
+                command.Parameters.AddWithValue("@Donor", txtdonor.Text)
+                command.Parameters.AddWithValue("@Status", newStatusValue)
+                command.Parameters.AddWithValue("@ID", ID)
+
+                command.ExecuteNonQuery()
+            End Using
+
+            If abeyl AndAlso laybrarisu Then
+                Dim deleteSql As String = "DELETE FROM `available_tbl` WHERE AccessionID = @AccessionID"
+                Using deleteCmd As New MySqlCommand(deleteSql, con)
+                    deleteCmd.Parameters.AddWithValue("@AccessionID", oldAccessionID)
+                    deleteCmd.ExecuteNonQuery()
+                End Using
+
+
+            ElseIf libraryonleh AndAlso avail Then
+                Dim kowms As String = "INSERT INTO available_tbl (`ISBN`, `Barcode`, `AccessionID`, `BookTitle`, `Shelf`, `Status`) " &
+                                 "VALUES (@ISBN, @Barcode, @AccessionID, @BookTitle, @Shelf, @Status)"
+
+                Using commandsu As New MySqlCommand(kowms, con)
+                    commandsu.Parameters.AddWithValue("@AccessionID", newAccessionID)
+                    commandsu.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                    commandsu.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                    commandsu.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                    commandsu.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                    commandsu.Parameters.AddWithValue("@Status", newStatusValue)
+                    commandsu.ExecuteNonQuery()
+                End Using
+
+
+            ElseIf abeyl AndAlso avail Then
+                Dim updit As String = "UPDATE `available_tbl` SET AccessionID = @NewAccessionID, BookTitle = @BookTitle, ISBN = @ISBN, Barcode = @Barcode, Shelf = @Shelf, Status = @Status WHERE AccessionID = @OldAccessionID"
+                Using comssxx As New MySqlCommand(updit, con)
+                    comssxx.Parameters.AddWithValue("@NewAccessionID", newAccessionID)
+                    comssxx.Parameters.AddWithValue("@OldAccessionID", oldAccessionID)
+                    comssxx.Parameters.AddWithValue("@BookTitle", txtbooktitle.Text)
+                    comssxx.Parameters.AddWithValue("@ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), CType(DBNull.Value, Object), txtisbn.Text))
+                    comssxx.Parameters.AddWithValue("@Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), CType(DBNull.Value, Object), txtbarcodes.Text))
+                    comssxx.Parameters.AddWithValue("@Shelf", cbshelf.Text)
+                    comssxx.Parameters.AddWithValue("@Status", newStatusValue)
+                    comssxx.ExecuteNonQuery()
+                End Using
+
+            End If
+
+            Dim newValuesList As New List(Of String)()
+            Dim oldValueList As New List(Of String)()
+            Dim changesMade As Boolean = False
+
+            Dim newValues As New Dictionary(Of String, Object)
+            newValues.Add("TransactionNo", txttransactionno.Text)
+            newValues.Add("AccessionID", newAccessionID)
+            newValues.Add("ISBN", If(String.IsNullOrWhiteSpace(txtisbn.Text), "NULL", txtisbn.Text))
+            newValues.Add("Barcode", If(String.IsNullOrWhiteSpace(txtbarcodes.Text), "NULL", txtbarcodes.Text))
+            newValues.Add("BookTitle", txtbooktitle.Text)
+            newValues.Add("Shelf", cbshelf.Text)
+            newValues.Add("SupplierName", txtsuppliername.Text)
+            newValues.Add("Donor", txtdonor.Text)
+            newValues.Add("Status", newStatusValue)
+
+            For Each kvp In newValues
+                Dim oldValueStr As String = If(oldValues(kvp.Key) Is DBNull.Value, "NULL", oldValues(kvp.Key).ToString())
+                Dim newValueStr As String = kvp.Value.ToString()
+
+                If Not oldValueStr.Equals(newValueStr, StringComparison.OrdinalIgnoreCase) Then
+                    oldValueList.Add($"{kvp.Key}: {oldValueStr}")
+                    newValuesList.Add($"{kvp.Key}: {newValueStr}")
+                    changesMade = True
+                End If
+            Next
+
+            If changesMade Then
+                GlobalVarsModule.LogAudit(
+                actionType:="UPDATE",
+                formName:="ACCESSION FORM",
+                description:=$"Updated Accession ID {oldAccessionID} (New ID: {newAccessionID}). Title: {txtbooktitle.Text}",
+                recordID:=newAccessionID,
+                oldValue:=String.Join("; ", oldValueList),
+                newValue:=String.Join("; ", newValuesList)
+            )
+                For Each form In Application.OpenForms
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+                Next
+            End If
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AvailableBooks Then
+                    Dim availsu = DirectCast(form, AvailableBooks)
+                    availsu.refreshavail()
+                    availsu.counts()
+                End If
+            Next
+
+            MessageBox.Show("Accession record updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+            Acession_Load(sender, e)
+            clearlahat()
+
+        Catch ex As Exception
+            MessageBox.Show("Error updating record: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+
+    End Sub
+
+
+    Private Sub btndeleteall_Click(sender As Object, e As EventArgs) Handles btndeleteall.Click
+
+        If CheckBox1.Checked Then
+            MessageBox.Show("Please uncheck 'Select Reserve Copies' to delete all records.", "Action Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        Dim firstDialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete ALL accession records? This action cannot be undone.", "Confirm Delete All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+
+        If firstDialogResult = DialogResult.Yes Then
+            Dim secondDialogResult As DialogResult = MessageBox.Show("This will permanently delete all accession records. Are you absolutely sure?", "Final Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+            If secondDialogResult = DialogResult.Yes Then
+                Dim con As New MySqlConnection(connectionString)
+                Dim transaction As MySqlTransaction = Nothing
+                Dim accessionCount As Integer = 0
+                Dim transactionCount As Integer = 0
+
+                Try
+                    con.Open()
+                    transaction = con.BeginTransaction()
+
+                    Dim comm As String = "SELECT COUNT(*) FROM `acession_tbl` WHERE `Status` IN ('Pending', 'Lost', 'Damaged')"
+                    Dim comssu As New MySqlCommand(comm, con, transaction)
+                    Dim count As Integer = CInt(comssu.ExecuteScalar())
+
+                    If count > 0 Then
+                        MessageBox.Show("Cannot delete all accession records. There are currently " & count.ToString() & " record(s) with 'Pending', 'Lost', or 'Damage' status.", "Deletion Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        transaction.Rollback()
+                        Return
+                    End If
+
+                    Dim com As String = "SELECT COUNT(*) FROM `borrowing_tbl`"
+                    Dim kapagod As New MySqlCommand(com, con, transaction)
+                    Dim borrowedCount As Integer = CInt(kapagod.ExecuteScalar())
+
+                    If borrowedCount > 0 Then
+                        MessageBox.Show("Cannot delete all accession records. Some records are currently borrowed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        transaction.Rollback()
+                        Return
+                    End If
+
+                    Dim reserveCheckSql As String = "SELECT COUNT(*) FROM `reservecopiess_tbl`"
+                    Dim reserveCmd As New MySqlCommand(reserveCheckSql, con, transaction)
+                    Dim reservedCount As Integer = CInt(reserveCmd.ExecuteScalar())
+
+                    If reservedCount > 0 Then
+                        MessageBox.Show("Cannot delete all accession records. Kindly pushback all transaction before deleting.", "Deletion Restricted - Reserved Books", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        transaction.Rollback()
+                        Return
+                    End If
+
+                    Dim countBeforeDeleteSql As String = "SELECT COUNT(*), COUNT(DISTINCT TransactionNo) FROM `acession_tbl`"
+                    Using countCmd As New MySqlCommand(countBeforeDeleteSql, con, transaction)
+                        Using reader As MySqlDataReader = countCmd.ExecuteReader()
+                            If reader.Read() Then
+                                accessionCount = reader.GetInt32(0)
+                                transactionCount = reader.GetInt32(1)
+                            End If
+                        End Using
+                    End Using
+
+                    If accessionCount = 0 Then
+                        MessageBox.Show("No accession records found to delete.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        transaction.Rollback()
+                        Return
+                    End If
+
+                    Dim coms As String = "DELETE FROM `acession_tbl`"
+                    Dim comsuus As New MySqlCommand(coms, con, transaction)
+                    comsuus.ExecuteNonQuery()
+
+                    Dim comsAvail As String = "DELETE FROM `available_tbl`"
+                    Dim comsuusAvail As New MySqlCommand(comsAvail, con, transaction)
+                    comsuusAvail.ExecuteNonQuery()
+
+                    Dim resett As String = "ALTER TABLE `acession_tbl` AUTO_INCREMENT = 1"
+                    Dim incrementsu As New MySqlCommand(resett, con, transaction)
+                    incrementsu.ExecuteNonQuery()
+
+                    transaction.Commit()
+
+                    GlobalVarsModule.LogAudit(
+                    actionType:="DELETE ALL",
+                    formName:="ACCESSION FORM",
+                    description:=$"Permanently deleted ALL accession records ({accessionCount} copies, {transactionCount} transactions).",
+                    recordID:="ALL",
+                    oldValue:="ALL ACCESSION RECORDS",
+                    newValue:="N/A (All deleted)"
+                )
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
+
+                    MessageBox.Show("All accession records have been successfully deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AvailableBooks Then
+                            Dim avail = DirectCast(form, AvailableBooks)
+                            avail.refreshavail()
+                            avail.counts()
+                        End If
+                    Next
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is TransactionNumber Then
+                            Dim load = DirectCast(form, TransactionNumber)
+                            load.LoadTransactions()
+
+                        End If
+                    Next
+                    UpdateSingleTransactionQuantity(txttransactionno.Text, txtbooktitle.Text)
+                    Acession_Load(sender, e)
+                    clearlahat()
+
+                Catch ex As Exception
+                    If transaction IsNot Nothing Then
+                        Try
+                            transaction.Rollback()
+                        Catch rollEx As Exception
+                        End Try
+                    End If
+                    MessageBox.Show("Error deleting all records: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Finally
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
+                End Try
+            End If
+        End If
+
+    End Sub
+
+    Private Sub btnclear_Click(sender As Object, e As EventArgs) Handles btnclear.Click
+        clearlahat()
+    End Sub
+
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If CheckBox1.Checked Then
+            Return
+        End If
+
+
+        If e.RowIndex >= 0 Then
+            Dim row = DataGridView1.Rows(e.RowIndex)
+
+            txtaccessionid.Text = row.Cells("AccessionID").Value.ToString
+            txtbooktitle.Text = row.Cells("BookTitle").Value.ToString
+            txtisbn.Text = row.Cells("ISBN").Value.ToString
+            txtbarcodes.Text = row.Cells("Barcode").Value.ToString
+            txtsuppliername.Text = row.Cells("SupplierName").Value.ToString
+            txttransactionno.Text = row.Cells("TransactionNo").Value.ToString
+
+            Dim shelfValue = row.Cells("Shelf").Value.ToString
+            cbshelf.SelectedIndex = cbshelf.FindStringExact(shelfValue)
+
+
+            Dim statusValue As String = row.Cells("Status").Value.ToString
+
+            If statusValue.Equals("Available", StringComparison.OrdinalIgnoreCase) Then
+                rbborrowable.Checked = True
+            ElseIf statusValue.Equals("For In-Library Use Only", StringComparison.OrdinalIgnoreCase) Then
+                rbforlibraryonly.Checked = True
+            Else
+
+                rbborrowable.Checked = True
+            End If
+
+        End If
+
+    End Sub
+
+    Private Sub btnview_Click(sender As Object, e As EventArgs) Handles btnview.Click
+
+        For Each form In Application.OpenForms
+            If TypeOf form Is ReserveCopies Then
+                Dim risirb = DirectCast(form, ReserveCopies)
+                risirb.reserveload()
+            End If
+        Next
+
+        ReserveCopies.ShowDialog()
+
+    End Sub
+
+    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
+
+        HandleAutoRefreshPause(DataGridView1, txtsearch)
+
+        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        If dt IsNot Nothing Then
+            If txtsearch.Text.Trim() <> "" Then
+                Dim filter As String = String.Format("BookTitle LIKE '*{0}*' OR Status LIKE '*{0}*'", txtsearch.Text.Trim())
+                dt.DefaultView.RowFilter = filter
+            Else
+                dt.DefaultView.RowFilter = ""
+            End If
+        End If
+
+    End Sub
+
+
+
+    Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnadd_MouseLeave(sender As Object, e As EventArgs) Handles btnadd.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndeleteall.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndeleteall.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnclear_MouseHover(sender As Object, e As EventArgs) Handles btnclear.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnclear_MouseLeave(sender As Object, e As EventArgs) Handles btnclear.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btntransaction_MouseHover(sender As Object, e As EventArgs) Handles btntransaction.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btntransaction_MouseLeave(sender As Object, e As EventArgs) Handles btntransaction.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub btnview_MouseHover(sender As Object, e As EventArgs) Handles btnview.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub btnview_MouseLeave(sender As Object, e As EventArgs) Handles btnview.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub CheckBox1_MouseHover(sender As Object, e As EventArgs) Handles CheckBox1.MouseHover
+        Cursor = Cursors.Hand
+    End Sub
+
+    Private Sub CheckBox1_MouseLeave(sender As Object, e As EventArgs) Handles CheckBox1.MouseLeave
+        Cursor = Cursors.Default
+    End Sub
+
+    Private Sub DisablePaste_AllTextBoxes()
+        For Each ctrl As Control In Me.Controls
+            AddHandlerToTextBoxes_NoPaste(ctrl)
+        Next
+    End Sub
+
+    Private Sub AddHandlerToTextBoxes_NoPaste(parent As Control)
+        For Each ctrl As Control In parent.Controls
+            If TypeOf ctrl Is TextBox Then
+                Dim tb As TextBox = CType(ctrl, TextBox)
+
+                tb.ContextMenuStrip = New ContextMenuStrip()
+
+                AddHandler tb.KeyDown, AddressOf BlockPasteKey
+                AddHandler tb.MouseUp, AddressOf BlockRightClick
+
+            End If
+
+            If ctrl.HasChildren Then
+                AddHandlerToTextBoxes_NoPaste(ctrl)
+            End If
+        Next
+
+    End Sub
+
+
+    Private Sub BlockPasteKey(sender As Object, e As KeyEventArgs)
+
+        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub BlockRightClick(sender As Object, e As MouseEventArgs)
+
+        If e.Button = MouseButtons.Right Then
+
+            Dim tb As TextBox = TryCast(sender, TextBox)
+            If tb IsNot Nothing Then
+                tb.ContextMenuStrip = New ContextMenuStrip()
+            End If
+        End If
+
+    End Sub
+
+    Private Sub DataGridView1_MouseHover(sender As Object, e As EventArgs) Handles DataGridView1.MouseHover
+        PauseAutoRefresh(DataGridView1)
+    End Sub
+
+    Private Sub DataGridView1_MouseLeave(sender As Object, e As EventArgs) Handles DataGridView1.MouseLeave
+        ResumeAutoRefresh(DataGridView1)
+    End Sub
+
+End Class

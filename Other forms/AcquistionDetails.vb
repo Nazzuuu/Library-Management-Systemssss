@@ -1,0 +1,1161 @@
+﻿Imports MySql.Data.MySqlClient
+
+Public Class AcquistionDetails
+
+    Private bookCount As Integer = 1
+    Private addedPanels As New List(Of Guna.UI2.WinForms.Guna2Panel)
+    Private allowRealClose As Boolean = False
+    Private isLayouting As Boolean = False
+
+    Private Const BASE_X As Integer = 12
+    Private Const BASE_BOOK_Y As Integer = 185
+    Private Const GAP As Integer = 15
+
+    Public Property SelectedAcquisitionID As String = ""
+
+    Private Sub AcquistionDetails_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.Size = New Size(1071, 701)
+        Me.AutoScroll = True
+
+        GlobalVarsModule.EnableCapitalizeFirstLetterForControls(Me)
+
+        DisablePaste_AllTextBoxes()
+
+        If cbsupplierdonator.Items.Count = 0 Then
+            supplieracq()
+        End If
+
+        If Not String.IsNullOrEmpty(SelectedAcquisitionID) Then
+
+            Debug.WriteLine("Editing ID: " & SelectedAcquisitionID)
+        Else
+
+            jineret()
+            clearlahatsu(False)
+        End If
+
+
+        DateTimePicker1.MaxDate = DateTime.Now.Date
+        DateTimePicker1.Value = DateTime.Now.Date
+
+
+        If DateTimePicker1.Value > DateTimePicker1.MaxDate Then
+            DateTimePicker1.Value = DateTimePicker1.MaxDate
+        End If
+
+        AddHandler cbsupplierdonator.DropDown, AddressOf RefreshComboBoxes
+        AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+
+        Panel_Duplicate.Location = New Point(BASE_X, BASE_BOOK_Y)
+
+        If addedPanels.Count = 0 Then
+            lblbooknumber.Text = "Book 1"
+            lblremove.Visible = False
+            addedPanels.Add(Panel_Duplicate)
+
+            AddHandler cbisbnbarcode.SelectedIndexChanged, AddressOf DynamicISBNBarcode_Changed
+            AddHandler txtbookprice.TextChanged, AddressOf DynamicCalculateTotal
+            AddHandler numupdown.ValueChanged, AddressOf DynamicCalculateTotal
+            AddHandler txtisbn.TextChanged, AddressOf DynamicSearch_TextChanged
+            AddHandler txtbarcode.TextChanged, AddressOf DynamicSearch_TextChanged
+        End If
+    End Sub
+
+    Public Sub clearlahatsu(Optional isEditMode As Boolean = False)
+
+        txtisbn.Enabled = False
+        txtbarcode.Enabled = False
+        txttransactionno.Enabled = False
+        txtbooktitle.Enabled = False
+
+        txtisbn.Text = ""
+        txtbarcode.Text = ""
+        txttransactionno.Text = ""
+        txtbooktitle.Text = ""
+        txtbookprice.Text = ""
+        numupdown.Value = 0
+        txttotalcost.Text = ""
+        txttotalcost.Enabled = False
+
+        If Not isEditMode Then
+            txttransactionno.Clear()
+            cbisbnbarcode.SelectedIndex = -1
+            cbsupplierdonator.SelectedIndex = -1
+            cbacquistiontype.SelectedIndex = -1
+            txtdonor.Clear()
+        End If
+
+        If addedPanels.Count > 1 Then
+
+            For i As Integer = addedPanels.Count - 1 To 1 Step -1
+                Dim pnl = addedPanels(i)
+                addedPanels.RemoveAt(i)
+                Me.Controls.Remove(pnl)
+                pnl.Dispose()
+            Next
+
+            bookCount = 1
+
+            ResetLayout()
+
+        End If
+
+
+    End Sub
+
+    Private Sub RefreshComboBoxes(sender As Object, e As EventArgs)
+        Dim cb As ComboBox = DirectCast(sender, ComboBox)
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Dim query As String = ""
+
+            Select Case cb.Name.ToLower()
+                Case "cbsupplierdonator"
+                    query = "SELECT SupplierName FROM supplier_tbl ORDER BY SupplierName"
+            End Select
+
+            If query <> "" Then
+                Dim dt As New DataTable()
+                Dim da As New MySqlDataAdapter(query, con)
+                da.Fill(dt)
+
+                cb.DataSource = dt
+                cb.DisplayMember = dt.Columns(0).ColumnName
+                cb.ValueMember = dt.Columns(0).ColumnName
+                cb.SelectedIndex = -1
+            End If
+        End Using
+    End Sub
+
+
+    Private Async Sub OnDatabaseUpdated()
+        Try
+
+            If Me Is Nothing OrElse Me.IsDisposed OrElse Not Me.IsHandleCreated Then
+                Return
+            End If
+
+            Await Task.Run(Sub()
+
+                               If Not Me.IsDisposed AndAlso Me.IsHandleCreated Then
+                                   Try
+                                       Me.Invoke(Sub()
+
+                                                     If Not Me.IsDisposed AndAlso Me.IsHandleCreated Then
+                                                         supplieracq()
+                                                     End If
+                                                 End Sub)
+                                   Catch ex As ObjectDisposedException
+
+                                   Catch ex As Exception
+
+                                   End Try
+                               End If
+                           End Sub)
+
+        Catch ex As Exception
+            Debug.WriteLine("OnDatabaseUpdated error: " & ex.Message)
+        End Try
+    End Sub
+
+
+
+
+
+    Public Sub supplieracq()
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim com As String = "SELECT * FROM supplier_tbl"
+        Dim adap As New MySqlDataAdapter(com, con)
+        Dim dt As New DataTable()
+
+        Try
+            adap.Fill(dt)
+            cbsupplierdonator.DataSource = dt
+            cbsupplierdonator.DisplayMember = "SupplierName"
+            cbsupplierdonator.ValueMember = "ID"
+            cbsupplierdonator.SelectedIndex = -1
+        Catch ex As Exception
+            Debug.WriteLine("Supplier load error: " & ex.Message)
+        End Try
+    End Sub
+
+
+    Private Sub DisablePaste_AllTextBoxes()
+        For Each ctrl As Control In Me.Controls
+            AddHandlerToTextBoxes_NoPaste(ctrl)
+        Next
+    End Sub
+
+    Private Sub AddHandlerToTextBoxes_NoPaste(parent As Control)
+        For Each ctrl As Control In parent.Controls
+            If TypeOf ctrl Is TextBox Then
+                Dim tb As TextBox = CType(ctrl, TextBox)
+
+                tb.ContextMenuStrip = New ContextMenuStrip()
+
+                AddHandler tb.KeyDown, AddressOf BlockPasteKey
+                AddHandler tb.MouseUp, AddressOf BlockRightClick
+
+            End If
+
+            If ctrl.HasChildren Then
+                AddHandlerToTextBoxes_NoPaste(ctrl)
+            End If
+        Next
+
+    End Sub
+
+    Private Sub BlockPasteKey(sender As Object, e As KeyEventArgs)
+
+        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+            e.SuppressKeyPress = True
+        End If
+
+    End Sub
+
+    Private Sub BlockRightClick(sender As Object, e As MouseEventArgs)
+
+        If e.Button = MouseButtons.Right Then
+
+            Dim tb As TextBox = TryCast(sender, TextBox)
+            If tb IsNot Nothing Then
+                tb.ContextMenuStrip = New ContextMenuStrip()
+            End If
+        End If
+
+    End Sub
+
+    Public Sub jineret()
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim com As String
+        Dim lastTransactionNo As String = ""
+        Dim newTransactionNo As Integer = 0
+
+        If Not String.IsNullOrEmpty(SelectedAcquisitionID) Then
+            Exit Sub
+        End If
+
+        Try
+            con.Open()
+            com = "SELECT TransactionNo FROM acquisition_tbl ORDER BY LENGTH(TransactionNo) DESC, TransactionNo DESC LIMIT 1"
+
+            Using comsi As New MySqlCommand(com, con)
+                Dim result As Object = comsi.ExecuteScalar()
+                If result IsNot Nothing Then
+                    lastTransactionNo = result.ToString()
+                End If
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        Finally
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+        End Try
+
+        If String.IsNullOrEmpty(lastTransactionNo) Then
+            newTransactionNo = 1
+        Else
+            Dim number As String = lastTransactionNo.Substring(lastTransactionNo.IndexOf("-") + 1)
+            If Integer.TryParse(number, newTransactionNo) Then
+                newTransactionNo += 1
+            Else
+                newTransactionNo = 1
+            End If
+        End If
+
+        txttransactionno.Text = "T-" & newTransactionNo.ToString("D5")
+    End Sub
+
+
+    Private Sub AcquistionDetails_VisibleChanged(sender As Object, e As EventArgs) Handles Me.VisibleChanged
+        If Me.Visible Then
+            ResetLayout()
+            jineret()
+        End If
+    End Sub
+
+    Private Sub btnaddanotherbook_Click(sender As Object, e As EventArgs) Handles btnaddanotherbook.Click
+        DuplicateBookPanel()
+    End Sub
+
+    Private Sub DuplicateBookPanel()
+        bookCount += 1
+
+        Dim isPurchased As Boolean = (cbacquistiontype.SelectedItem IsNot Nothing AndAlso cbacquistiontype.SelectedItem.ToString() = "PURCHASED")
+
+        Dim newPanel As New Guna.UI2.WinForms.Guna2Panel With {
+         .Size = Panel_Duplicate.Size,
+         .BorderColor = Panel_Duplicate.BorderColor,
+         .BorderThickness = Panel_Duplicate.BorderThickness,
+         .BorderRadius = Panel_Duplicate.BorderRadius,
+         .CustomBorderColor = Panel_Duplicate.CustomBorderColor,
+         .FillColor = Panel_Duplicate.FillColor,
+         .BackColor = Panel_Duplicate.BackColor,
+         .Name = "Panel_Book_" & bookCount
+     }
+
+        For Each ctrl As Control In Panel_Duplicate.Controls
+            Dim newCtrl As Control = Nothing
+            If TypeOf ctrl Is Guna.UI2.WinForms.Guna2TextBox Then
+                Dim o = DirectCast(ctrl, Guna.UI2.WinForms.Guna2TextBox)
+                Dim c As New Guna.UI2.WinForms.Guna2TextBox()
+                c.BorderRadius = o.BorderRadius
+                c.BorderColor = o.BorderColor
+                c.FillColor = o.FillColor
+                c.FocusedState.BorderColor = o.FocusedState.BorderColor
+                c.HoverState.BorderColor = o.HoverState.BorderColor
+                c.PlaceholderText = o.PlaceholderText
+                c.PasswordChar = o.PasswordChar
+                newCtrl = c
+                c.Text = ""
+
+                c.Enabled = o.Enabled
+
+                If ctrl.Name = "txtisbn" Or ctrl.Name = "txtbarcode" Then
+                    AddHandler c.TextChanged, AddressOf DynamicSearch_TextChanged
+                ElseIf ctrl.Name = "txtbookprice" Then
+                    AddHandler c.TextChanged, AddressOf DynamicCalculateTotal
+                End If
+
+            ElseIf TypeOf ctrl Is Guna.UI2.WinForms.Guna2ComboBox Then
+                Dim o = DirectCast(ctrl, Guna.UI2.WinForms.Guna2ComboBox)
+                Dim c As New Guna.UI2.WinForms.Guna2ComboBox()
+                c.BorderRadius = o.BorderRadius
+                c.BorderColor = o.BorderColor
+                c.FillColor = o.FillColor
+                For Each item In o.Items : c.Items.Add(item) : Next
+                c.SelectedIndex = -1
+                newCtrl = c
+
+
+                c.Enabled = o.Enabled
+
+                If ctrl.Name = "cbisbnbarcode" Then AddHandler c.SelectedIndexChanged, AddressOf DynamicISBNBarcode_Changed
+
+            ElseIf TypeOf ctrl Is Guna.UI2.WinForms.Guna2NumericUpDown Or TypeOf ctrl Is NumericUpDown Then
+                Dim c As Control
+                If TypeOf ctrl Is Guna.UI2.WinForms.Guna2NumericUpDown Then
+                    Dim o = DirectCast(ctrl, Guna.UI2.WinForms.Guna2NumericUpDown)
+                    Dim n As New Guna.UI2.WinForms.Guna2NumericUpDown()
+                    n.Minimum = o.Minimum : n.Maximum = o.Maximum : n.Value = 0
+                    n.BorderRadius = o.BorderRadius : n.BorderColor = o.BorderColor : n.FillColor = o.FillColor
+                    n.UpDownButtonFillColor = o.UpDownButtonFillColor : n.UpDownButtonForeColor = o.UpDownButtonForeColor
+                    n.Enabled = o.Enabled
+                    c = n
+                    AddHandler n.ValueChanged, AddressOf DynamicCalculateTotal
+                Else
+                    Dim o = DirectCast(ctrl, NumericUpDown)
+                    Dim n As New NumericUpDown()
+                    n.Minimum = o.Minimum : n.Maximum = o.Maximum : n.Value = 0
+                    n.Enabled = o.Enabled
+                    c = n
+                    AddHandler n.ValueChanged, AddressOf DynamicCalculateTotal
+                End If
+                newCtrl = c
+
+            ElseIf TypeOf ctrl Is Guna.UI2.WinForms.Guna2Button Then
+                Dim o = DirectCast(ctrl, Guna.UI2.WinForms.Guna2Button)
+                Dim c As New Guna.UI2.WinForms.Guna2Button()
+
+
+                c.Text = o.Text
+                c.Font = o.Font
+                c.ForeColor = o.ForeColor
+                c.Size = o.Size
+                c.Location = o.Location
+
+
+                c.FillColor = o.FillColor
+                c.BorderRadius = o.BorderRadius
+                c.BorderColor = o.BorderColor
+                c.BorderThickness = o.BorderThickness
+                c.CustomBorderColor = o.CustomBorderColor
+
+
+                c.Image = o.Image
+                c.ImageSize = o.ImageSize
+                c.ImageAlign = o.ImageAlign
+
+
+                c.HoverState.FillColor = o.HoverState.FillColor
+                c.HoverState.BorderColor = o.HoverState.BorderColor
+                c.HoverState.ForeColor = o.HoverState.ForeColor
+                c.PressedColor = o.PressedColor
+
+
+                c.Visible = o.Visible
+                c.Enabled = o.Enabled
+
+                newCtrl = c
+
+                If ctrl.Name = "btnselectsu" Then
+                    AddHandler c.Click, AddressOf btnselectsu_Click
+                End If
+
+            ElseIf TypeOf ctrl Is Label Then
+                newCtrl = New Label()
+            End If
+
+            If newCtrl IsNot Nothing Then
+                newCtrl.Size = ctrl.Size : newCtrl.Location = ctrl.Location : newCtrl.Font = ctrl.Font
+                newCtrl.ForeColor = ctrl.ForeColor : newCtrl.Name = ctrl.Name
+
+                If ctrl.Name = "lblbooknumber" Then
+                    newCtrl.Text = "Book " & bookCount
+                    DirectCast(newCtrl, Label).AutoSize = True
+                End If
+
+
+                If newCtrl.Name = "btnselectsu" Then
+                    newCtrl.Enabled = False
+                End If
+
+                If ctrl.Name = "lblremove" Then
+                    newCtrl.Text = "REMOVE" : newCtrl.Visible = True : newCtrl.Cursor = Cursors.Hand
+                    AddHandler newCtrl.Click, AddressOf RemovePanel_Click
+                ElseIf TypeOf newCtrl Is Label Then
+                    newCtrl.Text = ctrl.Text
+                End If
+                newPanel.Controls.Add(newCtrl)
+            End If
+        Next
+        Me.Controls.Add(newPanel)
+        addedPanels.Add(newPanel)
+        ResetLayout()
+    End Sub
+
+    Private Sub DynamicISBNBarcode_Changed(sender As Object, e As EventArgs)
+        Dim cb = DirectCast(sender, Guna.UI2.WinForms.Guna2ComboBox)
+        Dim panel = DirectCast(cb.Parent, Guna.UI2.WinForms.Guna2Panel)
+
+        Dim txtIsbn As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txtisbn")
+        Dim txtBarcode As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txtbarcode")
+        Dim btnselectsu As Guna.UI2.WinForms.Guna2Button = panel.Controls("btnselectsu")
+
+        If cb.SelectedItem IsNot Nothing Then
+
+            If btnselectsu IsNot Nothing Then btnselectsu.Visible = True
+
+            If cb.SelectedItem.ToString() = "ISBN" Then
+                txtIsbn.Enabled = True
+                txtBarcode.Enabled = False
+                txtBarcode.Text = ""
+
+
+                If btnselectsu IsNot Nothing Then
+                    btnselectsu.Enabled = False
+                End If
+
+            ElseIf cb.SelectedItem.ToString() = "BARCODE" Then
+                txtBarcode.Enabled = True
+                txtIsbn.Enabled = False
+                txtIsbn.Text = ""
+
+
+                If btnselectsu IsNot Nothing Then
+                    btnselectsu.Enabled = True
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub DynamicCalculateTotal(sender As Object, e As EventArgs)
+        Dim ctrl = DirectCast(sender, Control)
+        Dim panel = DirectCast(ctrl.Parent, Guna.UI2.WinForms.Guna2Panel)
+
+        Dim txtPrice As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txtbookprice")
+        Dim numQty As Control = panel.Controls("numupdown")
+        Dim txtTotal As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txttotalcost")
+
+        Dim price As Decimal = 0
+        Dim qty As Integer = 0
+
+        Decimal.TryParse(txtPrice.Text, price)
+        If TypeOf numQty Is Guna.UI2.WinForms.Guna2NumericUpDown Then
+            qty = DirectCast(numQty, Guna.UI2.WinForms.Guna2NumericUpDown).Value
+        ElseIf TypeOf numQty Is NumericUpDown Then
+            qty = DirectCast(numQty, NumericUpDown).Value
+        End If
+
+        txtTotal.Text = (price * qty).ToString("N2")
+    End Sub
+
+    Private Sub DynamicSearch_TextChanged(sender As Object, e As EventArgs)
+
+        Dim tb = DirectCast(sender, Guna.UI2.WinForms.Guna2TextBox)
+
+        If tb.Name = "txtisbn" AndAlso tb.Text.Length >= 13 Then
+
+            If IsISBNOrBarcodeExists("ISBN", tb.Text) Then
+                MessageBox.Show("This ISBN already scanned.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                tb.Clear()
+                Exit Sub
+            End If
+
+        End If
+
+
+        If tb.Name = "txtbarcode" AndAlso tb.Text.Length >= 13 Then
+
+            If IsISBNOrBarcodeExists("Barcode", tb.Text) Then
+                MessageBox.Show("This Barcode already scanned.", "Duplicate Scan", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                tb.Clear()
+                Exit Sub
+            End If
+
+        End If
+
+        Dim panel = DirectCast(tb.Parent, Guna.UI2.WinForms.Guna2Panel)
+        Dim txtTitle As Guna.UI2.WinForms.Guna2TextBox = panel.Controls("txtbooktitle")
+
+        If String.IsNullOrWhiteSpace(tb.Text) Then
+            txtTitle.Text = ""
+            Return
+        End If
+
+        Dim query As String = ""
+        If tb.Name = "txtisbn" Then
+            query = "SELECT `BookTitle` FROM `book_tbl` WHERE `ISBN` = @Val"
+        ElseIf tb.Name = "txtbarcode" Then
+            query = "SELECT `BookTitle` FROM `book_tbl` WHERE `Barcode` = @Val"
+        End If
+
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+            Try
+                con.Open()
+                Using cmd As New MySqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@Val", tb.Text)
+                    Dim result = cmd.ExecuteScalar()
+                    If result IsNot Nothing Then
+                        txtTitle.Text = result.ToString()
+                    Else
+                        txtTitle.Text = ""
+                    End If
+                End Using
+            Catch ex As Exception
+            End Try
+        End Using
+    End Sub
+
+
+    Private Function IsISBNOrBarcodeExists(field As String, value As String) As Boolean
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+
+            Dim transNo As String = txttransactionno.Text.Trim()
+
+            If String.IsNullOrWhiteSpace(transNo) Then
+
+                Dim query As String = $"SELECT COUNT(*) FROM acquisition_tbl WHERE {field} = @val"
+                Using cmd As New MySqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@val", value)
+                    con.Open()
+                    Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                    Return count > 0
+                End Using
+            Else
+
+                Dim query As String = $"SELECT COUNT(*) FROM acquisition_tbl WHERE {field} = @val AND TransactionNo = @tno"
+                Using cmd As New MySqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@val", value)
+                    cmd.Parameters.AddWithValue("@tno", transNo)
+                    con.Open()
+                    Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                    Return count > 0
+                End Using
+            End If
+
+        End Using
+
+    End Function
+
+    Private Sub RemovePanel_Click(sender As Object, e As EventArgs)
+        Dim lbl = DirectCast(sender, Label)
+        Dim panel = DirectCast(lbl.Parent, Guna.UI2.WinForms.Guna2Panel)
+
+        addedPanels.Remove(panel)
+        Me.Controls.Remove(panel)
+        panel.Dispose()
+        ResetLayout()
+
+        bookCount = addedPanels.Count
+
+    End Sub
+
+    Private Sub ResetLayout()
+        If isLayouting Then Exit Sub
+        isLayouting = True
+
+        Me.SuspendLayout()
+        Me.AutoScrollPosition = New Point(0, 0)
+        Panel_Transaction.Location = New Point(12, 29)
+        Panel_Transaction.BringToFront()
+
+        Dim currentY As Integer = BASE_BOOK_Y
+        For i As Integer = 0 To addedPanels.Count - 1
+            addedPanels(i).Location = New Point(BASE_X, currentY)
+            addedPanels(i).BringToFront()
+            currentY += addedPanels(i).Height + GAP
+        Next
+
+        Panel_buttons.Location = New Point(BASE_X, currentY)
+        Panel_buttons.BringToFront()
+        UpdateLabels()
+        Me.ResumeLayout()
+        isLayouting = False
+    End Sub
+
+    Private Sub UpdateLabels()
+
+        bookCount = addedPanels.Count
+
+        For i As Integer = 0 To addedPanels.Count - 1
+            For Each ctrl As Control In addedPanels(i).Controls
+                If ctrl.Name = "lblbooknumber" Then
+                    ctrl.Text = "Book " & (i + 1)
+                End If
+            Next
+        Next
+        lblsubmitcounts.Text = "Submit All (" & addedPanels.Count & " books)"
+    End Sub
+
+    Private Sub AcquistionDetails_Activated(sender As Object, e As EventArgs) Handles MyBase.Activated
+        ResetLayout()
+    End Sub
+
+    Private Sub btnsubmitall_Click(sender As Object, e As EventArgs) Handles btnsubmitall.Click
+
+
+        If cbacquistiontype.SelectedIndex = -1 Then
+            MessageBox.Show("Please select Acquisition Type.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            cbacquistiontype.Focus()
+            Exit Sub
+        End If
+
+        Dim isPurchased As Boolean = (cbacquistiontype.Text = "PURCHASED")
+
+
+        If isPurchased AndAlso cbsupplierdonator.SelectedIndex = -1 Then
+            MessageBox.Show("Please select Supplier.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            cbsupplierdonator.Focus()
+            Exit Sub
+        End If
+
+        Dim usedISBNs As New List(Of String)
+
+        For Each panel As Guna.UI2.WinForms.Guna2Panel In addedPanels
+            Dim bookNum As String = ""
+            For Each ctrl As Control In panel.Controls
+                If ctrl.Name = "lblbooknumber" Then bookNum = ctrl.Text
+            Next
+
+            Dim currentISBN As String = DirectCast(panel.Controls("txtisbn"), Guna.UI2.WinForms.Guna2TextBox).Text.Trim()
+
+            If Not String.IsNullOrEmpty(currentISBN) Then
+                If usedISBNs.Contains(currentISBN) Then
+                    MessageBox.Show("Duplicate ISBN detected: " & currentISBN & " in " & bookNum, "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
+                End If
+                usedISBNs.Add(currentISBN)
+            End If
+
+            If isPurchased Then
+                Dim titleBox = TryCast(panel.Controls("txtbooktitle"), Guna.UI2.WinForms.Guna2TextBox)
+                Dim titleText As String = If(titleBox IsNot Nothing, titleBox.Text.Trim(), "")
+
+                If String.IsNullOrWhiteSpace(titleText) Then
+                    Dim isbnVal = TryCast(panel.Controls("txtisbn"), Guna.UI2.WinForms.Guna2TextBox).Text.Trim()
+                    Dim barcodeVal = TryCast(panel.Controls("txtbarcode"), Guna.UI2.WinForms.Guna2TextBox).Text.Trim()
+
+                    If Not String.IsNullOrWhiteSpace(isbnVal) OrElse Not String.IsNullOrWhiteSpace(barcodeVal) Then
+                        Try
+                            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                                con.Open()
+                                Dim lookup As String = ""
+                                If Not String.IsNullOrWhiteSpace(isbnVal) Then
+                                    lookup = "SELECT BookTitle FROM book_tbl WHERE ISBN = @val LIMIT 1"
+                                ElseIf Not String.IsNullOrWhiteSpace(barcodeVal) Then
+                                    lookup = "SELECT BookTitle FROM book_tbl WHERE Barcode = @val LIMIT 1"
+                                End If
+
+                                If lookup <> "" Then
+                                    Using cmd As New MySqlCommand(lookup, con)
+                                        cmd.Parameters.AddWithValue("@val", If(Not String.IsNullOrWhiteSpace(isbnVal), isbnVal, barcodeVal))
+                                        Dim res = cmd.ExecuteScalar()
+                                        If res IsNot Nothing AndAlso Not IsDBNull(res) Then
+                                            If titleBox IsNot Nothing Then titleBox.Text = res.ToString()
+                                            titleText = res.ToString()
+                                        End If
+                                    End Using
+                                End If
+                            End Using
+                        Catch
+                        End Try
+                    End If
+                End If
+
+                If String.IsNullOrWhiteSpace(titleText) Then
+                    MessageBox.Show("Please provide Book Title for " & bookNum, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    If titleBox IsNot Nothing Then titleBox.Focus()
+                    Return
+                End If
+            End If
+
+
+            For Each ctrl As Control In panel.Controls
+                If ctrl.Name = "cbisbnbarcode" AndAlso DirectCast(ctrl, Guna.UI2.WinForms.Guna2ComboBox).SelectedIndex = -1 Then
+                    MessageBox.Show("Please select ISBN/Barcode for " & bookNum, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    ctrl.Focus()
+                    Exit Sub
+                End If
+
+
+                If TypeOf ctrl Is Guna.UI2.WinForms.Guna2TextBox Then
+                    Dim tb = DirectCast(ctrl, Guna.UI2.WinForms.Guna2TextBox)
+                    If isPurchased AndAlso String.IsNullOrWhiteSpace(tb.Text) AndAlso tb.Enabled = True AndAlso tb.Name <> "txttotalcost" Then
+                        MessageBox.Show("Please fill in all fields for " & bookNum, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        tb.Focus()
+                        Exit Sub
+                    End If
+                End If
+
+
+                If ctrl.Name = "numupdown" Then
+                    If DirectCast(ctrl, Guna.UI2.WinForms.Guna2NumericUpDown).Value <= 0 Then
+                        MessageBox.Show("Quantity for " & bookNum & " must be greater than 0.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        ctrl.Focus()
+                        Exit Sub
+                    End If
+                End If
+            Next
+        Next
+
+
+        Try
+            Dim dt As DataTable = TryCast(Acquisition2.DataGridView1.DataSource, DataTable)
+
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                con.Open()
+                For Each panel As Guna.UI2.WinForms.Guna2Panel In addedPanels
+                    Dim isbn As String = DirectCast(panel.Controls("txtisbn"), Guna.UI2.WinForms.Guna2TextBox).Text
+                    Dim barcode As String = DirectCast(panel.Controls("txtbarcode"), Guna.UI2.WinForms.Guna2TextBox).Text
+                    Dim title As String = DirectCast(panel.Controls("txtbooktitle"), Guna.UI2.WinForms.Guna2TextBox).Text
+
+                    Dim supplierName As String = If(isPurchased, cbsupplierdonator.Text, "")
+                    Dim donorName As String = If(Not isPurchased, txtdonor.Text, "")
+
+
+                    Dim qtyRaw = DirectCast(panel.Controls("numupdown"), Guna.UI2.WinForms.Guna2NumericUpDown).Value
+                    Dim priceText = DirectCast(panel.Controls("txtbookprice"), Guna.UI2.WinForms.Guna2TextBox).Text
+
+
+                    Dim qtyValue As Integer = CInt(qtyRaw)
+                    Dim priceValue As Object = DBNull.Value
+                    Dim totalValue As Object = DBNull.Value
+
+                    Dim parsedPrice As Decimal
+                    If isPurchased AndAlso Decimal.TryParse(priceText, parsedPrice) Then
+                        priceValue = parsedPrice
+                        totalValue = parsedPrice * qtyValue
+                    End If
+
+                    Dim transNo As String = txttransactionno.Text
+                    Dim dateAcq As String = DateTimePicker1.Value.ToString("yyyy-MM-dd")
+
+                    Dim sql As String = "INSERT INTO acquisition_tbl (TransactionNo, ISBN, Barcode, BookTitle, SupplierName, Donor, Quantity, BookPrice, TotalCost, DateAcquired) " &
+                                    "VALUES (@trans, @isbn, @barcode, @title, @sup, @don, @qty, @price, @total, @date)"
+
+                    Using cmd As New MySqlCommand(sql, con)
+                        cmd.Parameters.AddWithValue("@trans", transNo)
+                        cmd.Parameters.AddWithValue("@isbn", isbn)
+                        cmd.Parameters.AddWithValue("@barcode", barcode)
+                        cmd.Parameters.AddWithValue("@title", title)
+                        cmd.Parameters.AddWithValue("@sup", supplierName)
+                        cmd.Parameters.AddWithValue("@don", donorName)
+                        cmd.Parameters.AddWithValue("@qty", qtyValue)
+                        cmd.Parameters.AddWithValue("@price", priceValue)
+                        cmd.Parameters.AddWithValue("@total", totalValue)
+                        cmd.Parameters.AddWithValue("@date", dateAcq)
+                        cmd.ExecuteNonQuery()
+                    End Using
+
+                    GlobalVarsModule.LogAudit(
+                    actionType:="INSERT",
+                    formName:="ACQUISITION FORM",
+                    description:=$"Added New Acquisition Record for Book: {title} (ISBN: {isbn}, TransNo: {transNo})",
+                    recordID:=transNo
+                    )
+
+                    Dim newRow As DataRow = dt.NewRow()
+                    newRow("ISBN") = isbn
+                    newRow("Barcode") = barcode
+                    newRow("BookTitle") = title
+                    newRow("SupplierName") = supplierName
+                    newRow("Donor") = donorName
+                    newRow("Quantity") = qtyValue
+                    newRow("BookPrice") = If(priceValue Is DBNull.Value, 0, priceValue)
+                    newRow("TotalCost") = If(totalValue Is DBNull.Value, 0, totalValue)
+                    newRow("TransactionNo") = transNo
+                    newRow("DateAcquired") = dateAcq
+                    dt.Rows.Add(newRow)
+                Next
+            End Using
+
+            MessageBox.Show("Books Added Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Me.Close()
+            clearlahatsu(False)
+
+        Catch ex As Exception
+            MessageBox.Show("Error processing transaction: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+
+
+    Private Sub cbacquistiontype_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbacquistiontype.SelectedIndexChanged
+        Dim isPurchased As Boolean = (cbacquistiontype.SelectedItem IsNot Nothing AndAlso cbacquistiontype.SelectedItem.ToString() = "PURCHASED")
+
+        If isPurchased Then
+            lblsupdonator.Text = "SUPPLIER:"
+            cbsupplierdonator.Visible = True
+            cbsupplierdonator.Enabled = True
+            For Each panel In addedPanels
+                panel.Controls("txtbookprice").Enabled = True
+                panel.Controls("numupdown").Enabled = True
+            Next
+        Else
+            lblsupdonator.Text = "DONATOR:"
+            cbsupplierdonator.Visible = False
+            cbsupplierdonator.Enabled = True
+            cbsupplierdonator.SelectedIndex = -1
+            txtbookprice.Enabled = False
+
+            For Each panel In addedPanels
+                Dim txtPrice = DirectCast(panel.Controls("txtbookprice"), Guna.UI2.WinForms.Guna2TextBox)
+                Dim txtTotal = DirectCast(panel.Controls("txttotalcost"), Guna.UI2.WinForms.Guna2TextBox)
+                Dim numQty = DirectCast(panel.Controls("numupdown"), Guna.UI2.WinForms.Guna2NumericUpDown)
+
+
+                txtPrice.Text = ""
+                txtPrice.Enabled = False
+                txtTotal.Text = ""
+                numQty.Enabled = True
+
+            Next
+        End If
+    End Sub
+
+    Private Sub cbisbnbarcode_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbisbnbarcode.SelectedIndexChanged
+        If cbisbnbarcode.Text = "ISBN" Then
+            txtisbn.Enabled = True
+            txtbarcode.Enabled = False
+            btnselectsu.Enabled = False
+            txtbarcode.Text = ""
+        ElseIf cbisbnbarcode.Text = "BARCODE" Then
+            txtisbn.Enabled = False
+            txtbarcode.Enabled = True
+            btnselectsu.Enabled = True
+            txtisbn.Text = ""
+        End If
+    End Sub
+
+
+    Private Sub CalculateTotal()
+        Dim price As Decimal = 0
+        Dim qty As Decimal = numupdown.Value
+
+        If Decimal.TryParse(txtbookprice.Text, price) Then
+            txttotalcost.Text = (price * qty).ToString("F2")
+        Else
+            txttotalcost.Text = "0.00"
+        End If
+    End Sub
+
+    Private Function balidisyun() As Boolean
+        If String.IsNullOrEmpty(SelectedAcquisitionID) Then Return False
+
+        Try
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                con.Open()
+
+
+                Dim originalDate As DateTime
+                Dim checksu As String = "SELECT DateAcquired FROM acquisition_tbl WHERE ID=@id"
+                Using cmdsuss As New MySqlCommand(checksu, con)
+                    cmdsuss.Parameters.AddWithValue("@id", SelectedAcquisitionID)
+                    Dim result = cmdsuss.ExecuteScalar()
+                    If result Is Nothing OrElse IsDBNull(result) Then Return True
+                    originalDate = Convert.ToDateTime(result)
+                End Using
+
+
+                If originalDate.Date < DateTime.Today Then
+
+                    If DateTimePicker1.Value.Date >= DateTime.Today Then
+                        MessageBox.Show("This is a past record. Updating to the current or a future date is not allowed.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                        Return False
+                    End If
+                End If
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Validation Error: " & ex.Message)
+            Return False
+        End Try
+
+        Return True
+    End Function
+    Private Sub btnupdate_Click(sender As Object, e As EventArgs) Handles btnupdate.Click
+
+        If Not balidisyun() Then Exit Sub
+        If String.IsNullOrEmpty(SelectedAcquisitionID) Then Return
+
+        If numupdown.Value <= 0 Then
+            MessageBox.Show("Quantity cannot be zero.", "Invalid Quantity", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            numupdown.Focus()
+            Exit Sub
+        End If
+
+        Try
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+                con.Open()
+
+
+                Dim transNo As String = ""
+                Dim getTransSql As String = "SELECT TransactionNo FROM acquisition_tbl WHERE ID=@id"
+
+                Using cmdTrans = New MySqlCommand(getTransSql, con)
+                    cmdTrans.Parameters.AddWithValue("@id", SelectedAcquisitionID)
+                    transNo = Convert.ToString(cmdTrans.ExecuteScalar())
+                End Using
+
+
+                Dim currentCount As Integer = 0
+                Dim isbnVal As String = txtisbn.Text.Trim()
+                Dim barcodeVal As String = txtbarcode.Text.Trim()
+                Dim countSql As String = ""
+                If Not String.IsNullOrWhiteSpace(isbnVal) Then
+                    countSql = "SELECT COUNT(*) FROM acession_tbl WHERE TransactionNo=@tno AND ISBN=@isbn"
+                    Using cmdCount = New MySqlCommand(countSql, con)
+                        cmdCount.Parameters.AddWithValue("@tno", transNo)
+                        cmdCount.Parameters.AddWithValue("@isbn", isbnVal)
+                        currentCount = Convert.ToInt32(cmdCount.ExecuteScalar())
+                    End Using
+                ElseIf Not String.IsNullOrWhiteSpace(barcodeVal) Then
+                    countSql = "SELECT COUNT(*) FROM acession_tbl WHERE TransactionNo=@tno AND Barcode=@barcode"
+                    Using cmdCount = New MySqlCommand(countSql, con)
+                        cmdCount.Parameters.AddWithValue("@tno", transNo)
+                        cmdCount.Parameters.AddWithValue("@barcode", barcodeVal)
+                        currentCount = Convert.ToInt32(cmdCount.ExecuteScalar())
+                    End Using
+                Else
+                    countSql = "SELECT COUNT(*) FROM acession_tbl WHERE TransactionNo=@tno AND BookTitle=@title"
+                    Using cmdCount = New MySqlCommand(countSql, con)
+                        cmdCount.Parameters.AddWithValue("@tno", transNo)
+                        cmdCount.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                        currentCount = Convert.ToInt32(cmdCount.ExecuteScalar())
+                    End Using
+                End If
+
+                Dim newQty As Integer = CInt(numupdown.Value)
+
+                ' Use transaction for consistency when modifying accession rows and acquisition record
+                Dim trans As MySqlTransaction = con.BeginTransaction()
+                Try
+                    If newQty > currentCount Then
+
+                    ' Always add missing accession records when increasing quantity
+                    Dim detectedShelf As String = "1"
+                    Dim getShelfSql As String = "SELECT Shelf FROM acession_tbl WHERE BookTitle=@title LIMIT 1"
+                    Using cmdShelf As New MySqlCommand(getShelfSql, con)
+                        cmdShelf.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                        Dim result = cmdShelf.ExecuteScalar()
+                        If result IsNot Nothing AndAlso Not IsDBNull(result) Then
+                            detectedShelf = result.ToString()
+                        End If
+                    End Using
+
+                    Dim toAdd As Integer = newQty - currentCount
+                    Dim rnd As New Random()
+                    For i As Integer = 1 To toAdd
+                        Dim newAccessionID As String = Nothing
+                        ' ensure uniqueness of accession id
+                        Do
+                            newAccessionID = rnd.Next(10000, 99999).ToString()
+                            Dim existsSql As String = "SELECT COUNT(*) FROM acession_tbl WHERE AccessionID=@accid"
+                            Using existsCmd As New MySqlCommand(existsSql, con, trans)
+                                existsCmd.Parameters.AddWithValue("@accid", newAccessionID)
+                                Dim cnt As Integer = Convert.ToInt32(existsCmd.ExecuteScalar())
+                                If cnt = 0 Then Exit Do
+                            End Using
+                        Loop
+                        Dim insertAccSql As String = "INSERT INTO acession_tbl (TransactionNo, AccessionID, ISBN, Barcode, BookTitle, Shelf, SupplierName, Donor, Status) " &
+                                        "VALUES (@tno, @accid, @isbn, @barcode, @title, @shelf, @sup, @don, 'Available')"
+                        Using cmdAdd = New MySqlCommand(insertAccSql, con, trans)
+                            cmdAdd.Parameters.AddWithValue("@tno", transNo)
+                            cmdAdd.Parameters.AddWithValue("@accid", newAccessionID)
+                            cmdAdd.Parameters.AddWithValue("@isbn", txtisbn.Text)
+                            cmdAdd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
+                            cmdAdd.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                            cmdAdd.Parameters.AddWithValue("@shelf", detectedShelf)
+                            cmdAdd.Parameters.AddWithValue("@sup", If(cbacquistiontype.Text = "PURCHASED", cbsupplierdonator.Text, ""))
+                            cmdAdd.Parameters.AddWithValue("@don", If(cbacquistiontype.Text <> "PURCHASED", txtdonor.Text, ""))
+                            cmdAdd.ExecuteNonQuery()
+                        End Using
+                    Next
+                    trans.Commit()
+                    trans = Nothing
+                ElseIf newQty < currentCount Then
+
+                    Dim toDelete As Integer = currentCount - newQty
+
+                    If Not String.IsNullOrWhiteSpace(isbnVal) Then
+                        Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND ISBN=@isbn AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
+                        Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
+                            cmdDel.Parameters.AddWithValue("@tno", transNo)
+                            cmdDel.Parameters.AddWithValue("@isbn", isbnVal)
+                            cmdDel.ExecuteNonQuery()
+                        End Using
+                    ElseIf Not String.IsNullOrWhiteSpace(barcodeVal) Then
+                        Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND Barcode=@barcode AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
+                        Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
+                            cmdDel.Parameters.AddWithValue("@tno", transNo)
+                            cmdDel.Parameters.AddWithValue("@barcode", barcodeVal)
+                            cmdDel.ExecuteNonQuery()
+                        End Using
+                    Else
+                        Dim deleteAccSql = $"DELETE FROM acession_tbl WHERE TransactionNo=@tno AND BookTitle=@title AND Status='Available' ORDER BY ID DESC LIMIT {toDelete}"
+                        Using cmdDel = New MySqlCommand(deleteAccSql, con, trans)
+                            cmdDel.Parameters.AddWithValue("@tno", transNo)
+                            cmdDel.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                            cmdDel.ExecuteNonQuery()
+                        End Using
+                    End If
+
+                    trans.Commit()
+                    trans = Nothing
+                End If
+
+
+                Dim isPurchased As Boolean = (cbacquistiontype.Text = "PURCHASED")
+
+                Dim sql As String = "UPDATE acquisition_tbl SET " &
+                 "ISBN=@isbn, Barcode=@barcode, BookTitle=@title, " &
+                 "SupplierName=@sup, Donor=@don, Quantity=@qty, " &
+                 "BookPrice=@price, TotalCost=@total, DateAcquired=@date " &
+                 "WHERE ID=@id"
+
+                Using cmd As New MySqlCommand(sql, con, If(trans IsNot Nothing, trans, Nothing))
+                    cmd.Parameters.AddWithValue("@isbn", txtisbn.Text)
+                    cmd.Parameters.AddWithValue("@barcode", txtbarcode.Text)
+                    cmd.Parameters.AddWithValue("@title", txtbooktitle.Text)
+                    cmd.Parameters.AddWithValue("@sup", If(isPurchased, cbsupplierdonator.Text, ""))
+                    cmd.Parameters.AddWithValue("@don", If(Not isPurchased, txtdonor.Text, ""))
+                    cmd.Parameters.AddWithValue("@qty", numupdown.Value)
+
+                    Dim price As Decimal = 0
+                    Decimal.TryParse(txtbookprice.Text, price)
+                    cmd.Parameters.AddWithValue("@price", If(isPurchased, price, DBNull.Value))
+                    cmd.Parameters.AddWithValue("@total", If(isPurchased, price * numupdown.Value, DBNull.Value))
+
+                    cmd.Parameters.AddWithValue("@date", DateTimePicker1.Value.ToString("yyyy-MM-dd"))
+                    cmd.Parameters.AddWithValue("@id", SelectedAcquisitionID)
+
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                If trans IsNot Nothing Then
+                    trans.Commit()
+                    trans = Nothing
+                End If
+            Catch
+                Try
+                    If trans IsNot Nothing Then trans.Rollback()
+                Catch
+                End Try
+                Throw
+            End Try
+            End Using
+
+            GlobalVarsModule.LogAudit(
+             actionType:="UPDATE",
+             formName:="ACQUISITION FORM",
+             description:=$"Updated Acquisition Record for Book: {txtbooktitle.Text} (ID: {SelectedAcquisitionID})",
+             recordID:=SelectedAcquisitionID
+)
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is AuditTrail Then
+                    Dim load = DirectCast(form, AuditTrail)
+                    load.refreshaudit()
+                End If
+            Next
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is TotalBooksView Then
+                    Dim loadsu = DirectCast(form, TotalBooksView)
+                    loadsu.refreshtotalbooks()
+                End If
+            Next
+
+            For Each form In Application.OpenForms
+                If TypeOf form Is Accession Then
+                    Dim lodx = DirectCast(form, Accession)
+                    lodx.RefreshAccessionData()
+                End If
+            Next
+
+            MessageBox.Show("Record Updated Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+            cbacquistiontype.Enabled = True
+            RemoveHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
+
+            GlobalVarsModule.TriggerDatabaseUpdated()
+
+            Me.Close()
+
+        Catch ex As Exception
+            MessageBox.Show("Update Error: " & ex.Message)
+        End Try
+
+    End Sub
+
+
+    Private Sub txtbookprice_TextChanged(sender As Object, e As EventArgs) Handles txtbookprice.TextChanged
+        CalculateTotal()
+    End Sub
+
+    Private Sub AcquistionDetails_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+
+
+        If addedPanels.Count > 1 Then
+            Dim result As DialogResult = MessageBox.Show(
+            "You have multiple book panels open. Closing this form will discard all added books and reset to Book 1.",
+            "Confirm Exit",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Warning)
+
+            If result = DialogResult.No Then
+                e.Cancel = True
+            Else
+
+                clearlahatsu(False)
+            End If
+        End If
+    End Sub
+
+    Private Sub btnselectsu_Click(sender As Object, e As EventArgs) Handles btnselectsu.Click
+
+        Dim btn = DirectCast(sender, Guna.UI2.WinForms.Guna2Button)
+        Dim targetPanel = DirectCast(btn.Parent, Guna.UI2.WinForms.Guna2Panel)
+
+        SelectBarcode.TargetTextBox = targetPanel.Controls("txtbarcode")
+        SelectBarcode.ShowDialog()
+
+    End Sub
+
+    Private Sub AcquistionDetails_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+        Me.Dispose()
+    End Sub
+End Class
