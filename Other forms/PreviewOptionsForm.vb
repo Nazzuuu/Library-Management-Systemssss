@@ -70,4 +70,10 @@ Public Class PreviewOptionsForm
             dlg.Dispose()
         End Try
     End Function
+
+    ' Ensure Load event exists to match any designer or serialized event hookups.
+    Private Sub PreviewOptionsForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Intentionally left blank - prevents "Method 'PreviewOptionsForm_Load' not found" errors
+        ' when the form instance gets created and the Load event is wired from designer/resx.
+    End Sub
 End Class

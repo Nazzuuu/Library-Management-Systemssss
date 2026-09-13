@@ -46,6 +46,7 @@ Partial Class LibraryCardss
         Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         Label13 = New Label()
         Guna2Panel2 = New Guna.UI2.WinForms.Guna2Panel()
+        lblreprint = New LinkLabel()
         Label1 = New Label()
         lblname = New Label()
         lbllink = New LinkLabel()
@@ -111,6 +112,7 @@ Partial Class LibraryCardss
         Guna2Panel2.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         Guna2Panel2.BorderRadius = 5
         Guna2Panel2.BorderThickness = 2
+        Guna2Panel2.Controls.Add(lblreprint)
         Guna2Panel2.Controls.Add(Label1)
         Guna2Panel2.Controls.Add(lblname)
         Guna2Panel2.Controls.Add(lbllink)
@@ -140,12 +142,26 @@ Partial Class LibraryCardss
         Guna2Panel2.Size = New Size(845, 543)
         Guna2Panel2.TabIndex = 95
         ' 
+        ' lblreprint
+        ' 
+        lblreprint.AutoSize = True
+        lblreprint.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        lblreprint.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblreprint.LinkColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        lblreprint.Location = New Point(32, 110)
+        lblreprint.Name = "lblreprint"
+        lblreprint.Size = New Size(161, 16)
+        lblreprint.TabIndex = 125
+        lblreprint.TabStop = True
+        lblreprint.Text = "REPRINT LIBRARY CARD"
+        ToolTip1.SetToolTip(lblreprint, "Click Here")
+        ' 
         ' Label1
         ' 
         Label1.AutoSize = True
         Label1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label1.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label1.Location = New Point(32, 138)
+        Label1.Location = New Point(32, 157)
         Label1.Name = "Label1"
         Label1.Size = New Size(76, 16)
         Label1.TabIndex = 124
@@ -156,7 +172,7 @@ Partial Class LibraryCardss
         lblname.AutoSize = True
         lblname.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblname.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblname.Location = New Point(144, 138)
+        lblname.Location = New Point(144, 157)
         lblname.Name = "lblname"
         lblname.Size = New Size(15, 16)
         lblname.TabIndex = 123
@@ -168,12 +184,12 @@ Partial Class LibraryCardss
         lbllink.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
         lbllink.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         lbllink.LinkColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbllink.Location = New Point(379, 451)
+        lbllink.Location = New Point(334, 451)
         lbllink.Name = "lbllink"
-        lbllink.Size = New Size(87, 16)
+        lbllink.Size = New Size(183, 16)
         lbllink.TabIndex = 122
         lbllink.TabStop = True
-        lbllink.Text = "VIEW PHOTO"
+        lbllink.Text = "PREVIEW AND PRINT PHOTO"
         ToolTip1.SetToolTip(lbllink, "Click Here")
         ' 
         ' lblgrades
@@ -181,7 +197,7 @@ Partial Class LibraryCardss
         lblgrades.AutoSize = True
         lblgrades.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblgrades.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblgrades.Location = New Point(32, 252)
+        lblgrades.Location = New Point(32, 271)
         lblgrades.Name = "lblgrades"
         lblgrades.Size = New Size(55, 16)
         lblgrades.TabIndex = 120
@@ -192,7 +208,7 @@ Partial Class LibraryCardss
         Label3.AutoSize = True
         Label3.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label3.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label3.Location = New Point(32, 293)
+        Label3.Location = New Point(32, 312)
         Label3.Name = "Label3"
         Label3.Size = New Size(64, 16)
         Label3.TabIndex = 119
@@ -203,7 +219,7 @@ Partial Class LibraryCardss
         Label4.AutoSize = True
         Label4.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label4.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label4.Location = New Point(32, 335)
+        Label4.Location = New Point(32, 354)
         Label4.Name = "Label4"
         Label4.Size = New Size(63, 16)
         Label4.TabIndex = 118
@@ -214,7 +230,7 @@ Partial Class LibraryCardss
         Label5.AutoSize = True
         Label5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label5.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label5.Location = New Point(32, 214)
+        Label5.Location = New Point(32, 233)
         Label5.Name = "Label5"
         Label5.Size = New Size(95, 16)
         Label5.TabIndex = 117
@@ -225,7 +241,7 @@ Partial Class LibraryCardss
         Label9.AutoSize = True
         Label9.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         Label9.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        Label9.Location = New Point(32, 175)
+        Label9.Location = New Point(32, 194)
         Label9.Name = "Label9"
         Label9.Size = New Size(36, 16)
         Label9.TabIndex = 115
@@ -407,7 +423,7 @@ Partial Class LibraryCardss
         lblgrade.AutoSize = True
         lblgrade.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblgrade.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblgrade.Location = New Point(145, 252)
+        lblgrade.Location = New Point(145, 271)
         lblgrade.Name = "lblgrade"
         lblgrade.Size = New Size(15, 16)
         lblgrade.TabIndex = 100
@@ -418,7 +434,7 @@ Partial Class LibraryCardss
         lblsection.AutoSize = True
         lblsection.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblsection.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblsection.Location = New Point(145, 293)
+        lblsection.Location = New Point(145, 312)
         lblsection.Name = "lblsection"
         lblsection.Size = New Size(15, 16)
         lblsection.TabIndex = 99
@@ -429,7 +445,7 @@ Partial Class LibraryCardss
         lblstrand.AutoSize = True
         lblstrand.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblstrand.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblstrand.Location = New Point(145, 335)
+        lblstrand.Location = New Point(145, 354)
         lblstrand.Name = "lblstrand"
         lblstrand.Size = New Size(15, 16)
         lblstrand.TabIndex = 98
@@ -440,7 +456,7 @@ Partial Class LibraryCardss
         lbldepartment.AutoSize = True
         lbldepartment.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lbldepartment.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lbldepartment.Location = New Point(144, 214)
+        lbldepartment.Location = New Point(144, 233)
         lbldepartment.Name = "lbldepartment"
         lbldepartment.Size = New Size(15, 16)
         lbldepartment.TabIndex = 97
@@ -451,7 +467,7 @@ Partial Class LibraryCardss
         lblrn.AutoSize = True
         lblrn.Font = New Font("Tahoma", 9.75F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
         lblrn.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        lblrn.Location = New Point(144, 175)
+        lblrn.Location = New Point(144, 194)
         lblrn.Name = "lblrn"
         lblrn.Size = New Size(15, 16)
         lblrn.TabIndex = 95
@@ -517,4 +533,5 @@ Partial Class LibraryCardss
     Friend WithEvents ToolTip1 As ToolTip
     Friend WithEvents Label1 As Label
     Friend WithEvents lblname As Label
+    Friend WithEvents lblreprint As LinkLabel
 End Class

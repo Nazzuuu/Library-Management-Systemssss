@@ -265,9 +265,9 @@ Partial Class LibraryCardPreview
         ' 
         ' PictureBox2
         ' 
-        PictureBox2.Location = New Point(179, 302)
+        PictureBox2.Location = New Point(161, 276)
         PictureBox2.Name = "PictureBox2"
-        PictureBox2.Size = New Size(150, 62)
+        PictureBox2.Size = New Size(186, 62)
         PictureBox2.TabIndex = 132
         PictureBox2.TabStop = False
         ' 

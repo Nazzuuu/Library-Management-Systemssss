@@ -1075,5 +1075,8 @@ Public Class LibraryCardss
         End Try
     End Sub
 
-    ' combobox removed: no index-changed handlers needed
+    Private Sub lblreprint_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles lblreprint.LinkClicked
+        reprintlibrarycard.ShowDialog()
+    End Sub
+
 End Class
