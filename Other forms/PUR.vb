@@ -14,13 +14,17 @@ Class PUR
 
     Private Async Sub OnDatabaseUpdated()
         Try
-            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM pur_tbl")
+            ' Load penalty records (overdue / damaged / lost) instead of pur_tbl which may be unused
+            Dim q As String = "SELECT Borrower, FullName, ReturnedBook AS BookTitle, BorrowedDate, DueDate, ReturnDate, TransactionReceipt, Status " & _
+                              "FROM penalty_tbl ORDER BY BorrowedDate DESC"
+            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, q)
         Catch
         End Try
     End Sub
 
     Public Sub refreshPUR(Optional filter As String = "NOT_PENALIZED")
-        Dim query As String = "SELECT * FROM pur_tbl"
+        ' Show penalty records by default (these include statuses like Overdue, Damaged, Lost)
+        Dim query As String = "SELECT Borrower, FullName, ReturnedBook AS BookTitle, BorrowedDate, DueDate, ReturnDate, TransactionReceipt, Status FROM penalty_tbl ORDER BY BorrowedDate DESC"
 
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
 

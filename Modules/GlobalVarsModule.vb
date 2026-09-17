@@ -53,6 +53,40 @@ Module GlobalVarsModule
                 End Try
             Catch
             End Try
+
+            Try
+                CleanupLocalMachineLogins()
+            Catch
+            End Try
+        Catch
+        End Try
+    End Sub
+
+    Private Sub CleanupLocalMachineLogins()
+        Try
+            Dim localIP As String = GetLocalIPAddress()
+            If String.IsNullOrWhiteSpace(localIP) Then Return
+
+            Using con As New MySqlConnection(connectionString)
+                con.Open()
+
+                Using cmd As New MySqlCommand("UPDATE superadmin_tbl SET is_logged_in = 0, CurrentIP = '0.0.0.0' WHERE CurrentIP = @ip AND is_logged_in = 1", con)
+                    cmd.Parameters.AddWithValue("@ip", localIP)
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                Using cmd2 As New MySqlCommand("UPDATE user_staff_tbl SET is_logged_in = 0, CurrentIP = '0.0.0.0' WHERE CurrentIP = @ip AND is_logged_in = 1", con)
+                    cmd2.Parameters.AddWithValue("@ip", localIP)
+                    cmd2.ExecuteNonQuery()
+                End Using
+
+                Using cmd3 As New MySqlCommand("UPDATE borroweredit_tbl SET is_logged_in = 0, CurrentIP = NULL WHERE CurrentIP = @ip AND is_logged_in = 1", con)
+                    cmd3.Parameters.AddWithValue("@ip", localIP)
+                    cmd3.ExecuteNonQuery()
+                End Using
+
+                con.Close()
+            End Using
         Catch
         End Try
     End Sub

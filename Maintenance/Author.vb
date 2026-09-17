@@ -3,6 +3,9 @@ Imports MySql.Data.MySqlClient
 Imports Windows.Win32.System
 
 Public Class Author
+    Private isEditMode As Boolean = False
+    Private editAuthorID As Integer = 0
+    Private oldAuthorName As String = ""
     Private Sub Author_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         TopMost = True
         Me.Font = New Font("Baskerville Old Face", 9)
@@ -60,17 +63,125 @@ Public Class Author
                 DataGridView1.Columns("ID").Visible = False
             End If
 
-
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
             DataGridView1.ReadOnly = True
-        Catch ex As Exception
 
+        Catch ex As Exception
+            MessageBox.Show("Error while setting grid style: " & ex.Message)
         End Try
     End Sub
 
+    Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
 
+        If DataGridView1.Columns.Contains("AuthorName") Then
+            DataGridView1.Columns("AuthorName").DisplayIndex = 0
+        End If
+
+        DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
+
+    End Sub
+
+
+    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+
+        If e.RowIndex < 0 Then Exit Sub
+
+        Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+
+        If DataGridView1.Columns(e.ColumnIndex).Name = "Edit" Then
+
+            editAuthorID = CInt(row.Cells("ID").Value)
+            oldAuthorName = row.Cells("AuthorName").Value.ToString()
+
+            txtauthor.Text = oldAuthorName
+
+            isEditMode = True
+
+            DataGridView1.ClearSelection()
+            row.Selected = True
+
+            txtauthor.Focus()
+
+
+        ElseIf DataGridView1.Columns(e.ColumnIndex).Name = "Delete" Then
+
+            Dim authorName As String = row.Cells("AuthorName").Value.ToString()
+            Dim ID As Integer = CInt(row.Cells("ID").Value)
+
+            Dim result As DialogResult = MessageBox.Show(
+            "Are you sure you want to delete " & authorName & "?",
+            "Confirm Delete",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Warning
+        )
+
+            If result = DialogResult.Yes Then
+
+                Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+
+                    Try
+                        con.Open()
+
+
+                        Dim bookCom As New MySqlCommand(
+                        "SELECT COUNT(*) FROM `book_tbl` WHERE `Author` = @author",
+                        con
+                    )
+
+                        bookCom.Parameters.AddWithValue("@author", authorName)
+
+                        Dim bookCount As Integer = CInt(bookCom.ExecuteScalar())
+
+                        If bookCount > 0 Then
+                            MessageBox.Show(
+                            "Cannot delete this author. They are assigned to " &
+                            bookCount & " book(s).",
+                            "Information",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        )
+                            Exit Sub
+                        End If
+
+                        Dim deleteCom As New MySqlCommand(
+                        "DELETE FROM `author_tbl` WHERE `ID` = @id",
+                        con
+                    )
+
+                        deleteCom.Parameters.AddWithValue("@id", ID)
+                        deleteCom.ExecuteNonQuery()
+
+                        GlobalVarsModule.LogAudit(
+                        actionType:="DELETE",
+                        formName:="AUTHOR FORM",
+                        description:=$"Deleted Author: {authorName}",
+                        recordID:=ID.ToString(),
+                        oldValue:=authorName
+                    )
+                        MessageBox.Show(
+                        "Author deleted successfully!",
+                        "Success",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    )
+
+
+                        refreshauthor()
+
+                    Catch ex As Exception
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    End Try
+
+                End Using
+
+            End If
+
+        End If
+
+    End Sub
     Private Sub Guna2ControlBox1_Click(sender As Object, e As EventArgs)
         MainForm.Show()
 
@@ -94,193 +205,86 @@ Public Class Author
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim author As String = txtauthor.Text.Trim()
-        Dim insertedID As Integer = 0
 
         If String.IsNullOrWhiteSpace(author) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
 
-
         Try
-            con.Open()
 
-            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl` WHERE `AuthorName` = @author", con)
-            comsu.Parameters.AddWithValue("@author", author)
-            Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar())
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
 
-            If count > 0 Then
-                MsgBox("This author already exists.", vbExclamation, "Duplication is not allowed.")
-                Exit Sub
-            End If
-
-            Dim com As New MySqlCommand("INSERT INTO `author_tbl`(`AuthorName`) VALUES (@author); SELECT LAST_INSERT_ID()", con)
-            com.Parameters.AddWithValue("@author", author)
-
-            insertedID = Convert.ToInt32(com.ExecuteScalar())
-
-            GlobalVarsModule.LogAudit(
-                actionType:="ADD",
-                formName:="AUTHOR FORM",
-                description:=$"Added new Author: {author}",
-                recordID:=insertedID.ToString()
-            )
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is Book Then
-                    Dim book = DirectCast(form, Book)
-                    book.cbauthorr()
-                    Exit For
-                End If
-            Next
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is AuditTrail Then
-                    Dim load = DirectCast(form, AuditTrail)
-                    load.refreshaudit()
-                End If
-            Next
-
-            MsgBox("Author added successfully", vbInformation)
-            Author_Load(sender, e)
-
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            txtauthor.Clear()
-        End Try
-    End Sub
-
-    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-
-            Dim author As String = txtauthor.Text.Trim()
-
-            If String.IsNullOrWhiteSpace(author) Then
-                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
-                Exit Sub
-            End If
-
-            Dim oldawtor As String = selectedRow.Cells("AuthorName").Value.ToString().Trim()
-            Dim newawtor As String = txtauthor.Text.Trim()
-
-            If String.Equals(oldawtor, newawtor, StringComparison.OrdinalIgnoreCase) Then
-                MsgBox("The author name is the same as the current one.", vbInformation)
-                Exit Sub
-            End If
-
-            Try
                 con.Open()
 
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl` WHERE `AuthorName` = @author AND ID <> @id", con)
-                comsu.Parameters.AddWithValue("@author", author)
-                comsu.Parameters.AddWithValue("@id", ID)
-                Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar())
+                ' ==========================================
+                ' EDIT / UPDATE MODE
+                ' ==========================================
+                If isEditMode Then
 
-                If count > 0 Then
-                    MsgBox("This author already exists.", vbExclamation, "Duplication is not allowed.")
-                    Exit Sub
-                End If
-
-                Dim com As New MySqlCommand("UPDATE `author_tbl` SET `AuthorName` = @newawtor WHERE `ID` = @id", con)
-                com.Parameters.AddWithValue("@newawtor", newawtor)
-                com.Parameters.AddWithValue("@id", ID)
-                com.ExecuteNonQuery()
-
-
-                Dim comsus As New MySqlCommand("UPDATE `book_tbl` SET `Author` = @newawtor WHERE `Author` = @oldawtor", con)
-                comsus.Parameters.AddWithValue("@newawtor", newawtor)
-                comsus.Parameters.AddWithValue("@oldawtor", oldawtor)
-                comsus.ExecuteNonQuery()
-
-                GlobalVarsModule.LogAudit(
-                    actionType:="UPDATE",
-                    formName:="AUTHOR FORM",
-                    description:=$"Updated Author Name.",
-                    recordID:=ID.ToString(),
-                    oldValue:=oldawtor,
-                    newValue:=newawtor
+                    ' Check if the new author name already exists
+                    Dim checkCom As New MySqlCommand(
+                    "SELECT COUNT(*) FROM `author_tbl` 
+                     WHERE `AuthorName` = @author AND `ID` <> @id",
+                    con
                 )
 
-                For Each form In Application.OpenForms
-                    If TypeOf form Is Book Then
-                        Dim book = DirectCast(form, Book)
-                        book.cbauthorr()
-                        Exit For
-                    End If
-                Next
+                    checkCom.Parameters.AddWithValue("@author", author)
+                    checkCom.Parameters.AddWithValue("@id", editAuthorID)
 
-                For Each form In Application.OpenForms
-                    If TypeOf form Is AuditTrail Then
-                        Dim load = DirectCast(form, AuditTrail)
-                        load.refreshaudit()
-                    End If
-                Next
+                    Dim count As Integer = Convert.ToInt32(checkCom.ExecuteScalar())
 
-                For Each form In Application.OpenForms
-                    If TypeOf form Is MainForm Then
-                        Dim load = DirectCast(form, MainForm)
-                        load.loadsu()
-                    End If
-                Next
-
-                MsgBox("Updated successfully!", vbInformation)
-                Author_Load(sender, e)
-                txtauthor.Clear()
-            Catch ex As Exception
-                MsgBox(ex.Message, vbCritical)
-            End Try
-        Else
-            MsgBox("Please select a row to edit.", vbExclamation)
-        End If
-    End Sub
-
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this author?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-
-            If dialogResult = DialogResult.Yes Then
-
-                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim authorName As String = selectedRow.Cells("AuthorName").Value.ToString().Trim()
-
-                Try
-                    con.Open()
-
-
-                    Dim bookCom As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE Author = @author", con)
-                    bookCom.Parameters.AddWithValue("@author", authorName)
-                    Dim bookCount As Integer = CInt(bookCom.ExecuteScalar())
-
-                    If bookCount > 0 Then
-                        MessageBox.Show("Cannot delete this author. They are assigned to " & bookCount & " book(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        Return
+                    If count > 0 Then
+                        MsgBox("This author already exists.",
+                           vbExclamation,
+                           "Duplication is not allowed.")
+                        Exit Sub
                     End If
 
 
-                    Dim delete As New MySqlCommand("DELETE FROM `author_tbl` WHERE `ID` = @id", con)
-                    delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery()
+                    ' Update author_tbl
+                    Dim updateCom As New MySqlCommand(
+                    "UPDATE `author_tbl` 
+                     SET `AuthorName` = @newauthor 
+                     WHERE `ID` = @id",
+                    con
+                )
 
+                    updateCom.Parameters.AddWithValue("@newauthor", author)
+                    updateCom.Parameters.AddWithValue("@id", editAuthorID)
+
+                    updateCom.ExecuteNonQuery()
+
+
+                    ' Update books using the old author name
+                    Dim bookCom As New MySqlCommand(
+                    "UPDATE `book_tbl` 
+                     SET `Author` = @newauthor 
+                     WHERE `Author` = @oldauthor",
+                    con
+                )
+
+                    bookCom.Parameters.AddWithValue("@newauthor", author)
+                    bookCom.Parameters.AddWithValue("@oldauthor", oldAuthorName)
+
+                    bookCom.ExecuteNonQuery()
+
+
+                    ' ==========================================
+                    ' AUDIT - UPDATE
+                    ' ==========================================
                     GlobalVarsModule.LogAudit(
-                        actionType:="DELETE",
-                        formName:="AUTHOR FORM",
-                        description:=$"Deleted Author: {authorName}",
-                        recordID:=ID.ToString()
-                    )
+                    actionType:="UPDATE",
+                    formName:="AUTHOR FORM",
+                    description:=$"Updated Author Name: {oldAuthorName} to {author}",
+                    recordID:=editAuthorID.ToString(),
+                    oldValue:=oldAuthorName,
+                    newValue:=author
+                )
 
+
+                    ' Refresh Book author combobox
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then
                             Dim book = DirectCast(form, Book)
@@ -289,6 +293,8 @@ Public Class Author
                         End If
                     Next
 
+
+                    ' Refresh Audit Trail
                     For Each form In Application.OpenForms
                         If TypeOf form Is AuditTrail Then
                             Dim load = DirectCast(form, AuditTrail)
@@ -296,24 +302,278 @@ Public Class Author
                         End If
                     Next
 
-                    MsgBox("Author deleted successfully.", vbInformation)
-                    Author_Load(sender, e)
-                    txtauthor.Clear()
 
-                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+                    ' Refresh MainForm
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is MainForm Then
+                            Dim load = DirectCast(form, MainForm)
+                            load.loadsu()
+                        End If
+                    Next
 
-                    If rowCount = 0 Then
-                        Dim reset As New MySqlCommand("ALTER TABLE `author_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery()
+
+                    MsgBox("Author updated successfully.",
+                       vbInformation,
+                       "Success")
+
+
+                    ' Reset edit mode
+                    isEditMode = False
+                    editAuthorID = 0
+                    oldAuthorName = ""
+
+                    ' ==========================================
+                    ' ADD / SAVE NEW AUTHOR
+                    ' ==========================================
+                Else
+
+                    ' Check duplicate
+                    Dim checkCom As New MySqlCommand(
+                    "SELECT COUNT(*) FROM `author_tbl` 
+                     WHERE `AuthorName` = @author",
+                    con
+                )
+
+                    checkCom.Parameters.AddWithValue("@author", author)
+
+                    Dim count As Integer = Convert.ToInt32(checkCom.ExecuteScalar())
+
+                    If count > 0 Then
+                        MsgBox("This author already exists.",
+                           vbExclamation,
+                           "Duplication is not allowed.")
+                        Exit Sub
                     End If
 
-                Catch ex As Exception
-                    MsgBox(ex.Message, vbCritical)
-                End Try
-            End If
-        End If
+
+                    ' Insert new author
+                    Dim insertCom As New MySqlCommand(
+                    "INSERT INTO `author_tbl` (`AuthorName`) 
+                     VALUES (@author);
+                     SELECT LAST_INSERT_ID();",
+                    con
+                )
+
+                    insertCom.Parameters.AddWithValue("@author", author)
+
+                    Dim insertedID As Integer =
+                    Convert.ToInt32(insertCom.ExecuteScalar())
+
+
+                    ' ==========================================
+                    ' AUDIT - ADD / SAVE
+                    ' ==========================================
+                    GlobalVarsModule.LogAudit(
+                    actionType:="ADD",
+                    formName:="AUTHOR FORM",
+                    description:=$"Added new Author: {author}",
+                    recordID:=insertedID.ToString(),
+                    newValue:=author
+                )
+
+
+                    ' Refresh Book author combobox
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Book Then
+                            Dim book = DirectCast(form, Book)
+                            book.cbauthorr()
+                            Exit For
+                        End If
+                    Next
+
+
+                    ' Refresh Audit Trail
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is AuditTrail Then
+                            Dim load = DirectCast(form, AuditTrail)
+                            load.refreshaudit()
+                        End If
+                    Next
+
+
+                    MsgBox("Author saved successfully.",
+                       vbInformation,
+                       "Success")
+
+                End If
+
+            End Using
+
+            ' Refresh grid
+            refreshauthor()
+
+            ' Clear textbox
+            txtauthor.Clear()
+
+        Catch ex As Exception
+
+            MsgBox(ex.Message, vbCritical, "Error")
+
+        End Try
+
     End Sub
+
+    'Private Sub btnedit_Click(sender As Object, e As EventArgs)
+
+    '    If DataGridView1.SelectedRows.Count > 0 Then
+
+    '        Dim con As New MySqlConnection(connectionString)
+
+    '        Dim selectedRow = DataGridView1.SelectedRows(0)
+    '        Dim ID As Integer = selectedRow.Cells("ID").Value
+
+    '        Dim author = txtauthor.Text.Trim
+
+    '        If String.IsNullOrWhiteSpace(author) Then
+    '            MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+    '            Exit Sub
+    '        End If
+
+    '        Dim oldawtor = selectedRow.Cells("AuthorName").Value.ToString.Trim
+    '        Dim newawtor = txtauthor.Text.Trim
+
+    '        If String.Equals(oldawtor, newawtor, StringComparison.OrdinalIgnoreCase) Then
+    '            MsgBox("The author name is the same as the current one.", vbInformation)
+    '            Exit Sub
+    '        End If
+
+    '        Try
+    '            con.Open()
+
+    '            Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl` WHERE `AuthorName` = @author AND ID <> @id", con)
+    '            comsu.Parameters.AddWithValue("@author", author)
+    '            comsu.Parameters.AddWithValue("@id", ID)
+    '            Dim count = Convert.ToInt32(comsu.ExecuteScalar)
+
+    '            If count > 0 Then
+    '                MsgBox("This author already exists.", vbExclamation, "Duplication is not allowed.")
+    '                Exit Sub
+    '            End If
+
+    '            Dim com As New MySqlCommand("UPDATE `author_tbl` SET `AuthorName` = @newawtor WHERE `ID` = @id", con)
+    '            com.Parameters.AddWithValue("@newawtor", newawtor)
+    '            com.Parameters.AddWithValue("@id", ID)
+    '            com.ExecuteNonQuery()
+
+
+    '            Dim comsus As New MySqlCommand("UPDATE `book_tbl` SET `Author` = @newawtor WHERE `Author` = @oldawtor", con)
+    '            comsus.Parameters.AddWithValue("@newawtor", newawtor)
+    '            comsus.Parameters.AddWithValue("@oldawtor", oldawtor)
+    '            comsus.ExecuteNonQuery()
+
+    '            LogAudit(
+    '                actionType:="UPDATE",
+    '                formName:="AUTHOR FORM",
+    '                description:=$"Updated Author Name.",
+    '                recordID:=ID.ToString,
+    '                oldValue:=oldawtor,
+    '                newValue:=newawtor
+    '            )
+
+    '            For Each form In Application.OpenForms
+    '                If TypeOf form Is Book Then
+    '                    Dim book = DirectCast(form, Book)
+    '                    book.cbauthorr()
+    '                    Exit For
+    '                End If
+    '            Next
+
+    '            For Each form In Application.OpenForms
+    '                If TypeOf form Is AuditTrail Then
+    '                    Dim load = DirectCast(form, AuditTrail)
+    '                    load.refreshaudit()
+    '                End If
+    '            Next
+
+    '            For Each form In Application.OpenForms
+    '                If TypeOf form Is MainForm Then
+    '                    Dim load = DirectCast(form, MainForm)
+    '                    load.loadsu()
+    '                End If
+    '            Next
+
+    '            MsgBox("Updated successfully!", vbInformation)
+    '            Author_Load(sender, e)
+    '            txtauthor.Clear()
+    '        Catch ex As Exception
+    '            MsgBox(ex.Message, vbCritical)
+    '        End Try
+    '    Else
+    '        MsgBox("Please select a row to edit.", vbExclamation)
+    '    End If
+    'End Sub
+
+    'Private Sub btndelete_Click(sender As Object, e As EventArgs)
+
+    '    If DataGridView1.SelectedRows.Count > 0 Then
+
+    '        Dim dialogResult = MessageBox.Show("Are you sure you want to delete this author?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+
+    '        If dialogResult = DialogResult.Yes Then
+
+    '            Dim con As New MySqlConnection(connectionString)
+    '            Dim selectedRow = DataGridView1.SelectedRows(0)
+    '            Dim ID As Integer = selectedRow.Cells("ID").Value
+    '            Dim authorName = selectedRow.Cells("AuthorName").Value.ToString.Trim
+
+    '            Try
+    '                con.Open()
+
+
+    '                Dim bookCom As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE Author = @author", con)
+    '                bookCom.Parameters.AddWithValue("@author", authorName)
+    '                Dim bookCount As Integer = bookCom.ExecuteScalar()
+
+    '                If bookCount > 0 Then
+    '                    MessageBox.Show("Cannot delete this author. They are assigned to " & bookCount & " book(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+    '                    Return
+    '                End If
+
+
+    '                Dim delete As New MySqlCommand("DELETE FROM `author_tbl` WHERE `ID` = @id", con)
+    '                delete.Parameters.AddWithValue("@id", ID)
+    '                delete.ExecuteNonQuery()
+
+    '                LogAudit(
+    '                    actionType:="DELETE",
+    '                    formName:="AUTHOR FORM",
+    '                    description:=$"Deleted Author: {authorName}",
+    '                    recordID:=ID.ToString
+    '                )
+
+    '                For Each form In Application.OpenForms
+    '                    If TypeOf form Is Book Then
+    '                        Dim book = DirectCast(form, Book)
+    '                        book.cbauthorr()
+    '                        Exit For
+    '                    End If
+    '                Next
+
+    '                For Each form In Application.OpenForms
+    '                    If TypeOf form Is AuditTrail Then
+    '                        Dim load = DirectCast(form, AuditTrail)
+    '                        load.refreshaudit()
+    '                    End If
+    '                Next
+
+    '                MsgBox("Author deleted successfully.", vbInformation)
+    '                Author_Load(sender, e)
+    '                txtauthor.Clear()
+
+    '                Dim count As New MySqlCommand("SELECT COUNT(*) FROM `author_tbl`", con)
+    '                Dim rowCount As Long = count.ExecuteScalar()
+
+    '                If rowCount = 0 Then
+    '                    Dim reset As New MySqlCommand("ALTER TABLE `author_tbl` AUTO_INCREMENT = 1", con)
+    '                    reset.ExecuteNonQuery()
+    '                End If
+
+    '            Catch ex As Exception
+    '                MsgBox(ex.Message, vbCritical)
+    '            End Try
+    '        End If
+    '    End If
+    'End Sub
 
 
 
@@ -398,27 +658,27 @@ Public Class Author
 
     End Sub
 
-    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs)
 
-        Me.Cursor = Cursors.Hand
-
-    End Sub
-
-    Private Sub btnedit_Mouseleave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
-
-        Me.Cursor = Cursors.Default
+        Cursor = Cursors.Hand
 
     End Sub
 
-    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
+    Private Sub btnedit_Mouseleave(sender As Object, e As EventArgs)
 
-        Me.Cursor = Cursors.Hand
+        Cursor = Cursors.Default
 
     End Sub
 
-    Private Sub btndelete_Mouseleave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
+    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs)
 
-        Me.Cursor = Cursors.Default
+        Cursor = Cursors.Hand
+
+    End Sub
+
+    Private Sub btndelete_Mouseleave(sender As Object, e As EventArgs)
+
+        Cursor = Cursors.Default
 
     End Sub
 

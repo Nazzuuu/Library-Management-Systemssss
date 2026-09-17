@@ -1,6 +1,7 @@
 ﻿Imports MySql.Data.MySqlClient
 
 Public Class Grade
+
     Private Sub Grade_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         DisablePaste_AllTextBoxes()
         TopMost = True
@@ -13,20 +14,16 @@ Public Class Grade
             numupdown.Value = 0
         Catch
         End Try
+
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
-    End Sub
-
-    Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
-
-
-        SetupGridStyle()
-
     End Sub
 
     Public Sub refreshGrade()
         Dim query As String = "SELECT * FROM `grade_tbl` ORDER BY CAST(Grade AS UNSIGNED)"
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
         SetupGridStyle()
+        txtgrade.Clear()
+        numupdown.Value = 0
     End Sub
 
     Private Async Sub OnDatabaseUpdated()
@@ -40,32 +37,48 @@ Public Class Grade
             If DataGridView1.Columns.Contains("ID") Then
                 DataGridView1.Columns("ID").Visible = False
             End If
+
+            If DataGridView1.Columns.Contains("Grade") Then
+                DataGridView1.Columns("Grade").DisplayIndex = 0
+            End If
+
+            If DataGridView1.Columns.Contains("Edit") Then
+                DataGridView1.Columns("Edit").DisplayIndex = DataGridView1.Columns.Count - 2
+            End If
+
+            If DataGridView1.Columns.Contains("Delete") Then
+                DataGridView1.Columns("Delete").DisplayIndex = DataGridView1.Columns.Count - 1
+            End If
+
             DataGridView1.ClearSelection()
             DataGridView1.CurrentCell = Nothing
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+
         Catch
         End Try
     End Sub
 
+    Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
+        SetupGridStyle()
+    End Sub
 
     Private Sub Grade_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-
         DataGridView1.ClearSelection()
-
+        DataGridView1.CurrentCell = Nothing
     End Sub
 
     Private Sub Grade_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
 
         For Each form In Application.OpenForms
             If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
-                load.loadsu()
+                DirectCast(form, MainForm).loadsu()
             End If
         Next
 
         Dim activeMain As MainForm = GlobalVarsModule.ActiveMainForm
+
         If activeMain Is Nothing OrElse activeMain.IsDisposed Then
             activeMain = New MainForm()
             GlobalVarsModule.ActiveMainForm = activeMain
@@ -74,225 +87,401 @@ Public Class Grade
 
         activeMain.MaintenanceToolStripMenuItem.ShowDropDown()
         activeMain.MaintenanceToolStripMenuItem.ForeColor = Color.Gray
-        txtgrade.Text = ""
+        txtgrade.Clear()
 
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim newID As Integer = 0
-
-        Dim quantity As Integer = 0
-        Try
-            quantity = CInt(numupdown.Value)
-        Catch
-            quantity = 0
-        End Try
-
-        Dim gradesToAdd As New List(Of Integer)()
-
-        If quantity > 0 Then
-
-            For i As Integer = 1 To quantity
-                gradesToAdd.Add(i)
-            Next
-        Else
-            Dim grds As String = txtgrade.Text.Trim
-
-            If String.IsNullOrWhiteSpace(grds) Then
-                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
-                Exit Sub
-            End If
-
-            Dim grade As Integer
-            If Not Integer.TryParse(grds, grade) Then
-                MsgBox("Please enter a valid number.", vbExclamation, "Invalid Input")
-                txtgrade.Clear()
-                Exit Sub
-            End If
-
-            If grade < 1 OrElse grade > 12 Then
-                MsgBox("Please enter a grade between 1 and 12.", vbExclamation, "Invalid Grade")
-                txtgrade.Clear()
-                Exit Sub
-            End If
-
-            gradesToAdd.Add(grade)
-        End If
+        Dim gradeText As String = txtgrade.Text.Trim()
 
         Try
-            con.Open()
 
-            For Each gradeValue In gradesToAdd
 
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `grade_tbl` WHERE `Grade` = @grade", con)
-                coms.Parameters.AddWithValue("@grade", gradeValue.ToString())
-                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar())
+            If DataGridView1.SelectedRows.Count > 0 Then
 
-                If count > 0 Then
-
-                    Continue For
+                If String.IsNullOrWhiteSpace(gradeText) Then
+                    MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                    Exit Sub
                 End If
 
-                Dim com As New MySqlCommand("INSERT INTO `grade_tbl`(`Grade`) VALUES (@grade); SELECT LAST_INSERT_ID();", con)
-                com.Parameters.AddWithValue("@grade", gradeValue.ToString())
-                newID = Convert.ToInt32(com.ExecuteScalar())
+                Dim newGrade As Integer
 
-                GlobalVarsModule.LogAudit(
-                    actionType:="ADD",
-                    formName:="GRADE FORM",
-                    description:=$"Added new grade level: {gradeValue}",
-                    recordID:=newID.ToString()
-                )
-
-            Next
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is AuditTrail Then
-                    DirectCast(form, AuditTrail).refreshaudit()
+                If Not Integer.TryParse(gradeText, newGrade) Then
+                    MsgBox("Please enter a valid number.", vbExclamation, "Invalid Input")
+                    Exit Sub
                 End If
-            Next
 
-            For Each form In Application.OpenForms
-                If TypeOf form Is Borrower Then
-                    Dim borrower = DirectCast(form, Borrower)
-                    borrower.cbgradee()
-                    borrower.refreshData()
+                If newGrade < 1 OrElse newGrade > 12 Then
+                    MsgBox("Please enter a grade between 1 and 12.", vbExclamation, "Invalid Grade")
+                    Exit Sub
                 End If
-            Next
 
-            For Each form In Application.OpenForms
-                If TypeOf form Is Section Then
-                    Dim gradesucakes = DirectCast(form, Section)
-                    gradesucakes.cbgradesu()
-                    gradesucakes.refreshsecs()
+                Dim selectedRow = DataGridView1.SelectedRows(0)
+                Dim ID As Integer = Convert.ToInt32(selectedRow.Cells("ID").Value)
+                Dim oldGrade As String = selectedRow.Cells("Grade").Value.ToString().Trim()
+
+                If oldGrade = gradeText Then
+                    MsgBox("No changes were made.", vbExclamation, "No Update")
+                    Exit Sub
                 End If
-            Next
 
-            MsgBox("Grade(s) added successfully", vbInformation)
-            Grade_Load(sender, e)
+                Using con As New MySqlConnection(GlobalVarsModule.connectionString)
 
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
+                    con.Open()
+
+                    Dim check As New MySqlCommand(
+                        "SELECT COUNT(*) FROM `grade_tbl` WHERE `Grade` = @grade AND `ID` <> @id", con)
+
+                    check.Parameters.AddWithValue("@grade", gradeText)
+                    check.Parameters.AddWithValue("@id", ID)
+
+                    If Convert.ToInt32(check.ExecuteScalar()) > 0 Then
+                        MsgBox("This grade already exists.", vbExclamation, "Duplication not allowed.")
+                        Exit Sub
+                    End If
+
+                    Dim update As New MySqlCommand(
+                        "UPDATE `grade_tbl` SET `Grade` = @grade WHERE `ID` = @id", con)
+
+                    update.Parameters.AddWithValue("@grade", gradeText)
+                    update.Parameters.AddWithValue("@id", ID)
+                    update.ExecuteNonQuery()
+
+                    Dim updateSection As New MySqlCommand(
+                        "UPDATE `section_tbl` SET `GradeLevel` = @newGrade WHERE `GradeLevel` = @oldGrade", con)
+
+                    updateSection.Parameters.AddWithValue("@newGrade", gradeText)
+                    updateSection.Parameters.AddWithValue("@oldGrade", oldGrade)
+                    updateSection.ExecuteNonQuery()
+
+                    Dim updateBorrower As New MySqlCommand(
+                        "UPDATE `borrower_tbl` SET `Grade` = @newGrade WHERE `GradeLevel` = @oldGrade", con)
+
+                    updateBorrower.Parameters.AddWithValue("@newGrade", gradeText)
+                    updateBorrower.Parameters.AddWithValue("@oldGrade", oldGrade)
+                    updateBorrower.ExecuteNonQuery()
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="UPDATE",
+                        formName:="GRADE FORM",
+                        description:=$"Updated grade level ID {ID} from '{oldGrade}' to '{gradeText}'",
+                        recordID:=ID.ToString(),
+                        oldValue:=$"Grade Level: {oldGrade}",
+                        newValue:=$"Grade Level: {gradeText}"
+                    )
+
+                End Using
+
+                For Each form In Application.OpenForms
+
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+
+                    If TypeOf form Is Borrower Then
+                        DirectCast(form, Borrower).cbgradee()
+                        DirectCast(form, Borrower).refreshData()
+                    End If
+
+                    If TypeOf form Is Section Then
+                        DirectCast(form, Section).cbgradesu()
+                        DirectCast(form, Section).refreshsecs()
+                    End If
+
+                    If TypeOf form Is MainForm Then
+                        DirectCast(form, MainForm).loadsu()
+                    End If
+
+                Next
+
+                MsgBox("Grade updated successfully!", vbInformation)
+
+            Else
+
+
+                Dim quantity As Integer = 0
+
+                Try
+                    quantity = CInt(numupdown.Value)
+                Catch
+                    quantity = 0
+                End Try
+
+                Dim gradesToAdd As New List(Of Integer)
+
+                If quantity > 0 Then
+
+                    For i As Integer = 1 To quantity
+                        gradesToAdd.Add(i)
+                    Next
+
+                Else
+
+                    If String.IsNullOrWhiteSpace(gradeText) Then
+                        MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+                        Exit Sub
+                    End If
+
+                    Dim grade As Integer
+
+                    If Not Integer.TryParse(gradeText, grade) Then
+                        MsgBox("Please enter a valid number.", vbExclamation, "Invalid Input")
+                        Exit Sub
+                    End If
+
+                    If grade < 1 OrElse grade > 12 Then
+                        MsgBox("Please enter a grade between 1 and 12.", vbExclamation, "Invalid Grade")
+                        Exit Sub
+                    End If
+
+                    gradesToAdd.Add(grade)
+
+                End If
+
+                Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+
+                    con.Open()
+
+                    For Each gradeValue In gradesToAdd
+
+                        Dim check As New MySqlCommand(
+                            "SELECT COUNT(*) FROM `grade_tbl` WHERE `Grade` = @grade", con)
+
+                        check.Parameters.AddWithValue("@grade", gradeValue.ToString())
+
+                        If Convert.ToInt32(check.ExecuteScalar()) > 0 Then
+                            Continue For
+                        End If
+
+                        Dim insert As New MySqlCommand(
+                            "INSERT INTO `grade_tbl` (`Grade`) VALUES (@grade); SELECT LAST_INSERT_ID();", con)
+
+                        insert.Parameters.AddWithValue("@grade", gradeValue.ToString())
+
+                        Dim newID As Integer = Convert.ToInt32(insert.ExecuteScalar())
+
+                        GlobalVarsModule.LogAudit(
+                            actionType:="ADD",
+                            formName:="GRADE FORM",
+                            description:=$"Added new grade level: {gradeValue}",
+                            recordID:=newID.ToString()
+                        )
+
+                    Next
+
+                End Using
+
+                For Each form In Application.OpenForms
+
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
+                    End If
+
+                    If TypeOf form Is Borrower Then
+                        DirectCast(form, Borrower).cbgradee()
+                        DirectCast(form, Borrower).refreshData()
+                    End If
+
+                    If TypeOf form Is Section Then
+                        DirectCast(form, Section).cbgradesu()
+                        DirectCast(form, Section).refreshsecs()
+                    End If
+
+                Next
+
+                MsgBox("Grade(s) added successfully", vbInformation)
+
             End If
+
             txtgrade.Clear()
             numupdown.Value = 0
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+            refreshGrade()
+
+        Catch ex As MySqlException
+            MsgBox("Database Error: " & ex.Message, vbCritical, "Grade Error")
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "Grade Error")
+
         End Try
 
     End Sub
 
-    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
 
-        If DataGridView1.SelectedRows.Count > 0 Then
+        If e.RowIndex < 0 Then Exit Sub
 
-            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+        Dim row = DataGridView1.Rows(e.RowIndex)
 
-            Dim oldGrade As String = selectedRow.Cells("Grade").Value.ToString()
-            Dim grd As String = txtgrade.Text.Trim
+        If DataGridView1.Columns(e.ColumnIndex).Name = "Edit" Then
 
-            If String.IsNullOrWhiteSpace(grd) Then
-                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
-                Exit Sub
-            End If
+            DataGridView1.ClearSelection()
+            row.Selected = True
 
-            If oldGrade = grd Then
-                MsgBox("No changes were made.", vbExclamation, "No Update")
-                Exit Sub
-            End If
+            txtgrade.Text = row.Cells("Grade").Value.ToString()
+            numupdown.Value = 0
 
+            Exit Sub
 
-            Dim grade As Integer
-            If Not Integer.TryParse(grd, grade) Then
-                MsgBox("Please enter a valid number.", vbExclamation, "Invalid Input")
-                Exit Sub
-            End If
+        End If
 
-            If grade < 1 OrElse grade > 12 Then
-                MsgBox("Please enter a grade between 1 and 12.", vbExclamation, "Invalid Grade")
-                Exit Sub
-            End If
+        If DataGridView1.Columns(e.ColumnIndex).Name = "Delete" Then
+
+            Dim result = MessageBox.Show(
+        "Are you sure you want to delete this grade?",
+        "Confirm Delete",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Warning
+    )
+
+            If result <> DialogResult.Yes Then Exit Sub
+
+            Dim selectedRow = DataGridView1.Rows(e.RowIndex)
+            Dim gradeLevel As String = selectedRow.Cells("Grade").Value.ToString().Trim()
 
             Try
-                con.Open()
 
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `grade_tbl` WHERE `Grade` = @grade AND `ID` <> @id", con)
-                coms.Parameters.AddWithValue("@grade", grd)
-                coms.Parameters.AddWithValue("@id", ID)
+                Dim ID As Integer
 
-                Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar)
+                If selectedRow.Cells("ID").Value Is Nothing OrElse
+           IsDBNull(selectedRow.Cells("ID").Value) OrElse
+           Not Integer.TryParse(selectedRow.Cells("ID").Value.ToString(), ID) Then
 
-                If count > 0 Then
-                    MsgBox("This grade already exists.", vbExclamation, "Duplication not allowed.")
+                    MsgBox("Invalid Grade ID.", vbCritical, "Delete Error")
                     Exit Sub
+
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `grade_tbl` SET `Grade`= @grade WHERE `ID` = @id", con)
-                com.Parameters.AddWithValue("@grade", grd)
-                com.Parameters.AddWithValue("@id", ID)
-                com.ExecuteNonQuery()
+                Using con As New MySqlConnection(GlobalVarsModule.connectionString)
 
-                Dim comss As New MySqlCommand("UPDATE `section_tbl` SET `GradeLevel` = @newGrade WHERE `GradeLevel` = @oldGrade", con)
-                comss.Parameters.AddWithValue("@newGrade", grd)
-                comss.Parameters.AddWithValue("@oldGrade", oldGrade)
-                comss.ExecuteNonQuery()
+                    con.Open()
 
-                Dim comsiss As New MySqlCommand("UPDATE `borrower_tbl` SET `GradeLevel` = @newGrade WHERE `GradeLevel` = @oldGrade", con)
-                comsiss.Parameters.AddWithValue("@newGrade", grd)
-                comsiss.Parameters.AddWithValue("@oldGrade", oldGrade)
-                comsiss.ExecuteNonQuery()
+                    Dim sectionCom As New MySqlCommand(
+                "SELECT COUNT(*) FROM `section_tbl` WHERE `GradeLevel` = @grade", con)
 
-                GlobalVarsModule.LogAudit(
-                    actionType:="UPDATE",
-                    formName:="GRADE FORM",
-                    description:=$"Updated grade level ID {ID} from '{oldGrade}' to '{grd}'",
-                    recordID:=ID.ToString(),
-                    oldValue:=$"Grade Level: {oldGrade}",
-                    newValue:=$"Grade Level: {grd}"
+                    sectionCom.Parameters.AddWithValue("@grade", gradeLevel)
+
+                    Dim sectionCount As Integer =
+                Convert.ToInt32(sectionCom.ExecuteScalar())
+
+                    If sectionCount > 0 Then
+
+                        MessageBox.Show(
+                    "Cannot delete this grade. It is currently assigned to " &
+                    sectionCount & " section(s).",
+                    "Information",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
                 )
 
+                        Exit Sub
+
+                    End If
+
+                    Dim borrowerCom As New MySqlCommand(
+                "SELECT COUNT(*) FROM `borrower_tbl` WHERE `Grade` = @grade", con)
+
+                    borrowerCom.Parameters.AddWithValue("@grade", gradeLevel)
+
+                    Dim borrowerCount As Integer =
+                Convert.ToInt32(borrowerCom.ExecuteScalar())
+
+                    If borrowerCount > 0 Then
+
+                        MessageBox.Show(
+                    "Cannot delete this grade. It is currently assigned to " &
+                    borrowerCount & " borrower(s).",
+                    "Information",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                )
+
+                        Exit Sub
+
+                    End If
+
+                    Dim delete As New MySqlCommand(
+                "DELETE FROM `grade_tbl` WHERE `ID` = @id", con)
+
+                    delete.Parameters.AddWithValue("@id", ID)
+                    delete.ExecuteNonQuery()
+
+                    GlobalVarsModule.LogAudit(
+                actionType:="DELETE",
+                formName:="GRADE FORM",
+                description:=$"Deleted grade level: {gradeLevel}",
+                recordID:=ID.ToString()
+            )
+
+                    Dim count As New MySqlCommand(
+                "SELECT COUNT(*) FROM `grade_tbl`", con)
+
+                    Dim rowCount As Long =
+                Convert.ToInt64(count.ExecuteScalar())
+
+                    If rowCount = 0 Then
+
+                        Dim reset As New MySqlCommand(
+                    "ALTER TABLE `grade_tbl` AUTO_INCREMENT = 1", con)
+
+                        reset.ExecuteNonQuery()
+
+                    End If
+
+                End Using
+
                 For Each form In Application.OpenForms
+
                     If TypeOf form Is AuditTrail Then
                         DirectCast(form, AuditTrail).refreshaudit()
                     End If
-                Next
 
-                For Each form In Application.OpenForms
                     If TypeOf form Is Borrower Then
-                        Dim borrower = DirectCast(form, Borrower)
-                        borrower.cbgradee()
+                        DirectCast(form, Borrower).cbgradee()
+                        DirectCast(form, Borrower).refreshData()
                     End If
 
                     If TypeOf form Is Section Then
-                        Dim gradesucakes = DirectCast(form, Section)
-                        gradesucakes.cbgradesu()
+                        DirectCast(form, Section).cbgradesu()
+                        DirectCast(form, Section).refreshsecs()
                     End If
+
                 Next
 
-                For Each form In Application.OpenForms
-                    If TypeOf form Is MainForm Then
-                        Dim load = DirectCast(form, MainForm)
-                        load.loadsu()
-                    End If
-                Next
+                MsgBox("Grade deleted successfully.", vbInformation)
 
-                MsgBox("Updated successfully!", vbInformation)
-                Grade_Load(sender, e)
                 txtgrade.Clear()
+                numupdown.Value = 0
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+                refreshGrade()
+
+                Exit Sub
+
+            Catch ex As MySqlException
+
+                MsgBox("Database Error: " & ex.Message, vbCritical, "Delete Error")
+
             Catch ex As Exception
-                MsgBox(ex.Message, vbCritical)
-            Finally
-                If con.State = ConnectionState.Open Then
-                    con.Close()
-                End If
+
+                MsgBox(ex.Message, vbCritical, "Delete Error")
+
             End Try
-        Else
-            MsgBox("Please select a row to edit.", vbExclamation)
+
+        End If
+
+    End Sub
+
+    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex >= 0 Then
+
+            Dim row = DataGridView1.Rows(e.RowIndex)
+            txtgrade.Text = row.Cells("Grade").Value.ToString()
+
         End If
 
     End Sub
@@ -309,197 +498,9 @@ Public Class Grade
             If numupdown.Value > 12 Then
                 numupdown.Value = 12
             End If
+
         Catch
         End Try
-
-    End Sub
-
-    Private Sub btndeleteall_Click(sender As Object, e As EventArgs) Handles btndeleteall.Click
-
-        Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete ALL grades? This will only delete grades not referenced by sections or borrowers.", "Confirm Delete All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-
-        If dialogResult <> DialogResult.Yes Then
-            Return
-        End If
-
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-
-        Try
-            con.Open()
-
-            Dim safeToDelete As New List(Of Integer)()
-
-            Dim getAll As New MySqlCommand("SELECT ID, Grade FROM `grade_tbl`", con)
-            Using rdr = getAll.ExecuteReader()
-                While rdr.Read()
-                    Dim id = Convert.ToInt32(rdr("ID"))
-                    Dim gradeVal = rdr("Grade").ToString().Trim()
-                    Dim gradeInt As Integer
-                    If Integer.TryParse(gradeVal, gradeInt) Then
-
-                        safeToDelete.Add(gradeInt)
-                    End If
-                End While
-            End Using
-
-
-            Dim toActuallyDelete As New List(Of Integer)()
-
-            For Each g In safeToDelete
-                Dim sectionCom As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl` WHERE GradeLevel = @grade", con)
-                sectionCom.Parameters.AddWithValue("@grade", g.ToString())
-                Dim sectionCount As Integer = CInt(sectionCom.ExecuteScalar())
-
-                Dim borrowerCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE Grade = @grade", con)
-                borrowerCom.Parameters.AddWithValue("@grade", g.ToString())
-                Dim borrowerCount As Integer = CInt(borrowerCom.ExecuteScalar())
-
-                If sectionCount = 0 AndAlso borrowerCount = 0 Then
-                    toActuallyDelete.Add(g)
-                End If
-            Next
-
-            If toActuallyDelete.Count = 0 Then
-                MessageBox.Show("No grades can be deleted because they are referenced in other records.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                Return
-            End If
-
-
-            For Each g In toActuallyDelete
-                Dim del As New MySqlCommand("DELETE FROM `grade_tbl` WHERE `Grade` = @grade", con)
-                del.Parameters.AddWithValue("@grade", g.ToString())
-                del.ExecuteNonQuery()
-
-                GlobalVarsModule.LogAudit(
-                    actionType:="DELETE",
-                    formName:="GRADE FORM",
-                    description:=$"Deleted grade level: {g}",
-                    recordID:="0"
-                )
-            Next
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is AuditTrail Then
-                    DirectCast(form, AuditTrail).refreshaudit()
-                End If
-            Next
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is Borrower Then
-                    DirectCast(form, Borrower).cbgradee()
-                End If
-                If TypeOf form Is Section Then
-                    DirectCast(form, Section).cbgradesu()
-                End If
-            Next
-
-            MsgBox("Selected grades deleted successfully.", vbInformation)
-            Grade_Load(sender, e)
-
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
-
-    End Sub
-
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this grade?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-
-            If dialogResult = DialogResult.Yes Then
-
-                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim gradeLevel As String = selectedRow.Cells("Grade").Value.ToString().Trim()
-
-                Try
-                    con.Open()
-
-
-                    Dim sectionCom As New MySqlCommand("SELECT COUNT(*) FROM `section_tbl` WHERE GradeLevel = @grade", con)
-                    sectionCom.Parameters.AddWithValue("@grade", gradeLevel)
-                    Dim sectionCount As Integer = CInt(sectionCom.ExecuteScalar())
-
-                    If sectionCount > 0 Then
-                        MessageBox.Show("Cannot delete this grade. It is currently assigned to " & sectionCount & " section(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        Return
-                    End If
-
-
-                    Dim borrowerCom As New MySqlCommand("SELECT COUNT(*) FROM `borrower_tbl` WHERE GradeLevel = @grade", con)
-                    borrowerCom.Parameters.AddWithValue("@grade", gradeLevel)
-                    Dim borrowerCount As Integer = CInt(borrowerCom.ExecuteScalar())
-
-                    If borrowerCount > 0 Then
-                        MessageBox.Show("Cannot delete this grade. It is currently assigned to " & borrowerCount & " borrower(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        Return
-                    End If
-
-
-                    Dim delete As New MySqlCommand("DELETE FROM `grade_tbl` WHERE `ID` = @id", con)
-                    delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery()
-
-                    GlobalVarsModule.LogAudit(
-                        actionType:="DELETE",
-                        formName:="GRADE FORM",
-                        description:=$"Deleted grade level: {gradeLevel}",
-                        recordID:=ID.ToString()
-                    )
-
-                    For Each form In Application.OpenForms
-                        If TypeOf form Is AuditTrail Then
-                            DirectCast(form, AuditTrail).refreshaudit()
-                        End If
-                    Next
-
-                    For Each form In Application.OpenForms
-                        If TypeOf form Is Borrower Then
-                            DirectCast(form, Borrower).cbgradee()
-                        End If
-                        If TypeOf form Is Section Then
-                            DirectCast(form, Section).cbgradesu()
-                        End If
-                    Next
-
-                    MsgBox("Grade deleted successfully.", vbInformation)
-                    Grade_Load(sender, e)
-                    txtgrade.Clear()
-
-                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `grade_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
-
-                    If rowCount = 0 Then
-                        Dim reset As New MySqlCommand("ALTER TABLE `grade_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery()
-                    End If
-
-                Catch ex As Exception
-                    MsgBox(ex.Message, vbCritical)
-                Finally
-                    If con.State = ConnectionState.Open Then
-                        con.Close()
-                    End If
-                End Try
-            End If
-        End If
-    End Sub
-
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-
-        If e.RowIndex >= 0 Then
-
-            Dim row = DataGridView1.Rows(e.RowIndex)
-            txtgrade.Text = row.Cells("Grade").Value.ToString
-
-        End If
 
     End Sub
 
@@ -507,29 +508,45 @@ Public Class Grade
 
         HandleAutoRefreshPause(DataGridView1, txtsearch)
 
-        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        Dim dt As DataTable = TryCast(DataGridView1.DataSource, DataTable)
+
         If dt IsNot Nothing Then
+
             If txtsearch.Text.Trim() <> "" Then
-                Dim filter As String = String.Format("Grade LIKE '*{0}*'", txtsearch.Text.Trim())
+
+                Dim filter As String =
+                    String.Format("Grade LIKE '*{0}*'", txtsearch.Text.Trim())
+
                 dt.DefaultView.RowFilter = filter
+
             Else
                 dt.DefaultView.RowFilter = ""
             End If
+
         End If
 
     End Sub
 
     Private Sub txtgrade_KeyDown(sender As Object, e As KeyEventArgs) Handles txtgrade.KeyDown
 
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+        If e.Control AndAlso
+           (e.KeyCode = Keys.V OrElse
+            e.KeyCode = Keys.C OrElse
+            e.KeyCode = Keys.X) Then
+
             e.SuppressKeyPress = True
+        End If
+
+        If e.KeyCode = Keys.Enter Then
+            e.SuppressKeyPress = True
+            btnadd.PerformClick()
         End If
 
     End Sub
 
     Private Sub txtgrade_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtgrade.KeyPress
 
-        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+        If Not Char.IsDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) Then
             e.Handled = True
         End If
 
@@ -537,16 +554,22 @@ Public Class Grade
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
 
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+        If e.Control AndAlso
+           (e.KeyCode = Keys.V OrElse
+            e.KeyCode = Keys.C OrElse
+            e.KeyCode = Keys.X) Then
+
             e.SuppressKeyPress = True
         End If
 
     End Sub
 
     Private Sub Grade_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+
         If e.KeyCode = Keys.Escape Then
             Me.Close()
         End If
+
     End Sub
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
@@ -557,31 +580,20 @@ Public Class Grade
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
-
-    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
-
-    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
-
-    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
-
     Private Sub DisablePaste_AllTextBoxes()
+
         For Each ctrl As Control In Me.Controls
             AddHandlerToTextBoxes_NoPaste(ctrl)
         Next
+
     End Sub
 
     Private Sub AddHandlerToTextBoxes_NoPaste(parent As Control)
+
         For Each ctrl As Control In parent.Controls
+
             If TypeOf ctrl Is TextBox Then
+
                 Dim tb As TextBox = CType(ctrl, TextBox)
 
                 tb.ContextMenuStrip = New ContextMenuStrip()
@@ -594,14 +606,16 @@ Public Class Grade
             If ctrl.HasChildren Then
                 AddHandlerToTextBoxes_NoPaste(ctrl)
             End If
+
         Next
 
     End Sub
 
-
     Private Sub BlockPasteKey(sender As Object, e As KeyEventArgs)
 
-        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse
+           (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+
             e.SuppressKeyPress = True
         End If
 
@@ -612,12 +626,13 @@ Public Class Grade
         If e.Button = MouseButtons.Right Then
 
             Dim tb As TextBox = TryCast(sender, TextBox)
+
             If tb IsNot Nothing Then
                 tb.ContextMenuStrip = New ContextMenuStrip()
             End If
+
         End If
 
     End Sub
-
 
 End Class

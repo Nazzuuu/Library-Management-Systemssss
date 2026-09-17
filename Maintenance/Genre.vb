@@ -1,5 +1,7 @@
 ﻿Imports MySql.Data.MySqlClient
+
 Public Class Genre
+
     Private Sub Genre_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         DisablePaste_AllTextBoxes()
         TopMost = True
@@ -13,7 +15,7 @@ Public Class Genre
         Dim query As String = "SELECT * FROM `genre_tbl`"
         GlobalVarsModule.AutoRefreshGrid(DataGridView1, query, 2000)
         SetupGridStyle()
-        txtgenre.Text = ""
+        txtgenre.Clear()
     End Sub
 
     Private Async Sub OnDatabaseUpdated()
@@ -27,6 +29,7 @@ Public Class Genre
             If DataGridView1.Columns.Contains("ID") Then
                 DataGridView1.Columns("ID").Visible = False
             End If
+
             DataGridView1.ClearSelection()
             DataGridView1.CurrentCell = Nothing
             DataGridView1.EnableHeadersVisualStyles = False
@@ -36,35 +39,46 @@ Public Class Genre
         End Try
     End Sub
 
+    Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
 
-    Private Sub Genre_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        If DataGridView1.Columns.Contains("ID") Then
+            DataGridView1.Columns("ID").Visible = False
+        End If
+
+        If DataGridView1.Columns.Contains("Genre") Then
+            DataGridView1.Columns("Genre").DisplayIndex = 0
+        End If
+
+        If DataGridView1.Columns.Contains("Edit") Then
+            DataGridView1.Columns("Edit").DisplayIndex = DataGridView1.Columns.Count - 2
+        End If
+
+        If DataGridView1.Columns.Contains("Delete") Then
+            DataGridView1.Columns("Delete").DisplayIndex = DataGridView1.Columns.Count - 1
+        End If
 
         DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
+    End Sub
 
-
+    Private Sub Genre_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
     End Sub
 
     Private Sub Genre_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
-
-
-
         MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
-        txtgenre.Text = ""
-
-
+        txtgenre.Clear()
     End Sub
 
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
         Dim genre As String = txtgenre.Text.Trim()
-        Dim insertedID As Integer = 0
 
         If String.IsNullOrWhiteSpace(genre) Then
             MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
             Exit Sub
         End If
-
 
         If genre.Length < 3 Then
             MsgBox("Genre must be 3 characters or more.", vbExclamation, "Input Error")
@@ -78,237 +92,261 @@ Public Class Genre
             End If
         Next
 
+        Using con As New MySqlConnection(GlobalVarsModule.connectionString)
 
-        Try
-            con.Open()
-
-            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @genre ", con)
-            coms.Parameters.AddWithValue("@genre", genre)
-            Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar())
-
-            If count > 0 Then
-                MsgBox("Genre already exists.", vbExclamation, "Duplication is not allowed.")
-                Exit Sub
-            End If
-
-            Dim com As New MySqlCommand("INSERT INTO `genre_tbl`(`Genre`) VALUES (@genre); SELECT LAST_INSERT_ID()", con)
-            com.Parameters.AddWithValue("@genre", genre)
-            insertedID = Convert.ToInt32(com.ExecuteScalar())
-
-            GlobalVarsModule.LogAudit(
-            actionType:="ADD",
-            formName:="GENRE FORM",
-            description:=$"Added new Genre: {genre}",
-            recordID:=insertedID.ToString()
-        )
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is Book Then
-                    Dim book = DirectCast(form, Book)
-                    book.cbgenree()
-                End If
-            Next
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is AuditTrail Then
-                    Dim load = DirectCast(form, AuditTrail)
-                    load.refreshaudit()
-                End If
-            Next
-
-            MsgBox("Genre added successfully", vbInformation)
-            Genre_Load(sender, e)
-
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            txtgenre.Clear()
-        End Try
-
-    End Sub
-
-    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-
-            Dim oldGenre As String = selectedRow.Cells("Genre").Value.ToString().Trim()
-            Dim newGenre As String = txtgenre.Text.Trim()
-
-            If String.IsNullOrWhiteSpace(newGenre) Then
-                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
-                Exit Sub
-            End If
+            Try
+                con.Open()
 
 
-            If newGenre.Length < 3 Then
-                MsgBox("New Genre must be 3 characters or more.", vbExclamation, "Input Error")
-                Exit Sub
-            End If
+                If DataGridView1.SelectedRows.Count > 0 Then
 
+                    Dim selectedRow = DataGridView1.SelectedRows(0)
+                    Dim ID As Integer = Convert.ToInt32(selectedRow.Cells("ID").Value)
+                    Dim oldGenre As String = selectedRow.Cells("Genre").Value.ToString().Trim()
 
-            For Each c As Char In newGenre
-                If Not Char.IsLetter(c) AndAlso Not Char.IsWhiteSpace(c) AndAlso c <> "-" Then
-                    MsgBox("New Genre name can only contain letters (e.g., Sci-Fi).", vbExclamation, "Invalid Genre Format")
-                    Exit Sub
-                End If
-            Next
+                    If String.Equals(oldGenre, genre, StringComparison.OrdinalIgnoreCase) Then
+                        MsgBox("The genre name is the same as the current one.", vbInformation)
+                        Exit Sub
+                    End If
 
+                    Dim check As New MySqlCommand(
+                        "SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @genre AND `ID` <> @id", con)
 
-            If String.Equals(oldGenre, newGenre, StringComparison.OrdinalIgnoreCase) Then
-                MsgBox("The genre name is the same as the current one.", vbInformation)
-                Exit Sub
-            End If
+                    check.Parameters.AddWithValue("@genre", genre)
+                    check.Parameters.AddWithValue("@id", ID)
 
-            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
-                Try
-                    con.Open()
-
-
-                    Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @newGenre AND ID <> @id", con)
-                    coms.Parameters.AddWithValue("@newGenre", newGenre)
-                    coms.Parameters.AddWithValue("@id", ID)
-                    Dim count As Integer = Convert.ToInt32(coms.ExecuteScalar())
-
-                    If count > 0 Then
+                    If Convert.ToInt32(check.ExecuteScalar()) > 0 Then
                         MsgBox("Genre already exists.", vbExclamation, "Duplication is not allowed.")
                         Exit Sub
                     End If
 
+                    Dim update As New MySqlCommand(
+                        "UPDATE `genre_tbl` SET `Genre` = @genre WHERE `ID` = @id", con)
 
-                    Dim com As New MySqlCommand("UPDATE `genre_tbl` SET `Genre` = @newGenre WHERE `ID` = @id", con)
-                    com.Parameters.AddWithValue("@newGenre", newGenre)
-                    com.Parameters.AddWithValue("@id", ID)
-                    com.ExecuteNonQuery()
+                    update.Parameters.AddWithValue("@genre", genre)
+                    update.Parameters.AddWithValue("@id", ID)
+                    update.ExecuteNonQuery()
 
+                    Dim updateBooks As New MySqlCommand(
+                        "UPDATE `book_tbl` SET `Genre` = @newGenre WHERE `Genre` = @oldGenre", con)
 
-                    Dim comsis As New MySqlCommand("UPDATE `book_tbl` SET `Genre` = @newGenre WHERE `Genre` = @oldGenre", con)
-                    comsis.Parameters.AddWithValue("@newGenre", newGenre)
-                    comsis.Parameters.AddWithValue("@oldGenre", oldGenre)
-                    comsis.ExecuteNonQuery()
-
-
-                    GlobalVarsModule.LogAudit(
-                actionType:="UPDATE",
-                formName:="GENRE FORM",
-                description:=$"Updated Genre Name from '{oldGenre}' to '{newGenre}'.",
-                recordID:=ID.ToString(),
-                oldValue:=oldGenre,
-                newValue:=newGenre
-            )
-
-                    For Each form In Application.OpenForms
-                        If TypeOf form Is Book Then
-
-                            DirectCast(form, Book).cbgenree()
-                        End If
-                        If TypeOf form Is AuditTrail Then
-                            DirectCast(form, AuditTrail).refreshaudit()
-                        End If
-                        If TypeOf form Is MainForm Then
-                            DirectCast(form, MainForm).loadsu()
-                        End If
-                    Next
-
-                    MsgBox("Updated successfully!", vbInformation)
-
-
-                    Me.Genre_Load(sender, e)
-                    txtgenre.Clear()
-
-                Catch ex As Exception
-                    MsgBox(ex.Message, vbCritical)
-                End Try
-            End Using
-
-        Else
-            MsgBox("Please select a row to edit.", vbExclamation)
-        End If
-    End Sub
-
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this genre?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-
-            If dialogResult = DialogResult.Yes Then
-
-                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim genreName As String = selectedRow.Cells("Genre").Value.ToString().Trim()
-
-                Try
-                    con.Open()
-
-
-                    Dim bookCom As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE Genre = @genre", con)
-                    bookCom.Parameters.AddWithValue("@genre", genreName)
-                    Dim bookCount As Integer = CInt(bookCom.ExecuteScalar())
-
-                    If bookCount > 0 Then
-                        MessageBox.Show("Cannot delete this genre. It is assigned to " & bookCount & " book(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                        Return
-                    End If
-
-
-                    Dim delete As New MySqlCommand("DELETE FROM `genre_tbl` WHERE `ID` = @id", con)
-                    delete.Parameters.AddWithValue("@id", ID)
-                    delete.ExecuteNonQuery()
+                    updateBooks.Parameters.AddWithValue("@newGenre", genre)
+                    updateBooks.Parameters.AddWithValue("@oldGenre", oldGenre)
+                    updateBooks.ExecuteNonQuery()
 
                     GlobalVarsModule.LogAudit(
-                        actionType:="DELETE",
+                        actionType:="UPDATE",
                         formName:="GENRE FORM",
-                        description:=$"Deleted Genre: {genreName}",
-                        recordID:=ID.ToString()
+                        description:=$"Updated Genre Name from '{oldGenre}' to '{genre}'.",
+                        recordID:=ID.ToString(),
+                        oldValue:=oldGenre,
+                        newValue:=genre
                     )
 
                     For Each form In Application.OpenForms
                         If TypeOf form Is Book Then
-                            Dim book = DirectCast(form, Book)
-                            book.cbgenree()
+                            DirectCast(form, Book).cbgenree()
+                        ElseIf TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        ElseIf TypeOf form Is MainForm Then
+                            DirectCast(form, MainForm).loadsu()
                         End If
                     Next
+
+                    MsgBox("Genre updated successfully!", vbInformation)
+
+                Else
+
+                    ' ADD
+                    Dim check As New MySqlCommand(
+                        "SELECT COUNT(*) FROM `genre_tbl` WHERE `Genre` = @genre", con)
+
+                    check.Parameters.AddWithValue("@genre", genre)
+
+                    If Convert.ToInt32(check.ExecuteScalar()) > 0 Then
+                        MsgBox("Genre already exists.", vbExclamation, "Duplication is not allowed.")
+                        Exit Sub
+                    End If
+
+                    Dim insert As New MySqlCommand(
+                        "INSERT INTO `genre_tbl` (`Genre`) VALUES (@genre); SELECT LAST_INSERT_ID()", con)
+
+                    insert.Parameters.AddWithValue("@genre", genre)
+
+                    Dim insertedID As Integer = Convert.ToInt32(insert.ExecuteScalar())
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="ADD",
+                        formName:="GENRE FORM",
+                        description:=$"Added new Genre: {genre}",
+                        recordID:=insertedID.ToString()
+                    )
 
                     For Each form In Application.OpenForms
-                        If TypeOf form Is AuditTrail Then
-                            Dim load = DirectCast(form, AuditTrail)
-                            load.refreshaudit()
+                        If TypeOf form Is Book Then
+                            DirectCast(form, Book).cbgenree()
+                        ElseIf TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
                         End If
                     Next
 
-                    MsgBox("Genre deleted successfully.", vbInformation)
-                    Genre_Load(sender, e)
-                    txtgenre.Clear()
+                    MsgBox("Genre added successfully", vbInformation)
 
-                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `genre_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+                End If
+
+                txtgenre.Clear()
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+                refreshGenre()
+
+            Catch ex As Exception
+                MsgBox(ex.Message, vbCritical)
+            End Try
+
+        End Using
+
+    End Sub
+
+    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+
+        If e.RowIndex < 0 Then Exit Sub
+
+        Dim row = DataGridView1.Rows(e.RowIndex)
+
+        If DataGridView1.Columns(e.ColumnIndex).Name = "Edit" Then
+
+            DataGridView1.ClearSelection()
+            row.Selected = True
+            DataGridView1.CurrentCell = row.Cells(DataGridView1.Columns.GetFirstColumn(DataGridViewElementStates.Visible).Index)
+
+            txtgenre.Text = row.Cells("Genre").Value.ToString()
+
+            Exit Sub
+        End If
+
+        If DataGridView1.Columns(e.ColumnIndex).Name = "Delete" Then
+
+            Dim result = MessageBox.Show(
+        "Are you sure you want to delete this genre?",
+        "Confirm Delete",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Warning
+    )
+
+            If result <> DialogResult.Yes Then Exit Sub
+
+            Dim genreName As String = row.Cells("Genre").Value.ToString().Trim()
+
+            Try
+
+                Dim ID As Integer
+
+                If row.Cells("ID").Value Is Nothing OrElse
+           IsDBNull(row.Cells("ID").Value) OrElse
+           Not Integer.TryParse(row.Cells("ID").Value.ToString(), ID) Then
+
+                    MsgBox("Invalid Genre ID.", vbCritical)
+                    Exit Sub
+                End If
+
+                Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+
+                    con.Open()
+
+                    Dim bookCom As New MySqlCommand(
+                "SELECT COUNT(*) FROM `book_tbl` WHERE `Genre` = @genre", con)
+
+                    bookCom.Parameters.AddWithValue("@genre", genreName)
+
+                    Dim bookCount As Integer = Convert.ToInt32(bookCom.ExecuteScalar())
+
+                    If bookCount > 0 Then
+                        MessageBox.Show(
+                    "Cannot delete this genre. It is assigned to " &
+                    bookCount & " book(s).",
+                    "Information",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                )
+                        Exit Sub
+                    End If
+
+                    Dim delete As New MySqlCommand(
+                "DELETE FROM `genre_tbl` WHERE `ID` = @id", con)
+
+                    delete.Parameters.AddWithValue("@id", ID)
+                    delete.ExecuteNonQuery()
+
+                    GlobalVarsModule.LogAudit(
+                actionType:="DELETE",
+                formName:="GENRE FORM",
+                description:=$"Deleted Genre: {genreName}",
+                recordID:=ID.ToString()
+            )
+
+                    For Each form In Application.OpenForms
+                        If TypeOf form Is Book Then
+                            DirectCast(form, Book).cbgenree()
+                        ElseIf TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+                    Next
+
+                    Dim count As New MySqlCommand(
+                "SELECT COUNT(*) FROM `genre_tbl`", con)
+
+                    Dim rowCount As Long = Convert.ToInt64(count.ExecuteScalar())
 
                     If rowCount = 0 Then
-                        Dim reset As New MySqlCommand("ALTER TABLE `genre_tbl` AUTO_INCREMENT = 1", con)
+                        Dim reset As New MySqlCommand(
+                    "ALTER TABLE `genre_tbl` AUTO_INCREMENT = 1", con)
+
                         reset.ExecuteNonQuery()
                     End If
 
-                Catch ex As Exception
-                    MsgBox(ex.Message, vbCritical)
-                End Try
-            End If
+                End Using
+
+                MsgBox("Genre deleted successfully.", vbInformation)
+
+                txtgenre.Clear()
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+                refreshGenre()
+
+            Catch ex As MySqlException
+                MsgBox("Database Error: " & ex.Message, vbCritical, "Delete Error")
+
+            Catch ex As Exception
+                MsgBox(ex.Message, vbCritical, "Delete Error")
+
+            End Try
+
+            Exit Sub
+
         End If
+
     End Sub
 
+    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
 
+        If e.RowIndex >= 0 Then
+            Dim row = DataGridView1.Rows(e.RowIndex)
+            txtgenre.Text = row.Cells("Genre").Value.ToString()
+        End If
+
+    End Sub
 
     Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
         HandleAutoRefreshPause(DataGridView1, txtsearch)
 
-        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        Dim dt As DataTable = TryCast(DataGridView1.DataSource, DataTable)
+
         If dt IsNot Nothing Then
             If txtsearch.Text.Trim() <> "" Then
-                Dim filter As String = String.Format("Genre LIKE '*{0}*'", txtsearch.Text.Trim())
+                Dim filter As String =
+                    String.Format("Genre LIKE '*{0}*'", txtsearch.Text.Trim())
+
                 dt.DefaultView.RowFilter = filter
             Else
                 dt.DefaultView.RowFilter = ""
@@ -317,22 +355,19 @@ Public Class Genre
 
     End Sub
 
-    Private Sub DataGridView1_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-
-
-        If e.RowIndex >= 0 Then
-
-            Dim row = DataGridView1.Rows(e.RowIndex)
-            txtgenre.Text = row.Cells("Genre").Value.ToString()
-
-        End If
-
-    End Sub
-
     Private Sub txtgenre_KeyDown(sender As Object, e As KeyEventArgs) Handles txtgenre.KeyDown
 
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+        If e.Control AndAlso
+           (e.KeyCode = Keys.V OrElse
+            e.KeyCode = Keys.C OrElse
+            e.KeyCode = Keys.X) Then
+
             e.SuppressKeyPress = True
+        End If
+
+        If e.KeyCode = Keys.Enter Then
+            e.SuppressKeyPress = True
+            btnadd.PerformClick()
         End If
 
     End Sub
@@ -341,11 +376,14 @@ Public Class Genre
 
         If e.KeyChar = " "c AndAlso String.IsNullOrEmpty(txtgenre.Text) Then
             e.Handled = True
-
-
+            Exit Sub
         End If
 
-        If Not Char.IsLetter(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsWhiteSpace(e.KeyChar) Then
+        If Not Char.IsLetter(e.KeyChar) AndAlso
+           Not Char.IsControl(e.KeyChar) AndAlso
+           Not Char.IsWhiteSpace(e.KeyChar) AndAlso
+           e.KeyChar <> "-"c Then
+
             e.Handled = True
         End If
 
@@ -353,16 +391,22 @@ Public Class Genre
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
 
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+        If e.Control AndAlso
+           (e.KeyCode = Keys.V OrElse
+            e.KeyCode = Keys.C OrElse
+            e.KeyCode = Keys.X) Then
+
             e.SuppressKeyPress = True
         End If
 
     End Sub
 
     Private Sub Genre_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+
         If e.KeyCode = Keys.Escape Then
             Me.Close()
         End If
+
     End Sub
 
     Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
@@ -373,31 +417,20 @@ Public Class Genre
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
-
-    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
-
-    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
-        Cursor = Cursors.Hand
-    End Sub
-
-    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
-        Cursor = Cursors.Default
-    End Sub
-
     Private Sub DisablePaste_AllTextBoxes()
+
         For Each ctrl As Control In Me.Controls
             AddHandlerToTextBoxes_NoPaste(ctrl)
         Next
+
     End Sub
 
     Private Sub AddHandlerToTextBoxes_NoPaste(parent As Control)
+
         For Each ctrl As Control In parent.Controls
+
             If TypeOf ctrl Is TextBox Then
+
                 Dim tb As TextBox = CType(ctrl, TextBox)
 
                 tb.ContextMenuStrip = New ContextMenuStrip()
@@ -410,14 +443,16 @@ Public Class Genre
             If ctrl.HasChildren Then
                 AddHandlerToTextBoxes_NoPaste(ctrl)
             End If
+
         Next
 
     End Sub
 
-
     Private Sub BlockPasteKey(sender As Object, e As KeyEventArgs)
 
-        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse
+           (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+
             e.SuppressKeyPress = True
         End If
 
@@ -428,12 +463,13 @@ Public Class Genre
         If e.Button = MouseButtons.Right Then
 
             Dim tb As TextBox = TryCast(sender, TextBox)
+
             If tb IsNot Nothing Then
                 tb.ContextMenuStrip = New ContextMenuStrip()
             End If
+
         End If
 
     End Sub
-
 
 End Class

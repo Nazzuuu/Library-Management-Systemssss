@@ -75,6 +75,313 @@ Public Class Book
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
     End Sub
 
+    Private Sub DataGridView1_DataBindingComplete(sender As Object, e As DataGridViewBindingCompleteEventArgs) Handles DataGridView1.DataBindingComplete
+
+        Try
+
+            If DataGridView1.Columns.Contains("ID") Then
+                DataGridView1.Columns("ID").Visible = False
+            End If
+
+            If DataGridView1.Columns.Contains("Delete") Then
+                DataGridView1.Columns("Delete").DisplayIndex = DataGridView1.Columns.Count - 1
+            End If
+
+            If DataGridView1.Columns.Contains("Edit") Then
+                DataGridView1.Columns("Edit").DisplayIndex = DataGridView1.Columns.Count - 2
+            End If
+
+            For Each row As DataGridViewRow In DataGridView1.Rows
+
+                If DataGridView1.Columns.Contains("Edit") Then
+                    row.Cells("Edit").Style.Alignment =
+                        DataGridViewContentAlignment.MiddleCenter
+                End If
+
+                If DataGridView1.Columns.Contains("Delete") Then
+                    row.Cells("Delete").Style.Alignment =
+                        DataGridViewContentAlignment.MiddleCenter
+                End If
+
+            Next
+
+        Catch ex As Exception
+            Debug.WriteLine("DataBindingComplete error: " & ex.Message)
+        End Try
+
+    End Sub
+
+    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+
+        If e.RowIndex < 0 Then Exit Sub
+
+        If e.ColumnIndex < 0 OrElse e.ColumnIndex >= DataGridView1.Columns.Count Then Exit Sub
+
+        Dim clickedColumn As String = DataGridView1.Columns(e.ColumnIndex).Name
+        Dim selectedRow As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+
+        If selectedRow.IsNewRow Then Exit Sub
+
+
+
+        If clickedColumn = "Edit" Then
+
+            Try
+                DataGridView1.ClearSelection()
+                selectedRow.Selected = True
+
+                Dim idObj = selectedRow.Cells("ID").Value
+
+                If idObj IsNot Nothing AndAlso Not IsDBNull(idObj) Then
+                    LastSelectedBookID = Convert.ToInt32(idObj)
+                Else
+                    LastSelectedBookID = -1
+                End If
+
+                Try
+                    PauseAutoRefresh(DataGridView1)
+                Catch
+                End Try
+
+                skipRestore = True
+
+                If skipRestoreTimer IsNot Nothing Then
+                    skipRestoreTimer.Stop()
+                    skipRestoreTimer.Start()
+                End If
+
+                ApplyRowToFields(selectedRow)
+
+                rbgenerate.Enabled = False
+
+            Catch ex As Exception
+                MessageBox.Show(
+                    "Error loading book for editing: " & ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                )
+            End Try
+
+            Exit Sub
+
+        End If
+
+
+
+        If clickedColumn = "Delete" Then
+
+            Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim bookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
+
+            Dim bookISBN As String = ""
+            Dim bookBarcode As String = ""
+
+            If selectedRow.Cells("ISBN").Value IsNot Nothing AndAlso
+           Not IsDBNull(selectedRow.Cells("ISBN").Value) Then
+
+                bookISBN = selectedRow.Cells("ISBN").Value.ToString()
+            End If
+
+            If selectedRow.Cells("Barcode").Value IsNot Nothing AndAlso
+           Not IsDBNull(selectedRow.Cells("Barcode").Value) Then
+
+                bookBarcode = selectedRow.Cells("Barcode").Value.ToString()
+            End If
+
+
+            Dim dialogResult As DialogResult =
+            MessageBox.Show(
+                "Are you sure you want to delete this book?" &
+                Environment.NewLine &
+                Environment.NewLine &
+                "Book: " & bookTitle,
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            )
+
+            If dialogResult <> DialogResult.Yes Then
+                Exit Sub
+            End If
+
+
+            Using con As New MySqlConnection(GlobalVarsModule.connectionString)
+
+                Try
+
+                    con.Open()
+
+
+
+                    Dim acs As New MySqlCommand(
+                    "SELECT COUNT(*) 
+                     FROM `acession_tbl`
+                     WHERE (`ISBN` = @ISBN AND @ISBN <> '')
+                     OR (`Barcode` = @Barcode AND @Barcode <> '')",
+                    con)
+
+                    acs.Parameters.AddWithValue("@ISBN", bookISBN)
+                    acs.Parameters.AddWithValue("@Barcode", bookBarcode)
+
+                    Dim accessionCount As Integer =
+                    CInt(acs.ExecuteScalar())
+
+
+                    If accessionCount > 0 Then
+
+                        MsgBox(
+                        "Cannot delete this book. It has existing accession records.",
+                        vbExclamation,
+                        "Deletion Blocked"
+                    )
+
+                        Exit Sub
+
+                    End If
+
+
+
+                    Dim acx As New MySqlCommand(
+                    "SELECT COUNT(*)
+                     FROM `acquisition_tbl`
+                     WHERE (`ISBN` = @ISBN AND @ISBN <> '')
+                     OR (`Barcode` = @Barcode AND @Barcode <> '')",
+                    con)
+
+                    acx.Parameters.AddWithValue("@ISBN", bookISBN)
+                    acx.Parameters.AddWithValue("@Barcode", bookBarcode)
+
+                    Dim acquisitionCount As Integer =
+                    CInt(acx.ExecuteScalar())
+
+
+                    If acquisitionCount > 0 Then
+
+                        MsgBox(
+                        "Cannot delete this book. It has existing acquisition records.",
+                        vbExclamation,
+                        "Deletion Blocked"
+                    )
+
+                        Exit Sub
+
+                    End If
+
+
+
+                    Dim deleteCmd As New MySqlCommand(
+                    "DELETE FROM `book_tbl`
+                     WHERE `ID` = @id",
+                    con)
+
+                    deleteCmd.Parameters.AddWithValue("@id", bookID)
+
+                    Dim affectedRows As Integer =
+                    deleteCmd.ExecuteNonQuery()
+
+
+                    If affectedRows = 0 Then
+
+                        MsgBox(
+                        "Book was not found or was already deleted.",
+                        vbExclamation,
+                        "Delete Failed"
+                    )
+
+                        Exit Sub
+
+                    End If
+
+
+                    GlobalVarsModule.LogAudit(
+                    actionType:="DELETE",
+                    formName:="BOOK FORM",
+                    description:=$"Deleted Book: {bookTitle}",
+                    recordID:=bookID.ToString()
+                )
+
+
+
+                    For Each form In Application.OpenForms
+
+                        If TypeOf form Is AuditTrail Then
+                            DirectCast(form, AuditTrail).refreshaudit()
+                        End If
+
+                        If TypeOf form Is AvailableBooks Then
+                            DirectCast(form, AvailableBooks).refreshavail()
+                        End If
+
+                        If TypeOf form Is Acquisition2 Then
+                            DirectCast(form, Acquisition2).refreshData()
+                        End If
+
+                        If TypeOf form Is Accession Then
+                            DirectCast(form, Accession).RefreshAccessionData()
+                        End If
+
+                        If TypeOf form Is ReserveCopies Then
+                            DirectCast(form, ReserveCopies).reserveload()
+                        End If
+
+                        If TypeOf form Is Borrowing Then
+                            DirectCast(form, Borrowing).refreshborrowingsu()
+                        End If
+
+                    Next
+
+
+                    MsgBox(
+                    "Book deleted successfully.",
+                    vbInformation,
+                    "Success"
+                )
+
+
+                    LastSelectedBookID = -1
+
+                    clear()
+
+                    LoadBookData()
+
+
+                    Dim countCmd As New MySqlCommand(
+                    "SELECT COUNT(*) FROM `book_tbl`",
+                    con)
+
+                    Dim rowCount As Long =
+                    CLng(countCmd.ExecuteScalar())
+
+
+                    If rowCount = 0 Then
+
+                        Dim resetCmd As New MySqlCommand(
+                        "ALTER TABLE `book_tbl` AUTO_INCREMENT = 1",
+                        con)
+
+                        resetCmd.ExecuteNonQuery()
+
+                    End If
+
+
+                Catch ex As Exception
+
+                    MsgBox(
+                    "An error occurred while deleting the book: " &
+                    ex.Message,
+                    vbCritical,
+                    "Delete Error"
+                )
+
+                End Try
+
+            End Using
+
+        End If
+
+    End Sub
+
 
     Public Sub refreshbook()
         If String.IsNullOrEmpty(GlobalVarsModule.connectionString) Then
@@ -247,9 +554,6 @@ Public Class Book
                 DataGridView1.Columns("ID").Visible = False
             End If
 
-
-            ' DataGridView1.ClearSelection()
-            ' DataGridView1.CurrentCell = Nothing
             DataGridView1.EnableHeadersVisualStyles = False
             DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
             DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
@@ -436,9 +740,7 @@ Public Class Book
         While BarcodeIndex < BarcodeList.Count
             Dim info = BarcodeList(BarcodeIndex)
 
-
             Dim img As Image = GenerateBarcodeImage(info.Barcode, 280, 100)
-
 
             e.Graphics.DrawString(info.Title, fontTitle, Brushes.Black, x, y)
             e.Graphics.DrawImage(img, x, y + 20)
@@ -461,7 +763,6 @@ Public Class Book
     Function GenerateBarcodeImage(ByVal barcodeText As String, ByVal width As Integer, ByVal height As Integer) As Image
         Try
 
-
             Dim renderWidth As Integer = BARCODE_PIXEL_WIDTH
             Dim renderHeight As Integer = 80
             Dim totalLabelHeight As Integer = BARCODE_PIXEL_HEIGHT
@@ -481,14 +782,11 @@ Public Class Book
 
             Dim barcodeBitmap As Bitmap = writer.Write(barcodeText)
 
-
             Dim printImage As New Bitmap(renderWidth, totalLabelHeight)
             Using g As Graphics = Graphics.FromImage(printImage)
                 g.Clear(Color.White)
 
-
                 g.DrawImage(barcodeBitmap, 0, 0, renderWidth, renderHeight)
-
 
                 Using font As New Font("Arial", 8)
                     Using sf As New StringFormat With {
@@ -499,17 +797,14 @@ Public Class Book
                     End Using
                 End Using
 
-
                 Using borderPen As New Pen(Color.Black, 1)
 
                     g.DrawRectangle(borderPen, 0, 0, renderWidth - 1, totalLabelHeight - 1)
                 End Using
 
-
             End Using
 
             barcodeBitmap.Dispose()
-
 
             If width = renderWidth AndAlso height = totalLabelHeight Then
 
@@ -535,292 +830,289 @@ Public Class Book
         End Try
     End Function
 
+
     Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim isbn As Object = Nothing
-        Dim barcode As Object = Nothing
-        Dim booktitle As String = txtbooktitle.Text.Trim()
-        Dim yearsu As String = txtyearr.Text.Trim
-        Dim bookID As Integer = 0
+        Dim isUpdate As Boolean = False
+        Dim bookID As Integer = -1
+        Dim oldBookTitle As String = ""
+
+
+
+        If DataGridView1.SelectedRows.Count > 0 Then
+
+            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+
+            If Not selectedRow.IsNewRow Then
+
+                Dim idObj = selectedRow.Cells("ID").Value
+
+                If idObj IsNot Nothing AndAlso Not IsDBNull(idObj) Then
+
+                    bookID = Convert.ToInt32(idObj)
+                    oldBookTitle = selectedRow.Cells("BookTitle").Value.ToString()
+                    isUpdate = True
+
+                End If
+
+            End If
+
+        End If
+
+
+        Dim newBookTitle As String = txtbooktitle.Text.Trim()
+        Dim yearsu As String = txtyearr.Text.Trim()
+
         Dim currentYear As Integer = Date.Now.Year
         Dim inputYear As Integer
 
-        If Not Integer.TryParse(yearsu, inputYear) OrElse inputYear > currentYear OrElse inputYear < 1700 Then
-            MsgBox("Invalid Year. Please enter a valid year", vbExclamation, "Validation Error")
+
+        If Not Integer.TryParse(yearsu, inputYear) OrElse
+       inputYear > currentYear OrElse
+       inputYear < 1700 Then
+
+            MsgBox("Invalid Year. Please enter a valid year.",
+               vbExclamation,
+               "Validation Error")
             Exit Sub
         End If
 
-        Dim comx As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `BookTitle` = @booktitle", con)
-        comx.Parameters.AddWithValue("@booktitle", booktitle)
+
+        Dim authorValid As Boolean =
+        chkauthor.Checked OrElse
+        cbauthor.SelectedIndex >= 0 OrElse
+        Not String.IsNullOrWhiteSpace(cbauthor.Text)
+
+        Dim genreValid As Boolean =
+        cbgenre.SelectedIndex >= 0 OrElse
+        Not String.IsNullOrWhiteSpace(cbgenre.Text)
+
+        Dim publisherValid As Boolean =
+        cbpublisher.SelectedIndex >= 0 OrElse
+        Not String.IsNullOrWhiteSpace(cbpublisher.Text)
+
+        Dim languageValid As Boolean =
+        cblanguage.SelectedIndex >= 0 OrElse
+        Not String.IsNullOrWhiteSpace(cblanguage.Text)
+
+
+        If String.IsNullOrWhiteSpace(newBookTitle) OrElse
+       Not authorValid OrElse
+       Not genreValid OrElse
+       Not publisherValid OrElse
+       Not languageValid Then
+
+            MsgBox("Please fill in all the required fields.",
+               vbExclamation,
+               "Validation Error")
+            Exit Sub
+        End If
+
+
+        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+
+        Dim isbnValue As Object
+        Dim barcodeValue As Object
+
 
         Try
-            con.Open()
-            Dim count As Integer = CInt(comx.ExecuteScalar())
-            If count > 0 Then
-                MsgBox("This book already exists.", vbExclamation, "Duplication not allowed.")
-                Exit Sub
-            End If
-        Catch ex As Exception
-            MsgBox("Error checking Book Title: " & ex.Message, vbCritical)
-            Exit Sub
-        Finally
-            If con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
 
-        If rbgenerate.Checked Then
-            isbn = DBNull.Value
-            barcode = lblrandom.Text.Trim()
-
-
-            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `Barcode` = @barcode", con)
-            coms.Parameters.AddWithValue("@barcode", barcode)
-            Try
-                con.Open()
-                Dim count As Integer = CInt(coms.ExecuteScalar())
-                If count > 0 Then
-                    MsgBox("This barcode already exists.", vbExclamation, "Duplication not allowed.")
-                    Exit Sub
-                End If
-            Catch ex As Exception
-                MsgBox("Error checking Barcode: " & ex.Message, vbCritical)
-                Exit Sub
-            Finally
-                If con.State = ConnectionState.Open Then
-                    con.Close()
-                End If
-            End Try
-
-        Else
-            isbn = txtisbn.Text.Trim()
-
-            If String.IsNullOrEmpty(CStr(isbn)) Then
-                MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
-                Exit Sub
-            End If
-
-            Dim isbnString As String = CStr(isbn).Replace("-", "").Replace(" ", "")
-
-            If Not System.Text.RegularExpressions.Regex.IsMatch(isbnString, "^97[1-9]\d{10}$") Then
-                MsgBox("Invalid ISBN format.", vbExclamation, "Validation Error")
-                Exit Sub
-            End If
-
-            Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `ISBN` = @isbn", con)
-            coms.Parameters.AddWithValue("@isbn", isbn)
-            Try
-                con.Open()
-                Dim count As Integer = CInt(coms.ExecuteScalar())
-                If count > 0 Then
-                    MsgBox("The ISBN already exists. Please enter a unique ISBN.", vbExclamation, "Duplication not allowed.")
-                    Exit Sub
-                End If
-            Catch ex As Exception
-                MsgBox("Error checking ISBN: " & ex.Message, vbCritical)
-                Exit Sub
-            Finally
-                If con.State = ConnectionState.Open Then
-                    con.Close()
-                End If
-            End Try
-
-            barcode = DBNull.Value
-        End If
-
-
-        If String.IsNullOrEmpty(booktitle) OrElse (Not chkauthor.Checked AndAlso cbauthor.SelectedIndex = -1) OrElse cbgenre.SelectedIndex = -1 OrElse cbpublisher.SelectedIndex = -1 OrElse cblanguage.SelectedIndex = -1 Then
-            MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
-            Exit Sub
-        End If
-
-        Try
-            con.Open()
-
-            Dim com As New MySqlCommand("INSERT INTO `book_tbl`(`Barcode`,`ISBN`, `BookTitle`, `Author`, `Genre`, `Publisher`, `Language`, `YearPublished`) VALUES (@barcode, @isbn, @booktitle, @author, @genre, @publisher, @language, @yearpublished); SELECT LAST_INSERT_ID()", con)
-
-            com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcode), DBNull.Value, barcode))
-            com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbn), DBNull.Value, isbn))
-            com.Parameters.AddWithValue("@booktitle", booktitle)
-            com.Parameters.AddWithValue("@author", If(chkauthor.Checked, DBNull.Value, cbauthor.Text))
-            com.Parameters.AddWithValue("@genre", cbgenre.Text)
-            com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
-            com.Parameters.AddWithValue("@language", cblanguage.Text)
-            com.Parameters.AddWithValue("@yearpublished", yearsu)
-
-            bookID = Convert.ToInt32(com.ExecuteScalar())
-
-            GlobalVarsModule.LogAudit(
-        actionType:="ADD",
-        formName:="BOOK FORM",
-        description:=$"Added new Book: {booktitle}",
-        recordID:=bookID.ToString()
-    )
-
-            For Each form In Application.OpenForms
-                If TypeOf form Is AuditTrail Then
-                    Dim load = DirectCast(form, AuditTrail)
-                    load.refreshaudit()
-                End If
-            Next
-
-            MsgBox("Book added successfully", vbInformation)
-            clear()
-            LoadBookData()
-        Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
-        Finally
-            If Not IsNothing(con) AndAlso con.State = ConnectionState.Open Then
-                con.Close()
-            End If
-        End Try
-    End Sub
-
-    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-            Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
-            Dim oldBookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
-            Dim newBookTitle As String = txtbooktitle.Text.Trim()
-            Dim yearsu As String = txtyearr.Text.Trim
-            Dim currentYear As Integer = Date.Now.Year
-            Dim inputYear As Integer
-
-            If Not Integer.TryParse(yearsu, inputYear) OrElse inputYear > currentYear OrElse inputYear < 1700 Then
-                MsgBox("Invalid Year. Please enter a valid year", vbExclamation, "Validation Error")
-                Exit Sub
-            End If
-
-            ' Validate required fields. If "No Author" is checked, author is optional.
-            Dim authorValid As Boolean = chkauthor.Checked OrElse cbauthor.SelectedIndex >= 0 OrElse Not String.IsNullOrWhiteSpace(cbauthor.Text)
-            Dim genreValid As Boolean = cbgenre.SelectedIndex >= 0 OrElse Not String.IsNullOrWhiteSpace(cbgenre.Text)
-            Dim publisherValid As Boolean = cbpublisher.SelectedIndex >= 0 OrElse Not String.IsNullOrWhiteSpace(cbpublisher.Text)
-            Dim languageValid As Boolean = cblanguage.SelectedIndex >= 0 OrElse Not String.IsNullOrWhiteSpace(cblanguage.Text)
-
-            If String.IsNullOrWhiteSpace(newBookTitle) OrElse Not authorValid OrElse Not genreValid OrElse Not publisherValid OrElse Not languageValid Then
-                MsgBox("Please fill in all the required fields.", vbExclamation, "Validation Error")
-                Exit Sub
-            End If
-
-
-            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-
-
-            Dim isbnValue As Object
-            Dim barcodeValue As Object
 
             If rbgenerate.Checked Then
+
                 isbnValue = DBNull.Value
                 barcodeValue = lblrandom.Text.Trim()
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `Barcode` = @barcode AND `ID` <> @id", con)
-                coms.Parameters.AddWithValue("@barcode", barcodeValue)
-                coms.Parameters.AddWithValue("@id", bookID)
 
-                Try
-                    con.Open()
-                    Dim count As Integer = CInt(coms.ExecuteScalar())
-                    If count > 0 Then
-                        MsgBox("This book already exists.", vbExclamation, "Duplication not allowed.")
-                        Exit Sub
-                    End If
-                Catch ex As Exception
-                    MsgBox("Error checking Barcode: " & ex.Message, vbCritical)
+                If String.IsNullOrWhiteSpace(CStr(barcodeValue)) OrElse
+                   CStr(barcodeValue) = "0000000000000" Then
+
+                    MsgBox("Please generate a valid barcode.",
+                       vbExclamation,
+                       "Validation Error")
                     Exit Sub
-                Finally
-                    If con.State = ConnectionState.Open Then
-                        con.Close()
-                    End If
-                End Try
+
+                End If
+
+
+                Dim barcodeQuery As String
+
+                If isUpdate Then
+                    barcodeQuery =
+                    "SELECT COUNT(*) FROM `book_tbl`
+                     WHERE `Barcode` = @barcode
+                     AND `ID` <> @id"
+                Else
+                    barcodeQuery =
+                    "SELECT COUNT(*) FROM `book_tbl`
+                     WHERE `Barcode` = @barcode"
+                End If
+
+                Dim coms As New MySqlCommand(barcodeQuery, con)
+
+                coms.Parameters.AddWithValue("@barcode", barcodeValue)
+
+                If isUpdate Then
+                    coms.Parameters.AddWithValue("@id", bookID)
+                End If
+
+                con.Open()
+
+                Dim count As Integer = CInt(coms.ExecuteScalar())
+
+                con.Close()
+
+
+                If count > 0 Then
+
+                    MsgBox("This barcode already exists.",
+                       vbExclamation,
+                       "Duplication not allowed.")
+
+                    Exit Sub
+                End If
+
 
             Else
+
                 isbnValue = txtisbn.Text.Trim()
+
                 If String.IsNullOrEmpty(CStr(isbnValue)) Then
-                    MsgBox("Please enter a valid ISBN.", vbExclamation, "Validation Error")
+
+                    MsgBox("Please enter a valid ISBN.",
+                       vbExclamation,
+                       "Validation Error")
+
                     Exit Sub
                 End If
 
-                Dim isbnString As String = CStr(isbnValue).Replace("-", "").Replace(" ", "")
+
+                Dim isbnString As String =
+                CStr(isbnValue).Replace("-", "").Replace(" ", "")
 
 
-                If Not System.Text.RegularExpressions.Regex.IsMatch(isbnString, "^97[1-9]\d{10}$") Then
-                    MsgBox("Invalid ISBN format.", vbExclamation, "Validation Error")
+                If Not System.Text.RegularExpressions.Regex.IsMatch(
+                isbnString,
+                "^97[1-9]\d{10}$") Then
+
+                    MsgBox("Invalid ISBN format.",
+                       vbExclamation,
+                       "Validation Error")
+
                     Exit Sub
                 End If
 
-                Dim coms As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl` WHERE `ISBN` = @isbn AND `ID` <> @id", con)
+
+                Dim isbnQuery As String
+
+                If isUpdate Then
+                    isbnQuery =
+                    "SELECT COUNT(*) FROM `book_tbl`
+                     WHERE `ISBN` = @isbn
+                     AND `ID` <> @id"
+                Else
+                    isbnQuery =
+                    "SELECT COUNT(*) FROM `book_tbl`
+                     WHERE `ISBN` = @isbn"
+                End If
+
+
+                Dim coms As New MySqlCommand(isbnQuery, con)
+
                 coms.Parameters.AddWithValue("@isbn", isbnValue)
-                coms.Parameters.AddWithValue("@id", bookID)
-                Try
-                    con.Open()
-                    Dim count As Integer = CInt(coms.ExecuteScalar())
-                    If count > 0 Then
-                        MsgBox("The ISBN already exists. Please enter a unique ISBN.", vbExclamation, "Duplication not allowed.")
-                        Exit Sub
-                    End If
-                Catch ex As Exception
-                    MsgBox("Error checking ISBN: " & ex.Message, vbCritical)
+
+                If isUpdate Then
+                    coms.Parameters.AddWithValue("@id", bookID)
+                End If
+
+                con.Open()
+
+                Dim count As Integer = CInt(coms.ExecuteScalar())
+
+                con.Close()
+
+
+                If count > 0 Then
+
+                    MsgBox("The ISBN already exists. Please enter a unique ISBN.",
+                       vbExclamation,
+                       "Duplication not allowed.")
+
                     Exit Sub
-                Finally
-                    If con.State = ConnectionState.Open Then
-                        con.Close()
-                    End If
-                End Try
+                End If
+
+
                 barcodeValue = DBNull.Value
+
             End If
 
 
+            If Not isUpdate Then
 
-            Try
                 con.Open()
 
-                Dim com As New MySqlCommand("UPDATE `book_tbl` SET `Barcode` = @barcode, `ISBN`=@isbn, `BookTitle`= @booktitle, `Author`= @author, `Genre`= @genre, `Publisher`= @publisher, `Language`= @language, `YearPublished`= @yearpublished WHERE `ID` = @id", con)
-                com.Parameters.AddWithValue("@barcode", If(IsDBNull(barcodeValue), DBNull.Value, barcodeValue))
-                com.Parameters.AddWithValue("@isbn", If(IsDBNull(isbnValue), DBNull.Value, isbnValue))
-                com.Parameters.AddWithValue("@booktitle", newBookTitle)
-                com.Parameters.AddWithValue("@author", If(chkauthor.Checked, DBNull.Value, cbauthor.Text))
-                com.Parameters.AddWithValue("@genre", cbgenre.Text)
+                Dim addCmd As New MySqlCommand(
+                "INSERT INTO `book_tbl`
+                (`Barcode`,
+                 `ISBN`,
+                 `BookTitle`,
+                 `Author`,
+                 `Genre`,
+                 `Publisher`,
+                 `Language`,
+                 `YearPublished`)
+                 VALUES
+                (@barcode,
+                 @isbn,
+                 @booktitle,
+                 @author,
+                 @genre,
+                 @publisher,
+                 @language,
+                 @yearpublished)",
+                con)
 
-                com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
-                com.Parameters.AddWithValue("@language", cblanguage.Text)
-                com.Parameters.AddWithValue("@yearpublished", yearsu)
-                com.Parameters.AddWithValue("@id", bookID)
-                com.ExecuteNonQuery()
+
+                addCmd.Parameters.AddWithValue(
+                "@barcode",
+                If(IsDBNull(barcodeValue),
+                   DBNull.Value,
+                   barcodeValue))
+
+                addCmd.Parameters.AddWithValue(
+                "@isbn",
+                If(IsDBNull(isbnValue),
+                   DBNull.Value,
+                   isbnValue))
+
+                addCmd.Parameters.AddWithValue(
+                "@booktitle",
+                newBookTitle)
+
+                addCmd.Parameters.AddWithValue(
+                "@author",
+                If(chkauthor.Checked,
+                   DBNull.Value,
+                   cbauthor.Text))
+
+                addCmd.Parameters.AddWithValue("@genre", cbgenre.Text)
+                addCmd.Parameters.AddWithValue("@publisher", cbpublisher.Text)
+                addCmd.Parameters.AddWithValue("@language", cblanguage.Text)
+                addCmd.Parameters.AddWithValue("@yearpublished", yearsu)
+
+                addCmd.ExecuteNonQuery()
+
+                Dim newBookID As Long = addCmd.LastInsertedId
+
+                con.Close()
+
 
                 GlobalVarsModule.LogAudit(
-            actionType:="UPDATE",
-            formName:="BOOK FORM",
-            description:=$"Updated Book Title from '{oldBookTitle}' to '{newBookTitle}' (ID: {bookID})",
-            recordID:=bookID.ToString(),
-            oldValue:=oldBookTitle,
-            newValue:=newBookTitle
-        )
+                actionType:="ADD",
+                formName:="BOOK FORM",
+                description:=$"Added Book: {newBookTitle}",
+                recordID:=newBookID.ToString()
+            )
 
-                Dim comAcquisition As New MySqlCommand("UPDATE `acquisition_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
-                comAcquisition.Parameters.AddWithValue("@newBookTitle", newBookTitle)
-                comAcquisition.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
-                comAcquisition.ExecuteNonQuery()
-
-                Dim comAcession As New MySqlCommand("UPDATE `acession_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
-                comAcession.Parameters.AddWithValue("@newBookTitle", newBookTitle)
-                comAcession.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
-                comAcession.ExecuteNonQuery()
-
-                Dim comBorrowing As New MySqlCommand("UPDATE `borrowing_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
-                comBorrowing.Parameters.AddWithValue("@newBookTitle", newBookTitle)
-                comBorrowing.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
-                comBorrowing.ExecuteNonQuery()
-
-                Dim comReserve As New MySqlCommand("UPDATE `reservecopiess_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
-                comReserve.Parameters.AddWithValue("@newBookTitle", newBookTitle)
-                comReserve.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
-                comReserve.ExecuteNonQuery()
-
-                Dim availsus As New MySqlCommand("UPDATE `available_tbl` SET `BookTitle` = @newBookTitle WHERE `BookTitle` = @oldBookTitle", con)
-                availsus.Parameters.AddWithValue("@newBookTitle", newBookTitle)
-                availsus.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
-                availsus.ExecuteNonQuery()
 
                 For Each form In Application.OpenForms
 
@@ -840,121 +1132,208 @@ Public Class Book
                         DirectCast(form, Borrowing).refreshborrowingsu()
                     End If
 
-                    If TypeOf form Is AuditTrail Then
-                        Dim load = DirectCast(form, AuditTrail)
-                        load.refreshaudit()
+                    If TypeOf form Is AvailableBooks Then
+                        DirectCast(form, AvailableBooks).refreshavail()
                     End If
 
-                    If TypeOf form Is AvailableBooks Then
-                        Dim load = DirectCast(form, AvailableBooks)
-                        load.refreshavail()
+                    If TypeOf form Is AuditTrail Then
+                        DirectCast(form, AuditTrail).refreshaudit()
                     End If
+
                 Next
 
-                MsgBox("Book updated successfully", vbInformation)
+
+                MsgBox(
+                "Book added successfully.",
+                vbInformation,
+                "Success"
+            )
+
+
+                LastSelectedBookID = -1
+
                 clear()
                 LoadBookData()
-                AvailableBooks.refreshavail()
 
-            Catch ex As Exception
-                MsgBox(ex.Message, vbCritical)
-            Finally
-                If Not IsNothing(con) AndAlso con.State = ConnectionState.Open Then
-                    con.Close()
-                End If
-            End Try
-        Else
-            MsgBox("Please select a row to edit.", vbExclamation)
-        End If
-    End Sub
+                Exit Sub
 
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
-
-        If DataGridView1.SelectedRows.Count > 0 Then
-
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this book?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-
-            If dialogResult = DialogResult.Yes Then
-
-                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-
-                Dim bookID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim bookTitle As String = selectedRow.Cells("BookTitle").Value.ToString()
-
-                Dim bookISBN As String = selectedRow.Cells("ISBN").Value.ToString()
-                Dim bookBarcode As String = selectedRow.Cells("Barcode").Value.ToString()
-
-                Try
-                    con.Open()
-
-
-                    Dim acs As New MySqlCommand("SELECT COUNT(*) FROM `acession_tbl` WHERE `ISBN` = @ISBN OR `Barcode` = @Barcode", con)
-                    acs.Parameters.AddWithValue("@ISBN", bookISBN)
-                    acs.Parameters.AddWithValue("@Barcode", bookBarcode)
-
-                    Dim countss As Integer = CInt(acs.ExecuteScalar())
-
-                    If countss > 0 Then
-                        MsgBox("Cannot delete this book. It has existing accession records.", vbExclamation, "Deletion Blocked")
-                        Exit Sub
-                    End If
-
-
-                    Dim acx As New MySqlCommand("SELECT COUNT(*) FROM `acquisition_tbl` WHERE `ISBN` = @ISBN OR `Barcode` = @Barcode", con)
-                    acx.Parameters.AddWithValue("@ISBN", bookISBN)
-                    acx.Parameters.AddWithValue("@Barcode", bookBarcode)
-
-                    Dim countsx As Integer = CInt(acx.ExecuteScalar())
-
-                    If countsx > 0 Then
-                        MsgBox("Cannot delete this book. It has existing acquisition records.", vbExclamation, "Deletion Blocked")
-                        Exit Sub
-                    End If
-
-                    Dim delete As New MySqlCommand("DELETE FROM `book_tbl` WHERE `ID` = @id", con)
-                    delete.Parameters.AddWithValue("@id", bookID)
-                    delete.ExecuteNonQuery()
-
-                    GlobalVarsModule.LogAudit(
-                    actionType:="DELETE",
-                    formName:="BOOK FORM",
-                    description:=$"Deleted Book: {bookTitle}",
-                    recordID:=bookID.ToString()
-                )
-
-                    For Each form In Application.OpenForms
-                        If TypeOf form Is AuditTrail Then
-                            Dim load = DirectCast(form, AuditTrail)
-                            load.refreshaudit()
-                        End If
-                    Next
-
-                    MsgBox("Book deleted successfully.", vbInformation)
-
-
-                    LoadBookData()
-                    clear()
-
-                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `book_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
-
-                    If rowCount = 0 Then
-                        Dim reset As New MySqlCommand("ALTER TABLE `book_tbl` AUTO_INCREMENT = 1", con)
-                        reset.ExecuteNonQuery()
-                    End If
-
-                Catch ex As Exception
-                    MsgBox("An error occurred: " & ex.Message, vbCritical)
-                Finally
-                    If con.State = ConnectionState.Open Then
-                        con.Close()
-                    End If
-                End Try
             End If
-        Else
-            MsgBox("Please select a row to delete.", vbExclamation)
-        End If
+
+
+            con.Open()
+
+            Dim com As New MySqlCommand(
+            "UPDATE `book_tbl`
+             SET
+             `Barcode` = @barcode,
+             `ISBN` = @isbn,
+             `BookTitle` = @booktitle,
+             `Author` = @author,
+             `Genre` = @genre,
+             `Publisher` = @publisher,
+             `Language` = @language,
+             `YearPublished` = @yearpublished
+             WHERE `ID` = @id",
+            con)
+
+
+            com.Parameters.AddWithValue(
+            "@barcode",
+            If(IsDBNull(barcodeValue),
+               DBNull.Value,
+               barcodeValue))
+
+            com.Parameters.AddWithValue(
+            "@isbn",
+            If(IsDBNull(isbnValue),
+               DBNull.Value,
+               isbnValue))
+
+            com.Parameters.AddWithValue(
+            "@booktitle",
+            newBookTitle)
+
+            com.Parameters.AddWithValue(
+            "@author",
+            If(chkauthor.Checked,
+               DBNull.Value,
+               cbauthor.Text))
+
+            com.Parameters.AddWithValue("@genre", cbgenre.Text)
+            com.Parameters.AddWithValue("@publisher", cbpublisher.Text)
+            com.Parameters.AddWithValue("@language", cblanguage.Text)
+            com.Parameters.AddWithValue("@yearpublished", yearsu)
+            com.Parameters.AddWithValue("@id", bookID)
+
+            com.ExecuteNonQuery()
+
+
+
+            Dim comAcquisition As New MySqlCommand(
+            "UPDATE `acquisition_tbl`
+             SET `BookTitle` = @newBookTitle
+             WHERE `BookTitle` = @oldBookTitle",
+            con)
+
+            comAcquisition.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+            comAcquisition.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+            comAcquisition.ExecuteNonQuery()
+
+
+            Dim comAccession As New MySqlCommand(
+            "UPDATE `acession_tbl`
+             SET `BookTitle` = @newBookTitle
+             WHERE `BookTitle` = @oldBookTitle",
+            con)
+
+            comAccession.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+            comAccession.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+            comAccession.ExecuteNonQuery()
+
+
+            Dim comBorrowing As New MySqlCommand(
+            "UPDATE `borrowing_tbl`
+             SET `BookTitle` = @newBookTitle
+             WHERE `BookTitle` = @oldBookTitle",
+            con)
+
+            comBorrowing.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+            comBorrowing.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+            comBorrowing.ExecuteNonQuery()
+
+
+            Dim comReserve As New MySqlCommand(
+            "UPDATE `reservecopiess_tbl`
+             SET `BookTitle` = @newBookTitle
+             WHERE `BookTitle` = @oldBookTitle",
+            con)
+
+            comReserve.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+            comReserve.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+            comReserve.ExecuteNonQuery()
+
+
+            Dim comAvailable As New MySqlCommand(
+            "UPDATE `available_tbl`
+             SET `BookTitle` = @newBookTitle
+             WHERE `BookTitle` = @oldBookTitle",
+            con)
+
+            comAvailable.Parameters.AddWithValue("@newBookTitle", newBookTitle)
+            comAvailable.Parameters.AddWithValue("@oldBookTitle", oldBookTitle)
+            comAvailable.ExecuteNonQuery()
+
+
+            con.Close()
+
+
+
+            GlobalVarsModule.LogAudit(
+            actionType:="UPDATE",
+            formName:="BOOK FORM",
+            description:=$"Updated Book Title from '{oldBookTitle}' to '{newBookTitle}' (ID: {bookID})",
+            recordID:=bookID.ToString(),
+            oldValue:=oldBookTitle,
+            newValue:=newBookTitle
+        )
+
+
+            For Each form In Application.OpenForms
+
+                If TypeOf form Is Acquisition2 Then
+                    DirectCast(form, Acquisition2).refreshData()
+                End If
+
+                If TypeOf form Is Accession Then
+                    DirectCast(form, Accession).RefreshAccessionData()
+                End If
+
+                If TypeOf form Is ReserveCopies Then
+                    DirectCast(form, ReserveCopies).reserveload()
+                End If
+
+                If TypeOf form Is Borrowing Then
+                    DirectCast(form, Borrowing).refreshborrowingsu()
+                End If
+
+                If TypeOf form Is AvailableBooks Then
+                    DirectCast(form, AvailableBooks).refreshavail()
+                End If
+
+                If TypeOf form Is AuditTrail Then
+                    DirectCast(form, AuditTrail).refreshaudit()
+                End If
+
+            Next
+
+
+            MsgBox(
+            "Book updated successfully.",
+            vbInformation,
+            "Success"
+        )
+
+
+            LastSelectedBookID = -1
+
+            clear()
+            LoadBookData()
+
+
+        Catch ex As Exception
+
+            MsgBox("An error occurred: " & ex.Message,
+               vbCritical,
+               "Error")
+
+        Finally
+
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+
+        End Try
+
     End Sub
 
 
@@ -986,7 +1365,6 @@ Public Class Book
         cbpublisherr()
         cblang()
 
-
         picbarcode.Image = GenerateBarcodeImage(lblrandom.Text, picbarcode.Width, picbarcode.Height)
 
         DataGridView1.ClearSelection()
@@ -995,15 +1373,15 @@ Public Class Book
     End Sub
 
 
-
-
     Function jinireyt() As String
         Dim random As New Random()
         Dim barcode As String = ""
         HandleAutoRefreshPause(DataGridView1, txtsearch)
+
         For i As Integer = 0 To 12
             barcode += random.Next(0, 10).ToString()
         Next
+
         Return barcode
     End Function
 
@@ -1013,134 +1391,325 @@ Public Class Book
         HandleAutoRefreshPause(DataGridView1, txtsearch)
 
         Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+
         If dt IsNot Nothing Then
+
             If txtsearch.Text.Trim() <> "" Then
-                Dim filter As String = String.Format("BookTitle LIKE '*{0}*' OR ISBN LIKE '*{0}*'", txtsearch.Text.Trim())
+
+                Dim filter As String =
+                    String.Format(
+                        "BookTitle LIKE '*{0}*' OR ISBN LIKE '*{0}*'",
+                        txtsearch.Text.Trim()
+                    )
+
                 dt.DefaultView.RowFilter = filter
+
             Else
+
                 dt.DefaultView.RowFilter = ""
+
             End If
+
         End If
+
     End Sub
 
 
     Private Sub txtisbn_KeyDown(sender As Object, e As KeyEventArgs) Handles txtisbn.KeyDown
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
+        If e.Control AndAlso
+           (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
             e.SuppressKeyPress = True
+
         End If
+
     End Sub
 
     Private Sub txtisbn_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtisbn.KeyPress
+
         If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
             e.Handled = True
         End If
+
     End Sub
 
     Private Sub txtbooktitle_KeyDown(sender As Object, e As KeyEventArgs) Handles txtbooktitle.KeyDown
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
+        If e.Control AndAlso
+           (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
             e.SuppressKeyPress = True
+
         End If
+
     End Sub
 
     Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
+        If e.Control AndAlso
+           (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
             e.SuppressKeyPress = True
+
         End If
+
     End Sub
 
     Private Sub jinreytsu()
 
         skipRestore = True
+
         If skipRestoreTimer IsNot Nothing Then
             skipRestoreTimer.Stop()
             skipRestoreTimer.Start()
         End If
 
         If rbgenerate.Checked Then
+
             Dim newBarcode As String = jinireyt()
+
             lblrandom.Text = newBarcode
-            picbarcode.Image = GenerateBarcodeImage(newBarcode, picbarcode.Width, picbarcode.Height)
+
+            picbarcode.Image =
+                GenerateBarcodeImage(
+                    newBarcode,
+                    picbarcode.Width,
+                    picbarcode.Height
+                )
+
             txtisbn.Enabled = False
             txtisbn.Text = ""
+
         Else
+
             lblrandom.Text = "0000000000000"
             picbarcode.Image = Nothing
             txtisbn.Enabled = True
+
         End If
 
     End Sub
 
     Private Sub rbgenerate_CheckedChanged(sender As Object, e As EventArgs) Handles rbgenerate.CheckedChanged
+
         If Not isbarcode Then
             jinreytsu()
+            DataGridView1.ClearSelection()
         End If
+
     End Sub
 
     Private Function SafeCellValue(row As DataGridViewRow, columnName As String) As String
+
         Try
+
             If row.Cells(columnName).Value IsNot Nothing Then
                 Return row.Cells(columnName).Value.ToString()
             End If
+
         Catch
         End Try
+
         Return ""
+
     End Function
 
     Private Sub ApplyRowToFields(row As DataGridViewRow)
-        If row Is Nothing Then
-            Return
-        End If
+
+        If row Is Nothing Then Return
 
         Try
 
             isbarcode = True
 
-            txtbooktitle.Text = SafeCellValue(row, "BookTitle")
-            Dim authorVal As String = SafeCellValue(row, "Author")
+            txtbooktitle.Text =
+            SafeCellValue(row, "BookTitle")
+
+
+            Dim authorVal As String =
+            SafeCellValue(row, "Author")
+
             If String.IsNullOrWhiteSpace(authorVal) Then
-                ' No author stored -> check No Author and disable combobox
+
                 chkauthor.Checked = True
                 cbauthor.SelectedIndex = -1
                 cbauthor.Enabled = False
+
             Else
+
                 chkauthor.Checked = False
                 cbauthor.Enabled = True
-                cbauthor.Text = authorVal
-            End If
-            cbgenre.Text = SafeCellValue(row, "Genre")
-            txtyearr.Text = SafeCellValue(row, "YearPublished")
-            cbpublisher.Text = SafeCellValue(row, "Publisher")
-            cblanguage.Text = SafeCellValue(row, "Language")
 
-            Dim barcodeValue As String = SafeCellValue(row, "Barcode")
+                If cbauthor.DataSource Is Nothing Then
+                    cbauthorr()
+                End If
+
+                Dim authorIndex As Integer =
+                cbauthor.FindStringExact(authorVal)
+
+                If authorIndex >= 0 Then
+                    cbauthor.SelectedIndex = authorIndex
+                Else
+                    cbauthor.Text = authorVal
+                End If
+
+            End If
+
+
+
+            Dim genreVal As String =
+            SafeCellValue(row, "Genre")
+
+            If String.IsNullOrWhiteSpace(genreVal) Then
+
+                cbgenre.SelectedIndex = -1
+
+            Else
+
+                If cbgenre.DataSource Is Nothing Then
+                    cbgenree()
+                End If
+
+                Dim genreIndex As Integer =
+                cbgenre.FindStringExact(genreVal)
+
+                If genreIndex >= 0 Then
+                    cbgenre.SelectedIndex = genreIndex
+                Else
+                    cbgenre.Text = genreVal
+                End If
+
+            End If
+
+
+
+            Dim publisherVal As String =
+            SafeCellValue(row, "Publisher")
+
+            If String.IsNullOrWhiteSpace(publisherVal) Then
+
+                cbpublisher.SelectedIndex = -1
+
+            Else
+
+                If cbpublisher.DataSource Is Nothing Then
+                    cbpublisherr()
+                End If
+
+                Dim publisherIndex As Integer =
+                cbpublisher.FindStringExact(publisherVal)
+
+                If publisherIndex >= 0 Then
+                    cbpublisher.SelectedIndex = publisherIndex
+                Else
+                    cbpublisher.Text = publisherVal
+                End If
+
+            End If
+
+
+
+            Dim languageVal As String =
+            SafeCellValue(row, "Language")
+
+            If String.IsNullOrWhiteSpace(languageVal) Then
+
+                cblanguage.SelectedIndex = -1
+
+            Else
+
+                If cblanguage.DataSource Is Nothing Then
+                    cblang()
+                End If
+
+                Dim languageIndex As Integer =
+                cblanguage.FindStringExact(languageVal)
+
+                If languageIndex >= 0 Then
+                    cblanguage.SelectedIndex = languageIndex
+                Else
+                    cblanguage.Text = languageVal
+                End If
+
+            End If
+
+
+            txtyearr.Text =
+            SafeCellValue(row, "YearPublished")
+
+
+            Dim barcodeValue As String =
+            SafeCellValue(row, "Barcode")
+
             lblrandom.Text = barcodeValue
 
-            Dim isbnn = row.Cells("ISBN").Value
-            Dim hasISBN As Boolean = Not IsDBNull(isbnn) AndAlso Not String.IsNullOrEmpty(isbnn.ToString)
+
+            Dim isbnObj = row.Cells("ISBN").Value
+
+            Dim hasISBN As Boolean =
+            isbnObj IsNot Nothing AndAlso
+            Not IsDBNull(isbnObj) AndAlso
+            Not String.IsNullOrWhiteSpace(
+                isbnObj.ToString()
+            )
 
             If Not hasISBN Then
+
                 rbgenerate.Checked = True
                 txtisbn.Enabled = False
                 txtisbn.Text = ""
+
             Else
+
                 rbgenerate.Checked = False
                 txtisbn.Enabled = True
-                txtisbn.Text = isbnn.ToString
+                txtisbn.Text = isbnObj.ToString()
+
             End If
 
-            If Not String.IsNullOrEmpty(barcodeValue) AndAlso barcodeValue <> "0000000000000" Then
-                picbarcode.Image = GenerateBarcodeImage(barcodeValue, picbarcode.Width, picbarcode.Height)
-            ElseIf hasISBN AndAlso (String.IsNullOrEmpty(barcodeValue) OrElse barcodeValue = "0000000000000") Then
-                picbarcode.Image = GenerateBarcodeImage("0000000000000", picbarcode.Width, picbarcode.Height)
+
+            If Not String.IsNullOrEmpty(barcodeValue) AndAlso
+           barcodeValue <> "0000000000000" Then
+
+                picbarcode.Image =
+                GenerateBarcodeImage(
+                    barcodeValue,
+                    picbarcode.Width,
+                    picbarcode.Height
+                )
+
+            ElseIf hasISBN Then
+
+                picbarcode.Image =
+                GenerateBarcodeImage(
+                    "0000000000000",
+                    picbarcode.Width,
+                    picbarcode.Height
+                )
+
                 lblrandom.Text = "0000000000000"
+
             Else
+
                 picbarcode.Image = Nothing
+
             End If
+
+
         Catch ex As Exception
-            Debug.WriteLine("ApplyRowToFields error: " & ex.Message)
+
+            Debug.WriteLine(
+            "ApplyRowToFields error: " &
+            ex.Message
+        )
+
         Finally
+
             isbarcode = False
+
         End Try
+
     End Sub
 
 
@@ -1148,8 +1717,14 @@ Public Class Book
 
         If e.RowIndex < 0 Then Exit Sub
 
-        If e.RowIndex < 0 Then Exit Sub
+        If e.ColumnIndex < 0 Then Exit Sub
 
+        If DataGridView1.Columns(e.ColumnIndex).Name = "Edit" OrElse
+           DataGridView1.Columns(e.ColumnIndex).Name = "Delete" Then
+
+            Exit Sub
+
+        End If
 
         Try
             PauseAutoRefresh(DataGridView1)
@@ -1157,51 +1732,107 @@ Public Class Book
         End Try
 
         Try
+
             If cbauthor.DataSource Is Nothing OrElse cbauthor.Items.Count = 0 Then
-                AutoRefreshComboBox(cbauthor, "SELECT ID, AuthorName FROM author_tbl ORDER BY AuthorName", "AuthorName", "ID")
+                AutoRefreshComboBox(
+                    cbauthor,
+                    "SELECT ID, AuthorName FROM author_tbl ORDER BY AuthorName",
+                    "AuthorName",
+                    "ID"
+                )
             End If
+
             If cbgenre.DataSource Is Nothing OrElse cbgenre.Items.Count = 0 Then
-                AutoRefreshComboBox(cbgenre, "SELECT ID, Genre FROM genre_tbl ORDER BY Genre", "Genre", "ID")
+                AutoRefreshComboBox(
+                    cbgenre,
+                    "SELECT ID, Genre FROM genre_tbl ORDER BY Genre",
+                    "Genre",
+                    "ID"
+                )
             End If
+
             If cbpublisher.DataSource Is Nothing OrElse cbpublisher.Items.Count = 0 Then
-                AutoRefreshComboBox(cbpublisher, "SELECT ID, PublisherName FROM publisher_tbl ORDER BY PublisherName", "PublisherName", "ID")
+                AutoRefreshComboBox(
+                    cbpublisher,
+                    "SELECT ID, PublisherName FROM publisher_tbl ORDER BY PublisherName",
+                    "PublisherName",
+                    "ID"
+                )
             End If
+
             If cblanguage.DataSource Is Nothing OrElse cblanguage.Items.Count = 0 Then
-                AutoRefreshComboBox(cblanguage, "SELECT ID, Language FROM language_tbl ORDER BY Language", "Language", "ID")
+                AutoRefreshComboBox(
+                    cblanguage,
+                    "SELECT ID, Language FROM language_tbl ORDER BY Language",
+                    "Language",
+                    "ID"
+                )
             End If
+
         Catch ex As Exception
-            Debug.WriteLine("Error auto-refreshing combos: " & ex.Message)
+
+            Debug.WriteLine(
+                "Error auto-refreshing combos: " &
+                ex.Message
+            )
+
         End Try
 
-        Dim row As DataGridViewRow = DataGridView1.Rows(e.RowIndex)
+        Dim row As DataGridViewRow =
+            DataGridView1.Rows(e.RowIndex)
 
         Try
 
             Try
+
                 Dim idObj = row.Cells("ID").Value
-                If idObj IsNot Nothing AndAlso Not IsDBNull(idObj) Then
-                    LastSelectedBookID = Convert.ToInt32(idObj)
+
+                If idObj IsNot Nothing AndAlso
+                   Not IsDBNull(idObj) Then
+
+                    LastSelectedBookID =
+                        Convert.ToInt32(idObj)
+
                 Else
+
                     LastSelectedBookID = -1
+
                 End If
+
             Catch
+
                 LastSelectedBookID = -1
+
             End Try
 
             skipRestore = True
+
             skipRestoreTimer.Stop()
             skipRestoreTimer.Start()
 
             ApplyRowToFields(row)
+
         Catch ex As Exception
-            MessageBox.Show("Error loading row data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+            MessageBox.Show(
+                "Error loading row data: " &
+                ex.Message,
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            )
+
         End Try
 
-        If e.RowIndex >= 0 AndAlso Not DataGridView1.Rows(e.RowIndex).IsNewRow Then
+        If e.RowIndex >= 0 AndAlso
+           Not DataGridView1.Rows(e.RowIndex).IsNewRow Then
+
             rbgenerate.Enabled = False
+
         End If
 
     End Sub
+
 
     Private Sub txtbooktitle_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtbooktitle.KeyPress
 
@@ -1226,35 +1857,64 @@ Public Class Book
         End If
 
         Select Case e.KeyChar
-            Case "."c, ","c, "'"c, "-"c, ":"c, ";"c, "("c, ")"c, "?"c, "!"c, "&"c, "/"c
+
+            Case "."c, ","c, "'"c, "-"c, ":"c, ";"c,
+                 "("c, ")"c, "?"c, "!"c, "&"c, "/"c
+
                 e.Handled = False
                 Return
+
         End Select
 
         If e.KeyChar = Chr(34) Then
+
             e.Handled = False
             Return
+
         End If
 
         e.Handled = True
+
     End Sub
 
-    Private Sub txtbooktitle_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtbooktitle.Validating
+    Private Sub txtbooktitle_Validating(
+        sender As Object,
+        e As System.ComponentModel.CancelEventArgs
+    ) Handles txtbooktitle.Validating
 
-        Dim BookTitle As String = txtbooktitle.Text.Trim()
-        Dim TitlePattern As String = "^(?=.*[a-zA-Z])(?!.*[.,'():;?!&/-]{2,})[a-zA-Z0-9\s.,'():;?!&/-]+$"
+        Dim BookTitle As String =
+            txtbooktitle.Text.Trim()
+
+        Dim TitlePattern As String =
+            "^(?=.*[a-zA-Z])(?!.*[.,'():;?!&/-]{2,})[a-zA-Z0-9\s.,'():;?!&/-]+$"
 
         If String.IsNullOrEmpty(BookTitle) Then
+
             e.Cancel = False
             Return
+
         End If
 
-        If Not System.Text.RegularExpressions.Regex.IsMatch(BookTitle, TitlePattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
-            MessageBox.Show("Invalid book title format.", "Validation Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        If Not System.Text.RegularExpressions.Regex.IsMatch(
+            BookTitle,
+            TitlePattern,
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase) Then
+
+            MessageBox.Show(
+                "Invalid book title format.",
+                "Validation Warning",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            )
+
             e.Cancel = True
+
         Else
+
             e.Cancel = False
+
         End If
+
     End Sub
 
 
@@ -1298,8 +1958,6 @@ Public Class Book
         Cursor = Cursors.Default
     End Sub
 
-
-
     Private Sub btnaddlangauge_MouseHover(sender As Object, e As EventArgs)
         Cursor = Cursors.Hand
     End Sub
@@ -1316,19 +1974,19 @@ Public Class Book
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs)
         Cursor = Cursors.Hand
     End Sub
 
-    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
+    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs)
         Cursor = Cursors.Default
     End Sub
 
-    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
+    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs)
         Cursor = Cursors.Hand
     End Sub
 
-    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
+    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs)
         Cursor = Cursors.Default
     End Sub
 
@@ -1342,142 +2000,283 @@ Public Class Book
 
 
     Private Sub DisablePaste_AllTextBoxes()
+
         For Each ctrl As Control In Me.Controls
             AddHandlerToTextBoxes_NoPaste(ctrl)
         Next
+
     End Sub
 
     Private Sub AddHandlerToTextBoxes_NoPaste(parent As Control)
+
         For Each ctrl As Control In parent.Controls
+
             If TypeOf ctrl Is TextBox Then
-                Dim tb As TextBox = CType(ctrl, TextBox)
 
-                tb.ContextMenuStrip = New ContextMenuStrip()
+                Dim tb As TextBox =
+                    CType(ctrl, TextBox)
 
-                AddHandler tb.KeyDown, AddressOf BlockPasteKey
-                AddHandler tb.MouseUp, AddressOf BlockRightClick
+                tb.ContextMenuStrip =
+                    New ContextMenuStrip()
+
+                AddHandler tb.KeyDown,
+                    AddressOf BlockPasteKey
+
+                AddHandler tb.MouseUp,
+                    AddressOf BlockRightClick
 
             End If
 
             If ctrl.HasChildren Then
                 AddHandlerToTextBoxes_NoPaste(ctrl)
             End If
+
         Next
 
     End Sub
 
 
-    Private Sub BlockPasteKey(sender As Object, e As KeyEventArgs)
+    Private Sub BlockPasteKey(
+        sender As Object,
+        e As KeyEventArgs
+    )
 
-        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse
+           (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
+
             e.SuppressKeyPress = True
+
         End If
 
     End Sub
 
-    Private Sub BlockRightClick(sender As Object, e As MouseEventArgs)
+    Private Sub BlockRightClick(
+        sender As Object,
+        e As MouseEventArgs
+    )
 
         If e.Button = MouseButtons.Right Then
 
-            Dim tb As TextBox = TryCast(sender, TextBox)
+            Dim tb As TextBox =
+                TryCast(sender, TextBox)
+
             If tb IsNot Nothing Then
-                tb.ContextMenuStrip = New ContextMenuStrip()
+                tb.ContextMenuStrip =
+                    New ContextMenuStrip()
             End If
+
         End If
 
     End Sub
 
-    Private Sub txtyearr_KeyDown(sender As Object, e As KeyEventArgs) Handles txtyearr.KeyDown
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+    Private Sub txtyearr_KeyDown(
+        sender As Object,
+        e As KeyEventArgs
+    ) Handles txtyearr.KeyDown
+
+        If e.Control AndAlso
+           (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
             e.SuppressKeyPress = True
+
         End If
+
     End Sub
 
-    Private Sub txtyearr_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtyearr.KeyPress
-        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+    Private Sub txtyearr_KeyPress(
+        sender As Object,
+        e As KeyPressEventArgs
+    ) Handles txtyearr.KeyPress
+
+        If Not Char.IsDigit(e.KeyChar) And
+           Not Char.IsControl(e.KeyChar) Then
+
             e.Handled = True
+
         End If
+
     End Sub
 
-    Private Sub txtyearr_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtyearr.Validating
+    Private Sub txtyearr_Validating(
+        sender As Object,
+        e As System.ComponentModel.CancelEventArgs
+    ) Handles txtyearr.Validating
 
         If String.IsNullOrWhiteSpace(txtyearr.Text) Then
             Exit Sub
         End If
 
         Dim yearValue As Integer
-        If Not Integer.TryParse(txtyearr.Text, yearValue) Then
-            MessageBox.Show("Please enter a valid year.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+        If Not Integer.TryParse(
+            txtyearr.Text,
+            yearValue) Then
+
+            MessageBox.Show(
+                "Please enter a valid year.",
+                "Invalid Input",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            )
+
             txtyearr.Clear()
             e.Cancel = True
             Exit Sub
+
         End If
 
-
-        Dim currentYear As Integer = Date.Now.Year
-
+        Dim currentYear As Integer =
+            Date.Now.Year
 
         If yearValue > currentYear Then
-            MessageBox.Show("Year Published cannot be in the future. Please enter a valid year (up to " & currentYear & ").", "Invalid Year", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            txtyearr.Text = currentYear.ToString()
+
+            MessageBox.Show(
+                "Year Published cannot be in the future. Please enter a valid year (up to " &
+                currentYear &
+                ").",
+                "Invalid Year",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            )
+
+            txtyearr.Text =
+                currentYear.ToString()
+
             e.Cancel = True
+
         End If
+
     End Sub
 
-    Private Sub cbgenre_DropDown(sender As Object, e As EventArgs) Handles cbgenre.DropDown
+    Private Sub cbgenre_DropDown(
+        sender As Object,
+        e As EventArgs
+    ) Handles cbgenre.DropDown
+
         Try
+
             cbgenre.DataSource = Nothing
             cbgenree()
+
         Catch ex As Exception
-            Debug.WriteLine("Error refreshing genre combo: " & ex.Message)
+
+            Debug.WriteLine(
+                "Error refreshing genre combo: " &
+                ex.Message
+            )
+
         End Try
+
     End Sub
 
-    Private Sub cbauthor_DropDown(sender As Object, e As EventArgs) Handles cbauthor.DropDown
+    Private Sub cbauthor_DropDown(
+        sender As Object,
+        e As EventArgs
+    ) Handles cbauthor.DropDown
+
         Try
+
             cbauthor.DataSource = Nothing
             cbauthorr()
+
         Catch ex As Exception
-            Debug.WriteLine("Error refreshing author combo: " & ex.Message)
+
+            Debug.WriteLine(
+                "Error refreshing author combo: " &
+                ex.Message
+            )
+
         End Try
+
     End Sub
 
-    Private Sub cbpublisher_DropDown(sender As Object, e As EventArgs) Handles cbpublisher.DropDown
+    Private Sub cbpublisher_DropDown(
+        sender As Object,
+        e As EventArgs
+    ) Handles cbpublisher.DropDown
+
         Try
+
             cbpublisher.DataSource = Nothing
             cbpublisherr()
+
         Catch ex As Exception
-            Debug.WriteLine("Error refreshing publisher combo: " & ex.Message)
+
+            Debug.WriteLine(
+                "Error refreshing publisher combo: " &
+                ex.Message
+            )
+
         End Try
+
     End Sub
 
-    Private Sub cblanguage_DropDown(sender As Object, e As EventArgs) Handles cblanguage.DropDown
+    Private Sub cblanguage_DropDown(
+        sender As Object,
+        e As EventArgs
+    ) Handles cblanguage.DropDown
+
         Try
+
             cblanguage.DataSource = Nothing
             cblang()
+
         Catch ex As Exception
-            Debug.WriteLine("Error refreshing language combo: " & ex.Message)
+
+            Debug.WriteLine(
+                "Error refreshing language combo: " &
+                ex.Message
+            )
+
         End Try
+
     End Sub
 
-    Private Sub DataGridView1_MouseHover(sender As Object, e As EventArgs) Handles DataGridView1.MouseHover
+    Private Sub DataGridView1_MouseHover(
+        sender As Object,
+        e As EventArgs
+    ) Handles DataGridView1.MouseHover
+
         PauseAutoRefresh(DataGridView1)
+
     End Sub
 
-    Private Sub datagridview1_MouseLeave(sender As Object, e As EventArgs) Handles DataGridView1.MouseLeave
+    Private Sub datagridview1_MouseLeave(
+        sender As Object,
+        e As EventArgs
+    ) Handles DataGridView1.MouseLeave
+
         ResumeAutoRefresh(DataGridView1)
+
     End Sub
 
-    Private Sub chkauthor_CheckedChanged(sender As Object, e As EventArgs) Handles chkauthor.CheckedChanged
+    Private Sub chkauthor_CheckedChanged(
+        sender As Object,
+        e As EventArgs
+    ) Handles chkauthor.CheckedChanged
+
         Try
+
             If chkauthor.Checked Then
+
                 cbauthor.SelectedIndex = -1
                 cbauthor.Enabled = False
+
             Else
+
                 cbauthor.Enabled = True
+
             End If
+
         Catch ex As Exception
-            Debug.WriteLine("chkauthor_CheckedChanged error: " & ex.Message)
+
+            Debug.WriteLine(
+                "chkauthor_CheckedChanged error: " &
+                ex.Message
+            )
+
         End Try
+
     End Sub
+
 End Class
