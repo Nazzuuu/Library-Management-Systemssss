@@ -167,6 +167,7 @@ Module GlobalVarsModule
                                           "Subject VARCHAR(255), " &
                                           "Body TEXT, " &
                                           "IsSent TINYINT(1) DEFAULT 0, " &
+                                          "NoticeType VARCHAR(20) NULL, " &
                                           "CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP, " &
                                           "SentAt DATETIME NULL" &
                                           ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
@@ -194,7 +195,8 @@ Module GlobalVarsModule
                 {"CreatedAt", "DATETIME DEFAULT CURRENT_TIMESTAMP"},
                 {"SentAt", "DATETIME NULL"},
                 {"DueDate", "VARCHAR(255)"},
-                {"Date", "DATETIME NULL"}
+                {"Date", "DATETIME NULL"},
+                {"NoticeType", "VARCHAR(20) NULL"}
             }
 
             For Each kvp In requiredCols
@@ -208,6 +210,18 @@ Module GlobalVarsModule
                     End Try
                 End If
             Next
+
+            ' Dati pang mga record (bago pa magkaroon ng NoticeType) ay puro OVERDUE notice lang.
+            ' Minamarkahan sila para hindi ma-resend ang overdue notice sa mga dati nang na-notify.
+            Try
+                Using mig As New MySqlCommand("UPDATE `inbox_tbl` SET `NoticeType` = 'OVERDUE' " &
+                                              "WHERE `NoticeType` IS NULL " &
+                                              "AND `TransactionReceipt` IS NOT NULL " &
+                                              "AND `TransactionReceipt` <> ''", con)
+                    mig.ExecuteNonQuery()
+                End Using
+            Catch
+            End Try
         Catch
         End Try
     End Sub
@@ -588,11 +602,24 @@ Module GlobalVarsModule
             autoTimeoutTimer.Start()
             Try
                 dailyOverdueTimer.Start()
+
+                ' I-check agad ang Due Date / Overdue notifications pagka-start (hindi na hihintayin ang unang timer tick)
+                If LastProcessedDate < Date.Today Then
+                    Task.Run(Sub()
+                                 Try
+                                     SendOverdueBorrowerNotifications()
+                                 Catch
+                                 End Try
+                             End Sub)
+                End If
             Catch
             End Try
             Try
                 inboxCheckTimer.Start()
-                backgroundInboxTimer.Start()
+
+                ' DISABLED: ang backgroundInboxTimer ay nag-i-insert ng "sent" na record kahit hindi naman talaga nagse-send ng email
+                ' (placeholder credentials, walang smtp.Send) at magdodoble ng overdue notice. Ang SendOverdueBorrowerNotifications na ang gumagawa nito.
+                'backgroundInboxTimer.Start()
             Catch
             End Try
 
@@ -1086,6 +1113,7 @@ Module GlobalVarsModule
         End Try
     End Sub
 
+
     Public Sub SendOverdueBorrowerNotifications()
 
         SyncLock OverdueEmailLock
@@ -1095,10 +1123,9 @@ Module GlobalVarsModule
             OverdueProcessing = True
         End SyncLock
 
-        Try
-            Dim laptopDate As Date = Date.Today
-            Dim laptopDateString As String = laptopDate.ToString("yyyy-MM-dd")
+        Dim completed As Boolean = False
 
+        Try
             EnsureInboxTableExists()
 
             Using con As New MySqlConnection(connectionString)
@@ -1126,9 +1153,12 @@ Module GlobalVarsModule
                 End Using
 
                 Dim dateFormats() As String = {"MMMM-dd-yyyy", "MMMM dd, yyyy", "yyyy-MM-dd", "MM/dd/yyyy", "M/d/yyyy", "MMMM-dd-yy"}
+                Dim handledKeys As New HashSet(Of String)()
+
                 For Each c In candidates
                     Try
                         If String.IsNullOrWhiteSpace(c.dueStr) Then Continue For
+                        If String.IsNullOrWhiteSpace(c.receipt) Then Continue For
 
                         Dim dueDate As DateTime
                         Dim parsed As Boolean = DateTime.TryParse(c.dueStr, dueDate)
@@ -1143,22 +1173,33 @@ Module GlobalVarsModule
 
                         If Not parsed Then Continue For
 
-                        If dueDate.Date >= Date.Today Then Continue For
+
+                        Dim noticeKind As String
+                        If dueDate.Date = Date.Today Then
+                            noticeKind = NOTICE_DUE
+                        ElseIf dueDate.Date < Date.Today Then
+                            noticeKind = NOTICE_OVERDUE
+                        Else
+                            Continue For
+                        End If
+
+                        If Not handledKeys.Add(c.receipt & "|" & noticeKind) Then Continue For
 
 
-                        Using existsCmd As New MySqlCommand("SELECT COUNT(*) FROM inbox_tbl WHERE TransactionReceipt = @tr", con)
+                        Using existsCmd As New MySqlCommand("SELECT COUNT(*) FROM inbox_tbl WHERE TransactionReceipt = @tr AND NoticeType = @type", con)
                             existsCmd.Parameters.AddWithValue("@tr", c.receipt)
+                            existsCmd.Parameters.AddWithValue("@type", noticeKind)
                             Dim cnt As Integer = Convert.ToInt32(existsCmd.ExecuteScalar())
+
                             If cnt = 0 Then
-                                Using insCmd As New MySqlCommand("INSERT INTO inbox_tbl (TransactionReceipt, Email, FullName, Subject, Body, DueDate, Date) VALUES (@tr, @em, @nm, @sub, @body, @dueDate, NOW())", con)
+                                Using insCmd As New MySqlCommand("INSERT INTO inbox_tbl (TransactionReceipt, Email, FullName, Subject, Body, DueDate, `Date`, NoticeType) VALUES (@tr, @em, @nm, @sub, @body, @dueDate, NOW(), @type)", con)
                                     insCmd.Parameters.AddWithValue("@tr", c.receipt)
                                     insCmd.Parameters.AddWithValue("@em", c.email)
                                     insCmd.Parameters.AddWithValue("@nm", c.name)
-                                    insCmd.Parameters.AddWithValue("@sub", "MDA-LMS Overdue Notice")
-                                    Dim bodyText As String = "Due Date: " & dueDate.ToString("yyyy-MM-dd")
-                                    insCmd.Parameters.AddWithValue("@body", bodyText)
-
+                                    insCmd.Parameters.AddWithValue("@sub", If(noticeKind = NOTICE_DUE, "MDA-LMS Due Date Notice", "MDA-LMS Overdue Notice"))
+                                    insCmd.Parameters.AddWithValue("@body", "Due Date: " & dueDate.ToString("yyyy-MM-dd"))
                                     insCmd.Parameters.AddWithValue("@dueDate", dueDate.ToString("yyyy-MM-dd"))
+                                    insCmd.Parameters.AddWithValue("@type", noticeKind)
                                     insCmd.ExecuteNonQuery()
                                 End Using
                             End If
@@ -1169,110 +1210,132 @@ Module GlobalVarsModule
                 Next
 
 
-                Dim selectSql As String = "SELECT TransactionReceipt, Email, FullName, Subject, Body FROM inbox_tbl WHERE IsSent = 0 ORDER BY CreatedAt"
+                ' ===== Ipadala ang lahat ng hindi pa naipapadala =====
+                Dim pending As New List(Of (id As Integer, receipt As String, email As String, fullname As String, body As String, dueDate As String, noticeKind As String))()
+
+                Dim selectSql As String =
+                    "SELECT ID, TransactionReceipt, Email, FullName, Body, DueDate, COALESCE(NoticeType, 'OVERDUE') AS NoticeKind " &
+                    "FROM inbox_tbl WHERE IsSent = 0 ORDER BY CreatedAt"
+
                 Using selCmd As New MySqlCommand(selectSql, con)
                     Using rdr = selCmd.ExecuteReader()
-                        Dim emailMap As New Dictionary(Of String, List(Of (borrowID As String, fullname As String, subject As String, body As String)))()
                         While rdr.Read()
-                            Dim email As String = rdr("Email").ToString()
+                            Dim email As String = If(rdr("Email") Is DBNull.Value, "", rdr("Email").ToString())
                             If String.IsNullOrWhiteSpace(email) Then Continue While
-                            Dim borrowID As String = rdr("TransactionReceipt").ToString()
-                            Dim fullname As String = rdr("FullName").ToString()
-                            Dim subject As String = rdr("Subject").ToString()
-                            Dim body As String = rdr("Body").ToString()
 
-                            If Not emailMap.ContainsKey(email) Then
-                                emailMap(email) = New List(Of (String, String, String, String))()
-                            End If
-                            emailMap(email).Add((borrowID, fullname, subject, body))
+                            pending.Add((
+                                Convert.ToInt32(rdr("ID")),
+                                If(rdr("TransactionReceipt") Is DBNull.Value, "", rdr("TransactionReceipt").ToString()),
+                                email,
+                                If(rdr("FullName") Is DBNull.Value, "", rdr("FullName").ToString()),
+                                If(rdr("Body") Is DBNull.Value, "", rdr("Body").ToString()),
+                                If(rdr("DueDate") Is DBNull.Value, "", rdr("DueDate").ToString()),
+                                rdr("NoticeKind").ToString()))
                         End While
                         rdr.Close()
-
-                        If emailMap.Count > 0 Then
-                            Dim processedInboxIds As New ConcurrentBag(Of String)()
-                            Dim tasks As New List(Of Task)()
-
-                            For Each kvp In emailMap
-                                Dim toEmail As String = kvp.Key
-                                Dim items = kvp.Value
-                                tasks.Add(Task.Run(Sub()
-                                                       Try
-                                                           Dim firstName As String = If(items.Count > 0, items(0).fullname, "Borrower")
-                                                           Dim sb As New System.Text.StringBuilder()
-                                                           sb.AppendLine("Hello " & firstName & ",")
-                                                           sb.AppendLine()
-                                                           sb.AppendLine("Our records show that you have the following overdue item(s):")
-                                                           sb.AppendLine()
-                                                           For Each it In items
-                                                               sb.AppendLine($"- Transaction: {it.borrowID} | {it.body}")
-                                                           Next
-                                                           sb.AppendLine()
-                                                           sb.AppendLine("Please return the book(s) immediately to avoid penalties.")
-                                                           sb.AppendLine()
-                                                           sb.AppendLine("Monlimar Development Academy Library Management System (MDA-LMS)")
-
-                                                           Dim fullBody As String = sb.ToString()
-
-
-                                                           Try
-                                                               Using updCon As New MySqlConnection(connectionString)
-                                                                   updCon.Open()
-                                                                   For Each it In items
-                                                                       Using updCmd As New MySqlCommand("UPDATE inbox_tbl SET Body = @desc, `Date` = NOW() WHERE TransactionReceipt = @tr", updCon)
-                                                                           updCmd.Parameters.AddWithValue("@desc", fullBody)
-                                                                           updCmd.Parameters.AddWithValue("@tr", it.borrowID)
-                                                                           updCmd.ExecuteNonQuery()
-                                                                       End Using
-                                                                   Next
-                                                               End Using
-                                                           Catch exUpd As Exception
-                                                               AppendLog("Failed to update inbox DueDate: " & exUpd.Message)
-                                                           End Try
-
-                                                           Dim sentOk As Boolean = SendEmailNotification_Global(toEmail, items(0).subject, fullBody)
-                                                           If sentOk Then
-                                                               For Each it In items
-                                                                   processedInboxIds.Add(it.borrowID)
-                                                               Next
-                                                           End If
-                                                       Catch ex As Exception
-
-                                                       End Try
-                                                   End Sub))
-                            Next
-
-                            If tasks.Count > 0 Then
-                                Task.WaitAll(tasks.ToArray())
-                            End If
-
-
-                            Dim seen As New HashSet(Of String)()
-                            For Each id In processedInboxIds.ToArray()
-                                If Not seen.Contains(id) Then
-                                    seen.Add(id)
-                                    Try
-                                        Using updateCmd As New MySqlCommand("UPDATE inbox_tbl SET IsSent = 1, SentAt = NOW() WHERE TransactionReceipt = @id", con)
-                                            updateCmd.Parameters.AddWithValue("@id", id)
-                                            updateCmd.ExecuteNonQuery()
-                                        End Using
-                                    Catch ex As Exception
-                                        AppendLog("Failed to mark inbox row sent for " & id & ": " & ex.Message)
-                                    End Try
-                                End If
-                            Next
-
-                        End If
                     End Using
                 End Using
+
+                If pending.Count > 0 Then
+                    Dim processedInboxIds As New ConcurrentBag(Of Integer)()
+                    Dim tasks As New List(Of Task)()
+
+                    ' Isang email bawat tao bawat uri ng notice (Due Date at Overdue ay hiwalay)
+                    For Each grp In pending.GroupBy(Function(p) p.email.Trim().ToLower() & "|" & p.noticeKind.ToUpper())
+                        Dim items = grp.ToList()
+                        Dim toEmail As String = items(0).email.Trim()
+                        Dim isDueNotice As Boolean = items(0).noticeKind.Equals(NOTICE_DUE, StringComparison.OrdinalIgnoreCase)
+
+                        tasks.Add(Task.Run(Sub()
+                                               Try
+                                                   Dim firstName As String = If(String.IsNullOrWhiteSpace(items(0).fullname), "Borrower", items(0).fullname)
+                                                   Dim subjectText As String = If(isDueNotice, "MDA-LMS Due Date Notice", "MDA-LMS Overdue Notice")
+
+                                                   Dim sb As New System.Text.StringBuilder()
+                                                   sb.AppendLine("Hello " & firstName & ",")
+                                                   sb.AppendLine()
+
+                                                   If isDueNotice Then
+                                                       sb.AppendLine("This is a friendly reminder that the following borrowed item(s) are due today:")
+                                                   Else
+                                                       sb.AppendLine("Our records show that you have the following overdue item(s):")
+                                                   End If
+                                                   sb.AppendLine()
+
+                                                   For Each it In items
+                                                       Dim dueTxt As String = If(String.IsNullOrWhiteSpace(it.dueDate), it.body, it.dueDate)
+                                                       sb.AppendLine($"- Transaction: {it.receipt} | Due Date: {dueTxt}")
+                                                   Next
+                                                   sb.AppendLine()
+
+                                                   If isDueNotice Then
+                                                       sb.AppendLine("Please return the book(s) to the library today to avoid penalties.")
+                                                   Else
+                                                       sb.AppendLine("Please return the book(s) immediately to avoid penalties.")
+                                                   End If
+                                                   sb.AppendLine()
+                                                   sb.AppendLine("Monlimar Development Academy Library Management System (MDA-LMS)")
+
+                                                   Dim fullBody As String = sb.ToString()
+
+
+                                                   Try
+                                                       Using updCon As New MySqlConnection(connectionString)
+                                                           updCon.Open()
+                                                           For Each it In items
+                                                               Using updCmd As New MySqlCommand("UPDATE inbox_tbl SET Body = @desc, `Date` = NOW() WHERE ID = @id", updCon)
+                                                                   updCmd.Parameters.AddWithValue("@desc", fullBody)
+                                                                   updCmd.Parameters.AddWithValue("@id", it.id)
+                                                                   updCmd.ExecuteNonQuery()
+                                                               End Using
+                                                           Next
+                                                       End Using
+                                                   Catch exUpd As Exception
+                                                       AppendLog("Failed to update inbox body: " & exUpd.Message)
+                                                   End Try
+
+                                                   Dim sentOk As Boolean = SendEmailNotification_Global(toEmail, subjectText, fullBody)
+                                                   If sentOk Then
+                                                       For Each it In items
+                                                           processedInboxIds.Add(it.id)
+                                                       Next
+                                                   End If
+                                               Catch ex As Exception
+                                                   AppendLog("Notification task error: " & ex.Message)
+                                               End Try
+                                           End Sub))
+                    Next
+
+                    If tasks.Count > 0 Then
+                        Task.WaitAll(tasks.ToArray())
+                    End If
+
+
+                    For Each id In processedInboxIds.ToArray().Distinct()
+                        Try
+                            Using updateCmd As New MySqlCommand("UPDATE inbox_tbl SET IsSent = 1, SentAt = NOW() WHERE ID = @id", con)
+                                updateCmd.Parameters.AddWithValue("@id", id)
+                                updateCmd.ExecuteNonQuery()
+                            End Using
+                        Catch ex As Exception
+                            AppendLog("Failed to mark inbox row sent for ID " & id & ": " & ex.Message)
+                        End Try
+                    Next
+
+                End If
             End Using
-        Catch
 
+            completed = True
+        Catch ex As Exception
+            AppendLog("SendOverdueBorrowerNotifications error: " & ex.Message)
         Finally
-            Try
-
-                LastProcessedDate = Date.Today
-            Catch
-            End Try
+            ' Mamarkahan lang na tapos na ngayong araw kung walang error (para mag-retry kung nag-fail ang DB)
+            If completed Then
+                Try
+                    LastProcessedDate = Date.Today
+                Catch
+                End Try
+            End If
             SyncLock OverdueEmailLock
                 OverdueProcessing = False
             End SyncLock
@@ -1448,11 +1511,14 @@ Module GlobalVarsModule
 
     End Sub
 
+    Private Const NOTICE_DUE As String = "DUE"
+    Private Const NOTICE_OVERDUE As String = "OVERDUE"
+
     Public OverdueEmailAlreadySent As Boolean = False
     Public LastProcessedDate As Date = Date.MinValue
     Private OverdueEmailLock As New Object()
     Private OverdueProcessing As Boolean = False
-    Private WithEvents dailyOverdueTimer As New Timer() With {.Interval = 60 * 60 * 1000}
+    Private WithEvents dailyOverdueTimer As New Timer() With {.Interval = 60 * 1000}
     Private WithEvents inboxCheckTimer As New Timer() With {.Interval = 1000}
     Public inboxCache As DataTable = Nothing
     Public Event InboxUpdated()

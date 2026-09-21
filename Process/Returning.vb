@@ -67,6 +67,17 @@ Public Class Returning
         cbdamage.SelectedIndex = -1
     End Sub
 
+
+    Private Sub AutoSetOverdueStatus()
+        Dim dueDate As Date
+
+        If Date.TryParse(lblduedate.Text, dueDate) Then
+            If DateTime.Now.Date > dueDate.Date Then
+                rboverdue.Checked = True
+            End If
+        End If
+    End Sub
+
     Private Sub returning_shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         DataGridView1.ClearSelection()
         InitializeConditionControls()
@@ -215,6 +226,12 @@ Public Class Returning
         Dim newAccessionStatus As String = "Available"
         Dim bookStatusDescription As String = String.Empty
         Dim borrowerStatus As String = "NOT PENALIZED"
+
+
+        ' Safety net: if walang napiling status pero overdue na, automatic i-set as Overdue
+        If Not rboverdue.Checked AndAlso Not rbdamage.Checked AndAlso Not rblost.Checked Then
+            AutoSetOverdueStatus()
+        End If
 
 
         If rboverdue.Checked Then
@@ -1106,6 +1123,9 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
             lblborroweddate.Text = borrowedDateStr
             lblduedate.Text = dueDateStr
             lblbooktotal.Text = totalBooksCount & " (Total)"
+
+
+            AutoSetOverdueStatus()
 
             If String.IsNullOrWhiteSpace(borrowerIDValue) Then
                 Dim com_history_id As String = "SELECT `LRN`, `EmployeeNo`, `Borrower` FROM `borrowinghistory_tbl` WHERE `TransactionReceipt` = @transNo LIMIT 1"

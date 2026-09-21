@@ -28,6 +28,36 @@ Public Class Borrower
     Private editColName As String = ""
     Private deleteColName As String = ""
 
+    ' ===== Department helpers (accepts full name or acronym) - same rule as Section.vb =====
+    Private Function NormalizeDept(ByVal d As String) As String
+        If String.IsNullOrWhiteSpace(d) Then Return ""
+        Return d.Trim().ToLower().Replace(".", "").Replace(" ", "").Replace("-", "").Replace("_", "")
+    End Function
+
+    Private Function IsJHS(ByVal d As String) As Boolean
+        Select Case NormalizeDept(d)
+            Case "juniorhighschool", "juniorhigh", "jrhighschool", "jrhigh", "jhs"
+                Return True
+        End Select
+        Return False
+    End Function
+
+    Private Function IsSHS(ByVal d As String) As Boolean
+        Select Case NormalizeDept(d)
+            Case "seniorhighschool", "seniorhigh", "srhighschool", "srhigh", "shs"
+                Return True
+        End Select
+        Return False
+    End Function
+
+    Private Function IsElementary(ByVal d As String) As Boolean
+        Select Case NormalizeDept(d)
+            Case "elementary", "elementaryschool", "gradeschool", "elem"
+                Return True
+        End Select
+        Return False
+    End Function
+
     Private Sub Borrower_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         refreshData()
         DisablePaste_AllTextBoxes()
@@ -1112,7 +1142,7 @@ Public Class Borrower
         If borrowerType = "Student" Then
             rbstudent.Checked = True
 
-            If cbdepartment.Text = "Senior High School" Then
+            If IsSHS(cbdepartment.Text) Then
                 cbstrand.Visible = True
                 lblstrand.Visible = True
             Else
@@ -1874,8 +1904,8 @@ Public Class Borrower
             End If
 
 
-            Select Case selectedDept
-                Case "Junior High School"
+            Select Case True
+                Case IsJHS(selectedDept)
                     Dim con As New MySqlConnection(connectionString)
                     Dim dt As New DataTable
                     Try
@@ -1896,7 +1926,7 @@ Public Class Borrower
                         MessageBox.Show("Error filtering JHS grades: " & ex.Message)
                     End Try
 
-                Case "Senior High School"
+                Case IsSHS(selectedDept)
                     Dim con As New MySqlConnection(connectionString)
                     Dim dt As New DataTable
                     Try
@@ -1919,7 +1949,7 @@ Public Class Borrower
                         MessageBox.Show("Error filtering SHS grades: " & ex.Message)
                     End Try
 
-                Case "Elementary"
+                Case IsElementary(selectedDept)
                     Dim con As New MySqlConnection(connectionString)
                     Dim dt As New DataTable
                     Try
@@ -1938,6 +1968,28 @@ Public Class Borrower
                         lblstrand.Visible = False
                     Catch ex As Exception
                         MessageBox.Show("Error filtering Elementary grades: " & ex.Message)
+                    End Try
+
+                Case Else
+                    ' Ibang department (halimbawa: Kinder-1): lahat ng grade, section-based (walang strand)
+                    Dim con As New MySqlConnection(connectionString)
+                    Dim dt As New DataTable
+                    Try
+                        con.Open()
+                        Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` ORDER BY CAST(Grade AS UNSIGNED)", con)
+                        adap.Fill(dt)
+                        cbgrade.DataSource = dt
+                        cbgrade.DisplayMember = "Grade"
+                        cbgrade.ValueMember = "ID"
+                        cbgrade.SelectedIndex = -1
+
+                        cbgrade.Enabled = True
+                        cbsection.Visible = True
+                        lblsection.Visible = True
+                        cbstrand.Visible = False
+                        lblstrand.Visible = False
+                    Catch ex As Exception
+                        MessageBox.Show("Error loading grades: " & ex.Message)
                     End Try
             End Select
         End If
@@ -1963,14 +2015,15 @@ Public Class Borrower
             Dim selectedGrade As String = cbgrade.GetItemText(cbgrade.SelectedItem)
             Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
-            Select Case selectedDept
-                Case "Junior High School"
+            Select Case True
+                Case IsJHS(selectedDept)
                     cbsection.Enabled = True
                     Dim con As New MySqlConnection(connectionString)
                     Dim dt As New DataTable
                     Try
                         con.Open()
-                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = 'Junior High School' AND GradeLevel = @grade", con)
+                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = @dept AND GradeLevel = @grade", con)
+                        com.Parameters.AddWithValue("@dept", selectedDept)
                         com.Parameters.AddWithValue("@grade", selectedGrade)
                         Dim adap As New MySqlDataAdapter(com)
                         adap.Fill(dt)
@@ -1985,13 +2038,14 @@ Public Class Borrower
                         con.Close()
                     End Try
 
-                Case "Senior High School"
+                Case IsSHS(selectedDept)
                     cbstrand.Enabled = True
                     Dim con As New MySqlConnection(connectionString)
                     Dim dt As New DataTable
                     Try
                         con.Open()
-                        Dim com As New MySqlCommand("SELECT ID, Strand FROM `section_tbl` WHERE Department = 'Senior High School' AND GradeLevel = @grade", con)
+                        Dim com As New MySqlCommand("SELECT ID, Strand FROM `section_tbl` WHERE Department = @dept AND GradeLevel = @grade", con)
+                        com.Parameters.AddWithValue("@dept", selectedDept)
                         com.Parameters.AddWithValue("@grade", selectedGrade)
                         Dim adap As New MySqlDataAdapter(com)
                         adap.Fill(dt)
@@ -2006,13 +2060,14 @@ Public Class Borrower
                         con.Close()
                     End Try
 
-                Case "Elementary"
+                Case IsElementary(selectedDept)
                     cbsection.Enabled = True
                     Dim con As New MySqlConnection(connectionString)
                     Dim dt As New DataTable
                     Try
                         con.Open()
-                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = 'Elementary' AND GradeLevel = @grade", con)
+                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = @dept AND GradeLevel = @grade", con)
+                        com.Parameters.AddWithValue("@dept", selectedDept)
                         com.Parameters.AddWithValue("@grade", selectedGrade)
                         Dim adap As New MySqlDataAdapter(com)
                         adap.Fill(dt)
@@ -2023,6 +2078,29 @@ Public Class Borrower
                         cbstrand.Enabled = False
                     Catch ex As Exception
                         MessageBox.Show("Error loading sections for Elementary: " & ex.Message)
+                    Finally
+                        con.Close()
+                    End Try
+
+                Case Else
+                    ' Ibang department (halimbawa: Kinder-1): section-based
+                    cbsection.Enabled = True
+                    Dim con As New MySqlConnection(connectionString)
+                    Dim dt As New DataTable
+                    Try
+                        con.Open()
+                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = @dept AND GradeLevel = @grade", con)
+                        com.Parameters.AddWithValue("@dept", selectedDept)
+                        com.Parameters.AddWithValue("@grade", selectedGrade)
+                        Dim adap As New MySqlDataAdapter(com)
+                        adap.Fill(dt)
+                        cbsection.DataSource = dt
+                        cbsection.DisplayMember = "Section"
+                        cbsection.ValueMember = "ID"
+                        cbsection.SelectedIndex = -1
+                        cbstrand.Enabled = False
+                    Catch ex As Exception
+                        MessageBox.Show("Error loading sections: " & ex.Message)
                     Finally
                         con.Close()
                     End Try
