@@ -27,8 +27,12 @@ Public Class Borrower
 
     Private editColName As String = ""
     Private deleteColName As String = ""
+    Private isLoadingCombos As Boolean = False
 
-    ' ===== Department helpers (accepts full name or acronym) - same rule as Section.vb =====
+    Private ReadOnly STRAND_CB_POS As Point = New Point(942, 285)
+    Private ReadOnly STRAND_LBL_POS As Point = New Point(942, 266)
+
+
     Private Function NormalizeDept(ByVal d As String) As String
         If String.IsNullOrWhiteSpace(d) Then Return ""
         Return d.Trim().ToLower().Replace(".", "").Replace(" ", "").Replace("-", "").Replace("_", "")
@@ -56,6 +60,79 @@ Public Class Borrower
                 Return True
         End Select
         Return False
+    End Function
+
+    Private Function IsKinder(ByVal d As String) As Boolean
+        Select Case NormalizeDept(d)
+            Case "kinder", "kindergarten", "kinder1", "kinder2", "k1", "k2", "preschool", "prep"
+                Return True
+        End Select
+        Return False
+    End Function
+
+
+    Private Function GetDeptAliases(ByVal d As String) As String()
+
+        If IsJHS(d) Then
+            Return New String() {"Junior High School", "Junior High", "Jr High School", "Jr High", "JHS"}
+        End If
+
+        If IsSHS(d) Then
+            Return New String() {"Senior High School", "Senior High", "Sr High School", "Sr High", "SHS"}
+        End If
+
+        If IsElementary(d) Then
+            Return New String() {"Elementary", "Elementary School", "Grade School", "Elem"}
+        End If
+
+        If IsKinder(d) Then
+            Return New String() {"Kinder", "Kindergarten", "Preschool", "Prep"}
+        End If
+
+        Return New String() {If(d, "").Trim()}
+
+    End Function
+
+
+    Private Function BuildDeptWhere(ByVal cmd As MySqlCommand, ByVal dept As String) As String
+
+        Dim aliases As String() = GetDeptAliases(dept)
+        Dim parts As New List(Of String)()
+
+        Dim normalizedColumn As String =
+            "LOWER(REPLACE(REPLACE(REPLACE(REPLACE(TRIM(`Department`),'.',''),' ',''),'-',''),'_',''))"
+
+        For i As Integer = 0 To aliases.Length - 1
+            Dim p As String = "@dept" & i.ToString()
+            parts.Add(normalizedColumn & " = " & p)
+            cmd.Parameters.AddWithValue(p, NormalizeDept(aliases(i)))
+        Next
+
+        Return "(" & String.Join(" OR ", parts.ToArray()) & ")"
+
+    End Function
+
+    Private Sub SetStudentCombosVisible(ByVal visible As Boolean)
+
+        cbdepartment.Visible = True
+        lblgrade.Visible = visible
+        cbgrade.Visible = visible
+        lblsection.Visible = visible
+        cbsection.Visible = visible
+        lblstrand.Visible = visible
+        cbstrand.Visible = visible
+
+        cbstrand.Location = STRAND_CB_POS
+        lblstrand.Location = STRAND_LBL_POS
+
+    End Sub
+
+    Private Function CellText(ByVal row As DataGridViewRow, ByVal colName As String) As String
+        If row Is Nothing Then Return ""
+        If Not DataGridView1.Columns.Contains(colName) Then Return ""
+        Dim v As Object = row.Cells(colName).Value
+        If v Is Nothing OrElse v Is DBNull.Value Then Return ""
+        Return v.ToString().Trim()
     End Function
 
     Private Sub Borrower_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -112,7 +189,6 @@ Public Class Borrower
         Try
             Using ofd As New OpenFileDialog()
 
-
                 ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
                 ofd.Filter = "Excel Files|*.xlsx|CSV Files|*.csv|All Files|*.*"
                 ofd.FilterIndex = 1
@@ -130,25 +206,14 @@ Public Class Borrower
                 Try
                     importDt = ReadExcelToDataTable(ofd.FileName)
                 Catch ex As Exception
-                    MessageBox.Show(
-                        "Failed to read file: " & ex.Message,
-                        "Import Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    )
+                    MessageBox.Show("Failed to read file: " & ex.Message, "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     Return
                 End Try
 
                 If importDt Is Nothing OrElse importDt.Rows.Count = 0 Then
-                    MessageBox.Show(
-                        "No data found in the selected file.",
-                        "Import",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    )
+                    MessageBox.Show("No data found in the selected file.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     Return
                 End If
-
 
                 Dim existingLRNs As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
                 Dim existingEmpNos As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
@@ -172,27 +237,9 @@ Public Class Borrower
 
                             While rdr.Read()
 
-                                Dim lrn As String =
-                                    If(
-                                        rdr("LRN") Is DBNull.Value,
-                                        String.Empty,
-                                        rdr("LRN").ToString().Trim()
-                                    )
-
-                                Dim emp As String =
-                                    If(
-                                        rdr("EmployeeNo") Is DBNull.Value,
-                                        String.Empty,
-                                        rdr("EmployeeNo").ToString().Trim()
-                                    )
-
-                                Dim cont As String =
-                                    If(
-                                        rdr("ContactNumber") Is DBNull.Value,
-                                        String.Empty,
-                                        rdr("ContactNumber").ToString().Trim()
-                                    )
-
+                                Dim lrn As String = If(rdr("LRN") Is DBNull.Value, String.Empty, rdr("LRN").ToString().Trim())
+                                Dim emp As String = If(rdr("EmployeeNo") Is DBNull.Value, String.Empty, rdr("EmployeeNo").ToString().Trim())
+                                Dim cont As String = If(rdr("ContactNumber") Is DBNull.Value, String.Empty, rdr("ContactNumber").ToString().Trim())
                                 Dim fn As String = If(rdr("FirstName") Is DBNull.Value, String.Empty, rdr("FirstName").ToString().Trim())
                                 Dim ln As String = If(rdr("LastName") Is DBNull.Value, String.Empty, rdr("LastName").ToString().Trim())
 
@@ -229,53 +276,11 @@ Public Class Borrower
 
                 For Each dr As DataRow In importDt.Rows
 
-                    Dim firstName As String =
-                        GetColumnValue(
-                            dr,
-                            New String() {
-                                "FirstName",
-                                "Firstname",
-                                "First Name",
-                                "GivenName"
-                            }
-                        )
-
-                    Dim lastName As String =
-                        GetColumnValue(
-                            dr,
-                            New String() {
-                                "LastName",
-                                "Lastname",
-                                "Last Name",
-                                "Surname"
-                            }
-                        )
-
-                    Dim lrnVal As String =
-                        GetColumnValue(
-                            dr,
-                            New String() {
-                                "LRN"
-                            }
-                        )
-
-                    Dim empVal As String =
-                        GetColumnValue(
-                            dr,
-                            New String() {
-                                "EmployeeNo",
-                                "EmployeeNo."
-                            }
-                        )
-
-                    Dim contactVal As String =
-                        GetColumnValue(
-                            dr,
-                            New String() {
-                                "ContactNumber",
-                                "Contact"
-                            }
-                        )
+                    Dim firstName As String = GetColumnValue(dr, New String() {"FirstName", "Firstname", "First Name", "GivenName"})
+                    Dim lastName As String = GetColumnValue(dr, New String() {"LastName", "Lastname", "Last Name", "Surname"})
+                    Dim lrnVal As String = GetColumnValue(dr, New String() {"LRN"})
+                    Dim empVal As String = GetColumnValue(dr, New String() {"EmployeeNo", "EmployeeNo."})
+                    Dim contactVal As String = GetColumnValue(dr, New String() {"ContactNumber", "Contact"})
 
                     Dim normLrnVal As String = NormalizeIdentifier(lrnVal)
                     Dim normEmpVal As String = NormalizeIdentifier(empVal)
@@ -322,17 +327,9 @@ Public Class Borrower
                         " duplicate borrower(s) already in system:" &
                         Environment.NewLine &
                         Environment.NewLine &
-                        String.Join(
-                            Environment.NewLine,
-                            duplicates
-                        )
+                        String.Join(Environment.NewLine, duplicates)
 
-                    MessageBox.Show(
-                        msg,
-                        "Duplicate Borrowers",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
-                    )
+                    MessageBox.Show(msg, "Duplicate Borrowers", MessageBoxButtons.OK, MessageBoxIcon.Warning)
 
                 Else
 
@@ -353,38 +350,24 @@ Public Class Borrower
 
         Catch ex As Exception
 
-            MessageBox.Show(
-                "Error during import check: " &
-                ex.Message,
-                "Error",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error
-            )
+            MessageBox.Show("Error during import check: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
 
         End Try
 
     End Sub
 
 
-    Private Function GetColumnValue(
-        dr As DataRow,
-        possibleNames() As String
-    ) As String
+    Private Function GetColumnValue(dr As DataRow, possibleNames() As String) As String
 
         For Each colName As String In possibleNames
 
             For Each column As DataColumn In dr.Table.Columns
 
-                If String.Equals(
-                    column.ColumnName.Trim(),
-                    colName.Trim(),
-                    StringComparison.OrdinalIgnoreCase
-                ) Then
+                If String.Equals(column.ColumnName.Trim(), colName.Trim(), StringComparison.OrdinalIgnoreCase) Then
 
                     If dr(column) IsNot DBNull.Value Then
 
-                        Dim v As String =
-                            dr(column).ToString()
+                        Dim v As String = dr(column).ToString()
 
                         If Not String.IsNullOrWhiteSpace(v) Then
                             Return v.Trim()
@@ -427,7 +410,6 @@ Public Class Borrower
 
         End If
 
-
         Dim digitsOnly = New String(val.Where(Function(c) Char.IsDigit(c)).ToArray())
         Return digitsOnly
     End Function
@@ -435,49 +417,35 @@ Public Class Borrower
 
     Private Function ReadExcelToDataTable(filePath As String) As DataTable
 
-        Dim ext As String =
-            Path.GetExtension(filePath).ToLowerInvariant()
+        Dim ext As String = Path.GetExtension(filePath).ToLowerInvariant()
 
         Dim dt As New DataTable()
 
-
         If ext = ".csv" Then
 
-            Dim lines() As String =
-                File.ReadAllLines(filePath)
+            Dim lines() As String = File.ReadAllLines(filePath)
 
             If lines.Length = 0 Then
                 Return dt
             End If
 
-            Dim headers =
-                lines(0).Split({","c})
+            Dim headers = lines(0).Split({","c})
 
             For Each h In headers
 
-                Dim headerName As String =
-                    h.Trim().Trim(""""c)
+                Dim headerName As String = h.Trim().Trim(""""c)
 
                 If String.IsNullOrWhiteSpace(headerName) Then
-                    headerName =
-                        "Column" &
-                        dt.Columns.Count.ToString()
+                    headerName = "Column" & dt.Columns.Count.ToString()
                 End If
 
-                Dim originalName As String =
-                    headerName
+                Dim originalName As String = headerName
 
                 Dim counter As Integer = 1
 
                 While dt.Columns.Contains(headerName)
-
-                    headerName =
-                        originalName &
-                        "_" &
-                        counter.ToString()
-
+                    headerName = originalName & "_" & counter.ToString()
                     counter += 1
-
                 End While
 
                 dt.Columns.Add(headerName)
@@ -490,19 +458,12 @@ Public Class Borrower
                     Continue For
                 End If
 
-                Dim parts =
-                    lines(i).Split({","c})
+                Dim parts = lines(i).Split({","c})
 
-                Dim row As DataRow =
-                    dt.NewRow()
+                Dim row As DataRow = dt.NewRow()
 
                 For c As Integer = 0 To Math.Min(parts.Length - 1, dt.Columns.Count - 1)
-
-                    row(c) =
-                        parts(c).
-                        Trim().
-                        Trim(""""c)
-
+                    row(c) = parts(c).Trim().Trim(""""c)
                 Next
 
                 dt.Rows.Add(row)
@@ -513,13 +474,9 @@ Public Class Borrower
 
         End If
 
-
         If ext = ".xlsx" Then
-
             Return ReadXlsxToDataTable(filePath)
-
         End If
-
 
         Throw New NotSupportedException(
             "Only .xlsx and .csv files are supported for import." &
@@ -535,34 +492,24 @@ Public Class Borrower
 
         Dim dt As New DataTable()
 
-        Using archive As ZipArchive =
-            ZipFile.OpenRead(filePath)
-
+        Using archive As ZipArchive = ZipFile.OpenRead(filePath)
 
             Dim sharedStrings As New List(Of String)()
 
-            Dim sharedStringsEntry As ZipArchiveEntry =
-                archive.GetEntry("xl/sharedStrings.xml")
+            Dim sharedStringsEntry As ZipArchiveEntry = archive.GetEntry("xl/sharedStrings.xml")
 
             If sharedStringsEntry IsNot Nothing Then
 
-                Using stream As Stream =
-                    sharedStringsEntry.Open()
+                Using stream As Stream = sharedStringsEntry.Open()
 
-                    Dim sharedDoc As XDocument =
-                        XDocument.Load(stream)
+                    Dim sharedDoc As XDocument = XDocument.Load(stream)
 
-                    Dim ns As XNamespace =
-                        "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+                    Dim ns As XNamespace = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 
-                    For Each si As XElement In
-                        sharedDoc.Descendants(ns + "si")
+                    For Each si As XElement In sharedDoc.Descendants(ns + "si")
 
                         Dim textValue As String =
-                            String.Concat(
-                                si.Descendants(ns + "t").
-                                Select(Function(t) t.Value)
-                            )
+                            String.Concat(si.Descendants(ns + "t").Select(Function(t) t.Value))
 
                         sharedStrings.Add(textValue)
 
@@ -572,19 +519,12 @@ Public Class Borrower
 
             End If
 
-
             Dim worksheetEntry As ZipArchiveEntry = Nothing
 
             For Each entry As ZipArchiveEntry In archive.Entries
 
-                If entry.FullName.StartsWith(
-                    "xl/worksheets/",
-                    StringComparison.OrdinalIgnoreCase
-                ) AndAlso
-                   entry.FullName.EndsWith(
-                       ".xml",
-                       StringComparison.OrdinalIgnoreCase
-                   ) Then
+                If entry.FullName.StartsWith("xl/worksheets/", StringComparison.OrdinalIgnoreCase) AndAlso
+                   entry.FullName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase) Then
 
                     worksheetEntry = entry
                     Exit For
@@ -593,28 +533,17 @@ Public Class Borrower
 
             Next
 
-
             If worksheetEntry Is Nothing Then
-
-                Throw New InvalidDataException(
-                    "No worksheet was found in the selected Excel file."
-                )
-
+                Throw New InvalidDataException("No worksheet was found in the selected Excel file.")
             End If
 
+            Using stream As Stream = worksheetEntry.Open()
 
-            Using stream As Stream =
-                worksheetEntry.Open()
+                Dim sheetDoc As XDocument = XDocument.Load(stream)
 
-                Dim sheetDoc As XDocument =
-                    XDocument.Load(stream)
+                Dim ns As XNamespace = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 
-                Dim ns As XNamespace =
-                    "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
-
-                Dim rows =
-                    sheetDoc.Descendants(ns + "sheetData").
-                    Descendants(ns + "row")
+                Dim rows = sheetDoc.Descendants(ns + "sheetData").Descendants(ns + "row")
 
                 Dim firstRow As Boolean = True
 
@@ -622,42 +551,25 @@ Public Class Borrower
 
                     Dim cellValues As New Dictionary(Of Integer, String)()
 
-                    For Each cell As XElement In
-                        rowElement.Elements(ns + "c")
+                    For Each cell As XElement In rowElement.Elements(ns + "c")
 
                         Dim cellReference As String =
-                            If(
-                                cell.Attribute("r") Is Nothing,
-                                String.Empty,
-                                cell.Attribute("r").Value
-                            )
+                            If(cell.Attribute("r") Is Nothing, String.Empty, cell.Attribute("r").Value)
 
                         If String.IsNullOrWhiteSpace(cellReference) Then
                             Continue For
                         End If
 
-                        Dim columnIndex As Integer =
-                            GetExcelColumnIndex(cellReference)
+                        Dim columnIndex As Integer = GetExcelColumnIndex(cellReference)
 
                         Dim cellType As String =
-                            If(
-                                cell.Attribute("t") Is Nothing,
-                                String.Empty,
-                                cell.Attribute("t").Value
-                            )
+                            If(cell.Attribute("t") Is Nothing, String.Empty, cell.Attribute("t").Value)
 
-                        Dim value As String =
-                            GetXlsxCellValue(
-                                cell,
-                                cellType,
-                                sharedStrings,
-                                ns
-                            )
+                        Dim value As String = GetXlsxCellValue(cell, cellType, sharedStrings, ns)
 
                         cellValues(columnIndex) = value
 
                     Next
-
 
                     If cellValues.Count = 0 Then
                         Continue For
@@ -665,43 +577,27 @@ Public Class Borrower
 
                     If firstRow Then
 
-                        Dim maxColumn As Integer =
-                            cellValues.Keys.Max()
+                        Dim maxColumn As Integer = cellValues.Keys.Max()
 
                         For i As Integer = 0 To maxColumn
 
-                            Dim headerName As String =
-                                String.Empty
+                            Dim headerName As String = String.Empty
 
                             If cellValues.ContainsKey(i) Then
-
-                                headerName =
-                                    cellValues(i).Trim()
-
+                                headerName = cellValues(i).Trim()
                             End If
 
                             If String.IsNullOrWhiteSpace(headerName) Then
-
-                                headerName =
-                                    "Column" &
-                                    (i + 1).ToString()
-
+                                headerName = "Column" & (i + 1).ToString()
                             End If
 
-                            Dim originalName As String =
-                                headerName
+                            Dim originalName As String = headerName
 
                             Dim counter As Integer = 1
 
                             While dt.Columns.Contains(headerName)
-
-                                headerName =
-                                    originalName &
-                                    "_" &
-                                    counter.ToString()
-
+                                headerName = originalName & "_" & counter.ToString()
                                 counter += 1
-
                             End While
 
                             dt.Columns.Add(headerName)
@@ -712,41 +608,25 @@ Public Class Borrower
 
                     Else
 
-
-
-                        Dim row As DataRow =
-                            dt.NewRow()
-
+                        Dim row As DataRow = dt.NewRow()
 
                         For i As Integer = 0 To dt.Columns.Count - 1
 
                             If cellValues.ContainsKey(i) Then
-
-                                row(i) =
-                                    cellValues(i)
-
+                                row(i) = cellValues(i)
                             Else
-
-                                row(i) =
-                                    String.Empty
-
+                                row(i) = String.Empty
                             End If
 
                         Next
 
-
                         Dim hasData As Boolean = False
-
 
                         For i As Integer = 0 To dt.Columns.Count - 1
 
-                            If Not String.IsNullOrWhiteSpace(
-                                row(i).ToString()
-                            ) Then
-
+                            If Not String.IsNullOrWhiteSpace(row(i).ToString()) Then
                                 hasData = True
                                 Exit For
-
                             End If
 
                         Next
@@ -775,23 +655,13 @@ Public Class Borrower
         ns As XNamespace
     ) As String
 
-
-
         If cellType = "inlineStr" Then
-
-            Return String.Concat(
-                cell.Descendants(ns + "t").
-                Select(Function(t) t.Value)
-            ).Trim()
-
+            Return String.Concat(cell.Descendants(ns + "t").Select(Function(t) t.Value)).Trim()
         End If
-
-
 
         If cellType = "s" Then
 
-            Dim valueElement As XElement =
-                cell.Element(ns + "v")
+            Dim valueElement As XElement = cell.Element(ns + "v")
 
             If valueElement Is Nothing Then
                 Return String.Empty
@@ -799,16 +669,10 @@ Public Class Borrower
 
             Dim index As Integer
 
-            If Integer.TryParse(
-                valueElement.Value,
-                index
-            ) Then
+            If Integer.TryParse(valueElement.Value, index) Then
 
-                If index >= 0 AndAlso
-                   index < sharedStrings.Count Then
-
+                If index >= 0 AndAlso index < sharedStrings.Count Then
                     Return sharedStrings(index).Trim()
-
                 End If
 
             End If
@@ -817,11 +681,9 @@ Public Class Borrower
 
         End If
 
-
         If cellType = "b" Then
 
-            Dim valueElement As XElement =
-                cell.Element(ns + "v")
+            Dim valueElement As XElement = cell.Element(ns + "v")
 
             If valueElement Is Nothing Then
                 Return String.Empty
@@ -835,19 +697,13 @@ Public Class Borrower
 
         End If
 
-
-
-
-        Dim normalValue As XElement =
-            cell.Element(ns + "v")
+        Dim normalValue As XElement = cell.Element(ns + "v")
 
         If normalValue IsNot Nothing Then
             Return normalValue.Value.Trim()
         End If
 
-
-        Dim formulaValue As XElement =
-            cell.Element(ns + "f")
+        Dim formulaValue As XElement = cell.Element(ns + "f")
 
         If formulaValue IsNot Nothing Then
 
@@ -857,29 +713,21 @@ Public Class Borrower
 
         End If
 
-
         Return String.Empty
 
     End Function
 
 
-    Private Function GetExcelColumnIndex(
-        cellReference As String
-    ) As Integer
+    Private Function GetExcelColumnIndex(cellReference As String) As Integer
 
         Dim columnLetters As String = ""
 
         For Each ch As Char In cellReference
 
             If Char.IsLetter(ch) Then
-
-                columnLetters &=
-                    ch
-
+                columnLetters &= ch
             Else
-
                 Exit For
-
             End If
 
         Next
@@ -890,12 +738,9 @@ Public Class Borrower
 
         Dim columnNumber As Integer = 0
 
-        For Each ch As Char In
-            columnLetters.ToUpperInvariant()
+        For Each ch As Char In columnLetters.ToUpperInvariant()
 
-            columnNumber =
-                (columnNumber * 26) +
-                (AscW(ch) - AscW("A"c) + 1)
+            columnNumber = (columnNumber * 26) + (AscW(ch) - AscW("A"c) + 1)
 
         Next
 
@@ -939,7 +784,6 @@ Public Class Borrower
 
             For Each col As DataGridViewColumn In DataGridView1.Columns
 
-
                 If Not String.IsNullOrEmpty(col.DataPropertyName) Then Continue For
 
                 Dim n As String = col.Name.ToLowerInvariant()
@@ -955,7 +799,6 @@ Public Class Borrower
                 End If
 
             Next
-
 
             If editColName <> "" Then
                 DataGridView1.Columns(editColName).DisplayIndex = DataGridView1.Columns.Count - 2
@@ -999,27 +842,20 @@ Public Class Borrower
 
         For Each row As DataGridViewRow In DataGridView1.Rows
 
-
             If Not row.IsNewRow Then
 
-
                 If row.DataBoundItem IsNot Nothing Then
-
 
                     Dim dataRowView As DataRowView = TryCast(row.DataBoundItem, DataRowView)
 
                     If dataRowView IsNot Nothing AndAlso dataRowView.Row.Table.Columns.Contains("HasAccount") Then
 
-
                         Dim hasAccountValue As Object = dataRowView.Row("HasAccount")
                         Dim hasAccount As Integer = 0
 
-
                         If hasAccountValue IsNot DBNull.Value AndAlso hasAccountValue IsNot Nothing Then
-
                             hasAccount = CInt(hasAccountValue)
                         End If
-
 
                         If hasAccount = 1 Then
 
@@ -1034,7 +870,6 @@ Public Class Borrower
                             row.DefaultCellStyle.SelectionBackColor = Color.IndianRed
                             row.DefaultCellStyle.SelectionForeColor = Color.White
                         End If
-
 
                         If editColName <> "" AndAlso DataGridView1.Columns.Contains(editColName) Then
                             row.Cells(editColName).Style.BackColor = Color.White
@@ -1061,7 +896,6 @@ Public Class Borrower
         ResolveActionColumns()
 
         ColorRows()
-
 
         For Each col As DataGridViewColumn In DataGridView1.Columns
             If col.Name = "HasAccount" Then
@@ -1103,16 +937,15 @@ Public Class Borrower
 
             editingID = Convert.ToInt32(row.Cells("ID").Value)
 
-            oldBorrowerTypeVal = If(row.Cells("Borrower").Value Is DBNull.Value OrElse row.Cells("Borrower").Value Is Nothing, "", row.Cells("Borrower").Value.ToString().Trim())
-            oldFirstNameVal = If(row.Cells("FirstName").Value Is DBNull.Value OrElse row.Cells("FirstName").Value Is Nothing, "", row.Cells("FirstName").Value.ToString().Trim())
-            oldLastNameVal = If(row.Cells("LastName").Value Is DBNull.Value OrElse row.Cells("LastName").Value Is Nothing, "", row.Cells("LastName").Value.ToString().Trim())
-            oldMiddleInitialVal = If(row.Cells("MiddleInitial").Value Is DBNull.Value OrElse row.Cells("MiddleInitial").Value Is Nothing, "", row.Cells("MiddleInitial").Value.ToString().Trim())
-            oldLRNVal = If(row.Cells("LRN").Value Is DBNull.Value OrElse row.Cells("LRN").Value Is Nothing, "", row.Cells("LRN").Value.ToString().Trim())
-            oldEmployeeNoVal = If(row.Cells("EmployeeNo").Value Is DBNull.Value OrElse row.Cells("EmployeeNo").Value Is Nothing, "", row.Cells("EmployeeNo").Value.ToString().Trim())
-            oldContactNumberVal = If(row.Cells("ContactNumber").Value Is DBNull.Value OrElse row.Cells("ContactNumber").Value Is Nothing, "", row.Cells("ContactNumber").Value.ToString().Trim())
+            oldBorrowerTypeVal = CellText(row, "Borrower")
+            oldFirstNameVal = CellText(row, "FirstName")
+            oldLastNameVal = CellText(row, "LastName")
+            oldMiddleInitialVal = CellText(row, "MiddleInitial")
+            oldLRNVal = CellText(row, "LRN")
+            oldEmployeeNoVal = CellText(row, "EmployeeNo")
+            oldContactNumberVal = CellText(row, "ContactNumber")
 
             isEditMode = True
-
 
             txtfname.Enabled = True
             txtlname.Enabled = True
@@ -1134,35 +967,30 @@ Public Class Borrower
         If row Is Nothing Then Exit Sub
         If Not DataGridView1.Columns.Contains("MiddleInitial") Then Exit Sub
 
-        Dim borrowerType As String = row.Cells("Borrower").Value.ToString()
-
-        cbdepartment.Text = row.Cells("Department").Value.ToString()
-        cbdepartment_SelectedIndexChanged(cbdepartment, EventArgs.Empty)
+        Dim borrowerType As String = CellText(row, "Borrower")
+        Dim deptVal As String = CellText(row, "Department")
 
         If borrowerType = "Student" Then
             rbstudent.Checked = True
-
-            If IsSHS(cbdepartment.Text) Then
-                cbstrand.Visible = True
-                lblstrand.Visible = True
-            Else
-                cbstrand.Visible = False
-                lblstrand.Visible = False
-            End If
-
         ElseIf borrowerType = "Teacher" Then
             rbteacher.Checked = True
-
-            txtemployeeno.Text = If(IsDBNull(row.Cells("EmployeeNo").Value), String.Empty, row.Cells("EmployeeNo").Value.ToString())
-            txtlrn.Text = ""
-
-            cbstrand.Visible = False
-            lblstrand.Visible = False
         End If
 
-        txtfname.Text = row.Cells("FirstName").Value.ToString()
+        cbdepartment.Text = deptVal
+        cbdepartment_SelectedIndexChanged(cbdepartment, EventArgs.Empty)
 
-        Dim middleInitial As String = row.Cells("MiddleInitial").Value.ToString().Trim().ToUpper()
+        If borrowerType = "Teacher" Then
+            txtemployeeno.Text = CellText(row, "EmployeeNo")
+            txtlrn.Text = ""
+            SetStudentCombosVisible(False)
+        Else
+
+            SetStudentCombosVisible(True)
+        End If
+
+        txtfname.Text = CellText(row, "FirstName")
+
+        Dim middleInitial As String = CellText(row, "MiddleInitial").ToUpper()
 
         If middleInitial = "N/A" OrElse String.IsNullOrWhiteSpace(middleInitial) Then
             CheckBox1.Checked = False
@@ -1172,26 +1000,36 @@ Public Class Borrower
             txtmname.Text = middleInitial
         End If
 
-        txtlname.Text = row.Cells("LastName").Value.ToString()
-        txtlrn.Text = If(IsDBNull(row.Cells("LRN").Value), "", row.Cells("LRN").Value.ToString())
-        txtcontactnumber.Text = row.Cells("ContactNumber").Value.ToString()
-        cbdepartment.Text = row.Cells("Department").Value.ToString()
-        cbgrade.Text = row.Cells("Grade").Value.ToString()
-        cbsection.Text = row.Cells("Section").Value.ToString()
-        cbstrand.Text = row.Cells("Strand").Value.ToString()
+        txtlname.Text = CellText(row, "LastName")
+        txtlrn.Text = CellText(row, "LRN")
+        txtcontactnumber.Text = CellText(row, "ContactNumber")
+
+        cbgrade.Text = CellText(row, "Grade")
+        cbgrade_SelectedIndexChanged(cbgrade, EventArgs.Empty)
+
+        If borrowerType <> "Teacher" AndAlso IsSHS(deptVal) Then
+
+            cbstrand.Text = CellText(row, "Strand")
+            cbstrand_SelectedIndexChanged(cbstrand, EventArgs.Empty)
+
+            cbsection.Text = CellText(row, "Section")
+
+        Else
+
+            cbsection.Text = CellText(row, "Section")
+            cbstrand.Text = CellText(row, "Strand")
+
+        End If
 
     End Sub
 
     Public Sub strandlocation()
 
         cbstrand.Visible = True
-
-        cbstrand.Location = New Point(942, 285)
-
+        cbstrand.Location = STRAND_CB_POS
 
         lblstrand.Visible = True
-
-        lblstrand.Location = New Point(942, 266)
+        lblstrand.Location = STRAND_LBL_POS
 
     End Sub
 
@@ -1203,11 +1041,14 @@ Public Class Borrower
         Try
             con.Open()
             adap.Fill(dt)
+            isLoadingCombos = True
             cbgrade.DataSource = dt
             cbgrade.DisplayMember = "Grade"
             cbgrade.ValueMember = "ID"
             cbgrade.SelectedIndex = -1
+            isLoadingCombos = False
         Catch ex As Exception
+            isLoadingCombos = False
             MessageBox.Show("Error loading grades: " & ex.Message)
         Finally
             con.Close()
@@ -1222,11 +1063,14 @@ Public Class Borrower
         Try
             con.Open()
             adap.Fill(dt)
+            isLoadingCombos = True
             cbsection.DataSource = dt
             cbsection.DisplayMember = "Section"
             cbsection.ValueMember = "ID"
             cbsection.SelectedIndex = -1
+            isLoadingCombos = False
         Catch ex As Exception
+            isLoadingCombos = False
             MessageBox.Show("Error loading sections: " & ex.Message)
         Finally
             con.Close()
@@ -1241,11 +1085,14 @@ Public Class Borrower
         Try
             con.Open()
             adap.Fill(dt)
+            isLoadingCombos = True
             cbdepartment.DataSource = dt
             cbdepartment.DisplayMember = "Department"
             cbdepartment.ValueMember = "ID"
             cbdepartment.SelectedIndex = -1
+            isLoadingCombos = False
         Catch ex As Exception
+            isLoadingCombos = False
             MessageBox.Show("Error loading departments: " & ex.Message)
         Finally
             con.Close()
@@ -1262,11 +1109,14 @@ Public Class Borrower
         Try
             con.Open()
             adap.Fill(dt)
+            isLoadingCombos = True
             cbstrand.DataSource = dt
             cbstrand.DisplayMember = "Strand"
             cbstrand.ValueMember = "ID"
             cbstrand.SelectedIndex = -1
+            isLoadingCombos = False
         Catch ex As Exception
+            isLoadingCombos = False
             MessageBox.Show("Error loading strands: " & ex.Message)
         Finally
             con.Close()
@@ -1360,7 +1210,6 @@ Public Class Borrower
         End If
 
 
-
         If borrowerType = "Student" Then
             If String.IsNullOrWhiteSpace(txtlrn.Text) Then
                 MsgBox("Please enter the student's LRN.", vbExclamation, "Missing Information")
@@ -1372,6 +1221,21 @@ Public Class Borrower
             If lrn.ToString().Length <> 12 OrElse Not IsNumeric(lrn) Then
                 MsgBox("LRN must be 12 digits.", vbExclamation, "Invalid LRN")
                 Exit Sub
+            End If
+
+
+            If IsSHS(cbdepartment.Text) Then
+
+                If String.IsNullOrWhiteSpace(cbstrand.Text) Then
+                    MsgBox("Please select the student's Strand.", vbExclamation, "Missing Information")
+                    Exit Sub
+                End If
+
+                If String.IsNullOrWhiteSpace(cbsection.Text) Then
+                    MsgBox("Please select the student's Section.", vbExclamation, "Missing Information")
+                    Exit Sub
+                End If
+
             End If
 
         ElseIf borrowerType = "Teacher" Then
@@ -1446,10 +1310,7 @@ Public Class Borrower
                 registeredForm.ludeyngborrower()
             End If
 
-            cbstrand.Visible = True
-            cbstrand.Location = New Point(942, 285)
-            lblstrand.Visible = True
-            lblstrand.Location = New Point(942, 266)
+            strandlocation()
 
         Catch ex As Exception
             MessageBox.Show("Error adding borrower: " & ex.Message)
@@ -1538,7 +1399,6 @@ Public Class Borrower
         End If
 
 
-
         If borrowerType = "Student" Then
             If String.IsNullOrWhiteSpace(txtlrn.Text) Then
                 MsgBox("Please enter the student's LRN.", vbExclamation, "Missing Information")
@@ -1551,6 +1411,21 @@ Public Class Borrower
             If lrn.ToString.Length <> 12 OrElse Not IsNumeric(lrn) Then
                 MsgBox("LRN must be 12 digits.", vbExclamation, "Invalid LRN")
                 Exit Sub
+            End If
+
+
+            If IsSHS(cbdepartment.Text) Then
+
+                If String.IsNullOrWhiteSpace(cbstrand.Text) Then
+                    MsgBox("Please select the student's Strand.", vbExclamation, "Missing Information")
+                    Exit Sub
+                End If
+
+                If String.IsNullOrWhiteSpace(cbsection.Text) Then
+                    MsgBox("Please select the student's Section.", vbExclamation, "Missing Information")
+                    Exit Sub
+                End If
+
             End If
 
         ElseIf borrowerType = "Teacher" Then
@@ -1708,11 +1583,7 @@ Public Class Borrower
                 registeredForm.ludeyngborrower()
             End If
 
-
-            cbstrand.Visible = True
-            cbstrand.Location = New Point(942, 285)
-            lblstrand.Visible = True
-            lblstrand.Location = New Point(942, 266)
+            strandlocation()
 
         Catch ex As Exception
             MessageBox.Show("Error updating borrower: " & ex.Message)
@@ -1746,12 +1617,11 @@ Public Class Borrower
 
             ID = Convert.ToInt32(selectedRow.Cells("ID").Value)
 
-            Dim firstName = selectedRow.Cells("FirstName").Value.ToString.Trim
-            Dim lastName = selectedRow.Cells("LastName").Value.ToString.Trim
-            Dim middleInitialValue = selectedRow.Cells("MiddleInitial").Value
-            Dim middleInitial = If(middleInitialValue Is DBNull.Value OrElse middleInitialValue Is Nothing, "", middleInitialValue.ToString.Trim)
+            Dim firstName = CellText(selectedRow, "FirstName")
+            Dim lastName = CellText(selectedRow, "LastName")
+            Dim middleInitial = CellText(selectedRow, "MiddleInitial")
 
-            borrowerTypeToDelete = selectedRow.Cells("Borrower").Value.ToString.Trim
+            borrowerTypeToDelete = CellText(selectedRow, "Borrower")
             fullNameToDelete = $"{lastName}, {firstName}"
             If middleInitial.ToUpper <> "N/A" AndAlso Not String.IsNullOrWhiteSpace(middleInitial) Then
                 fullNameToDelete = $"{lastName}, {firstName} {middleInitial}"
@@ -1832,10 +1702,7 @@ Public Class Borrower
                 registeredForm.ludeyngborrower()
             End If
 
-            cbstrand.Visible = True
-            cbstrand.Location = New Point(942, 285)
-            lblstrand.Visible = True
-            lblstrand.Location = New Point(942, 266)
+            strandlocation()
 
         Catch ex As Exception
             MessageBox.Show("Error deleting borrower: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -1870,7 +1737,6 @@ Public Class Borrower
 
     Private Sub cbdepartment_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbdepartment.SelectedIndexChanged
 
-
         cbgrade.Enabled = False
         cbgrade.SelectedIndex = -1
         cbsection.Enabled = False
@@ -1879,129 +1745,116 @@ Public Class Borrower
         cbstrand.SelectedIndex = -1
 
 
-        cbgrade.Visible = True
-        lblgrade.Visible = True
-        cbsection.Visible = True
-        lblsection.Visible = True
-        cbstrand.Visible = True
-        lblstrand.Visible = True
-
-        If cbdepartment.SelectedIndex <> -1 Then
-            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
-
-
-            If rbteacher.Checked Then
-                cbgrade.Enabled = False
-                cbgrade.Visible = False
-                lblgrade.Visible = False
-                cbsection.Enabled = False
-                cbsection.Visible = False
-                lblsection.Visible = False
-                cbstrand.Enabled = False
-                cbstrand.Visible = False
-                lblstrand.Visible = False
-                Return
-            End If
-
-
-            Select Case True
-                Case IsJHS(selectedDept)
-                    Dim con As New MySqlConnection(connectionString)
-                    Dim dt As New DataTable
-                    Try
-                        con.Open()
-                        Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('7', '8', '9', '10')", con)
-                        adap.Fill(dt)
-                        cbgrade.DataSource = dt
-                        cbgrade.DisplayMember = "Grade"
-                        cbgrade.ValueMember = "ID"
-                        cbgrade.SelectedIndex = -1
-
-                        cbgrade.Enabled = True
-                        cbsection.Visible = True
-                        lblsection.Visible = True
-                        cbstrand.Visible = False
-                        lblstrand.Visible = False
-                    Catch ex As Exception
-                        MessageBox.Show("Error filtering JHS grades: " & ex.Message)
-                    End Try
-
-                Case IsSHS(selectedDept)
-                    Dim con As New MySqlConnection(connectionString)
-                    Dim dt As New DataTable
-                    Try
-                        con.Open()
-                        Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('11', '12')", con)
-                        adap.Fill(dt)
-                        cbgrade.DataSource = dt
-                        cbgrade.DisplayMember = "Grade"
-                        cbgrade.ValueMember = "ID"
-                        cbgrade.SelectedIndex = -1
-
-                        cbgrade.Enabled = True
-                        cbsection.Visible = False
-                        lblsection.Visible = False
-                        cbstrand.Visible = True
-                        lblstrand.Visible = True
-                        cbstrand.Location = New Point(942, 216)
-                        lblstrand.Location = New Point(942, 197)
-                    Catch ex As Exception
-                        MessageBox.Show("Error filtering SHS grades: " & ex.Message)
-                    End Try
-
-                Case IsElementary(selectedDept)
-                    Dim con As New MySqlConnection(connectionString)
-                    Dim dt As New DataTable
-                    Try
-                        con.Open()
-                        Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('1', '2', '3', '4', '5', '6')", con)
-                        adap.Fill(dt)
-                        cbgrade.DataSource = dt
-                        cbgrade.DisplayMember = "Grade"
-                        cbgrade.ValueMember = "ID"
-                        cbgrade.SelectedIndex = -1
-
-                        cbgrade.Enabled = True
-                        cbsection.Visible = True
-                        lblsection.Visible = True
-                        cbstrand.Visible = False
-                        lblstrand.Visible = False
-                    Catch ex As Exception
-                        MessageBox.Show("Error filtering Elementary grades: " & ex.Message)
-                    End Try
-
-                Case Else
-                    ' Ibang department (halimbawa: Kinder-1): lahat ng grade, section-based (walang strand)
-                    Dim con As New MySqlConnection(connectionString)
-                    Dim dt As New DataTable
-                    Try
-                        con.Open()
-                        Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` ORDER BY CAST(Grade AS UNSIGNED)", con)
-                        adap.Fill(dt)
-                        cbgrade.DataSource = dt
-                        cbgrade.DisplayMember = "Grade"
-                        cbgrade.ValueMember = "ID"
-                        cbgrade.SelectedIndex = -1
-
-                        cbgrade.Enabled = True
-                        cbsection.Visible = True
-                        lblsection.Visible = True
-                        cbstrand.Visible = False
-                        lblstrand.Visible = False
-                    Catch ex As Exception
-                        MessageBox.Show("Error loading grades: " & ex.Message)
-                    End Try
-            End Select
+        If rbteacher.Checked Then
+            SetStudentCombosVisible(False)
+            Return
         End If
+
+        SetStudentCombosVisible(True)
+
+        If cbdepartment.SelectedIndex = -1 Then Return
+
+        Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
+
+        Select Case True
+
+            Case IsJHS(selectedDept)
+                Dim con As New MySqlConnection(connectionString)
+                Dim dt As New DataTable
+                Try
+                    con.Open()
+                    Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('7', '8', '9', '10')", con)
+                    adap.Fill(dt)
+                    isLoadingCombos = True
+                    cbgrade.DataSource = dt
+                    cbgrade.DisplayMember = "Grade"
+                    cbgrade.ValueMember = "ID"
+                    cbgrade.SelectedIndex = -1
+                    isLoadingCombos = False
+
+                    cbgrade.Enabled = True
+                Catch ex As Exception
+                    isLoadingCombos = False
+                    MessageBox.Show("Error filtering JHS grades: " & ex.Message)
+                Finally
+                    con.Close()
+                End Try
+
+            Case IsSHS(selectedDept)
+                Dim con As New MySqlConnection(connectionString)
+                Dim dt As New DataTable
+                Try
+                    con.Open()
+                    Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('11', '12')", con)
+                    adap.Fill(dt)
+                    isLoadingCombos = True
+                    cbgrade.DataSource = dt
+                    cbgrade.DisplayMember = "Grade"
+                    cbgrade.ValueMember = "ID"
+                    cbgrade.SelectedIndex = -1
+                    isLoadingCombos = False
+
+                    cbgrade.Enabled = True
+                Catch ex As Exception
+                    isLoadingCombos = False
+                    MessageBox.Show("Error filtering SHS grades: " & ex.Message)
+                Finally
+                    con.Close()
+                End Try
+
+            Case IsElementary(selectedDept)
+                Dim con As New MySqlConnection(connectionString)
+                Dim dt As New DataTable
+                Try
+                    con.Open()
+                    Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` WHERE Grade IN ('1', '2', '3', '4', '5', '6')", con)
+                    adap.Fill(dt)
+                    isLoadingCombos = True
+                    cbgrade.DataSource = dt
+                    cbgrade.DisplayMember = "Grade"
+                    cbgrade.ValueMember = "ID"
+                    cbgrade.SelectedIndex = -1
+                    isLoadingCombos = False
+
+                    cbgrade.Enabled = True
+                Catch ex As Exception
+                    isLoadingCombos = False
+                    MessageBox.Show("Error filtering Elementary grades: " & ex.Message)
+                Finally
+                    con.Close()
+                End Try
+
+            Case Else
+
+                Dim con As New MySqlConnection(connectionString)
+                Dim dt As New DataTable
+                Try
+                    con.Open()
+                    Dim adap As New MySqlDataAdapter("SELECT ID, Grade FROM `grade_tbl` ORDER BY CAST(Grade AS UNSIGNED)", con)
+                    adap.Fill(dt)
+                    isLoadingCombos = True
+                    cbgrade.DataSource = dt
+                    cbgrade.DisplayMember = "Grade"
+                    cbgrade.ValueMember = "ID"
+                    cbgrade.SelectedIndex = -1
+                    isLoadingCombos = False
+
+                    cbgrade.Enabled = True
+                Catch ex As Exception
+                    isLoadingCombos = False
+                    MessageBox.Show("Error loading grades: " & ex.Message)
+                Finally
+                    con.Close()
+                End Try
+
+        End Select
+
     End Sub
 
     Private Sub cbsection_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbsection.SelectedIndexChanged
 
-        If cbsection.SelectedIndex <> -1 AndAlso cbgrade.SelectedIndex <> -1 Then
-            cbstrand.Enabled = True
-        Else
-            cbstrand.Enabled = False
-        End If
+        If isLoadingCombos Then Return
+
     End Sub
 
     Private Sub cbgrade_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbgrade.SelectedIndexChanged
@@ -2011,135 +1864,257 @@ Public Class Borrower
         cbstrand.Enabled = False
         cbstrand.SelectedIndex = -1
 
-        If cbgrade.SelectedIndex <> -1 Then
-            Dim selectedGrade As String = cbgrade.GetItemText(cbgrade.SelectedItem)
-            Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
+        If isLoadingCombos Then Return
+        If rbteacher.Checked Then Return
+        If cbgrade.SelectedIndex = -1 Then Return
+        If cbdepartment.SelectedIndex = -1 Then Return
 
-            Select Case True
-                Case IsJHS(selectedDept)
-                    cbsection.Enabled = True
-                    Dim con As New MySqlConnection(connectionString)
-                    Dim dt As New DataTable
-                    Try
-                        con.Open()
-                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = @dept AND GradeLevel = @grade", con)
-                        com.Parameters.AddWithValue("@dept", selectedDept)
-                        com.Parameters.AddWithValue("@grade", selectedGrade)
-                        Dim adap As New MySqlDataAdapter(com)
-                        adap.Fill(dt)
-                        cbsection.DataSource = dt
-                        cbsection.DisplayMember = "Section"
-                        cbsection.ValueMember = "ID"
-                        cbsection.SelectedIndex = -1
-                        cbstrand.Enabled = False
-                    Catch ex As Exception
-                        MessageBox.Show("Error loading sections: " & ex.Message)
-                    Finally
-                        con.Close()
-                    End Try
+        Dim selectedGrade As String = cbgrade.GetItemText(cbgrade.SelectedItem).Trim()
+        Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
 
-                Case IsSHS(selectedDept)
-                    cbstrand.Enabled = True
-                    Dim con As New MySqlConnection(connectionString)
-                    Dim dt As New DataTable
-                    Try
-                        con.Open()
-                        Dim com As New MySqlCommand("SELECT ID, Strand FROM `section_tbl` WHERE Department = @dept AND GradeLevel = @grade", con)
-                        com.Parameters.AddWithValue("@dept", selectedDept)
-                        com.Parameters.AddWithValue("@grade", selectedGrade)
-                        Dim adap As New MySqlDataAdapter(com)
-                        adap.Fill(dt)
-                        cbstrand.DataSource = dt
-                        cbstrand.DisplayMember = "Strand"
-                        cbstrand.ValueMember = "ID"
-                        cbstrand.SelectedIndex = -1
-                        cbsection.Enabled = False
-                    Catch ex As Exception
-                        MessageBox.Show("Error loading strands: " & ex.Message)
-                    Finally
-                        con.Close()
-                    End Try
+        If IsSHS(selectedDept) Then
 
-                Case IsElementary(selectedDept)
-                    cbsection.Enabled = True
-                    Dim con As New MySqlConnection(connectionString)
-                    Dim dt As New DataTable
-                    Try
-                        con.Open()
-                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = @dept AND GradeLevel = @grade", con)
-                        com.Parameters.AddWithValue("@dept", selectedDept)
-                        com.Parameters.AddWithValue("@grade", selectedGrade)
-                        Dim adap As New MySqlDataAdapter(com)
-                        adap.Fill(dt)
-                        cbsection.DataSource = dt
-                        cbsection.DisplayMember = "Section"
-                        cbsection.ValueMember = "ID"
-                        cbsection.SelectedIndex = -1
-                        cbstrand.Enabled = False
-                    Catch ex As Exception
-                        MessageBox.Show("Error loading sections for Elementary: " & ex.Message)
-                    Finally
-                        con.Close()
-                    End Try
+            LoadStrandsForGrade(selectedDept, selectedGrade)
+            cbstrand.Enabled = True
 
-                Case Else
-                    ' Ibang department (halimbawa: Kinder-1): section-based
-                    cbsection.Enabled = True
-                    Dim con As New MySqlConnection(connectionString)
-                    Dim dt As New DataTable
-                    Try
-                        con.Open()
-                        Dim com As New MySqlCommand("SELECT ID, Section FROM `section_tbl` WHERE Department = @dept AND GradeLevel = @grade", con)
-                        com.Parameters.AddWithValue("@dept", selectedDept)
-                        com.Parameters.AddWithValue("@grade", selectedGrade)
-                        Dim adap As New MySqlDataAdapter(com)
-                        adap.Fill(dt)
-                        cbsection.DataSource = dt
-                        cbsection.DisplayMember = "Section"
-                        cbsection.ValueMember = "ID"
-                        cbsection.SelectedIndex = -1
-                        cbstrand.Enabled = False
-                    Catch ex As Exception
-                        MessageBox.Show("Error loading sections: " & ex.Message)
-                    Finally
-                        con.Close()
-                    End Try
-            End Select
+            isLoadingCombos = True
+            cbsection.DataSource = Nothing
+            cbsection.Items.Clear()
+            cbsection.Text = ""
+            isLoadingCombos = False
+
+            cbsection.Enabled = False
+
+        Else
+
+            LoadSectionsForGrade(selectedDept, selectedGrade)
+            cbsection.Enabled = True
+            cbstrand.Enabled = False
+
         End If
+
+    End Sub
+
+
+    Private Sub cbstrand_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbstrand.SelectedIndexChanged
+
+        If isLoadingCombos Then Return
+        If rbteacher.Checked Then Return
+        If cbdepartment.SelectedIndex = -1 Then Return
+
+        Dim selectedDept As String = cbdepartment.GetItemText(cbdepartment.SelectedItem)
+
+        ' Strand -> Section cascade ay para lang sa SHS
+        If Not IsSHS(selectedDept) Then Return
+
+        If cbstrand.SelectedIndex = -1 OrElse cbgrade.SelectedIndex = -1 Then
+
+            isLoadingCombos = True
+            cbsection.DataSource = Nothing
+            cbsection.Items.Clear()
+            cbsection.Text = ""
+            isLoadingCombos = False
+
+            cbsection.Enabled = False
+            Return
+
+        End If
+
+        Dim selectedGrade As String = cbgrade.GetItemText(cbgrade.SelectedItem).Trim()
+        Dim selectedStrand As String = cbstrand.GetItemText(cbstrand.SelectedItem).Trim()
+
+        LoadSectionsForStrand(selectedDept, selectedGrade, selectedStrand)
+
+        cbsection.Enabled = True
+
+    End Sub
+
+
+    Private Sub LoadSectionsForGrade(ByVal selectedDept As String, ByVal selectedGrade As String)
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim dt As New DataTable
+
+        Try
+            con.Open()
+
+            Dim com As New MySqlCommand("", con)
+            Dim deptWhere As String = BuildDeptWhere(com, selectedDept)
+
+            com.CommandText =
+                "SELECT MIN(`ID`) AS ID, TRIM(`Section`) AS Section " &
+                "FROM `section_tbl` " &
+                "WHERE " & deptWhere & " " &
+                "AND TRIM(`GradeLevel`) = @grade " &
+                "AND `Section` IS NOT NULL AND TRIM(`Section`) <> '' " &
+                "GROUP BY TRIM(`Section`) " &
+                "ORDER BY TRIM(`Section`)"
+
+            com.Parameters.AddWithValue("@grade", selectedGrade)
+
+            Dim adap As New MySqlDataAdapter(com)
+            adap.Fill(dt)
+
+            isLoadingCombos = True
+            cbsection.DataSource = dt
+            cbsection.DisplayMember = "Section"
+            cbsection.ValueMember = "ID"
+            cbsection.SelectedIndex = -1
+            isLoadingCombos = False
+
+        Catch ex As Exception
+            isLoadingCombos = False
+            MessageBox.Show("Error loading sections: " & ex.Message)
+        Finally
+            con.Close()
+        End Try
+
+    End Sub
+
+
+    Private Sub LoadSectionsForStrand(ByVal selectedDept As String, ByVal selectedGrade As String, ByVal selectedStrand As String)
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim dt As New DataTable
+
+        Try
+            con.Open()
+
+            Dim com As New MySqlCommand("", con)
+            Dim deptWhere As String = BuildDeptWhere(com, selectedDept)
+
+            com.CommandText =
+                "SELECT MIN(`ID`) AS ID, TRIM(`Section`) AS Section " &
+                "FROM `section_tbl` " &
+                "WHERE " & deptWhere & " " &
+                "AND TRIM(`GradeLevel`) = @grade " &
+                "AND LOWER(TRIM(`Strand`)) = LOWER(@strand) " &
+                "AND `Section` IS NOT NULL AND TRIM(`Section`) <> '' " &
+                "GROUP BY TRIM(`Section`) " &
+                "ORDER BY TRIM(`Section`)"
+
+            com.Parameters.AddWithValue("@grade", selectedGrade)
+            com.Parameters.AddWithValue("@strand", selectedStrand)
+
+            Dim adap As New MySqlDataAdapter(com)
+            adap.Fill(dt)
+
+            ' Fallback: kung walang naka-tag na strand sa section_tbl,
+            ' ilabas na lang lahat ng section ng dept + grade para hindi dead-end.
+            If dt.Rows.Count = 0 Then
+
+                Dim dt2 As New DataTable
+                Dim com2 As New MySqlCommand("", con)
+                Dim deptWhere2 As String = BuildDeptWhere(com2, selectedDept)
+
+                com2.CommandText =
+                    "SELECT MIN(`ID`) AS ID, TRIM(`Section`) AS Section " &
+                    "FROM `section_tbl` " &
+                    "WHERE " & deptWhere2 & " " &
+                    "AND TRIM(`GradeLevel`) = @grade " &
+                    "AND `Section` IS NOT NULL AND TRIM(`Section`) <> '' " &
+                    "GROUP BY TRIM(`Section`) " &
+                    "ORDER BY TRIM(`Section`)"
+
+                com2.Parameters.AddWithValue("@grade", selectedGrade)
+
+                Dim adap2 As New MySqlDataAdapter(com2)
+                adap2.Fill(dt2)
+
+                dt = dt2
+
+            End If
+
+            isLoadingCombos = True
+            cbsection.DataSource = dt
+            cbsection.DisplayMember = "Section"
+            cbsection.ValueMember = "ID"
+            cbsection.SelectedIndex = -1
+            isLoadingCombos = False
+
+        Catch ex As Exception
+            isLoadingCombos = False
+            MessageBox.Show("Error loading sections: " & ex.Message)
+        Finally
+            con.Close()
+        End Try
+
+    End Sub
+
+
+    Private Sub LoadStrandsForGrade(ByVal selectedDept As String, ByVal selectedGrade As String)
+
+        Dim con As New MySqlConnection(connectionString)
+        Dim dt As New DataTable
+
+        Try
+            con.Open()
+
+            Dim com As New MySqlCommand("", con)
+            Dim deptWhere As String = BuildDeptWhere(com, selectedDept)
+
+            com.CommandText =
+                "SELECT MIN(`ID`) AS ID, TRIM(`Strand`) AS Strand " &
+                "FROM `section_tbl` " &
+                "WHERE " & deptWhere & " " &
+                "AND TRIM(`GradeLevel`) = @grade " &
+                "AND `Strand` IS NOT NULL AND TRIM(`Strand`) <> '' " &
+                "GROUP BY TRIM(`Strand`) " &
+                "ORDER BY TRIM(`Strand`)"
+
+            com.Parameters.AddWithValue("@grade", selectedGrade)
+
+            Dim adap As New MySqlDataAdapter(com)
+            adap.Fill(dt)
+
+
+            If dt.Rows.Count = 0 Then
+                Dim dt2 As New DataTable
+                Dim com2 As New MySqlCommand(
+                    "SELECT MIN(`ID`) AS ID, TRIM(`Strand`) AS Strand FROM `strand_tbl` " &
+                    "WHERE `Strand` IS NOT NULL AND TRIM(`Strand`) <> '' " &
+                    "GROUP BY TRIM(`Strand`) ORDER BY TRIM(`Strand`)", con)
+                Dim adap2 As New MySqlDataAdapter(com2)
+                adap2.Fill(dt2)
+                dt = dt2
+            End If
+
+            isLoadingCombos = True
+            cbstrand.DataSource = dt
+            cbstrand.DisplayMember = "Strand"
+            cbstrand.ValueMember = "ID"
+            cbstrand.SelectedIndex = -1
+            isLoadingCombos = False
+
+        Catch ex As Exception
+            isLoadingCombos = False
+            MessageBox.Show("Error loading strands: " & ex.Message)
+        Finally
+            con.Close()
+        End Try
+
     End Sub
 
     Private Sub rbstudent_CheckedChanged(sender As Object, e As EventArgs) Handles rbstudent.CheckedChanged
 
         If rbstudent.Checked Then
 
-
             txtlrn.Visible = True
             txtlrn.Enabled = True
             txtemployeeno.Visible = False
 
-
             lblborrowertype.Text = "LRN:"
-
 
             cbdepartment.Enabled = True
             cbdepartment.DataSource = Nothing
             cbdepts()
 
+
+            SetStudentCombosVisible(True)
+
             cbgrade.Enabled = False
-            cbgrade.Visible = True
-            lblgrade.Visible = True
-
             cbsection.Enabled = False
-            cbsection.Visible = True
-            lblsection.Visible = True
-
             cbstrand.Enabled = False
-            cbstrand.Visible = True
-            lblstrand.Visible = True
-
-            cbstrand.Location = New Point(942, 285)
-            lblstrand.Location = New Point(942, 266)
-
 
             txtfname.Enabled = True
             txtlname.Enabled = True
@@ -2156,40 +2131,27 @@ Public Class Borrower
 
         If rbteacher.Checked Then
 
-
             txtlrn.Visible = False
             txtlrn.Enabled = False
             txtemployeeno.Visible = True
 
-
             lblborrowertype.Text = "Employee no.:"
-
 
             cbdepartment.Enabled = True
             cbdepartment.DataSource = Nothing
             cbdepts()
 
+            SetStudentCombosVisible(False)
 
             cbgrade.Enabled = False
-            cbgrade.Visible = False
-            lblgrade.Visible = False
-
             cbsection.Enabled = False
-            cbsection.Visible = False
-            lblsection.Visible = False
-
             cbstrand.Enabled = False
-            cbstrand.Visible = False
-            lblstrand.Visible = False
-
 
             txtfname.Enabled = True
             txtlname.Enabled = True
             txtmname.Enabled = True
             txtemployeeno.Enabled = True
             txtcontactnumber.Enabled = True
-            'rbnone.Enabled = True
-            'rbnone.Checked = False
 
             CheckBox1.Enabled = True
             CheckBox1.Checked = False
@@ -2211,7 +2173,7 @@ Public Class Borrower
 
     Private Sub ClearFields()
 
-        ' reset edit mode
+
         isEditMode = False
         editingID = 0
         oldBorrowerTypeVal = ""
@@ -2233,12 +2195,7 @@ Public Class Borrower
         txtlrn.Visible = True
         txtemployeeno.Visible = False
 
-        cbdepartment.Visible = True
-        cbgrade.Visible = True
-        cbsection.Visible = True
-        lblsection.Visible = True
-        cbstrand.Visible = True
-        lblstrand.Visible = True
+        SetStudentCombosVisible(True)
 
         cbdepartment.Enabled = False
         cbgrade.Enabled = False
@@ -2348,7 +2305,6 @@ Public Class Borrower
 
     Private Sub txtcontactnumber_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtcontactnumber.KeyPress
 
-
         If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
             e.Handled = True
         End If
@@ -2390,10 +2346,8 @@ Public Class Borrower
 
     Private Sub txtcontactnumber_KeyUp(sender As Object, e As KeyEventArgs) Handles txtcontactnumber.KeyUp
 
-
         If e.KeyCode = Keys.Back Then
             AddHandler txtcontactnumber.TextChanged, AddressOf txtcontactnumber_TextChanged
-
         End If
 
     End Sub
@@ -2419,19 +2373,11 @@ Public Class Borrower
     Private Sub btnclear_Click_1(sender As Object, e As EventArgs) Handles btnclear.Click
 
         ClearFields()
-
-        cbstrand.Visible = True
-        cbstrand.Location = New Point(942, 285)
-
-
-        lblstrand.Visible = True
-        lblstrand.Location = New Point(942, 266)
-
+        strandlocation()
 
     End Sub
 
     Private Sub txtmname_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtmname.KeyPress
-
 
         If Char.IsControl(e.KeyChar) Then
             e.Handled = False
@@ -2441,30 +2387,25 @@ Public Class Borrower
         Dim currentText As String = txtmname.Text
         Dim currentLengthWithoutPeriod As Integer = currentText.Replace(".", "").Length
 
-
         If Not Char.IsLetter(e.KeyChar) AndAlso e.KeyChar <> "."c Then
             e.Handled = True
             Return
         End If
-
 
         If e.KeyChar = "."c AndAlso currentText.Contains(".") Then
             e.Handled = True
             Return
         End If
 
-
         If Char.IsLetter(e.KeyChar) AndAlso currentLengthWithoutPeriod >= 1 Then
             e.Handled = True
             Return
         End If
 
-
         If currentText.Length >= 2 AndAlso currentText.EndsWith(".") Then
             e.Handled = True
             Return
         End If
-
 
         If Char.IsLetter(e.KeyChar) AndAlso currentText.Contains(".") Then
             e.Handled = True
@@ -2479,7 +2420,6 @@ Public Class Borrower
         If isFormatting Then Return
 
         Dim currentText As String = txtmname.Text
-
 
         Dim initial As String = ""
         For Each c As Char In currentText
@@ -2525,8 +2465,6 @@ Public Class Borrower
         End If
 
     End Sub
-
-
 
 
     Private Sub DisablePaste_AllTextBoxes()

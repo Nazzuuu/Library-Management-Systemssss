@@ -184,6 +184,51 @@ Public Class Section
             Debug.WriteLine("Grid column layout error: " & ex.Message)
         End Try
 
+        If DataGridView1.Columns.Contains("Edit") Then
+
+            DataGridView1.Columns("Edit").DisplayIndex =
+                DataGridView1.Columns.Count - 2
+
+            DataGridView1.Columns("Edit").DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter
+
+            For Each row As DataGridViewRow In DataGridView1.Rows
+
+                If Not row.IsNewRow Then
+
+                    row.Cells("Edit").Style.Alignment =
+                        DataGridViewContentAlignment.MiddleCenter
+
+                End If
+
+            Next
+
+        End If
+
+        If DataGridView1.Columns.Contains("Delete") Then
+
+            DataGridView1.Columns("Delete").DisplayIndex =
+                DataGridView1.Columns.Count - 1
+
+            DataGridView1.Columns("Delete").DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter
+
+            For Each row As DataGridViewRow In DataGridView1.Rows
+
+                If Not row.IsNewRow Then
+
+                    row.Cells("Delete").Style.Alignment =
+                        DataGridViewContentAlignment.MiddleCenter
+
+                End If
+
+            Next
+
+        End If
+
+        DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
+
     End Sub
 
     Private Sub RefreshComboBoxes(sender As Object, e As EventArgs)

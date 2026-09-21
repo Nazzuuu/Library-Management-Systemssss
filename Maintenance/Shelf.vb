@@ -3,46 +3,83 @@ Imports MySql.Data.MySqlClient
 Imports System.Data
 
 Public Class Shelf
+
+    Private selectedShelfID As Integer = 0
+
     Private Sub Shelf_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         DisablePaste_AllTextBoxes()
 
         TopMost = True
         Me.Refresh()
+
         LoadShelfData()
 
+        GlobalVarsModule.AutoRefreshGrid(
+            DataGridView1,
+            "SELECT * FROM `shelf_tbl` ORDER BY CAST(Shelf AS UNSIGNED)",
+            2000
+        )
 
-        GlobalVarsModule.AutoRefreshGrid(DataGridView1, "SELECT * FROM `shelf_tbl` ORDER BY CAST(Shelf AS UNSIGNED)", 2000)
         AddHandler GlobalVarsModule.DatabaseUpdated, AddressOf OnDatabaseUpdated
 
     End Sub
 
-    Private Sub btndeleteall_Click(sender As Object, e As EventArgs) Handles btndeleteall.Click
+    Private Sub btndeleteall_Click(sender As Object, e As EventArgs)
 
-        Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete ALL shelves? This action cannot be undone.", "Confirm Delete All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+        Dim dialogResult = MessageBox.Show(
+            "Are you sure you want to delete ALL shelves? This action cannot be undone.",
+            "Confirm Delete All",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Warning
+        )
 
         If dialogResult <> DialogResult.Yes Then
             Return
         End If
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+        Dim con As New MySqlConnection(
+            GlobalVarsModule.connectionString
+        )
 
         Try
             con.Open()
 
+            Dim acsCountCmd As New MySqlCommand(
+                "SELECT COUNT(*) FROM `acession_tbl` " &
+                "WHERE Shelf IS NOT NULL AND Shelf <> ''",
+                con
+            )
 
-            Dim acsCountCmd As New MySqlCommand("SELECT COUNT(*) FROM `acession_tbl` WHERE Shelf IS NOT NULL AND Shelf <> ''", con)
-            Dim accessionCount As Integer = CInt(acsCountCmd.ExecuteScalar())
+            Dim accessionCount As Integer =
+                Convert.ToInt32(acsCountCmd.ExecuteScalar())
 
             If accessionCount > 0 Then
-                MessageBox.Show("Cannot delete all shelves. There are " & accessionCount & " accession(s) assigned to shelves.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+                MessageBox.Show(
+                    "Cannot delete all shelves. There are " &
+                    accessionCount &
+                    " accession(s) assigned to shelves.",
+                    "Information",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                )
+
                 Return
             End If
 
-            Dim delete As New MySqlCommand("DELETE FROM `shelf_tbl`", con)
+            Dim delete As New MySqlCommand(
+                "DELETE FROM `shelf_tbl`",
+                con
+            )
+
             delete.ExecuteNonQuery()
 
-            Dim reset As New MySqlCommand("ALTER TABLE `shelf_tbl` AUTO_INCREMENT = 1", con)
+            Dim reset As New MySqlCommand(
+                "ALTER TABLE `shelf_tbl` AUTO_INCREMENT = 1",
+                con
+            )
+
             reset.ExecuteNonQuery()
 
             GlobalVarsModule.LogAudit(
@@ -53,489 +90,1723 @@ Public Class Shelf
             )
 
             For Each form In Application.OpenForms
+
                 If TypeOf form Is AuditTrail Then
                     DirectCast(form, AuditTrail).refreshaudit()
                 End If
+
             Next
 
             For Each form In Application.OpenForms
+
                 If TypeOf form Is Accession Then
                     Dim acss = DirectCast(form, Accession)
                     acss.shelfsu()
                 End If
+
             Next
 
-            MsgBox("All shelves deleted successfully.", vbInformation)
-            Shelf_Load(sender, e)
+            selectedShelfID = 0
+
             txtshelf.Clear()
 
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+
+            LoadShelfData()
+
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+
+            MsgBox(
+                "All shelves deleted successfully.",
+                vbInformation
+            )
+
         Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
+
+            MsgBox(
+                ex.Message,
+                vbCritical
+            )
+
         Finally
-            If con.State = ConnectionState.Open Then con.Close()
+
+            If con.State = ConnectionState.Open Then
+                con.Close()
+            End If
+
         End Try
 
     End Sub
 
     Private Sub LoadShelfData()
 
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-        Dim com As String = "SELECT * FROM `shelf_tbl` ORDER BY CAST(Shelf AS UNSIGNED)"
-        Dim adap As New MySqlDataAdapter(com, con)
+        Dim con As New MySqlConnection(
+            GlobalVarsModule.connectionString
+        )
+
+        Dim com As String =
+            "SELECT * FROM `shelf_tbl` " &
+            "ORDER BY CAST(Shelf AS UNSIGNED)"
+
+        Dim adap As New MySqlDataAdapter(
+            com,
+            con
+        )
+
         Dim ds As New DataSet
 
         Try
+
             adap.Fill(ds, "INFO")
-            DataGridView1.DataSource = ds.Tables("INFO")
+
+            DataGridView1.DataSource =
+                ds.Tables("INFO")
+
             SetupShelfGridStyle()
+
         Catch ex As Exception
-            MsgBox($"Error loading data: {ex.Message}", vbCritical)
+
+            MsgBox(
+                $"Error loading data: {ex.Message}",
+                vbCritical
+            )
+
         End Try
 
     End Sub
 
     Private Async Sub OnDatabaseUpdated()
+
         Try
-            Await GlobalVarsModule.LoadToGridAsync(DataGridView1, "SELECT * FROM `shelf_tbl` ORDER BY CAST(Shelf AS UNSIGNED)")
+
+            Await GlobalVarsModule.LoadToGridAsync(
+                DataGridView1,
+                "SELECT * FROM `shelf_tbl` ORDER BY CAST(Shelf AS UNSIGNED)"
+            )
+
             SetupShelfGridStyle()
+
         Catch
+
         End Try
+
     End Sub
 
     Private Sub SetupShelfGridStyle()
+
         Try
+
+            If DataGridView1.Columns.Contains("ID") Then
+
+                DataGridView1.Columns("ID").Visible = False
+
+            End If
+
+            DataGridView1.EnableHeadersVisualStyles = False
+
+            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor =
+                Color.FromArgb(207, 58, 109)
+
+            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor =
+                Color.White
+
+        Catch
+
+        End Try
+
+    End Sub
+
+    Private Sub DataGridView1_DataBindingComplete(
+        sender As Object,
+        e As DataGridViewBindingCompleteEventArgs
+    ) Handles DataGridView1.DataBindingComplete
+
+        Try
+
             If DataGridView1.Columns.Contains("ID") Then
                 DataGridView1.Columns("ID").Visible = False
             End If
 
+            If DataGridView1.Columns.Contains("Edit") Then
+
+                DataGridView1.Columns("Edit").DisplayIndex =
+                    DataGridView1.Columns.Count - 2
+
+                DataGridView1.Columns("Edit").DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter
+
+                For Each row As DataGridViewRow In DataGridView1.Rows
+
+                    If Not row.IsNewRow Then
+
+                        row.Cells("Edit").Style.Alignment =
+                            DataGridViewContentAlignment.MiddleCenter
+
+                    End If
+
+                Next
+
+            End If
+
+            If DataGridView1.Columns.Contains("Delete") Then
+
+                DataGridView1.Columns("Delete").DisplayIndex =
+                    DataGridView1.Columns.Count - 1
+
+                DataGridView1.Columns("Delete").DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter
+
+                For Each row As DataGridViewRow In DataGridView1.Rows
+
+                    If Not row.IsNewRow Then
+
+                        row.Cells("Delete").Style.Alignment =
+                            DataGridViewContentAlignment.MiddleCenter
+
+                    End If
+
+                Next
+
+            End If
+
             DataGridView1.ClearSelection()
             DataGridView1.CurrentCell = Nothing
-            DataGridView1.EnableHeadersVisualStyles = False
-            DataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(207, 58, 109)
-            DataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White
-        Catch
+        Catch ex As Exception
+
+            Debug.WriteLine(
+                "Shelf grid column layout error: " &
+                ex.Message
+            )
+
         End Try
+
     End Sub
 
 
-    Private Sub btnadd_Click(sender As Object, e As EventArgs) Handles btnadd.Click
-        Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
+    Private Sub btnadd_Click(
+        sender As Object,
+        e As EventArgs
+    ) Handles btnadd.Click
+
+
+        If selectedShelfID > 0 Then
+
+            Dim con As New MySqlConnection(
+                GlobalVarsModule.connectionString
+            )
+
+            Dim ID As Integer =
+                selectedShelfID
+
+            Dim newShelf As String =
+                txtshelf.Text.Trim
+
+            Dim oldShelf As String = ""
+
+            If String.IsNullOrWhiteSpace(newShelf) Then
+
+                MsgBox(
+                    "Please fill in the required fields.",
+                    vbExclamation,
+                    "Missing Information"
+                )
+
+                Exit Sub
+
+            End If
+
+            Try
+
+                con.Open()
+
+
+                Dim oldCmd As New MySqlCommand(
+                    "SELECT `Shelf` FROM `shelf_tbl` " &
+                    "WHERE `ID` = @id",
+                    con
+                )
+
+                oldCmd.Parameters.AddWithValue(
+                    "@id",
+                    ID
+                )
+
+                Dim oldValue = oldCmd.ExecuteScalar()
+
+                If oldValue Is Nothing OrElse
+                   oldValue Is DBNull.Value Then
+
+                    MsgBox(
+                        "The selected shelf no longer exists.",
+                        vbExclamation
+                    )
+
+                    selectedShelfID = 0
+                    txtshelf.Clear()
+
+                    Exit Sub
+
+                End If
+
+                oldShelf =
+                    oldValue.ToString.Trim
+
+
+                If oldShelf.Equals(
+                    newShelf,
+                    StringComparison.OrdinalIgnoreCase
+                ) Then
+
+                    MsgBox(
+                        "No changes were made.",
+                        vbInformation
+                    )
+
+                    Exit Sub
+
+                End If
+
+
+                Dim comsu As New MySqlCommand(
+                    "SELECT COUNT(*) FROM `shelf_tbl` " &
+                    "WHERE `Shelf` = @shelf AND `ID` <> @id",
+                    con
+                )
+
+                comsu.Parameters.AddWithValue(
+                    "@shelf",
+                    newShelf
+                )
+
+                comsu.Parameters.AddWithValue(
+                    "@id",
+                    ID
+                )
+
+                Dim count As Integer =
+                    Convert.ToInt32(
+                        comsu.ExecuteScalar()
+                    )
+
+                If count > 0 Then
+
+                    MsgBox(
+                        "This shelf already exists.",
+                        vbExclamation
+                    )
+
+                    Exit Sub
+
+                End If
+
+                Dim com As New MySqlCommand(
+                    "UPDATE `shelf_tbl` " &
+                    "SET `Shelf` = @shelf " &
+                    "WHERE `ID` = @id",
+                    con
+                )
+
+                com.Parameters.AddWithValue(
+                    "@shelf",
+                    newShelf
+                )
+
+                com.Parameters.AddWithValue(
+                    "@id",
+                    ID
+                )
+
+                com.ExecuteNonQuery()
+
+
+                Dim comss As New MySqlCommand(
+                    "UPDATE `acession_tbl` " &
+                    "SET `Shelf` = @newShelf " &
+                    "WHERE `Shelf` = @oldShelf",
+                    con
+                )
+
+                comss.Parameters.AddWithValue(
+                    "@newShelf",
+                    newShelf
+                )
+
+                comss.Parameters.AddWithValue(
+                    "@oldShelf",
+                    oldShelf
+                )
+
+                comss.ExecuteNonQuery()
+
+
+                GlobalVarsModule.LogAudit(
+                    actionType:="UPDATE",
+                    formName:="SHELF FORM",
+                    description:=$"Updated shelf ID {ID} from '{oldShelf}' to '{newShelf}'",
+                    recordID:=ID.ToString,
+                    oldValue:=oldShelf,
+                    newValue:=newShelf
+                )
+
+
+                For Each form In Application.OpenForms
+
+                    If TypeOf form Is AuditTrail Then
+
+                        DirectCast(
+                            form,
+                            AuditTrail
+                        ).refreshaudit()
+
+                    End If
+
+                Next
+
+
+                For Each form In Application.OpenForms
+
+                    If TypeOf form Is Accession Then
+
+                        Dim acs =
+                            DirectCast(
+                                form,
+                                Accession
+                            )
+
+                        acs.shelfsu()
+                        acs.RefreshAccessionData()
+
+                    End If
+
+                Next
+
+                MsgBox(
+                    "Update successfully!!",
+                    vbInformation
+                )
+
+                selectedShelfID = 0
+
+                txtshelf.Clear()
+
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+
+                LoadShelfData()
+
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+
+            Catch ex As Exception
+
+                MsgBox(
+                    ex.Message,
+                    vbCritical
+                )
+
+            Finally
+
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
+
+            End Try
+
+            Exit Sub
+
+        End If
+
+
+        Dim conAdd As New MySqlConnection(
+            GlobalVarsModule.connectionString
+        )
+
         Dim newID As Integer = 0
         Dim countAdded As Integer = 0
         Dim countSkipped As Integer = 0
 
-        Dim multiCount As Integer = Convert.ToInt32(numupdown.Value)
+        Dim multiCount As Integer =
+            Convert.ToInt32(numupdown.Value)
 
         Try
-            con.Open()
+
+            conAdd.Open()
+
 
             If multiCount > 0 Then
+
                 For i As Integer = 1 To multiCount
-                    Dim shelfVal As String = i.ToString()
-                    Dim existsCmd As New MySqlCommand("SELECT COUNT(*) FROM `shelf_tbl` WHERE `Shelf` = @shelf", con)
-                    existsCmd.Parameters.AddWithValue("@shelf", shelfVal)
-                    Dim existsCount As Integer = Convert.ToInt32(existsCmd.ExecuteScalar())
+
+                    Dim shelfVal As String =
+                        i.ToString()
+
+                    Dim existsCmd As New MySqlCommand(
+                        "SELECT COUNT(*) FROM `shelf_tbl` " &
+                        "WHERE `Shelf` = @shelf",
+                        conAdd
+                    )
+
+                    existsCmd.Parameters.AddWithValue(
+                        "@shelf",
+                        shelfVal
+                    )
+
+                    Dim existsCount As Integer =
+                        Convert.ToInt32(
+                            existsCmd.ExecuteScalar()
+                        )
+
                     If existsCount > 0 Then
+
                         countSkipped += 1
+
                         Continue For
+
                     End If
 
-                    Dim insertCmd As New MySqlCommand("INSERT INTO `shelf_tbl`(`Shelf`) VALUES (@shelf); SELECT LAST_INSERT_ID();", con)
-                    insertCmd.Parameters.AddWithValue("@shelf", shelfVal)
-                    newID = Convert.ToInt32(insertCmd.ExecuteScalar())
+                    Dim insertCmd As New MySqlCommand(
+                        "INSERT INTO `shelf_tbl`(`Shelf`) " &
+                        "VALUES (@shelf); " &
+                        "SELECT LAST_INSERT_ID();",
+                        conAdd
+                    )
 
-                    GlobalVarsModule.LogAudit(actionType:="ADD", formName:="SHELF FORM", description:=$"Added new shelf: {shelfVal}", recordID:=newID.ToString())
+                    insertCmd.Parameters.AddWithValue(
+                        "@shelf",
+                        shelfVal
+                    )
+
+                    newID =
+                        Convert.ToInt32(
+                            insertCmd.ExecuteScalar()
+                        )
+
+                    GlobalVarsModule.LogAudit(
+                        actionType:="ADD",
+                        formName:="SHELF FORM",
+                        description:=$"Added new shelf: {shelfVal}",
+                        recordID:=newID.ToString()
+                    )
+
                     countAdded += 1
+
                 Next
 
                 For Each form In Application.OpenForms
-                    If TypeOf form Is AuditTrail Then DirectCast(form, AuditTrail).refreshaudit()
-                    If TypeOf form Is Accession Then DirectCast(form, Accession).shelfsu()
+
+                    If TypeOf form Is AuditTrail Then
+
+                        DirectCast(
+                            form,
+                            AuditTrail
+                        ).refreshaudit()
+
+                    End If
+
+                    If TypeOf form Is Accession Then
+
+                        DirectCast(
+                            form,
+                            Accession
+                        ).shelfsu()
+
+                    End If
+
                 Next
 
-                MsgBox($"Added {countAdded} shelves. Skipped {countSkipped} existing.", vbInformation)
+                MsgBox(
+                    $"Added {countAdded} shelves. Skipped {countSkipped} existing.",
+                    vbInformation
+                )
+
                 Try
-                    numupdown.Value = numupdown.Minimum
+
+                    numupdown.Value =
+                        numupdown.Minimum
+
                     numupdown.Refresh()
+
                     Application.DoEvents()
+
                 Catch
+
                 End Try
+
             Else
-                Dim shelf As String = txtshelf.Text.Trim
+
+                '----------------------------------------------
+                ' SINGLE SHELF
+                '----------------------------------------------
+                Dim shelf As String =
+                    txtshelf.Text.Trim
+
                 If String.IsNullOrWhiteSpace(shelf) Then
-                    MsgBox("Please fill in the required fields (Shelf Number).", vbExclamation, "Missing Information")
+
+                    MsgBox(
+                        "Please fill in the required fields (Shelf Number).",
+                        vbExclamation,
+                        "Missing Information"
+                    )
+
                     Exit Sub
+
                 End If
 
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `shelf_tbl` WHERE `Shelf` = @shelf", con)
-                comsu.Parameters.AddWithValue("@shelf", shelf)
-                Dim countExist As Integer = Convert.ToInt32(comsu.ExecuteScalar)
+                Dim comsu As New MySqlCommand(
+                    "SELECT COUNT(*) FROM `shelf_tbl` " &
+                    "WHERE `Shelf` = @shelf",
+                    conAdd
+                )
+
+                comsu.Parameters.AddWithValue(
+                    "@shelf",
+                    shelf
+                )
+
+                Dim countExist As Integer =
+                    Convert.ToInt32(
+                        comsu.ExecuteScalar()
+                    )
 
                 If countExist > 0 Then
-                    MsgBox("This shelf already exists.", vbExclamation)
+
+                    MsgBox(
+                        "This shelf already exists.",
+                        vbExclamation
+                    )
+
                     Exit Sub
+
                 End If
 
-                Dim com As New MySqlCommand("INSERT INTO `shelf_tbl`(`Shelf`) VALUES (@shelf); SELECT LAST_INSERT_ID();", con)
-                com.Parameters.AddWithValue("@shelf", shelf)
-                newID = Convert.ToInt32(com.ExecuteScalar())
+                Dim com As New MySqlCommand(
+                    "INSERT INTO `shelf_tbl`(`Shelf`) " &
+                    "VALUES (@shelf); " &
+                    "SELECT LAST_INSERT_ID();",
+                    conAdd
+                )
 
-                GlobalVarsModule.LogAudit(actionType:="ADD", formName:="SHELF FORM", description:=$"Added new shelf: {shelf}", recordID:=newID.ToString())
+                com.Parameters.AddWithValue(
+                    "@shelf",
+                    shelf
+                )
+
+                newID =
+                    Convert.ToInt32(
+                        com.ExecuteScalar()
+                    )
+
+                GlobalVarsModule.LogAudit(
+                    actionType:="ADD",
+                    formName:="SHELF FORM",
+                    description:=$"Added new shelf: {shelf}",
+                    recordID:=newID.ToString()
+                )
+
 
                 For Each form In Application.OpenForms
-                    If TypeOf form Is AuditTrail Then DirectCast(form, AuditTrail).refreshaudit()
-                    If TypeOf form Is Accession Then DirectCast(form, Accession).shelfsu()
+
+                    If TypeOf form Is AuditTrail Then
+
+                        DirectCast(
+                            form,
+                            AuditTrail
+                        ).refreshaudit()
+
+                    End If
+
+                    If TypeOf form Is Accession Then
+
+                        DirectCast(
+                            form,
+                            Accession
+                        ).shelfsu()
+
+                    End If
+
                 Next
 
-                MsgBox("Shelf added successfully!!", vbInformation)
+                MsgBox(
+                    "Shelf added successfully!!",
+                    vbInformation
+                )
+
                 Try
-                    numupdown.Value = numupdown.Minimum
+
+                    numupdown.Value =
+                        numupdown.Minimum
+
                     numupdown.Refresh()
+
                     Application.DoEvents()
+
                 Catch
+
                 End Try
+
             End If
 
-            Shelf_Load(sender, e)
+            '==================================================
+            ' CLEAR + REFRESH
+            '==================================================
+            selectedShelfID = 0
+
             txtshelf.Clear()
+
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+
+            LoadShelfData()
+
+            DataGridView1.ClearSelection()
+            DataGridView1.CurrentCell = Nothing
+
         Catch ex As Exception
-            MsgBox(ex.Message, vbCritical)
+
+            MsgBox(
+                ex.Message,
+                vbCritical
+            )
+
         Finally
-            If con.State = ConnectionState.Open Then con.Close()
+
+            If conAdd.State = ConnectionState.Open Then
+                conAdd.Close()
+            End If
+
         End Try
+
     End Sub
 
-    Private Sub btnedit_Click(sender As Object, e As EventArgs) Handles btnedit.Click
+    '==========================================================
+    ' OLD EDIT CODE
+    ' KEPT, BUT NO HANDLES
+    ' ACTUAL EDIT IS NOW DGV EDIT COLUMN
+    '==========================================================
+    Private Sub btnedit_Click(
+        sender As Object,
+        e As EventArgs
+    )
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-            Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
+            Dim con As New MySqlConnection(
+                GlobalVarsModule.connectionString
+            )
 
-            Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
+            Dim selectedRow =
+                DataGridView1.SelectedRows(0)
 
-            Dim oldShelf As String = selectedRow.Cells("Shelf").Value.ToString().Trim()
-            Dim newShelf As String = txtshelf.Text.Trim
+            Dim ID As Integer =
+                selectedRow.Cells("ID").Value
+
+            Dim oldShelf =
+                selectedRow.Cells("Shelf").Value.ToString.Trim
+
+            Dim newShelf =
+                txtshelf.Text.Trim
 
             If String.IsNullOrWhiteSpace(newShelf) Then
-                MsgBox("Please fill in the required fields.", vbExclamation, "Missing Information")
+
+                MsgBox(
+                    "Please fill in the required fields.",
+                    vbExclamation,
+                    "Missing Information"
+                )
+
                 Exit Sub
+
             End If
 
-            If oldShelf.Equals(newShelf, StringComparison.OrdinalIgnoreCase) Then
-                MsgBox("No changes were made.", vbInformation)
+            If oldShelf.Equals(
+                newShelf,
+                StringComparison.OrdinalIgnoreCase
+            ) Then
+
+                MsgBox(
+                    "No changes were made.",
+                    vbInformation
+                )
+
                 Exit Sub
+
             End If
 
             Try
+
                 con.Open()
 
-                Dim comsu As New MySqlCommand("SELECT COUNT(*) FROM `shelf_tbl` WHERE `Shelf` = @shelf AND `ID` <> @id", con)
-                comsu.Parameters.AddWithValue("@shelf", newShelf)
-                comsu.Parameters.AddWithValue("@id", ID)
+                Dim comsu As New MySqlCommand(
+                    "SELECT COUNT(*) FROM `shelf_tbl` " &
+                    "WHERE `Shelf` = @shelf AND `ID` <> @id",
+                    con
+                )
 
-                Dim count As Integer = Convert.ToInt32(comsu.ExecuteScalar)
+                comsu.Parameters.AddWithValue(
+                    "@shelf",
+                    newShelf
+                )
+
+                comsu.Parameters.AddWithValue(
+                    "@id",
+                    ID
+                )
+
+                Dim count =
+                    Convert.ToInt32(
+                        comsu.ExecuteScalar
+                    )
 
                 If count > 0 Then
-                    MsgBox("This shelf already exists.", vbExclamation)
+
+                    MsgBox(
+                        "This shelf already exists.",
+                        vbExclamation
+                    )
+
                     Exit Sub
+
                 End If
 
-                Dim com As New MySqlCommand("UPDATE `shelf_tbl` SET `Shelf` = @shelf WHERE `ID` = @id", con)
-                com.Parameters.AddWithValue("@shelf", newShelf)
-                com.Parameters.AddWithValue("@id", ID)
+                Dim com As New MySqlCommand(
+                    "UPDATE `shelf_tbl` " &
+                    "SET `Shelf` = @shelf " &
+                    "WHERE `ID` = @id",
+                    con
+                )
+
+                com.Parameters.AddWithValue(
+                    "@shelf",
+                    newShelf
+                )
+
+                com.Parameters.AddWithValue(
+                    "@id",
+                    ID
+                )
+
                 com.ExecuteNonQuery()
 
+                Dim comss As New MySqlCommand(
+                    "UPDATE `acession_tbl` " &
+                    "SET `Shelf` = @newShelf " &
+                    "WHERE `Shelf` = @oldShelf",
+                    con
+                )
 
-                Dim comss As New MySqlCommand("UPDATE `acession_tbl` SET `Shelf` = @newShelf WHERE `Shelf` = @oldShelf", con)
-                comss.Parameters.AddWithValue("@newShelf", newShelf)
-                comss.Parameters.AddWithValue("@oldShelf", oldShelf)
+                comss.Parameters.AddWithValue(
+                    "@newShelf",
+                    newShelf
+                )
+
+                comss.Parameters.AddWithValue(
+                    "@oldShelf",
+                    oldShelf
+                )
+
                 comss.ExecuteNonQuery()
 
                 GlobalVarsModule.LogAudit(
                     actionType:="UPDATE",
                     formName:="SHELF FORM",
                     description:=$"Updated shelf ID {ID} from '{oldShelf}' to '{newShelf}'",
-                    recordID:=ID.ToString(),
+                    recordID:=ID.ToString,
                     oldValue:=oldShelf,
                     newValue:=newShelf
                 )
 
                 For Each form In Application.OpenForms
+
                     If TypeOf form Is AuditTrail Then
-                        DirectCast(form, AuditTrail).refreshaudit()
+
+                        DirectCast(
+                            form,
+                            AuditTrail
+                        ).refreshaudit()
+
                     End If
+
                 Next
 
                 For Each form In Application.OpenForms
+
                     If TypeOf form Is Accession Then
-                        Dim acs = DirectCast(form, Accession)
+
+                        Dim acs =
+                            DirectCast(
+                                form,
+                                Accession
+                            )
+
                         acs.shelfsu()
                         acs.RefreshAccessionData()
+
                     End If
+
                 Next
 
-                MsgBox("Update successfully!!", vbInformation)
+                MsgBox(
+                    "Update successfully!!",
+                    vbInformation
+                )
+
                 txtshelf.Clear()
-                Shelf_Load(sender, e)
+
+                selectedShelfID = 0
+
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+
+                LoadShelfData()
+
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+
             Catch ex As Exception
-                MsgBox(ex.Message, vbCritical)
+
+                MsgBox(
+                    ex.Message,
+                    vbCritical
+                )
+
             Finally
-                If con.State = ConnectionState.Open Then con.Close()
+
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
+
             End Try
+
         Else
-            MsgBox("Please select a row to edit.", vbExclamation)
+
+            MsgBox(
+                "Please select a row to edit.",
+                vbExclamation
+            )
+
         End If
 
     End Sub
 
-    Private Sub btndelete_Click(sender As Object, e As EventArgs) Handles btndelete.Click
+
+    Private Sub btndelete_Click(
+        sender As Object,
+        e As EventArgs
+    )
 
         If DataGridView1.SelectedRows.Count > 0 Then
 
-            Dim dialogResult As DialogResult = MessageBox.Show("Are you sure you want to delete this shelf?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            Dim dialogResult =
+                MessageBox.Show(
+                    "Are you sure you want to delete this shelf?",
+                    "Confirm Delete",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                )
 
             If dialogResult = DialogResult.Yes Then
 
-                Dim con As New MySqlConnection(GlobalVarsModule.connectionString)
-                Dim selectedRow As DataGridViewRow = DataGridView1.SelectedRows(0)
-                Dim ID As Integer = CInt(selectedRow.Cells("ID").Value)
-                Dim shelf As String = selectedRow.Cells("Shelf").Value.ToString().Trim()
+                Dim con As New MySqlConnection(
+                    GlobalVarsModule.connectionString
+                )
+
+                Dim selectedRow =
+                    DataGridView1.SelectedRows(0)
+
+                Dim ID As Integer =
+                    selectedRow.Cells("ID").Value
+
+                Dim shelf =
+                    selectedRow.Cells("Shelf").Value.ToString.Trim
 
                 Try
+
                     con.Open()
 
-                    Dim acsCountCmd As New MySqlCommand("SELECT COUNT(*) FROM `acession_tbl` WHERE Shelf = @shelf", con)
-                    acsCountCmd.Parameters.AddWithValue("@shelf", shelf)
-                    Dim accessionCount As Integer = CInt(acsCountCmd.ExecuteScalar())
+                    Dim acsCountCmd As New MySqlCommand(
+                        "SELECT COUNT(*) FROM `acession_tbl` " &
+                        "WHERE Shelf = @shelf",
+                        con
+                    )
+
+                    acsCountCmd.Parameters.AddWithValue(
+                        "@shelf",
+                        shelf
+                    )
+
+                    Dim accessionCount As Integer =
+                        Convert.ToInt32(
+                            acsCountCmd.ExecuteScalar()
+                        )
 
                     If accessionCount > 0 Then
-                        MessageBox.Show("Cannot delete this shelf. They are assigned to " & accessionCount & " accession(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+                        MessageBox.Show(
+                            "Cannot delete this shelf. They are assigned to " &
+                            accessionCount &
+                            " accession(s).",
+                            "Information",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        )
+
                         Return
+
                     End If
 
+                    Dim delete As New MySqlCommand(
+                        "DELETE FROM `shelf_tbl` WHERE `ID` = @id",
+                        con
+                    )
 
-                    Dim delete As New MySqlCommand("DELETE FROM `shelf_tbl` WHERE `ID` = @id", con)
-                    delete.Parameters.AddWithValue("@id", ID)
+                    delete.Parameters.AddWithValue(
+                        "@id",
+                        ID
+                    )
+
                     delete.ExecuteNonQuery()
 
                     GlobalVarsModule.LogAudit(
                         actionType:="DELETE",
                         formName:="SHELF FORM",
                         description:=$"Deleted shelf: {shelf}",
-                        recordID:=ID.ToString()
+                        recordID:=ID.ToString
                     )
 
                     For Each form In Application.OpenForms
+
                         If TypeOf form Is AuditTrail Then
                             DirectCast(form, AuditTrail).refreshaudit()
                         End If
+
                     Next
 
                     For Each form In Application.OpenForms
+
                         If TypeOf form Is Accession Then
-                            Dim acss = DirectCast(form, Accession)
+
+                            Dim acss =
+                                DirectCast(
+                                    form,
+                                    Accession
+                                )
+
                             acss.shelfsu()
+
                         End If
+
                     Next
 
-                    MsgBox("Shelf deleted successfully.", vbInformation)
-                    Shelf_Load(sender, e)
+                    MsgBox(
+                        "Shelf deleted successfully.",
+                        vbInformation
+                    )
+
+                    selectedShelfID = 0
+
                     txtshelf.Clear()
 
-                    Dim count As New MySqlCommand("SELECT COUNT(*) FROM `shelf_tbl`", con)
-                    Dim rowCount As Long = CLng(count.ExecuteScalar())
+                    DataGridView1.ClearSelection()
+                    DataGridView1.CurrentCell = Nothing
+
+                    LoadShelfData()
+
+                    DataGridView1.ClearSelection()
+                    DataGridView1.CurrentCell = Nothing
+
+                    Dim count As New MySqlCommand(
+                        "SELECT COUNT(*) FROM `shelf_tbl`",
+                        con
+                    )
+
+                    Dim rowCount As Long =
+                        Convert.ToInt64(
+                            count.ExecuteScalar()
+                        )
 
                     If rowCount = 0 Then
-                        Dim reset As New MySqlCommand("ALTER TABLE `shelf_tbl` AUTO_INCREMENT = 1", con)
+
+                        Dim reset As New MySqlCommand(
+                            "ALTER TABLE `shelf_tbl` AUTO_INCREMENT = 1",
+                            con
+                        )
+
                         reset.ExecuteNonQuery()
+
                     End If
 
                 Catch ex As Exception
-                    MsgBox(ex.Message, vbCritical)
+
+                    MsgBox(
+                        ex.Message,
+                        vbCritical
+                    )
+
                 Finally
-                    If con.State = ConnectionState.Open Then con.Close()
+
+                    If con.State = ConnectionState.Open Then
+                        con.Close()
+                    End If
+
                 End Try
+
             End If
-        End If
-
-    End Sub
-
-    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
-
-        If e.RowIndex >= 0 Then
-
-            Dim row = DataGridView1.Rows(e.RowIndex)
-            txtshelf.Text = row.Cells("Shelf").Value.ToString
 
         End If
 
     End Sub
 
-    Private Sub txtshelf_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtshelf.KeyPress
-        If Not Char.IsDigit(e.KeyChar) And Not Char.IsControl(e.KeyChar) Then
+
+    Private Sub DataGridView1_CellContentClick(
+        sender As Object,
+        e As DataGridViewCellEventArgs
+    ) Handles DataGridView1.CellContentClick
+
+        If e.RowIndex < 0 OrElse
+           e.ColumnIndex < 0 Then
+
+            Exit Sub
+
+        End If
+
+        Dim columnName As String =
+            DataGridView1.Columns(e.ColumnIndex).Name
+
+        Dim row As DataGridViewRow =
+            DataGridView1.Rows(e.RowIndex)
+
+
+        If columnName = "Edit" Then
+
+            Try
+
+                If row.Cells("ID").Value Is Nothing OrElse
+                   row.Cells("ID").Value Is DBNull.Value Then
+
+                    Exit Sub
+
+                End If
+
+                selectedShelfID =
+                    Convert.ToInt32(
+                        row.Cells("ID").Value
+                    )
+
+                txtshelf.Text =
+                    row.Cells("Shelf").Value.ToString()
+
+                DataGridView1.ClearSelection()
+
+                row.Selected = True
+
+                If DataGridView1.Columns.Contains("Edit") Then
+
+                    DataGridView1.CurrentCell =
+                        row.Cells("Edit")
+
+                End If
+
+            Catch ex As Exception
+
+                MsgBox(
+                    ex.Message,
+                    vbCritical
+                )
+
+            End Try
+
+            Exit Sub
+
+        End If
+
+
+        If columnName = "Delete" Then
+
+            Dim con As New MySqlConnection(
+                GlobalVarsModule.connectionString
+            )
+
+            Try
+
+                If row.Cells("ID").Value Is Nothing OrElse
+                   row.Cells("ID").Value Is DBNull.Value Then
+
+                    Exit Sub
+
+                End If
+
+                Dim ID As Integer =
+                    Convert.ToInt32(
+                        row.Cells("ID").Value
+                    )
+
+                Dim shelf As String =
+                    row.Cells("Shelf").Value.ToString.Trim
+
+
+                Dim dialogResult =
+                    MessageBox.Show(
+                        "Are you sure you want to delete this shelf?",
+                        "Confirm Delete",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning
+                    )
+
+                If dialogResult <> DialogResult.Yes Then
+                    Exit Sub
+                End If
+
+                con.Open()
+
+
+                Dim acsCountCmd As New MySqlCommand(
+                    "SELECT COUNT(*) FROM `acession_tbl` " &
+                    "WHERE Shelf = @shelf",
+                    con
+                )
+
+                acsCountCmd.Parameters.AddWithValue(
+                    "@shelf",
+                    shelf
+                )
+
+                Dim accessionCount As Integer =
+                    Convert.ToInt32(
+                        acsCountCmd.ExecuteScalar()
+                    )
+
+                If accessionCount > 0 Then
+
+                    MessageBox.Show(
+                        "Cannot delete this shelf. They are assigned to " &
+                        accessionCount &
+                        " accession(s).",
+                        "Information",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    )
+
+                    Exit Sub
+
+                End If
+
+
+                Dim delete As New MySqlCommand(
+                    "DELETE FROM `shelf_tbl` WHERE `ID` = @id",
+                    con
+                )
+
+                delete.Parameters.AddWithValue(
+                    "@id",
+                    ID
+                )
+
+                delete.ExecuteNonQuery()
+
+
+                GlobalVarsModule.LogAudit(
+                    actionType:="DELETE",
+                    formName:="SHELF FORM",
+                    description:=$"Deleted shelf: {shelf}",
+                    recordID:=ID.ToString
+                )
+
+
+                For Each form In Application.OpenForms
+
+                    If TypeOf form Is AuditTrail Then
+
+                        DirectCast(
+                            form,
+                            AuditTrail
+                        ).refreshaudit()
+
+                    End If
+
+                Next
+
+
+                For Each form In Application.OpenForms
+
+                    If TypeOf form Is Accession Then
+
+                        Dim acss =
+                            DirectCast(
+                                form,
+                                Accession
+                            )
+
+                        acss.shelfsu()
+
+                    End If
+
+                Next
+
+                selectedShelfID = 0
+
+                txtshelf.Clear()
+
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+
+                LoadShelfData()
+
+                DataGridView1.ClearSelection()
+                DataGridView1.CurrentCell = Nothing
+
+                MsgBox(
+                    "Shelf deleted successfully.",
+                    vbInformation
+                )
+
+
+                Dim count As New MySqlCommand(
+                    "SELECT COUNT(*) FROM `shelf_tbl`",
+                    con
+                )
+
+                Dim rowCount As Long =
+                    Convert.ToInt64(
+                        count.ExecuteScalar()
+                    )
+
+                If rowCount = 0 Then
+
+                    Dim reset As New MySqlCommand(
+                        "ALTER TABLE `shelf_tbl` AUTO_INCREMENT = 1",
+                        con
+                    )
+
+                    reset.ExecuteNonQuery()
+
+                End If
+
+            Catch ex As Exception
+
+                MsgBox(
+                    ex.Message,
+                    vbCritical
+                )
+
+            Finally
+
+                If con.State = ConnectionState.Open Then
+                    con.Close()
+                End If
+
+            End Try
+
+            Exit Sub
+
+        End If
+
+    End Sub
+
+    Private Sub DataGridView1_CellClick(
+        sender As Object,
+        e As DataGridViewCellEventArgs
+    ) Handles DataGridView1.CellClick
+
+        If e.RowIndex < 0 OrElse
+           e.ColumnIndex < 0 Then
+
+            Exit Sub
+
+        End If
+
+        Dim columnName As String =
+            DataGridView1.Columns(e.ColumnIndex).Name
+
+
+        If columnName = "Edit" OrElse
+           columnName = "Delete" Then
+
+            Exit Sub
+
+        End If
+
+        Dim row =
+            DataGridView1.Rows(e.RowIndex)
+
+        If row.Cells("ID").Value Is Nothing OrElse
+           row.Cells("ID").Value Is DBNull.Value Then
+
+            Exit Sub
+
+        End If
+
+        selectedShelfID =
+            Convert.ToInt32(
+                row.Cells("ID").Value
+            )
+
+        txtshelf.Text =
+            row.Cells("Shelf").Value.ToString
+
+    End Sub
+
+
+    Private Sub txtshelf_KeyPress(
+        sender As Object,
+        e As KeyPressEventArgs
+    ) Handles txtshelf.KeyPress
+
+        If Not Char.IsDigit(e.KeyChar) AndAlso
+           Not Char.IsControl(e.KeyChar) Then
+
             e.Handled = True
+
         End If
+
     End Sub
 
-    Private Sub numupdown_ValueChanged(sender As Object, e As EventArgs) Handles numupdown.ValueChanged
+
+    Private Sub numupdown_ValueChanged(
+        sender As Object,
+        e As EventArgs
+    ) Handles numupdown.ValueChanged
+
         Try
+
             If numupdown.Value > 0 Then
+
                 txtshelf.Enabled = False
+
             Else
+
                 txtshelf.Enabled = True
+
             End If
+
         Catch
+
         End Try
+
     End Sub
 
-    Private Sub txtshelf_KeyDown(sender As Object, e As KeyEventArgs) Handles txtshelf.KeyDown
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
+    Private Sub txtshelf_KeyDown(
+        sender As Object,
+        e As KeyEventArgs
+    ) Handles txtshelf.KeyDown
+
+        If e.Control AndAlso
+           (
+               e.KeyCode = Keys.V OrElse
+               e.KeyCode = Keys.C OrElse
+               e.KeyCode = Keys.X
+           ) Then
+
             e.SuppressKeyPress = True
+
         End If
+
     End Sub
 
-    Private Sub Shelf_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+
+    Private Sub Shelf_KeyDown(
+        sender As Object,
+        e As KeyEventArgs
+    ) Handles MyBase.KeyDown
+
         If e.KeyCode = Keys.Escape Then
             Me.Close()
         End If
+
     End Sub
 
-    Private Sub txtsearch_TextChanged(sender As Object, e As EventArgs) Handles txtsearch.TextChanged
 
-        HandleAutoRefreshPause(DataGridView1, txtsearch)
+    Private Sub txtsearch_TextChanged(
+        sender As Object,
+        e As EventArgs
+    ) Handles txtsearch.TextChanged
 
-        Dim dt As DataTable = DirectCast(DataGridView1.DataSource, DataTable)
+        HandleAutoRefreshPause(
+            DataGridView1,
+            txtsearch
+        )
+
+        Dim dt As DataTable =
+            TryCast(
+                DataGridView1.DataSource,
+                DataTable
+            )
+
         If dt IsNot Nothing Then
+
             If txtsearch.Text.Trim() <> "" Then
-                Dim filter As String = String.Format("Shelf LIKE '*{0}*'", txtsearch.Text.Trim())
-                dt.DefaultView.RowFilter = filter
+
+                Dim filter As String =
+                    String.Format(
+                        "Shelf LIKE '*{0}*'",
+                        txtsearch.Text.Trim()
+                    )
+
+                dt.DefaultView.RowFilter =
+                    filter
+
             Else
+
                 dt.DefaultView.RowFilter = ""
+
             End If
+
         End If
 
     End Sub
 
-    Private Sub txtsearch_KeyDown(sender As Object, e As KeyEventArgs) Handles txtsearch.KeyDown
-        If e.Control AndAlso (e.KeyCode = Keys.V Or e.KeyCode = Keys.C Or e.KeyCode = Keys.X) Then
+
+    Private Sub txtsearch_KeyDown(
+        sender As Object,
+        e As KeyEventArgs
+    ) Handles txtsearch.KeyDown
+
+        If e.Control AndAlso
+           (
+               e.KeyCode = Keys.V OrElse
+               e.KeyCode = Keys.C OrElse
+               e.KeyCode = Keys.X
+           ) Then
+
             e.SuppressKeyPress = True
+
         End If
+
     End Sub
 
-    Private Sub Shelf_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+    Private Sub Shelf_FormClosed(
+        sender As Object,
+        e As FormClosedEventArgs
+    ) Handles Me.FormClosed
 
         For Each form In Application.OpenForms
+
             If TypeOf form Is MainForm Then
-                Dim load = DirectCast(form, MainForm)
+
+                Dim load =
+                    DirectCast(
+                        form,
+                        MainForm
+                    )
+
                 load.loadsu()
+
             End If
+
         Next
 
-        MainForm.MaintenanceToolStripMenuItem.ForeColor = Color.White
+        MainForm.MaintenanceToolStripMenuItem.ForeColor =
+            Color.White
+
         txtshelf.Text = ""
 
     End Sub
 
-    Private Sub Shelf_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
+    Private Sub Shelf_Shown(
+        sender As Object,
+        e As EventArgs
+    ) Handles MyBase.Shown
 
         DataGridView1.ClearSelection()
+        DataGridView1.CurrentCell = Nothing
 
     End Sub
 
-    Private Sub txtshelf_Validating(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles txtshelf.Validating
+
+    Private Sub txtshelf_Validating(
+        sender As Object,
+        e As System.ComponentModel.CancelEventArgs
+    ) Handles txtshelf.Validating
 
         Dim ShelfNumber As Integer
 
-        If String.IsNullOrWhiteSpace(txtshelf.Text) Then
+        If String.IsNullOrWhiteSpace(
+            txtshelf.Text
+        ) Then
+
             e.Cancel = False
             Return
+
         End If
 
-        If Integer.TryParse(txtshelf.Text.Trim(), ShelfNumber) Then
+        If Integer.TryParse(
+            txtshelf.Text.Trim(),
+            ShelfNumber
+        ) Then
 
             If ShelfNumber < 1 Then
-                MessageBox.Show("Shelf number must be 1 or higher. Zero is not allowed.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+                MessageBox.Show(
+                    "Shelf number must be 1 or higher. Zero is not allowed.",
+                    "Input Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                )
+
                 e.Cancel = True
+
             Else
+
                 e.Cancel = False
+
             End If
+
         Else
 
-            MessageBox.Show("Invalid shelf number.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show(
+                "Invalid shelf number.",
+                "Input Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            )
+
             e.Cancel = True
+
         End If
+
     End Sub
 
-    Private Sub btnadd_MouseHover(sender As Object, e As EventArgs) Handles btnadd.MouseHover
+
+    Private Sub btnadd_MouseHover(
+        sender As Object,
+        e As EventArgs
+    ) Handles btnadd.MouseHover
+
         Cursor = Cursors.Hand
+
     End Sub
 
-    Private Sub btnadd_MouseLeave(sender As Object, e As EventArgs) Handles btnadd.MouseLeave
+    Private Sub btnadd_MouseLeave(
+        sender As Object,
+        e As EventArgs
+    ) Handles btnadd.MouseLeave
+
         Cursor = Cursors.Default
+
     End Sub
 
-    Private Sub btnedit_MouseHover(sender As Object, e As EventArgs) Handles btnedit.MouseHover
+
+    Private Sub btnedit_MouseHover(
+        sender As Object,
+        e As EventArgs
+    )
+
         Cursor = Cursors.Hand
+
     End Sub
 
-    Private Sub btnedit_MouseLeave(sender As Object, e As EventArgs) Handles btnedit.MouseLeave
+    Private Sub btnedit_MouseLeave(
+        sender As Object,
+        e As EventArgs
+    )
+
         Cursor = Cursors.Default
+
     End Sub
 
-    Private Sub btndelete_MouseHover(sender As Object, e As EventArgs) Handles btndelete.MouseHover
+
+    Private Sub btndelete_MouseHover(
+        sender As Object,
+        e As EventArgs
+    )
+
         Cursor = Cursors.Hand
+
     End Sub
 
-    Private Sub btndelete_MouseLeave(sender As Object, e As EventArgs) Handles btndelete.MouseLeave
+    Private Sub btndelete_MouseLeave(
+        sender As Object,
+        e As EventArgs
+    )
+
         Cursor = Cursors.Default
+
     End Sub
 
     Private Sub DisablePaste_AllTextBoxes()
+
         For Each ctrl As Control In Me.Controls
+
             AddHandlerToTextBoxes_NoPaste(ctrl)
+
         Next
+
     End Sub
 
-    Private Sub AddHandlerToTextBoxes_NoPaste(parent As Control)
+    Private Sub AddHandlerToTextBoxes_NoPaste(
+        parent As Control
+    )
+
         For Each ctrl As Control In parent.Controls
+
             If TypeOf ctrl Is TextBox Then
-                Dim tb As TextBox = CType(ctrl, TextBox)
 
-                tb.ContextMenuStrip = New ContextMenuStrip()
+                Dim tb As TextBox =
+                    CType(ctrl, TextBox)
 
-                AddHandler tb.KeyDown, AddressOf BlockPasteKey
-                AddHandler tb.MouseUp, AddressOf BlockRightClick
+                tb.ContextMenuStrip =
+                    New ContextMenuStrip()
+
+                AddHandler tb.KeyDown,
+                    AddressOf BlockPasteKey
+
+                AddHandler tb.MouseUp,
+                    AddressOf BlockRightClick
 
             End If
 
             If ctrl.HasChildren Then
+
                 AddHandlerToTextBoxes_NoPaste(ctrl)
+
             End If
+
         Next
 
     End Sub
 
+    Private Sub BlockPasteKey(
+        sender As Object,
+        e As KeyEventArgs
+    )
 
-    Private Sub BlockPasteKey(sender As Object, e As KeyEventArgs)
+        If (e.Control AndAlso
+            e.KeyCode = Keys.V) OrElse
+           (e.Shift AndAlso
+            e.KeyCode = Keys.Insert) Then
 
-        If (e.Control AndAlso e.KeyCode = Keys.V) OrElse (e.Shift AndAlso e.KeyCode = Keys.Insert) Then
             e.SuppressKeyPress = True
+
         End If
 
     End Sub
 
-    Private Sub BlockRightClick(sender As Object, e As MouseEventArgs)
+
+    Private Sub BlockRightClick(
+        sender As Object,
+        e As MouseEventArgs
+    )
 
         If e.Button = MouseButtons.Right Then
 
-            Dim tb As TextBox = TryCast(sender, TextBox)
+            Dim tb As TextBox =
+                TryCast(
+                    sender,
+                    TextBox
+                )
+
             If tb IsNot Nothing Then
-                tb.ContextMenuStrip = New ContextMenuStrip()
+
+                tb.ContextMenuStrip =
+                    New ContextMenuStrip()
+
             End If
+
         End If
 
     End Sub
-
 
 End Class
