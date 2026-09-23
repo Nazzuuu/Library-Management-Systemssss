@@ -332,8 +332,8 @@ Public Class Returning
             Dim returnedBookTitles As String = String.Join(" | ", booksToReturn)
 
             Dim insert_com As String = "INSERT INTO `returning_tbl` " &
-                                 "(`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`, `BorrowerStatus`) " &
-                                 "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)"
+                             "(`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`, `BorrowerStatus`) " &
+                             "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)"
 
             Using insert_cmd As New MySqlCommand(insert_com, con, trans)
                 insert_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
@@ -355,26 +355,21 @@ Public Class Returning
                 insert_cmd.ExecuteNonQuery()
             End Using
 
-            If rboverdue.Checked OrElse rbdamage.Checked OrElse rblost.Checked Then
-                Dim insert_penalty_com As String = "INSERT INTO `penalty_tbl` " &
-                                               "(`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`, `BorrowerStatus`) " &
-                                               "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)"
+            ' ✨ FIX: pstudent_tbl talaga ang tamang table na ito (hindi penalty_tbl), pero ang mga tunay na column
+            '    nito ay ID, Borrower, TransactionNumber, Lrn, Name, DueDate, BookStatus, BorrowerStatus lang
+            '    (walang EmployeeNo/FullName/Department/Grade/Section/Strand/ReturnedBook/BookTotal/BorrowedDate/
+            '    ReturnDate/TransactionReceipt/Status column — kaya iyon ang dahilan ng error).
+            If (rboverdue.Checked OrElse rbdamage.Checked OrElse rblost.Checked) AndAlso lblborrowertype.Text.Trim().Equals("Student", StringComparison.OrdinalIgnoreCase) Then
+                Dim insert_penalty_com As String = "INSERT INTO `pstudent_tbl` " &
+                                           "(`Borrower`, `TransactionNumber`, `Lrn`, `Name`, `DueDate`, `BookStatus`, `BorrowerStatus`) " &
+                                           "VALUES (@borrowerType, @transNo, @lrn, @fullName, @dueDate, @bookStatus, @borrowerStatus)"
 
                 Using insert_penalty_cmd As New MySqlCommand(insert_penalty_com, con, trans)
                     insert_penalty_cmd.Parameters.AddWithValue("@borrowerType", lblborrowertype.Text)
-                    insert_penalty_cmd.Parameters.AddWithValue("@lrn", If(String.IsNullOrWhiteSpace(lbllrn.Text) OrElse lbllrn.Text = "N/A", Nothing, lbllrn.Text))
-                    insert_penalty_cmd.Parameters.AddWithValue("@empNo", If(String.IsNullOrWhiteSpace(lblemployeeno.Text) OrElse lblemployeeno.Text = "N/A", Nothing, lblemployeeno.Text))
-                    insert_penalty_cmd.Parameters.AddWithValue("@fullName", lblfullname.Text)
-                    insert_penalty_cmd.Parameters.AddWithValue("@dept", If(String.IsNullOrWhiteSpace(lbldepartment.Text), Nothing, lbldepartment.Text))
-                    insert_penalty_cmd.Parameters.AddWithValue("@grade", If(String.IsNullOrWhiteSpace(lblgrade.Text), Nothing, lblgrade.Text))
-                    insert_penalty_cmd.Parameters.AddWithValue("@section", If(String.IsNullOrWhiteSpace(lblsection.Text), Nothing, lblsection.Text))
-                    insert_penalty_cmd.Parameters.AddWithValue("@strand", If(String.IsNullOrWhiteSpace(lblstrand.Text), Nothing, lblstrand.Text))
-                    insert_penalty_cmd.Parameters.AddWithValue("@returnedBook", returnedBookTitles)
-                    insert_penalty_cmd.Parameters.AddWithValue("@bookTotal", booksToReturn.Count)
-                    insert_penalty_cmd.Parameters.AddWithValue("@borrowDate", lblborroweddate.Text)
-                    insert_penalty_cmd.Parameters.AddWithValue("@dueDate", lblduedate.Text)
-                    insert_penalty_cmd.Parameters.AddWithValue("@returnDate", DateTime.Now.ToShortDateString())
                     insert_penalty_cmd.Parameters.AddWithValue("@transNo", TransactionNo)
+                    insert_penalty_cmd.Parameters.AddWithValue("@lrn", If(String.IsNullOrWhiteSpace(lbllrn.Text) OrElse lbllrn.Text = "N/A", Nothing, lbllrn.Text))
+                    insert_penalty_cmd.Parameters.AddWithValue("@fullName", lblfullname.Text)
+                    insert_penalty_cmd.Parameters.AddWithValue("@dueDate", lblduedate.Text)
                     insert_penalty_cmd.Parameters.AddWithValue("@bookStatus", bookStatus)
                     insert_penalty_cmd.Parameters.AddWithValue("@borrowerStatus", borrowerStatus)
                     insert_penalty_cmd.ExecuteNonQuery()
@@ -439,13 +434,13 @@ Public Class Returning
 
 
             GlobalVarsModule.LogAudit(
-            actionType:="ADD",
-            formName:="BOOK RETURN",
-            description:=$"Returned {booksToReturn.Count} book(s) for transaction {TransactionNo}. Status: {bookStatusDescription}.",
-            recordID:=TransactionNo,
-            oldValue:=$"Borrower: {lblfullname.Text}",
-            newValue:=$"Returned Books: {String.Join(" | ", booksToReturn)}"
-        )
+        actionType:="ADD",
+        formName:="BOOK RETURN",
+        description:=$"Returned {booksToReturn.Count} book(s) for transaction {TransactionNo}. Status: {bookStatusDescription}.",
+        recordID:=TransactionNo,
+        oldValue:=$"Borrower: {lblfullname.Text}",
+        newValue:=$"Returned Books: {String.Join(" | ", booksToReturn)}"
+    )
 
             For Each form In Application.OpenForms
                 If TypeOf form Is AuditTrail Then DirectCast(form, AuditTrail).refreshaudit()
@@ -751,7 +746,8 @@ Public Class Returning
             End If
 
 
-            Dim delete_penalty_com As String = "DELETE FROM `penalty_tbl` WHERE `TransactionReceipt` = @transNo"
+            ' ✨ FIX: pstudent_tbl na (hindi na penalty_tbl); ang column pala ay TransactionNumber, hindi TransactionReceipt
+            Dim delete_penalty_com As String = "DELETE FROM `pstudent_tbl` WHERE `TransactionNumber` = @transNo"
             Using delete_penalty_cmd As New MySqlCommand(delete_penalty_com, con, trans)
                 delete_penalty_cmd.Parameters.AddWithValue("@transNo", transacReceipt)
                 delete_penalty_cmd.ExecuteNonQuery()
@@ -870,30 +866,25 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
         End If
     End Sub
 
+    ' ✨ FIX: pstudent_tbl na (hindi na penalty_tbl), at STUDENT borrowers lang ang pumapasok dito.
+    '    Ang tunay na column ng pstudent_tbl ay Borrower, TransactionNumber, Lrn, Name, DueDate, BookStatus, BorrowerStatus lang.
     Private Sub InsertPenaltyRecord(ByVal row As DataRow, ByVal con As MySqlConnection, ByVal trans As MySqlTransaction)
-        Dim insert_penalty_com As String = "INSERT INTO `penalty_tbl` (`Borrower`, `LRN`, `EmployeeNo`, `FullName`, `Department`, `Grade`, `Section`, `Strand`, `ReturnedBook`, `BookTotal`, `BorrowedDate`, `DueDate`, `ReturnDate`, `TransactionReceipt`, `Status`, `BorrowerStatus`) " &
-                                        "VALUES (@borrowerType, @lrn, @empNo, @fullName, @dept, @grade, @section, @strand, @returnedBook, @bookTotal, @borrowDate, @dueDate, @returnDate, @transNo, @bookStatus, @borrowerStatus)" ' ✨ IDINAGDAG ANG `BorrowerStatus`
+
+        Dim borrowerTypeVal As String = If(row("Borrower") Is DBNull.Value, "", row("Borrower").ToString())
+        If Not borrowerTypeVal.Trim().Equals("Student", StringComparison.OrdinalIgnoreCase) Then
+            Return
+        End If
+
+        Dim insert_penalty_com As String = "INSERT INTO `pstudent_tbl` (`Borrower`, `TransactionNumber`, `Lrn`, `Name`, `DueDate`, `BookStatus`, `BorrowerStatus`) " &
+                                        "VALUES (@borrowerType, @transNo, @lrn, @fullName, @dueDate, @bookStatus, @borrowerStatus)"
 
         Using insert_penalty_cmd As New MySqlCommand(insert_penalty_com, con, trans)
             insert_penalty_cmd.Parameters.AddWithValue("@borrowerType", row("Borrower"))
-            insert_penalty_cmd.Parameters.AddWithValue("@lrn", row("LRN"))
-            insert_penalty_cmd.Parameters.AddWithValue("@empNo", row("EmployeeNo"))
-            insert_penalty_cmd.Parameters.AddWithValue("@fullName", row("FullName"))
-            insert_penalty_cmd.Parameters.AddWithValue("@dept", row("Department"))
-            insert_penalty_cmd.Parameters.AddWithValue("@grade", row("Grade"))
-            insert_penalty_cmd.Parameters.AddWithValue("@section", row("Section"))
-            insert_penalty_cmd.Parameters.AddWithValue("@strand", row("Strand"))
-
-
-            insert_penalty_cmd.Parameters.AddWithValue("@returnedBook", row("ReturnedBook"))
-            insert_penalty_cmd.Parameters.AddWithValue("@bookTotal", row("BookTotal"))
-
-            insert_penalty_cmd.Parameters.AddWithValue("@borrowDate", row("BorrowedDate"))
-            insert_penalty_cmd.Parameters.AddWithValue("@dueDate", row("DueDate"))
-            insert_penalty_cmd.Parameters.AddWithValue("@returnDate", row("ReturnDate"))
             insert_penalty_cmd.Parameters.AddWithValue("@transNo", row("TransactionReceipt"))
+            insert_penalty_cmd.Parameters.AddWithValue("@lrn", row("LRN"))
+            insert_penalty_cmd.Parameters.AddWithValue("@fullName", row("FullName"))
+            insert_penalty_cmd.Parameters.AddWithValue("@dueDate", row("DueDate"))
             insert_penalty_cmd.Parameters.AddWithValue("@bookStatus", row("Status"))
-
             insert_penalty_cmd.Parameters.AddWithValue("@borrowerStatus", row("BorrowerStatus"))
 
             insert_penalty_cmd.ExecuteNonQuery()
@@ -1391,8 +1382,8 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
             Try
                 con.Open()
 
-
-                Dim penaltyQuery As String = "SELECT BorrowerStatus FROM penalty_tbl WHERE TransactionReceipt = @transNo LIMIT 1"
+                ' ✨ FIX: pstudent_tbl na (hindi na penalty_tbl); ang column pala ay TransactionNumber, hindi TransactionReceipt
+                Dim penaltyQuery As String = "SELECT BorrowerStatus FROM pstudent_tbl WHERE TransactionNumber = @transNo LIMIT 1"
                 Using cmdPenalty As New MySqlCommand(penaltyQuery, con)
                     cmdPenalty.Parameters.AddWithValue("@transNo", transactionNo)
                     Dim result As Object = cmdPenalty.ExecuteScalar()
@@ -1410,7 +1401,7 @@ newValue:=$"New Status: {bookStatus}, New Accession: {newAccessionStatus}"
                     End If
                 End Using
 
-                Dim purQuery As String = "SELECT COUNT(*) FROM pur_tbl WHERE TRIM(TransactionReceipt) = @transNo AND (LOWER(TRIM(Status)) = 'paid' OR LOWER(TRIM(Status)) = 'replaced')"
+                Dim purQuery As String = "SELECT COUNT(*) FROM pur_tbl WHERE TRIM(TransactionReceipt) = @transNo AND (LOWER(TRIM(Status)) = 'paid' OR LOWER(TRIM(Status)) = 'replaced book')"
                 Using cmdPur As New MySqlCommand(purQuery, con)
                     cmdPur.Parameters.AddWithValue("@transNo", transactionNo.Trim())
                     Dim purCount As Integer = Convert.ToInt32(cmdPur.ExecuteScalar())

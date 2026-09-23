@@ -277,7 +277,7 @@ Public Class Borrowing
         txtbarcode.Enabled = False
         txtshelf.Enabled = False
         txtaccessionid.Enabled = False
-        ' Enable Available Books button automatically for borrowers
+
         Try
             btnview.Enabled = (GlobalVarsModule.CurrentUserRole = "Borrower")
         Catch
@@ -1408,7 +1408,7 @@ Public Class Borrowing
 
     Private Sub view_link_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles view_link.LinkClicked
         Try
-            ' Prefer current logged-in borrower identity (by identifier) to ensure accurate history shown
+
             Dim borrowerType As String = GlobalVarsModule.CurrentBorrowerType
             If String.IsNullOrWhiteSpace(borrowerType) Then
                 borrowerType = If(rbteacher.Checked, "Teacher", "Student")
@@ -1419,20 +1419,20 @@ Public Class Borrowing
             Dim borrowerName As String = String.Empty
 
             If GlobalVarsModule.CurrentUserRole = "Borrower" AndAlso Not String.IsNullOrWhiteSpace(GlobalVarsModule.CurrentBorrowerID) Then
-                ' Use identifier from logged-in borrower so popup can resolve the correct full name
+
                 If String.Equals(GlobalVarsModule.CurrentBorrowerType, "Student", StringComparison.OrdinalIgnoreCase) Then
                     lrn = GlobalVarsModule.CurrentBorrowerID
                 ElseIf String.Equals(GlobalVarsModule.CurrentBorrowerType, "Teacher", StringComparison.OrdinalIgnoreCase) Then
                     empNo = GlobalVarsModule.CurrentBorrowerID
                 End If
             Else
-                ' Fallback to fields on the form if not a borrower role
+
                 lrn = txtlrn.Text.Trim()
                 empNo = txtemployee.Text.Trim()
                 borrowerName = txtname.Text.Trim()
             End If
 
-            ' Try to resolve display name from identifier to ensure correct history owner
+
             Try
                 If String.IsNullOrWhiteSpace(borrowerName) Then
                     Using con As New MySqlConnection(GlobalVarsModule.connectionString)

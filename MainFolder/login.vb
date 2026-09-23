@@ -391,7 +391,7 @@ TryBorrower:
                         borrowingForm_borrower.TopLevel = False
                         borrowingForm_borrower.BringToFront()
                         activeMain_borrower.Panel_dash.Controls.Add(borrowingForm_borrower)
-                        borrowingForm_borrower.SetupBorrowerFields()
+                        'borrowingForm_borrower.SetupBorrowerFields()
                         borrowingForm_borrower.Show()
 
                         Try

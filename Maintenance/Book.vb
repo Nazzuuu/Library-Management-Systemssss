@@ -326,7 +326,7 @@ Public Class Book
                         End If
 
                         If TypeOf form Is Borrowing Then
-                            DirectCast(form, Borrowing).refreshborrowingsu()
+                            'DirectCast(form, Borrowing).refreshborrowingsu()
                         End If
 
                     Next
@@ -1129,7 +1129,7 @@ Public Class Book
                     End If
 
                     If TypeOf form Is Borrowing Then
-                        DirectCast(form, Borrowing).refreshborrowingsu()
+                        'DirectCast(form, Borrowing).refreshborrowingsu()
                     End If
 
                     If TypeOf form Is AvailableBooks Then
@@ -1293,7 +1293,7 @@ Public Class Book
                 End If
 
                 If TypeOf form Is Borrowing Then
-                    DirectCast(form, Borrowing).refreshborrowingsu()
+                    'DirectCast(form, Borrowing).refreshborrowingsu()
                 End If
 
                 If TypeOf form Is AvailableBooks Then

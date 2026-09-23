@@ -504,7 +504,7 @@ Public Class MainForm
                 Panel_dash.Controls.Add(Borrowing)
                 Accession.btnview.Visible = True
 
-                .SetupBorrowerFields()
+                '.SetupBorrowerFields()
                 .Show()
 
                 .DataGridView1.ClearSelection()
@@ -783,7 +783,7 @@ Public Class MainForm
             .BringToFront()
             Panel_dash.Controls.Add(Borrowing)
 
-            .SetupBorrowerFields()
+            '.SetupBorrowerFields()
             .Show()
 
             Borrowing.DataGridView1.ClearSelection()
@@ -793,7 +793,7 @@ Public Class MainForm
 
         lblform.Text = "BORROWING FORM"
 
-        Borrowing.SetupBorrowerFields()
+        'Borrowing.SetupBorrowerFields()
 
 
     End Sub
@@ -1376,17 +1376,19 @@ Public Class MainForm
 
         Panel_dash.Controls.Clear()
 
-        With Penalty
-            .TopLevel = False
-            .TopMost = True
-            .BringToFront()
-            Panel_dash.Controls.Add(Penalty)
+        'With Penalty
+        '    .TopLevel = False
+        '    .TopMost = True
+        '    .BringToFront()
+        '    Panel_dash.Controls.Add(Penalty)
 
-            .Show()
+        '    .Show()
 
-            Book.DataGridView1.ClearSelection()
-            Book.DataGridView1.CurrentCell = Nothing
-        End With
+        '    Book.DataGridView1.ClearSelection()
+        '    Book.DataGridView1.CurrentCell = Nothing
+        'End With
+
+        PenaltyFormm.ShowDialog()
 
         lblform.Text = "PENALTY FORM"
 

@@ -23,20 +23,20 @@ Partial Class Shelf
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim CustomizableEdges7 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges8 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges1 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges2 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges3 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges4 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges5 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges6 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges9 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim CustomizableEdges10 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim CustomizableEdges17 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges18 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges11 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges12 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges13 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges14 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges15 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges16 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges19 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim CustomizableEdges20 As Guna.UI2.WinForms.Suite.CustomizableEdges = New Guna.UI2.WinForms.Suite.CustomizableEdges()
+        Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle7 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle8 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         Label2 = New Label()
         numupdown = New Guna.UI2.WinForms.Guna2NumericUpDown()
@@ -47,10 +47,10 @@ Partial Class Shelf
         txtsearch = New Guna.UI2.WinForms.Guna2TextBox()
         Guna2Elipse1 = New Guna.UI2.WinForms.Guna2Elipse(components)
         DataGridView1 = New DataGridView()
-        Label12 = New Label()
-        Label13 = New Label()
         Edit = New DataGridViewButtonColumn()
         Delete = New DataGridViewButtonColumn()
+        Label12 = New Label()
+        Label13 = New Label()
         Guna2GradientPanel1.SuspendLayout()
         CType(numupdown, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -67,10 +67,10 @@ Partial Class Shelf
         Guna2GradientPanel1.Controls.Add(Label1)
         Guna2GradientPanel1.Controls.Add(txtshelf)
         Guna2GradientPanel1.Controls.Add(btnadd)
-        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges7
+        Guna2GradientPanel1.CustomizableEdges = CustomizableEdges17
         Guna2GradientPanel1.Location = New Point(30, 20)
         Guna2GradientPanel1.Name = "Guna2GradientPanel1"
-        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges8
+        Guna2GradientPanel1.ShadowDecoration.CustomizableEdges = CustomizableEdges18
         Guna2GradientPanel1.Size = New Size(545, 150)
         Guna2GradientPanel1.TabIndex = 30
         ' 
@@ -90,11 +90,11 @@ Partial Class Shelf
         numupdown.BackColor = Color.Transparent
         numupdown.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         numupdown.BorderRadius = 12
-        numupdown.CustomizableEdges = CustomizableEdges1
+        numupdown.CustomizableEdges = CustomizableEdges11
         numupdown.Font = New Font("Segoe UI", 9F)
         numupdown.Location = New Point(422, 20)
         numupdown.Name = "numupdown"
-        numupdown.ShadowDecoration.CustomizableEdges = CustomizableEdges2
+        numupdown.ShadowDecoration.CustomizableEdges = CustomizableEdges12
         numupdown.Size = New Size(90, 28)
         numupdown.TabIndex = 108
         numupdown.UpDownButtonFillColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
@@ -114,7 +114,7 @@ Partial Class Shelf
         ' 
         txtshelf.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtshelf.BorderRadius = 12
-        txtshelf.CustomizableEdges = CustomizableEdges3
+        txtshelf.CustomizableEdges = CustomizableEdges13
         txtshelf.DefaultText = ""
         txtshelf.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtshelf.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -130,7 +130,7 @@ Partial Class Shelf
         txtshelf.Name = "txtshelf"
         txtshelf.PlaceholderText = ""
         txtshelf.SelectedText = ""
-        txtshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges4
+        txtshelf.ShadowDecoration.CustomizableEdges = CustomizableEdges14
         txtshelf.Size = New Size(476, 33)
         txtshelf.TabIndex = 3
         txtshelf.TextAlign = HorizontalAlignment.Center
@@ -140,7 +140,7 @@ Partial Class Shelf
         btnadd.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnadd.BorderRadius = 9
         btnadd.BorderThickness = 1
-        btnadd.CustomizableEdges = CustomizableEdges5
+        btnadd.CustomizableEdges = CustomizableEdges15
         btnadd.DisabledState.BorderColor = Color.DarkGray
         btnadd.DisabledState.CustomBorderColor = Color.DarkGray
         btnadd.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
@@ -150,7 +150,7 @@ Partial Class Shelf
         btnadd.ForeColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         btnadd.Location = New Point(207, 102)
         btnadd.Name = "btnadd"
-        btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges6
+        btnadd.ShadowDecoration.CustomizableEdges = CustomizableEdges16
         btnadd.Size = New Size(141, 27)
         btnadd.TabIndex = 0
         btnadd.Text = "SAVE"
@@ -170,7 +170,7 @@ Partial Class Shelf
         ' 
         txtsearch.BorderColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
         txtsearch.BorderRadius = 16
-        txtsearch.CustomizableEdges = CustomizableEdges9
+        txtsearch.CustomizableEdges = CustomizableEdges19
         txtsearch.DefaultText = ""
         txtsearch.DisabledState.BorderColor = Color.FromArgb(CByte(208), CByte(208), CByte(208))
         txtsearch.DisabledState.FillColor = Color.FromArgb(CByte(226), CByte(226), CByte(226))
@@ -185,7 +185,7 @@ Partial Class Shelf
         txtsearch.Name = "txtsearch"
         txtsearch.PlaceholderText = "Search Shelf Number"
         txtsearch.SelectedText = ""
-        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges10
+        txtsearch.ShadowDecoration.CustomizableEdges = CustomizableEdges20
         txtsearch.Size = New Size(546, 30)
         txtsearch.TabIndex = 29
         ' 
@@ -203,46 +203,64 @@ Partial Class Shelf
         DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         DataGridView1.BackgroundColor = SystemColors.Control
         DataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal
-        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DataGridViewCellStyle1.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
-        DataGridViewCellStyle1.ForeColor = Color.White
-        DataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
-        DataGridViewCellStyle1.SelectionForeColor = Color.White
-        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
-        DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle5.BackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle5.Font = New Font("Tahoma", 9.75F, FontStyle.Bold)
+        DataGridViewCellStyle5.ForeColor = Color.White
+        DataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(CByte(207), CByte(58), CByte(109))
+        DataGridViewCellStyle5.SelectionForeColor = Color.White
+        DataGridViewCellStyle5.WrapMode = DataGridViewTriState.True
+        DataGridView1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
         DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridView1.Columns.AddRange(New DataGridViewColumn() {Edit, Delete})
         DataGridView1.Cursor = Cursors.Hand
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle2.BackColor = SystemColors.Window
-        DataGridViewCellStyle2.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle2.ForeColor = Color.White
-        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
-        DataGridView1.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle6.BackColor = SystemColors.Window
+        DataGridViewCellStyle6.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle6.ForeColor = Color.White
+        DataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle6.WrapMode = DataGridViewTriState.False
+        DataGridView1.DefaultCellStyle = DataGridViewCellStyle6
         DataGridView1.Location = New Point(29, 241)
         DataGridView1.MultiSelect = False
         DataGridView1.Name = "DataGridView1"
         DataGridView1.ReadOnly = True
-        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle3.BackColor = SystemColors.Control
-        DataGridViewCellStyle3.Font = New Font("Segoe UI", 9F)
-        DataGridViewCellStyle3.ForeColor = SystemColors.WindowText
-        DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
-        DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle7.BackColor = SystemColors.Control
+        DataGridViewCellStyle7.Font = New Font("Segoe UI", 9F)
+        DataGridViewCellStyle7.ForeColor = SystemColors.WindowText
+        DataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle7.WrapMode = DataGridViewTriState.True
+        DataGridView1.RowHeadersDefaultCellStyle = DataGridViewCellStyle7
         DataGridView1.RowHeadersVisible = False
         DataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing
-        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.TopCenter
-        DataGridViewCellStyle4.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        DataGridViewCellStyle4.ForeColor = Color.Black
-        DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.TopCenter
+        DataGridViewCellStyle8.Font = New Font("Tahoma", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle8.ForeColor = Color.Black
+        DataGridView1.RowsDefaultCellStyle = DataGridViewCellStyle8
         DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         DataGridView1.Size = New Size(543, 150)
         DataGridView1.TabIndex = 31
+        ' 
+        ' Edit
+        ' 
+        Edit.FillWeight = 30F
+        Edit.HeaderText = "Edit"
+        Edit.Name = "Edit"
+        Edit.ReadOnly = True
+        Edit.Text = "✎"
+        Edit.UseColumnTextForButtonValue = True
+        ' 
+        ' Delete
+        ' 
+        Delete.FillWeight = 30F
+        Delete.HeaderText = "Delete"
+        Delete.Name = "Delete"
+        Delete.ReadOnly = True
+        Delete.Text = "🗑"
+        Delete.UseColumnTextForButtonValue = True
         ' 
         ' Label12
         ' 
@@ -265,24 +283,6 @@ Partial Class Shelf
         Label13.Size = New Size(296, 16)
         Label13.TabIndex = 109
         Label13.Text = "Select Row before clicking [Edit] or [Delete]."
-        ' 
-        ' Edit
-        ' 
-        Edit.FillWeight = 30F
-        Edit.HeaderText = "Edit"
-        Edit.Name = "Edit"
-        Edit.ReadOnly = True
-        Edit.Text = "✎"
-        Edit.UseColumnTextForButtonValue = True
-        ' 
-        ' Delete
-        ' 
-        Delete.FillWeight = 30F
-        Delete.HeaderText = "Delete"
-        Delete.Name = "Delete"
-        Delete.ReadOnly = True
-        Delete.Text = "🗑"
-        Delete.UseColumnTextForButtonValue = True
         ' 
         ' Shelf
         ' 

@@ -334,7 +334,7 @@ Public Class AvailableBooks
                 activeBorrowing.txtsus.Text = bookTitle.Trim()
 
 
-                activeBorrowing.SetupBorrowerFields()
+                'activeBorrowing.SetupBorrowerFields()
 
                 If activeBorrowing.rbteacher.Checked Then
 
@@ -638,7 +638,7 @@ Public Class AvailableBooks
                         activeBorrowing.txtbarcode.Text = String.Join(",", barcodes.Distinct())
                         activeBorrowing.txtshelf.Text = String.Join(",", shelves.Distinct())
 
-                        activeBorrowing.SetupBorrowerFields()
+                        'activeBorrowing.SetupBorrowerFields()
                     End If
                 Catch ex As Exception
                 End Try

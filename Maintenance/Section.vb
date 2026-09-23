@@ -1168,8 +1168,8 @@ Public Class Section
 
                 ElseIf IsSHS(deptValue) Then
 
-                    txtsection.Visible = False
-                    txtsection.Enabled = False
+                    txtsection.Visible = True
+                    txtsection.Enabled = True
 
                     cbstrand.Visible = True
                     cbstrand.Enabled = True

@@ -1528,7 +1528,7 @@ Public Class Shelf
             txtsearch
         )
 
-        Dim dt As DataTable =
+        Dim dt =
             TryCast(
                 DataGridView1.DataSource,
                 DataTable
@@ -1536,12 +1536,12 @@ Public Class Shelf
 
         If dt IsNot Nothing Then
 
-            If txtsearch.Text.Trim() <> "" Then
+            If txtsearch.Text.Trim <> "" Then
 
-                Dim filter As String =
+                Dim filter =
                     String.Format(
                         "Shelf LIKE '*{0}*'",
-                        txtsearch.Text.Trim()
+                        txtsearch.Text.Trim
                     )
 
                 dt.DefaultView.RowFilter =
