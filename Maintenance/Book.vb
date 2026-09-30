@@ -1515,6 +1515,92 @@ Public Class Book
 
     End Function
 
+    Private Function FindComboIndexByText(cb As ComboBox, target As String) As Integer
+
+        If cb Is Nothing OrElse cb.Items.Count = 0 Then Return -1
+
+        For i As Integer = 0 To cb.Items.Count - 1
+
+            Dim itemText As String = ""
+
+            Try
+                itemText = cb.GetItemText(cb.Items(i))
+            Catch
+                itemText = ""
+            End Try
+
+            If String.Equals(
+                If(itemText, "").Trim(),
+                target,
+                StringComparison.OrdinalIgnoreCase) Then
+
+                Return i
+
+            End If
+
+        Next
+
+        Return -1
+
+    End Function
+
+    Private Sub SelectComboByText(cb As ComboBox, value As String, loader As Action)
+
+        Try
+
+            If String.IsNullOrWhiteSpace(value) Then
+                cb.SelectedIndex = -1
+                Return
+            End If
+
+            Dim target As String = value.Trim()
+
+            If cb.DataSource Is Nothing OrElse cb.Items.Count = 0 Then
+                loader()
+            End If
+
+            Dim idx As Integer = FindComboIndexByText(cb, target)
+
+            If idx < 0 Then
+                loader()
+                idx = FindComboIndexByText(cb, target)
+            End If
+
+            If idx < 0 Then
+
+                Dim dt As DataTable = TryCast(cb.DataSource, DataTable)
+
+                If dt IsNot Nothing AndAlso
+                   Not String.IsNullOrEmpty(cb.DisplayMember) AndAlso
+                   dt.Columns.Contains(cb.DisplayMember) Then
+
+                    Dim newRow As DataRow = dt.NewRow()
+                    newRow(cb.DisplayMember) = target
+                    dt.Rows.InsertAt(newRow, 0)
+
+                    idx = FindComboIndexByText(cb, target)
+
+                End If
+
+            End If
+
+            If idx >= 0 Then
+                cb.SelectedIndex = idx
+            Else
+                cb.Text = value
+            End If
+
+        Catch ex As Exception
+
+            Debug.WriteLine(
+                "SelectComboByText error (" & cb.Name & "): " &
+                ex.Message
+            )
+
+        End Try
+
+    End Sub
+
     Private Sub ApplyRowToFields(row As DataGridViewRow)
 
         If row Is Nothing Then Return
@@ -1541,98 +1627,17 @@ Public Class Book
                 chkauthor.Checked = False
                 cbauthor.Enabled = True
 
-                If cbauthor.DataSource Is Nothing Then
-                    cbauthorr()
-                End If
-
-                Dim authorIndex As Integer =
-                cbauthor.FindStringExact(authorVal)
-
-                If authorIndex >= 0 Then
-                    cbauthor.SelectedIndex = authorIndex
-                Else
-                    cbauthor.Text = authorVal
-                End If
+                SelectComboByText(cbauthor, authorVal, AddressOf cbauthorr)
 
             End If
 
 
 
-            Dim genreVal As String =
-            SafeCellValue(row, "Genre")
+            SelectComboByText(cbgenre, SafeCellValue(row, "Genre"), AddressOf cbgenree)
 
-            If String.IsNullOrWhiteSpace(genreVal) Then
+            SelectComboByText(cbpublisher, SafeCellValue(row, "Publisher"), AddressOf cbpublisherr)
 
-                cbgenre.SelectedIndex = -1
-
-            Else
-
-                If cbgenre.DataSource Is Nothing Then
-                    cbgenree()
-                End If
-
-                Dim genreIndex As Integer =
-                cbgenre.FindStringExact(genreVal)
-
-                If genreIndex >= 0 Then
-                    cbgenre.SelectedIndex = genreIndex
-                Else
-                    cbgenre.Text = genreVal
-                End If
-
-            End If
-
-
-
-            Dim publisherVal As String =
-            SafeCellValue(row, "Publisher")
-
-            If String.IsNullOrWhiteSpace(publisherVal) Then
-
-                cbpublisher.SelectedIndex = -1
-
-            Else
-
-                If cbpublisher.DataSource Is Nothing Then
-                    cbpublisherr()
-                End If
-
-                Dim publisherIndex As Integer =
-                cbpublisher.FindStringExact(publisherVal)
-
-                If publisherIndex >= 0 Then
-                    cbpublisher.SelectedIndex = publisherIndex
-                Else
-                    cbpublisher.Text = publisherVal
-                End If
-
-            End If
-
-
-
-            Dim languageVal As String =
-            SafeCellValue(row, "Language")
-
-            If String.IsNullOrWhiteSpace(languageVal) Then
-
-                cblanguage.SelectedIndex = -1
-
-            Else
-
-                If cblanguage.DataSource Is Nothing Then
-                    cblang()
-                End If
-
-                Dim languageIndex As Integer =
-                cblanguage.FindStringExact(languageVal)
-
-                If languageIndex >= 0 Then
-                    cblanguage.SelectedIndex = languageIndex
-                Else
-                    cblanguage.Text = languageVal
-                End If
-
-            End If
+            SelectComboByText(cblanguage, SafeCellValue(row, "Language"), AddressOf cblang)
 
 
             txtyearr.Text =

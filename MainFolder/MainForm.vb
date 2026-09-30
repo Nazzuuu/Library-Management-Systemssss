@@ -775,13 +775,13 @@ Public Class MainForm
 
     Private Sub BorrowToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles BorrowToolStripMenuItem.Click
 
-        With Borrowing
+        With BorrowBook
 
             Panel_dash.Controls.Clear()
             .TopMost = True
             .TopLevel = False
             .BringToFront()
-            Panel_dash.Controls.Add(Borrowing)
+            Panel_dash.Controls.Add(BorrowBook)
 
             '.SetupBorrowerFields()
             .Show()

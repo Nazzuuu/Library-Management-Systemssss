@@ -725,6 +725,193 @@ Module GlobalVarsModule
         End Try
     End Sub
 
+    Public AutoSelectFirstRowDisabled As Boolean = True
+
+    Private ReadOnly noAutoSelectGrids As New ConcurrentDictionary(Of DataGridView, Boolean)
+
+    Private Sub EnsureNoAutoSelect(grid As DataGridView)
+        Try
+            If grid Is Nothing OrElse grid.IsDisposed Then Return
+            If Not noAutoSelectGrids.TryAdd(grid, True) Then Return
+
+            AddHandler grid.DataBindingComplete, AddressOf Grid_DataBindingComplete_NoAutoSelect
+            AddHandler grid.Disposed,
+                Sub(s As Object, e As EventArgs)
+                    Dim b As Boolean
+                    noAutoSelectGrids.TryRemove(grid, b)
+                End Sub
+        Catch
+        End Try
+    End Sub
+
+    Private Sub Grid_DataBindingComplete_NoAutoSelect(sender As Object, e As DataGridViewBindingCompleteEventArgs)
+        Try
+            If Not AutoSelectFirstRowDisabled Then Return
+            If e.ListChangedType <> ListChangedType.Reset Then Return
+
+            Dim g As DataGridView = TryCast(sender, DataGridView)
+            If g Is Nothing OrElse g.IsDisposed Then Return
+
+            g.ClearSelection()
+            g.CurrentCell = Nothing
+        Catch
+        End Try
+    End Sub
+
+
+    Private Sub EnableGridDoubleBuffer(grid As DataGridView)
+        Try
+            If grid Is Nothing OrElse grid.IsDisposed Then Return
+            If SystemInformation.TerminalServerSession Then Return
+
+            Dim pi = GetType(DataGridView).GetProperty("DoubleBuffered",
+                        Reflection.BindingFlags.Instance Or Reflection.BindingFlags.NonPublic)
+            If pi IsNot Nothing Then pi.SetValue(grid, True, Nothing)
+        Catch
+        End Try
+    End Sub
+
+
+    Private Function GetBoundTable(grid As DataGridView) As DataTable
+        Try
+            Dim ds As Object = grid.DataSource
+            Dim dt As DataTable = TryCast(ds, DataTable)
+            If dt IsNot Nothing Then Return dt
+
+            Dim bs As BindingSource = TryCast(ds, BindingSource)
+            If bs IsNot Nothing Then Return TryCast(bs.DataSource, DataTable)
+        Catch
+        End Try
+        Return Nothing
+    End Function
+
+    Private Function GridValuesEqual(a As Object, b As Object) As Boolean
+        Dim aNull As Boolean = (a Is Nothing OrElse IsDBNull(a))
+        Dim bNull As Boolean = (b Is Nothing OrElse IsDBNull(b))
+        If aNull AndAlso bNull Then Return True
+        If aNull OrElse bNull Then Return False
+
+        If TypeOf a Is Byte() AndAlso TypeOf b Is Byte() Then
+            Return DirectCast(a, Byte()).SequenceEqual(DirectCast(b, Byte()))
+        End If
+
+        Return a.Equals(b)
+    End Function
+
+    Private Function GridKeyOf(v As Object) As String
+        If v Is Nothing OrElse IsDBNull(v) Then Return Nothing
+        Return Convert.ToString(v, Globalization.CultureInfo.InvariantCulture)
+    End Function
+
+    Private Sub UpdateRowInPlace(targetRow As DataRow, freshRow As DataRow, map() As Integer)
+        For c As Integer = 0 To map.Length - 1
+            Dim newVal As Object = freshRow(c)
+            If Not GridValuesEqual(targetRow(map(c)), newVal) Then
+                targetRow(map(c)) = newVal
+            End If
+        Next
+    End Sub
+
+    Private Function MergeDataTableInPlace(target As DataTable, fresh As DataTable) As Boolean
+        Try
+            If target Is Nothing OrElse fresh Is Nothing Then Return False
+
+
+            Dim n As Integer = fresh.Columns.Count
+            Dim map(n - 1) As Integer
+            For i As Integer = 0 To n - 1
+                Dim tc As DataColumn = target.Columns(fresh.Columns(i).ColumnName)
+                If tc Is Nothing OrElse tc.DataType <> fresh.Columns(i).DataType Then Return False
+                map(i) = tc.Ordinal
+            Next
+
+
+            Dim useKey As Boolean = fresh.Columns.Contains("ID") AndAlso target.Columns.Contains("ID")
+            Dim fKeyOrd As Integer = -1
+            Dim tKeyOrd As Integer = -1
+            Dim freshKeys As New HashSet(Of String)()
+            Dim targetMap As New Dictionary(Of String, DataRow)()
+
+            If useKey Then
+                fKeyOrd = fresh.Columns("ID").Ordinal
+                tKeyOrd = target.Columns("ID").Ordinal
+
+                For Each fr As DataRow In fresh.Rows
+                    Dim k As String = GridKeyOf(fr(fKeyOrd))
+                    If k Is Nothing OrElse Not freshKeys.Add(k) Then
+                        useKey = False
+                        Exit For
+                    End If
+                Next
+
+                If useKey Then
+                    For Each tr As DataRow In target.Rows
+                        If tr.RowState = DataRowState.Deleted Then Continue For
+                        Dim k As String = GridKeyOf(tr(tKeyOrd))
+                        If k Is Nothing OrElse targetMap.ContainsKey(k) Then
+                            useKey = False
+                            Exit For
+                        End If
+                        targetMap.Add(k, tr)
+                    Next
+                End If
+            End If
+
+            If useKey Then
+
+                Dim toRemove As New List(Of DataRow)()
+                For Each kv In targetMap
+                    If Not freshKeys.Contains(kv.Key) Then toRemove.Add(kv.Value)
+                Next
+                For Each r In toRemove
+                    target.Rows.Remove(r)
+                    targetMap.Remove(GridKeyOf(r(tKeyOrd)))
+                Next
+
+
+                For i As Integer = 0 To fresh.Rows.Count - 1
+                    Dim fr As DataRow = fresh.Rows(i)
+                    Dim k As String = GridKeyOf(fr(fKeyOrd))
+                    Dim tr As DataRow = Nothing
+
+                    If targetMap.TryGetValue(k, tr) Then
+                        UpdateRowInPlace(tr, fr, map)
+                    Else
+                        Dim nr As DataRow = target.NewRow()
+                        For c As Integer = 0 To n - 1
+                            nr(map(c)) = fr(c)
+                        Next
+                        target.Rows.InsertAt(nr, Math.Min(i, target.Rows.Count))
+                        targetMap(k) = nr
+                    End If
+                Next
+            Else
+
+                Dim common As Integer = Math.Min(target.Rows.Count, fresh.Rows.Count)
+                For i As Integer = 0 To common - 1
+                    UpdateRowInPlace(target.Rows(i), fresh.Rows(i), map)
+                Next
+
+                For i As Integer = common To fresh.Rows.Count - 1
+                    Dim nr As DataRow = target.NewRow()
+                    For c As Integer = 0 To n - 1
+                        nr(map(c)) = fresh.Rows(i)(c)
+                    Next
+                    target.Rows.Add(nr)
+                Next
+
+                While target.Rows.Count > fresh.Rows.Count
+                    target.Rows.RemoveAt(target.Rows.Count - 1)
+                End While
+            End If
+
+            Return True
+        Catch ex As Exception
+            Debug.WriteLine("MergeDataTableInPlace error: " & ex.Message)
+            Return False
+        End Try
+    End Function
+
     Public Async Function LoadToGridAsync(grid As DataGridView, query As String) As Task
         If grid Is Nothing OrElse grid.IsDisposed Then Return
 
@@ -768,7 +955,21 @@ Module GlobalVarsModule
                         Return
                     End If
 
+                    Dim existing As DataTable = GetBoundTable(grid)
+                    If existing IsNot Nothing AndAlso MergeDataTableInPlace(existing, dt) Then
+                        Return
+                    End If
+
+                    EnsureNoAutoSelect(grid)
                     grid.DataSource = dt
+
+                    If AutoSelectFirstRowDisabled Then
+                        Try
+                            grid.ClearSelection()
+                            grid.CurrentCell = Nothing
+                        Catch
+                        End Try
+                    End If
                 End Sub
 
             If grid.InvokeRequired Then
@@ -819,10 +1020,27 @@ Module GlobalVarsModule
                 refreshTimers.Remove(grid)
             End If
 
+            EnableGridDoubleBuffer(grid)
+            EnsureNoAutoSelect(grid)
+
             Await LoadToGridAsync(grid, query)
             HideStandardColumns(grid)
 
             Dim t As New Timer() With {.Interval = Math.Max(1000, intervalMs)}
+            Dim busy As Boolean = False
+
+
+            AddHandler grid.Disposed,
+                Sub(s As Object, e As EventArgs)
+                    Try
+                        t.Stop()
+                        t.Dispose()
+                        If refreshTimers.ContainsKey(grid) AndAlso Object.ReferenceEquals(refreshTimers(grid), t) Then
+                            refreshTimers.Remove(grid)
+                        End If
+                    Catch
+                    End Try
+                End Sub
 
             AddHandler t.Tick,
                 Async Sub(sender As Object, e As EventArgs)
@@ -834,10 +1052,16 @@ Module GlobalVarsModule
                         Return
                     End If
 
-                    If IsUserEditingForm(grid) Then
+
+                    If busy Then
                         Return
                     End If
 
+                    If IsUserEditingForm(grid) OrElse grid.IsCurrentCellInEditMode Then
+                        Return
+                    End If
+
+                    busy = True
                     Try
                         Dim selectedColumn As String = ""
                         Dim selectedValue As Object = Nothing
@@ -856,13 +1080,23 @@ Module GlobalVarsModule
                             firstDisplayedRow = grid.FirstDisplayedScrollingRowIndex
                         End If
 
+                        Dim boundBefore As Object = grid.DataSource
+
                         Await LoadToGridAsync(grid, query)
 
+                        If grid Is Nothing OrElse grid.IsDisposed Then Return
+
                         HideStandardColumns(grid)
-                        RestoreSelection(grid, selectedColumn, selectedValue, currentColumn, currentValue, firstDisplayedRow)
+
+
+                        If Not Object.ReferenceEquals(boundBefore, grid.DataSource) Then
+                            RestoreSelection(grid, selectedColumn, selectedValue, currentColumn, currentValue, firstDisplayedRow)
+                        End If
 
                     Catch ex As Exception
                         Debug.WriteLine("AutoRefreshGrid error: " & ex.Message)
+                    Finally
+                        busy = False
                     End Try
                 End Sub
 
